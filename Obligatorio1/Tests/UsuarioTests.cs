@@ -50,6 +50,10 @@ namespace Tests
         {
             Usuario usuario1 = new Usuario("Juan", "Perez", "contrasena", "email");
             Assert.IsFalse(usuario1.contrasenaValida());
+            Usuario usuario2 = new Usuario("Juan", "Perez", "Contrasena", "email");
+            Assert.IsTrue(usuario2.contrasenaValida());
+            Usuario usuario3 = new Usuario("Juan", "Perez", "COntrasena", "email");
+            Assert.IsTrue(usuario3.contrasenaValida());
         }
     }
 }
