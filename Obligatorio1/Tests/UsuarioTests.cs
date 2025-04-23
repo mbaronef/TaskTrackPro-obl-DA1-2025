@@ -7,14 +7,10 @@ namespace Tests
     public class UsuarioTests
     {
         [TestMethod]
-        public void constructor()
+        public void Constructor()
         {
-            // Arrange
-
-            // Act
-            var usuario = new Usuario("Juan", "Perez", "contrasena", "email"); // completar según tu constructor
-
-            // Assert
+            Usuario usuario = new Usuario("Juan", "Perez", "contrasena", "email"); // completar según tu constructor
+            
             Assert.AreEqual(usuario.Nombre, "Juan");
             Assert.AreEqual(usuario.Apellido, "Perez");
             Assert.AreEqual(usuario.Contrasena, "contrasena");
