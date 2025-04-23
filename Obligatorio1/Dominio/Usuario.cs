@@ -19,4 +19,9 @@ public class Usuario
         Contrasena = unContrasena;
         Email = unEmail;
     }
+
+    public bool contrasenaValida()
+    {
+        return this.Contrasena.Any(char.IsUpper);
+    }
 }
