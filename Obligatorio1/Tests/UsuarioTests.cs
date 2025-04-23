@@ -18,11 +18,11 @@ namespace Tests
         }
         
         [TestMethod]
-        public void ContadorId()
+        public void ContadorCantidadUsuarios()
         {
             Usuario usuario = new Usuario("Juan", "Perez", "contrasena", "email");
             
-            Assert.AreEqual(usuario.Id, 1);
+            Assert.AreEqual(Usuario.Contador, 1);
         }
     }
 }
