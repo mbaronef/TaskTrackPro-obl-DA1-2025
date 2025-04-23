@@ -33,8 +33,10 @@ namespace Tests
         public void SeAsigaUnId()
         {
             Usuario usuario1 = new Usuario("Juan", "Perez", "contrasena", "email");
+            Usuario usuario2 = new Usuario("Mateo", "Perez", "contrasena", "email");
             
             Assert.AreEqual(usuario1.Id, 1);
+            Assert.AreEqual(usuario2.Id, 2);
         }
         
         
