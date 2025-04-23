@@ -29,6 +29,14 @@ namespace Tests
             Assert.AreEqual(Usuario.Contador, 2);
         }
         
+        [TestMethod]
+        public void SeAsigaUnId()
+        {
+            Usuario usuario1 = new Usuario("Juan", "Perez", "contrasena", "email");
+            
+            Assert.AreEqual(usuario1.Id, 1);
+        }
+        
         
         
     }
