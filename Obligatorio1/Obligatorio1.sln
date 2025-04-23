@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dominio", "Dominio\Dominio.csproj", "{993FBF92-E099-49A5-8AB7-F229EDF5DBF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaz", "Interfaz\Interfaz.csproj", "{AF584B15-2CF5-4E9F-B59A-EB1195C86DF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{9150EB24-3FD9-482A-8219-1CFB7DB40A5E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{993FBF92-E099-49A5-8AB7-F229EDF5DBF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{993FBF92-E099-49A5-8AB7-F229EDF5DBF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{993FBF92-E099-49A5-8AB7-F229EDF5DBF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{993FBF92-E099-49A5-8AB7-F229EDF5DBF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF584B15-2CF5-4E9F-B59A-EB1195C86DF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF584B15-2CF5-4E9F-B59A-EB1195C86DF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF584B15-2CF5-4E9F-B59A-EB1195C86DF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF584B15-2CF5-4E9F-B59A-EB1195C86DF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9150EB24-3FD9-482A-8219-1CFB7DB40A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9150EB24-3FD9-482A-8219-1CFB7DB40A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9150EB24-3FD9-482A-8219-1CFB7DB40A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9150EB24-3FD9-482A-8219-1CFB7DB40A5E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
