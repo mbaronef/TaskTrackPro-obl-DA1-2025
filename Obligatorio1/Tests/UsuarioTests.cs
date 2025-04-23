@@ -38,8 +38,16 @@ namespace Tests
             Assert.AreEqual(usuario1.Id, 1);
             Assert.AreEqual(usuario2.Id, 2);
         }
-        
-        
-        
+
+        [TestMethod]
+        public void IdYContadorSeCorresponden()
+        {
+            Usuario usuario1 = new Usuario("Juan", "Perez", "contrasena", "email");
+            Assert.AreEqual(usuario1.Id, Usuario.Contador);
+            Usuario usuario2 = new Usuario("Mateo", "Perez", "contrasena", "email");
+            Assert.AreEqual(usuario2.Id, Usuario.Contador);
+        }
+
+
     }
 }
