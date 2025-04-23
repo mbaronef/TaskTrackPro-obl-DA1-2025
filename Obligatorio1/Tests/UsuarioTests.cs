@@ -1,4 +1,7 @@
+using Dominio;
 namespace Tests
+
+
 {
     [TestClass]
     public class UsuarioTests
@@ -14,7 +17,7 @@ namespace Tests
             // Assert
             Assert.AreEqual(usuario.Nombre, "Juan");
             Assert.AreEqual(usuario.Apellido, "Perez");
-            Assert.AreEqual(usuario.Contraseña, "contrasena");
+            Assert.AreEqual(usuario.Contrasena, "contrasena");
             Assert.AreEqual(usuario.Email, "email");
         }
     }
