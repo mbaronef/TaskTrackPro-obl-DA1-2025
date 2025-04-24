@@ -20,7 +20,7 @@ public class Usuario
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
-        Contrasena = unaContrasena;
+        Contrasena = Usuario.encriptarContrasena(unaContrasena);
     }
     
     public static string encriptarContrasena(string unaContrasena)
