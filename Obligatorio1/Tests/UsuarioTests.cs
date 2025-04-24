@@ -41,6 +41,14 @@ namespace Tests
             Assert.IsFalse(usuario.EsAdministradorProyecto);
         }
 
+        [TestMethod]
+        public void ContrasenaEncriptadaEsDistintaALaOriginal()
+        {
+            string unaContrasena = "Contrase#a3";
+            string contrasenaEncriptada = Usuario.encriptarContrasena(unaContrasena);
+            Assert.AreNotEqual(unaContrasena, contrasenaEncriptada);
+        }
+
         /*[TestMethod]
         public void ContrasenaIncluyeAlMenosUnaMayuscula()
         {
