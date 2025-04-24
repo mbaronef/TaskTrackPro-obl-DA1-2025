@@ -7,17 +7,20 @@ public class Usuario
     public int Id { get; set; }
     public string Nombre { get; set; }
     public string Apellido { get; set; }
-    public string Contrasena { get; set; }
+    public DateTime FechaNacimiento { get; set; }
     public string Email { get; set; }
+    public string Contrasena { get; set; }
+    
 
-    public Usuario(string unNombre, string unApellido, string unContrasena, string unEmail)
+    public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
     {
         Contador++;
         Id = Contador;
         Nombre = unNombre;
         Apellido = unApellido;
-        Contrasena = unContrasena;
+        FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
+        Contrasena = unaContrasena;
     }
 
     public bool contrasenaValida()
