@@ -1,5 +1,7 @@
 namespace Dominio;
 
+using System.Text;
+
 public class Usuario
 {
     public int Id { get; set; }
@@ -20,6 +22,16 @@ public class Usuario
         Email = unEmail;
         Contrasena = unaContrasena;
     }
+    public static string encriptarContrasena(string unaContrasena)
+    { 
+        StringBuilder resultado = new StringBuilder(); 
+        foreach (char c in unaContrasena) 
+        {
+            resultado.Append((char)(c + 3));
+        } 
+        return resultado.ToString();
+    }
+    
 
     public bool contrasenaValida()
     {
