@@ -12,4 +12,10 @@ public class NotificacionTests
         Assert.AreEqual("Mensaje de notificación", nuevaNotificacion.Mensaje);
     }
 
+    [TestMethod]
+    public void Se_asigna_fecha_ok()
+    {
+        Notificacion nuevaNotificacion = new Notificacion("Mensaje de notificación");
+        Assert.AreEqual(DateTime.Today, nuevaNotificacion.Fecha);
+    }
 }
