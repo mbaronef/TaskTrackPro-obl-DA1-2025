@@ -10,6 +10,7 @@ public class Usuario
     public DateTime FechaNacimiento { get; set; }
     public string Email { get; set; }
     public string Contrasena { get; set; }
+    public List<Notificacion> Notificaciones { get; private set; }
     
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
@@ -21,6 +22,7 @@ public class Usuario
         FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
         Contrasena = unaContrasena;
+        Notificaciones = new List<Notificacion>();
     }
 
     public bool contrasenaValida()
