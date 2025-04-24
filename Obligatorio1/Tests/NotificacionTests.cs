@@ -1,5 +1,7 @@
 namespace Tests;
 
+using Dominio;
+
 [TestClass]
 public class NotificacionTests
 {
