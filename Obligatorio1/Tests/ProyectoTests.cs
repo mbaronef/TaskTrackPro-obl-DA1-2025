@@ -39,5 +39,16 @@ namespace Tests
             Assert.IsTrue(proyecto.FechaInicio >= antes && proyecto.FechaInicio <= despues); // porque DateTime.Now cambia
         }
         
+        [TestMethod]
+        public void FechaFinMasTempranaInicializadaConMinValue()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea>();
+
+            var proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, miembros);
+
+            Assert.AreEqual(DateTime.MinValue, proyecto.FechaFinMasTemprana);
+        }
     }
 }
