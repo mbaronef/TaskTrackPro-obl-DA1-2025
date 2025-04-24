@@ -8,6 +8,8 @@ public class Proyecto
     public List<Tarea> Tareas { get; set; }
     public Usuario Administrador { get; set; }
     public List<Usuario> Miembros { get; set; }
+    
+    public DateTime FechaInicio { get; set; } = DateTime.Now;
 
     public Proyecto(string nombre, string descripcion, List<Tarea> tareas, Usuario administrador, List<Usuario> miembros)
     {

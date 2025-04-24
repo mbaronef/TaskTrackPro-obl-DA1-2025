@@ -30,9 +30,10 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea>();
 
             DateTime antes = DateTime.Now;
-            Proyecto proyecto = new Proyecto("Nombre", "Descripción", null, admin, miembros);
+            Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, miembros);
             DateTime despues = DateTime.Now;
 
             Assert.IsTrue(proyecto.FechaInicio >= antes && proyecto.FechaInicio <= despues); // porque DateTime.Now cambia
