@@ -30,6 +30,16 @@ namespace Tests
             Assert.IsNotNull(usuario.Notificaciones);
             Assert.AreEqual(0,usuario.Notificaciones.Count);
         }
+        
+        [TestMethod]
+        public void UnNuevoUsuarioNoEsAdministradorDeProyectoPorDefecto()
+        {
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
+            
+            Assert.IsFalse(usuario.EsAsministradorProyecto);
+        }
 
         [TestMethod]
         public void ContadorCantidadUsuarios()
@@ -41,7 +51,7 @@ namespace Tests
             Usuario usuario2 = new Usuario("Mateo", "Perez", fechaNacimiento2, "unemail2@gmail.com", "Contrase#a2");
             Assert.AreEqual(Usuario.Contador, 2);
         }
-        
+
         [TestMethod]
         public void SeAsigaUnId()
         {
