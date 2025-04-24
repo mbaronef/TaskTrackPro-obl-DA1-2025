@@ -1,4 +1,4 @@
-namespace Tests.Dummies;
+namespace Dominio.Dummies;
 
 public class Usuario
 {

@@ -1,4 +1,8 @@
+using Dominio;
+using Dominio.Dummies;
+
 namespace Tests
+
 {
     [TestClass]
     public class ProyectoTests
