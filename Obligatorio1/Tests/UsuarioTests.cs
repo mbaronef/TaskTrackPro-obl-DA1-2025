@@ -19,7 +19,18 @@ namespace Tests
             Assert.AreEqual("unemail@gmail.com", usuario.Email);
             Assert.AreEqual("Contrase#a3", usuario.Contrasena);
         }
-        
+
+        [TestMethod]
+        public void UsuarioSeCreaConListaNotificacionesVacia()
+        {
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
+            
+            Assert.IsNotNull(usuario.Notificaciones);
+            Assert.AreEqual(0,usuario.Notificaciones.Count);
+        }
+
         [TestMethod]
         public void ContadorCantidadUsuarios()
         {
