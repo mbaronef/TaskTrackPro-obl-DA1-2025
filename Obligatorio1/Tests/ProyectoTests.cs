@@ -25,7 +25,5 @@ namespace Tests
             Assert.AreEqual(miembros, proyecto.Miembros);
         }
         
-        [TestMethod]
-        public void 
     }
 }
