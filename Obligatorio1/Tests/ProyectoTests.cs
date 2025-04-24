@@ -8,7 +8,7 @@ namespace Tests
     public class ProyectoTests
     {
         [TestMethod]
-        public void constructor()
+        public void ConstructorConParametrosAsignadosCorrectamente()
         {
             string nombre = "Proyecto 1";
             string descripcion = "Descripción";
@@ -24,5 +24,8 @@ namespace Tests
             Assert.AreEqual(admin, proyecto.Administrador);
             Assert.AreEqual(miembros, proyecto.Miembros);
         }
+        
+        [TestMethod]
+        public void 
     }
 }
