@@ -10,6 +10,8 @@ public class Proyecto
     public List<Usuario> Miembros { get; set; }
     
     public DateTime FechaInicio { get; set; } = DateTime.Now;
+    
+    public DateTime FechaFinMasTemprana { get; set; } = DateTime.MinValue;
 
     public Proyecto(string nombre, string descripcion, List<Tarea> tareas, Usuario administrador, List<Usuario> miembros)
     {
