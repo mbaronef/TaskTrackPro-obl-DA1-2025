@@ -11,6 +11,7 @@ public class Usuario
     public string Email { get; set; }
     public string Contrasena { get; set; }
     public List<Notificacion> Notificaciones { get; private set; }
+    public bool EsAdministradorProyecto { get; set; }
     
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
@@ -23,6 +24,7 @@ public class Usuario
         Email = unEmail;
         Contrasena = unaContrasena;
         Notificaciones = new List<Notificacion>();
+        EsAdministradorProyecto = false;
     }
 
     public bool contrasenaValida()

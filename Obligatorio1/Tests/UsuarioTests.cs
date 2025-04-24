@@ -38,7 +38,7 @@ namespace Tests
             
             Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
             
-            Assert.IsFalse(usuario.EsAsministradorProyecto);
+            Assert.IsFalse(usuario.EsAdministradorProyecto);
         }
 
         [TestMethod]
