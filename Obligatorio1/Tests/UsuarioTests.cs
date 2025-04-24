@@ -1,20 +1,22 @@
 using Dominio;
-namespace Tests
 
+namespace Tests
 
 {
     [TestClass]
     public class UsuarioTests
     {
         [TestMethod]
-        public void Constructor()
+        public void ConstructorConParametrosAsignaCorrectamente()
         {
-            Usuario usuario = new Usuario("Juan", "Perez", "contrasena", "email");
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
             
-            Assert.AreEqual(usuario.Nombre, "Juan");
-            Assert.AreEqual(usuario.Apellido, "Perez");
-            Assert.AreEqual(usuario.Contrasena, "contrasena");
-            Assert.AreEqual(usuario.Email, "email");
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
+            
+            Assert.AreEqual("Juan", usuario.Nombre);
+            Assert.AreEqual("Perez", usuario.Apellido);
+            Assert.AreEqual(fechaNacimiento, usuario.FechaNacimiento);
+            Assert.AreEqual("unemail@gmail.com", usuario.Email);
         }
         
         [TestMethod]
