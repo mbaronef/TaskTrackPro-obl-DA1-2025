@@ -25,5 +25,18 @@ namespace Tests
             Assert.AreEqual(miembros, proyecto.Miembros);
         }
         
+        [TestMethod]
+        public void FechaInicioInicializadaConFechaActual()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+
+            DateTime antes = DateTime.Now;
+            Proyecto proyecto = new Proyecto("Nombre", "Descripción", null, admin, miembros);
+            DateTime despues = DateTime.Now;
+
+            Assert.IsTrue(proyecto.FechaInicio >= antes && proyecto.FechaInicio <= despues); // porque DateTime.Now cambia
+        }
+        
     }
 }
