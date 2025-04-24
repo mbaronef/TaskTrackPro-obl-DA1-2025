@@ -49,6 +49,16 @@ namespace Tests
             Assert.AreNotEqual(unaContrasena, contrasenaEncriptada);
         }
 
+        [TestMethod]
+        public void ContrasenasIgualesEncriptanIgual()
+        {
+            string unaContrasena = "Contrase#a3";
+            string contrasenaEncriptada1 = Usuario.encriptarContrasena(unaContrasena);
+            string contrasenaEncriptada2 = Usuario.encriptarContrasena(unaContrasena);
+            
+            Assert.AreEqual(contrasenaEncriptada1, contrasenaEncriptada2);
+        }
+
         /*[TestMethod]
         public void ContrasenaIncluyeAlMenosUnaMayuscula()
         {

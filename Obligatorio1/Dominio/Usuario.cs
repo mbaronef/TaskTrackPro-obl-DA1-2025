@@ -22,12 +22,13 @@ public class Usuario
         Email = unEmail;
         Contrasena = unaContrasena;
     }
+    
     public static string encriptarContrasena(string unaContrasena)
     { 
         StringBuilder resultado = new StringBuilder(); 
-        foreach (char c in unaContrasena) 
+        foreach (char caracter in unaContrasena) 
         {
-            resultado.Append((char)(c + 3));
+            resultado.Append((char)(caracter + 3));
         } 
         return resultado.ToString();
     }
