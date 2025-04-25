@@ -20,17 +20,16 @@ public class Usuario
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
     {
-        ValidarContrasena(unaContrasena);
         ValidarEmail(unEmail);
-        
+        SetContrasenaEncriptada(unaContrasena);
         Nombre = unNombre;
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
-        SetContrasena(unaContrasena);
     }
-    private void SetContrasena(string contrasena)
+    private void SetContrasenaEncriptada(string contrasena)
     { 
+        ValidarContrasena(contrasena);
         _contrasena = Usuario.EncriptarContrasena(contrasena);
     }
     public static string EncriptarContrasena(string contrasena)
@@ -105,7 +104,7 @@ public class Usuario
 
     public void CambiarContrasena(string nuevaContrasena)
     {
-        SetContrasena(nuevaContrasena);
+        SetContrasenaEncriptada(nuevaContrasena);
     }
 
     public void RecibirNotificacion(Notificacion notificacion)

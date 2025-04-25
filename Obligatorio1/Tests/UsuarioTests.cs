@@ -140,6 +140,18 @@ namespace Tests
             usuario.CambiarContrasena(nuevaContrasena);
             Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
         }
+        
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void DaErrorSiSeCambiaContrasenaInvalida()
+        {
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@adinet.com", "Contrase#a3");
+
+            string nuevaContrasena = "c1.A";
+            usuario.CambiarContrasena(nuevaContrasena);
+            Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
+        }
 
         [TestMethod]
         public void SeRecibeUnaNotificacionCorrectamente()
