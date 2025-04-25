@@ -20,14 +20,7 @@ public class Usuario
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
     {
-        ValidarLargoContrasena(unaContrasena, 8);
-        ValidarAlgunaMayuscula(unaContrasena);
-        ValidarAlgunaMinuscula(unaContrasena);
-        ValidarAlgunNumero(unaContrasena);
-        if (!Regex.IsMatch(unaContrasena, "[^a-zA-Z0-9]"))
-        {
-            throw new ExcepcionDominio("La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).");
-        }
+        ValidarContrasena(unaContrasena);
         
         Nombre = unNombre;
         Apellido = unApellido;
@@ -50,6 +43,15 @@ public class Usuario
         return (_contrasena == Usuario.EncriptarContrasena(contrasenaIngresada));
     }
 
+    private void ValidarContrasena(string contrasena)
+    {
+        ValidarLargoContrasena(contrasena, 8);
+        ValidarAlgunaMayusculaContrasena(contrasena);
+        ValidarAlgunaMinusculaContrasena(contrasena);
+        ValidarAlgunNumeroContrasena(contrasena);
+        ValidarAlgunCaracterEspecialContrasena(contrasena);
+    }
+
     private void ValidarLargoContrasena(string contrasena, int largoMinimo)
     {
         if (contrasena.Length < largoMinimo)
@@ -58,7 +60,7 @@ public class Usuario
         }
     }
 
-    private void ValidarAlgunaMayuscula(string contrasena)
+    private void ValidarAlgunaMayusculaContrasena(string contrasena)
     {
         if (!contrasena.Any(char.IsUpper))
         {
@@ -66,7 +68,7 @@ public class Usuario
         }
     }
 
-    private void ValidarAlgunaMinuscula(string contrasena)
+    private void ValidarAlgunaMinusculaContrasena(string contrasena)
     {
         if (!contrasena.Any(char.IsLower))
         {
@@ -74,11 +76,19 @@ public class Usuario
         }
     }
 
-    private void ValidarAlgunNumero(string contrasena)
+    private void ValidarAlgunNumeroContrasena(string contrasena)
     {
         if (!contrasena.Any(char.IsDigit))
         {
             throw new ExcepcionDominio("La contraseña debe incluir al menos una número (0-9).");
+        }
+    }
+
+    private void ValidarAlgunCaracterEspecialContrasena(string contrasena)
+    {
+        if (!Regex.IsMatch(contrasena, "[^a-zA-Z0-9]"))
+        {
+            throw new ExcepcionDominio("La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).");
         }
     }
 
