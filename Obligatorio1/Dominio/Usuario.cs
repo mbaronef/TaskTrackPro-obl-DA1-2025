@@ -24,6 +24,11 @@ public class Usuario
             throw new ExcepcionDominio("La contraseña debe tener al menos 8 caracteres.");
         }
 
+        if (!unaContrasena.Any(char.IsUpper))
+        {
+            throw new ExcepcionDominio("La contraseña debe incluir al menos una letra mayúscula (A-Z).");
+        }
+
         Nombre = unNombre;
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;
@@ -44,9 +49,4 @@ public class Usuario
     {
         return (_contrasena == Usuario.EncriptarContrasena(contrasenaIngresada));
     }
-    
-    /*public bool contrasenaValida()
-    {
-        return this.Contrasena.Any(char.IsUpper);
-    }*/
 }
