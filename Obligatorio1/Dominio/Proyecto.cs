@@ -1,4 +1,6 @@
 using Dominio.Dummies;
+using Dominio.Excepciones;
+
 namespace Dominio;
 
 public class Proyecto
@@ -15,6 +17,21 @@ public class Proyecto
 
     public Proyecto(string nombre, string descripcion, List<Tarea> tareas, Usuario administrador, List<Usuario> miembros)
     {
+        if (string.IsNullOrWhiteSpace(nombre))
+            throw new ExcepcionDominio("El nombre del proyecto no puede estar vacío o null.");
+
+        if (string.IsNullOrWhiteSpace(descripcion))
+            throw new ExcepcionDominio("La descripción del proyecto no puede estar vacía o null.");
+
+        if (administrador is null)
+            throw new ExcepcionDominio("El proyecto debe tener un administrador.");
+
+        if (miembros is null)
+            throw new ExcepcionDominio("La lista de miembros no puede ser null.");
+
+        if (!miembros.Contains(administrador))
+            throw new ExcepcionDominio("El administrador debe estar incluido en la lista de miembros.");
+
         Nombre = nombre;
         Descripcion = descripcion;
         Tareas = tareas;
