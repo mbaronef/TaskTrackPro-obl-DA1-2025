@@ -112,6 +112,9 @@ public class Usuario
     {
         Notificaciones.Add(notificacion);
     }
-    
-    
+
+    public void BorrarNotificacion(int idNotificacion)
+    {
+        Notificaciones.RemoveAll(n => n.Id == idNotificacion);
+    }
 }
