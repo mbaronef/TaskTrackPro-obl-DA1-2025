@@ -4,12 +4,13 @@ using System.Text;
 
 public class Usuario
 {
+    private string _contrasena;
+    
     public int Id { get; set; }
     public string Nombre { get; set; }
     public string Apellido { get; set; }
     public DateTime FechaNacimiento { get; set; }
     public string Email { get; set; }
-    public string Contrasena { get; set; }
     public List<Notificacion> Notificaciones { get; private set; } = new List<Notificacion>();
     public bool EsAdministradorProyecto { get; set; } =  false;
     
@@ -20,7 +21,7 @@ public class Usuario
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
-        Contrasena = Usuario.EncriptarContrasena(unaContrasena);
+        _contrasena = Usuario.EncriptarContrasena(unaContrasena);
     }
     
     public static string EncriptarContrasena(string contrasena)
@@ -35,11 +36,11 @@ public class Usuario
 
     public bool Autenticar(string contrasenaIngresada)
     {
-        return (this.Contrasena == Usuario.EncriptarContrasena(contrasenaIngresada));
+        return (_contrasena == Usuario.EncriptarContrasena(contrasenaIngresada));
     }
 
-    public bool contrasenaValida()
+    /*public bool contrasenaValida()
     {
         return this.Contrasena.Any(char.IsUpper);
-    }
+    }*/
 }

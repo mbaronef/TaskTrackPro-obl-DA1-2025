@@ -17,7 +17,7 @@ namespace Tests
             Assert.AreEqual("Perez", usuario.Apellido);
             Assert.AreEqual(fechaNacimiento, usuario.FechaNacimiento);
             Assert.AreEqual("unemail@gmail.com", usuario.Email);
-            Assert.AreEqual(usuario.Contrasena, Usuario.EncriptarContrasena("Contrase#a3"));
+            Assert.IsTrue(usuario.Autenticar("Contrase#a3"));
         }
 
         [TestMethod]
