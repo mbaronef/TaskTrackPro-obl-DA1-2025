@@ -49,6 +49,9 @@ public class Proyecto
         if (usuario is null)
             throw new ExcepcionDominio("No se puede agregar un miembro null.");
         
+        if (Miembros.Contains(usuario))
+            throw new ExcepcionDominio("El miembro ya pertenece al proyecto.");
+        
         Miembros.Add(usuario);
     }
     
