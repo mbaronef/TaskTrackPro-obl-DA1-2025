@@ -27,6 +27,18 @@ namespace Tests
         }
         
         [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void Constructor_DeberiaLanzarExcepcionSiDescripcionSupera400Caracteres()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            string descripcion = new string('a', 401); // 401 = inválido
+            List<Tarea> tareas = new List<Tarea>();
+
+            Proyecto proyecto = new Proyecto("Proyecto", descripcion, tareas, admin, miembros);
+        }
+        
+        [TestMethod]
         public void FechaInicioInicializadaConFechaActual()
         {
             Usuario admin = new Usuario();
