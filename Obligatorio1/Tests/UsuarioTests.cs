@@ -154,5 +154,4 @@ namespace Tests
             Assert.AreSame(notificacion, usuario.Notificaciones.ElementAt(0));
         }
     }
-
 }

@@ -107,4 +107,11 @@ public class Usuario
     {
         SetContrasena(nuevaContrasena);
     }
+
+    public void RecibirNotificacion(Notificacion notificacion)
+    {
+        Notificaciones.Add(notificacion);
+    }
+    
+    
 }
