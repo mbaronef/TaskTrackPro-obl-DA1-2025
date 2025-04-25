@@ -78,8 +78,7 @@ public class Usuario
     {
         if (!contrasena.Any(char.IsDigit))
         {
-            throw new ExcepcionDominio("La contraseña debe incluir al menos una número (0-9).");
-        }
+            throw new ExcepcionDominio("La contraseña debe incluir al menos un número (0-9).");
     }
 
     private void ValidarAlgunCaracterEspecialContrasena(string contrasena)
