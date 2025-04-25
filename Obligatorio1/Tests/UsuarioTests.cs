@@ -95,7 +95,7 @@ namespace Tests
         public void IngresoDeContrasenaSinMayusculas()
         {
             DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "minuscula");
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "minuscula1@");
         }
         
         [ExpectedException(typeof(ExcepcionDominio))]
@@ -103,7 +103,15 @@ namespace Tests
         public void IngresoDeContrasenaSinMinusculas()
         {
             DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "MAYUSCULA");
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "MAYUSCULA1@");
+        }
+        
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void IngresoDeContrasenaSinNumeros()
+        {
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "CoNtRaSeN@");
         }
     }
 
