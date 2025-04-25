@@ -1,4 +1,5 @@
 using Dominio;
+using Dominio.Excepciones;
 using Dominio.Dummies;
 
 namespace Tests
@@ -50,5 +51,76 @@ namespace Tests
 
             Assert.AreEqual(DateTime.MinValue, proyecto.FechaFinMasTemprana);
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ConstructorLanzaExcepcionSiNombreEsVacio()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+
+            Proyecto proyecto = new Proyecto("", "Descripción válida", new List<Tarea>(), admin, miembros);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ConstructorLanzaExcepcionSiNombreEsNull()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+
+            Proyecto proyecto = new Proyecto(null, "Descripción válida", new List<Tarea>(), admin, miembros);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ConstructorLanzaExcepcionSiDescripcionEsVacia()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+
+            Proyecto proyecto = new Proyecto("Nombre válido", "", new List<Tarea>(), admin, miembros);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ConstructorLanzaExcepcionSiDescripcionEsNull()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            
+            Proyecto proyecto = new Proyecto("Nombre válido", null, new List<Tarea>(), admin, miembros);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ConstructorLanzaExcepcionSiAdministradorEsNull()
+        {
+            List<Usuario> miembros = new List<Usuario> { new Usuario() };
+
+            Proyecto proyecto = new Proyecto("Nombre", "Descripción", new List<Tarea>(), null, miembros);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ConstructorLanzaExcepcionSiMiembrosEsNull()
+        {
+            Usuario admin = new Usuario();
+
+            Proyecto proyecto = new Proyecto("Nombre", "Descripción", new List<Tarea>(), admin, null);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ConstructorLanzaExcepcionSiMiembrosNoContieneAdministrador() // este no se si alguna vez pasa porque lo pusimos que cuando se crea lo agrega
+        {
+            Usuario admin = new Usuario();
+            Usuario otro = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { otro };
+
+            Proyecto proyecto = new Proyecto("Nombre", "Descripción", new List<Tarea>(), admin, miembros);
+        }
+        
+        
     }
 }
