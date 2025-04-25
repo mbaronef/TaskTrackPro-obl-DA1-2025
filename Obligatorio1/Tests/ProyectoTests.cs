@@ -39,6 +39,34 @@ namespace Tests
         }
         
         [TestMethod]
+        public void Constructor_DeberiaPermitirDescripcionConMenosDe400Caracteres()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            string descripcion = new string('a', 399);
+            List<Tarea> tareas = new List<Tarea>();
+
+            Proyecto proyecto = new Proyecto("Proyecto", descripcion, tareas, admin, miembros);
+
+            Assert.AreEqual(descripcion, proyecto.Descripcion);
+        }
+        
+        [TestMethod]
+        public void Constructor_DeberiaPermitirDescripcionDeHasta400Caracteres()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            string descripcion = new string('a', 400); // 400 caracteres exactos
+            List<Tarea> tareas = new List<Tarea>();
+
+            Proyecto proyecto = new Proyecto("Proyecto", descripcion, tareas, admin, miembros);
+
+            Assert.AreEqual(descripcion, proyecto.Descripcion);
+        }
+        
+        
+        
+        [TestMethod]
         public void FechaInicioInicializadaConFechaActual()
         {
             Usuario admin = new Usuario();
@@ -246,12 +274,7 @@ namespace Tests
         // modificaciones (ver que cosas modificar)
         // notificarMiembros(string mensaje)
         // notificarAdministradores (string mensaje)
-        // validar descripcion
         // falta eliminar tarea que no esta en UML !!!!!!!
-        
-        
-        
-        
         
     }
 }
