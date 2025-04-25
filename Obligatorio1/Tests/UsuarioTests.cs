@@ -70,6 +70,18 @@ namespace Tests
             Assert.IsTrue(usuario.Autenticar(contrasenaIngresada));
         }
         
+        [TestMethod]
+        public void CompararContrasenaDadaConContrasenaDeUsuarioIncorrecto()
+        {
+            string contrasenaIngresada = "OtraContraseña";
+            
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
+            
+            Assert.IsFalse(usuario.Autenticar(contrasenaIngresada));
+        }
+        
+        
 
         /*[TestMethod]
         public void ContrasenaIncluyeAlMenosUnaMayuscula()
