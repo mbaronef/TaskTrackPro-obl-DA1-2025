@@ -1,3 +1,5 @@
+using Dominio.Excepciones;
+
 namespace Dominio;
 
 using System.Text;
@@ -17,6 +19,11 @@ public class Usuario
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
     {
+        if (unaContrasena.Length < 8)
+        {
+            throw new ExcepcionDominio("La contraseña debe tener al menos 8 caracteres.");
+        }
+
         Nombre = unNombre;
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;
@@ -33,12 +40,11 @@ public class Usuario
         } 
         return resultado.ToString();
     }
-
     public bool Autenticar(string contrasenaIngresada)
     {
         return (_contrasena == Usuario.EncriptarContrasena(contrasenaIngresada));
     }
-
+    
     /*public bool contrasenaValida()
     {
         return this.Contrasena.Any(char.IsUpper);
