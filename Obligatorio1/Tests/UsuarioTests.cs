@@ -17,7 +17,7 @@ namespace Tests
             Assert.AreEqual("Perez", usuario.Apellido);
             Assert.AreEqual(fechaNacimiento, usuario.FechaNacimiento);
             Assert.AreEqual("unemail@gmail.com", usuario.Email);
-            Assert.AreEqual(usuario.Contrasena, Usuario.encriptarContrasena("Contrase#a3"));
+            Assert.AreEqual(usuario.Contrasena, Usuario.EncriptarContrasena("Contrase#a3"));
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace Tests
         public void ContrasenaEncriptadaEsDistintaALaOriginal()
         {
             string unaContrasena = "Contrase#a3";
-            string contrasenaEncriptada = Usuario.encriptarContrasena(unaContrasena);
+            string contrasenaEncriptada = Usuario.EncriptarContrasena(unaContrasena);
             Assert.AreNotEqual(unaContrasena, contrasenaEncriptada);
         }
 
@@ -53,10 +53,21 @@ namespace Tests
         public void ContrasenasIgualesEncriptanIgual()
         {
             string unaContrasena = "Contrase#a3";
-            string contrasenaEncriptada1 = Usuario.encriptarContrasena(unaContrasena);
-            string contrasenaEncriptada2 = Usuario.encriptarContrasena(unaContrasena);
+            string contrasenaEncriptada1 = Usuario.EncriptarContrasena(unaContrasena);
+            string contrasenaEncriptada2 = Usuario.EncriptarContrasena(unaContrasena);
             
             Assert.AreEqual(contrasenaEncriptada1, contrasenaEncriptada2);
+        }
+        
+        [TestMethod]
+        public void CompararContrasenaDadaConContrasenaDeUsuarioOk()
+        {
+            string contrasenaIngresada = "Contrase#a3";
+            
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
+            
+            Assert.IsTrue(usuario.Autenticar(contrasenaIngresada));
         }
         
 

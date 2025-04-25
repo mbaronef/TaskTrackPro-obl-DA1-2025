@@ -20,10 +20,10 @@ public class Usuario
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
-        Contrasena = Usuario.encriptarContrasena(unaContrasena);
+        Contrasena = Usuario.EncriptarContrasena(unaContrasena);
     }
     
-    public static string encriptarContrasena(string unaContrasena)
+    public static string EncriptarContrasena(string unaContrasena)
     { 
         StringBuilder resultado = new StringBuilder(); 
         foreach (char caracter in unaContrasena) 
@@ -33,7 +33,6 @@ public class Usuario
         return resultado.ToString();
     }
     
-
     public bool contrasenaValida()
     {
         return this.Contrasena.Any(char.IsUpper);
