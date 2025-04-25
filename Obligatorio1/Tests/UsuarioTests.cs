@@ -1,4 +1,5 @@
 using Dominio;
+using Dominio.Excepciones;
 
 namespace Tests
 
@@ -80,8 +81,15 @@ namespace Tests
             
             Assert.IsFalse(usuario.Autenticar(contrasenaIngresada));
         }
-        
-        
+
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void IngresoDeContrasenaMuyCorta()
+        {
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "P3e.");
+        }
+
 
         /*[TestMethod]
         public void ContrasenaIncluyeAlMenosUnaMayuscula()
@@ -95,4 +103,5 @@ namespace Tests
             Assert.IsTrue(usuario3.contrasenaValida());
         }*/
     }
+
 }
