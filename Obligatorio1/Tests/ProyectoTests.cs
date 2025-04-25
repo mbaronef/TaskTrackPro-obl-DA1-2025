@@ -161,6 +161,16 @@ namespace Tests
             proyecto.AsignarMiembro(null); 
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void AsignarMiembro_DeberiaLanzarExcepcionSiUsuarioYaEstaEnMiembros()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
+
+            proyecto.AsignarMiembro(admin); 
+        }
         
         
         
