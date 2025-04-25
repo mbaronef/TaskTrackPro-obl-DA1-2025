@@ -34,16 +34,11 @@ public class Usuario
     }
     public static string EncriptarContrasena(string contrasena)
     { 
-        StringBuilder resultado = new StringBuilder(); 
-        foreach (char caracter in contrasena) 
-        {
-            resultado.Append((char)(caracter + 3));
-        } 
-        return resultado.ToString();
+        return BCrypt.Net.BCrypt.HashPassword(contrasena);
     }
     public bool Autenticar(string contrasenaIngresada)
     {
-        return (_contrasena == Usuario.EncriptarContrasena(contrasenaIngresada));
+        return BCrypt.Net.BCrypt.Verify(contrasenaIngresada, _contrasena);
     }
 
     private void ValidarContrasena(string contrasena)

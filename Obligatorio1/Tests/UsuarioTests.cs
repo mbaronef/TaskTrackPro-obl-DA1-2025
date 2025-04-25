@@ -51,16 +51,6 @@ namespace Tests
         }
 
         [TestMethod]
-        public void ContrasenasIgualesEncriptanIgual()
-        {
-            string unaContrasena = "Contrase#a3";
-            string contrasenaEncriptada1 = Usuario.EncriptarContrasena(unaContrasena);
-            string contrasenaEncriptada2 = Usuario.EncriptarContrasena(unaContrasena);
-
-            Assert.AreEqual(contrasenaEncriptada1, contrasenaEncriptada2);
-        }
-
-        [TestMethod]
         public void CompararContrasenaDadaConContrasenaDeUsuarioOk()
         {
             string contrasenaIngresada = "Contrase#a3";
