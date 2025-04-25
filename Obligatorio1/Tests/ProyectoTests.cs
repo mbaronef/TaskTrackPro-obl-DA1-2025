@@ -159,6 +159,7 @@ namespace Tests
             
             proyecto.AgregarTarea(tarea1);
         }
+        // falta eliminar tarea que no esta en UML !!!!!!!
 
         [TestMethod]
         public void AsignarMiembro_DeberiaAgregarUsuarioALaListaDeMiembros()
@@ -195,6 +196,29 @@ namespace Tests
 
             proyecto.AsignarMiembro(admin); 
         }
+        
+        
+        [TestMethod]
+        public void EliminarMiembro_DeberiaEliminarUsuarioDeLaLista() // en realidad deberia recibir el id del miembro a eliminar
+        {
+            Usuario admin = new Usuario();
+            Usuario miembro = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin, miembro };
+            List<Tarea> tareas = new List<Tarea>();
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
+
+            proyecto.EliminarMiembro(miembro);
+
+            Assert.IsFalse(proyecto.Miembros.Contains(miembro));
+            Assert.AreEqual(1, proyecto.Miembros.Count);
+        }
+        
+        // falta:
+        // que no deje eliminar usuario que no exista en miembros
+        // que no deje eliminar al admin "se debe asignar a otro administrador de proyecto previamente"
+        
+        
+        
         
         
         

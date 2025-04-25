@@ -60,5 +60,9 @@ public class Proyecto
         
         Miembros.Add(usuario);
     }
-    
+
+    public void EliminarMiembro(Usuario usuario)
+    {
+        Miembros.Remove(usuario);
+    }
 }
