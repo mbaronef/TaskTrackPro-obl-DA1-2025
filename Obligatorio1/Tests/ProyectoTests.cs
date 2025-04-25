@@ -263,6 +263,19 @@ namespace Tests
             Assert.AreEqual(1, proyecto.Miembros.Count);
         }
         
+        [TestMethod]
+        public void EsAdministrador_RetornaTrueSiUsuarioEsAdministrador()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
+
+            bool resultado = proyecto.EsAdministrador(admin);
+
+            Assert.IsTrue(resultado);
+        }
+        
         // falta:
         // que no deje eliminar usuario que no exista en miembros
         // que no deje eliminar al admin "se debe asignar a otro administrador de proyecto previamente"
