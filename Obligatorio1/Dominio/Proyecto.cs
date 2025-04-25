@@ -31,6 +31,9 @@ public class Proyecto
 
         if (!miembros.Contains(administrador))
             throw new ExcepcionDominio("El administrador debe estar incluido en la lista de miembros.");
+        
+        if (descripcion.Length > 400)
+            throw new ExcepcionDominio("La descripción del proyecto no puede superar los 400 caracteres.");
 
         Nombre = nombre;
         Descripcion = descripcion;

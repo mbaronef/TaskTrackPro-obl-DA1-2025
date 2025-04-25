@@ -32,7 +32,7 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
-            string descripcion = new string('a', 401); // 401 = inválido
+            string descripcion = new string('a', 401); 
             List<Tarea> tareas = new List<Tarea>();
 
             Proyecto proyecto = new Proyecto("Proyecto", descripcion, tareas, admin, miembros);
