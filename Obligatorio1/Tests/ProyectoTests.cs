@@ -137,6 +137,30 @@ namespace Tests
         }
         
         [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void AgregarTarea_DeberiaLanzarExcepcionSiTareaEsNull()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
+
+            proyecto.AgregarTarea(null); 
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void AgregarTarea_DeberiaLanzarExcepcionSiTareaYaEstaEnTareas()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            Tarea  tarea1 = new Tarea();
+            List<Tarea> tareas = new List<Tarea> { tarea1 };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción",  tareas, admin, miembros);
+            
+            proyecto.AgregarTarea(tarea1);
+        }
+
+        [TestMethod]
         public void AsignarMiembro_DeberiaAgregarUsuarioALaListaDeMiembros()
         {
             Usuario admin = new Usuario();

@@ -41,6 +41,12 @@ public class Proyecto
     
     public void AgregarTarea(Tarea tarea)
     {
+        if(tarea is null)
+            throw new ExcepcionDominio("No se puede agregar una tarea null.");
+        
+        if(Tareas.Contains(tarea))
+            throw new ExcepcionDominio("La tarea ya fue agregada al proyecto.");
+        
         Tareas.Add(tarea);
     }
 
