@@ -27,9 +27,12 @@ public class Usuario
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
-        _contrasena = Usuario.EncriptarContrasena(unaContrasena);
+        SetContrasena(unaContrasena);
     }
-    
+    private void SetContrasena(string contrasena)
+    { 
+        _contrasena = Usuario.EncriptarContrasena(contrasena);
+    }
     public static string EncriptarContrasena(string contrasena)
     { 
         StringBuilder resultado = new StringBuilder(); 
@@ -100,8 +103,8 @@ public class Usuario
         }
     }
 
-    public void CambiarContrasena(string contrasena)
+    public void CambiarContrasena(string nuevaContrasena)
     {
-        _contrasena = EncriptarContrasena(contrasena);
+        SetContrasena(nuevaContrasena);
     }
 }
