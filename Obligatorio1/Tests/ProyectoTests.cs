@@ -168,7 +168,6 @@ namespace Tests
             
             proyecto.AgregarTarea(tarea1);
         }
-        // falta eliminar tarea que no esta en UML !!!!!!!
 
         [TestMethod]
         public void AsignarMiembro_DeberiaAgregarUsuarioALaListaDeMiembros()
@@ -228,6 +227,15 @@ namespace Tests
         // que no deje eliminar usuario que no exista en miembros
         // que no deje eliminar al admin "se debe asignar a otro administrador de proyecto previamente"
         
+        // metodos faltantes:
+        // calcularRutaCritica()
+        // darRecursosFaltantes()
+        // esAdministrador(Usuario usuario)
+        // modificaciones (ver que cosas modificar)
+        // notificarMiembros(string mensaje)
+        // notificarAdministradores (string mensaje)
+        // validar descripcion
+        // falta eliminar tarea que no esta en UML !!!!!!!
         
         
         
