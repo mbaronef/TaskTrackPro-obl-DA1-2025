@@ -21,6 +21,7 @@ public class Usuario
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
     {
         ValidarContrasena(unaContrasena);
+        ValidarEmail(unEmail);
         
         Nombre = unNombre;
         Apellido = unApellido;
@@ -91,6 +92,12 @@ public class Usuario
             throw new ExcepcionDominio("La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).");
         }
     }
-
+    private void ValidarEmail(string email)
+    {
+        if (!Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+        {
+            throw new ExcepcionDominio("El email tiene un formato inválido");
+        }
+    }
 
 }
