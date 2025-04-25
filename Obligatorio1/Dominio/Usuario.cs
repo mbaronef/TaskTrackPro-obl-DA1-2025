@@ -28,6 +28,11 @@ public class Usuario
         {
             throw new ExcepcionDominio("La contraseña debe incluir al menos una letra mayúscula (A-Z).");
         }
+        
+        if (!unaContrasena.Any(char.IsLower))
+        {
+            throw new ExcepcionDominio("La contraseña debe incluir al menos una letra minúscula (a-z).");
+        }
 
         Nombre = unNombre;
         Apellido = unApellido;
