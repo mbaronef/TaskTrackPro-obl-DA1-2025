@@ -46,6 +46,9 @@ public class Proyecto
 
     public void AsignarMiembro(Usuario usuario)
     {
+        if (usuario is null)
+            throw new ExcepcionDominio("No se puede agregar un miembro null.");
+        
         Miembros.Add(usuario);
     }
     

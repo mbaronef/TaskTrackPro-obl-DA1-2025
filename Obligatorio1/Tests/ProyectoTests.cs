@@ -149,5 +149,20 @@ namespace Tests
 
             Assert.IsTrue(proyecto.Miembros.Contains(nuevoMiembro));
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void AsignarMiembro_DeberiaLanzarExcepcionSiUsuarioEsNull()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
+
+            proyecto.AsignarMiembro(null); 
+        }
+        
+        
+        
+        
     }
 }
