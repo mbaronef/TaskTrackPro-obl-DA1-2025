@@ -99,4 +99,9 @@ public class Usuario
             throw new ExcepcionDominio("El email tiene un formato inválido");
         }
     }
+
+    public void CambiarContrasena(string contrasena)
+    {
+        _contrasena = EncriptarContrasena(contrasena);
+    }
 }
