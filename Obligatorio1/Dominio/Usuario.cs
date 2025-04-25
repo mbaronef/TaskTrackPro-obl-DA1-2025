@@ -99,5 +99,4 @@ public class Usuario
             throw new ExcepcionDominio("El email tiene un formato inválido");
         }
     }
-
 }
