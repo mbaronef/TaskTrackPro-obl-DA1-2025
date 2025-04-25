@@ -153,5 +153,18 @@ namespace Tests
             Assert.AreEqual(1, usuario.Notificaciones.Count);
             Assert.AreSame(notificacion, usuario.Notificaciones.ElementAt(0));
         }
+        
+        [TestMethod]
+        public void SeBorraUnaNotificacionCorrectamente()
+        {
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "6onTrase}a3");
+            Notificacion notificacion = new Notificacion("un mensaje de notificación");
+            int id = notificacion.Id;
+            usuario.RecibirNotificacion(notificacion);
+
+            usuario.BorrarNotificacion(id);
+            Assert.AreEqual(0, usuario.Notificaciones.Count);
+        }
     }
 }
