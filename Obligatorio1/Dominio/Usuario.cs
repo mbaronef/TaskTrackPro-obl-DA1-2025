@@ -22,10 +22,7 @@ public class Usuario
         ValidarLargoContrasena(unaContrasena, 8);
         ValidarAlgunaMayuscula(unaContrasena);
         ValidarAlgunaMinuscula(unaContrasena);
-        if (!unaContrasena.Any(char.IsDigit))
-        {
-            throw new ExcepcionDominio("La contraseña debe incluir al menos una número (0-9).");
-        }
+        ValidarAlgunNumero(unaContrasena);
         
         Nombre = unNombre;
         Apellido = unApellido;
@@ -69,6 +66,14 @@ public class Usuario
         if (!contrasena.Any(char.IsLower))
         {
             throw new ExcepcionDominio("La contraseña debe incluir al menos una letra minúscula (a-z).");
+        }
+    }
+
+    private void ValidarAlgunNumero(string contrasena)
+    {
+        if (!contrasena.Any(char.IsDigit))
+        {
+            throw new ExcepcionDominio("La contraseña debe incluir al menos una número (0-9).");
         }
     }
 
