@@ -19,21 +19,10 @@ public class Usuario
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
     {
-        if (unaContrasena.Length < 8)
-        {
-            throw new ExcepcionDominio("La contraseña debe tener al menos 8 caracteres.");
-        }
-
-        if (!unaContrasena.Any(char.IsUpper))
-        {
-            throw new ExcepcionDominio("La contraseña debe incluir al menos una letra mayúscula (A-Z).");
-        }
+        ValidarLargoContrasena(unaContrasena, 8);
+        ValidarAlgunaMayuscula(unaContrasena);
+        ValidarAlgunaMinuscula(unaContrasena);
         
-        if (!unaContrasena.Any(char.IsLower))
-        {
-            throw new ExcepcionDominio("La contraseña debe incluir al menos una letra minúscula (a-z).");
-        }
-
         Nombre = unNombre;
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;
@@ -54,4 +43,30 @@ public class Usuario
     {
         return (_contrasena == Usuario.EncriptarContrasena(contrasenaIngresada));
     }
+
+    private void ValidarLargoContrasena(string contrasena, int largoMinimo)
+    {
+        if (contrasena.Length < largoMinimo)
+        {
+            throw new ExcepcionDominio($"La contraseña debe tener al menos {largoMinimo} caracteres.");
+        }
+    }
+
+    private void ValidarAlgunaMayuscula(string contrasena)
+    {
+        if (!contrasena.Any(char.IsUpper))
+        {
+            throw new ExcepcionDominio("La contraseña debe incluir al menos una letra mayúscula (A-Z).");
+        }
+    }
+
+    private void ValidarAlgunaMinuscula(string contrasena)
+    {
+        if (!contrasena.Any(char.IsLower))
+        {
+            throw new ExcepcionDominio("La contraseña debe incluir al menos una letra minúscula (a-z).");
+        }
+    }
+
+
 }
