@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Dominio.Excepciones;
 
 namespace Dominio;
@@ -23,6 +24,10 @@ public class Usuario
         ValidarAlgunaMayuscula(unaContrasena);
         ValidarAlgunaMinuscula(unaContrasena);
         ValidarAlgunNumero(unaContrasena);
+        if (!Regex.IsMatch(unaContrasena, "[^a-zA-Z0-9]"))
+        {
+            throw new ExcepcionDominio("La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).");
+        }
         
         Nombre = unNombre;
         Apellido = unApellido;
