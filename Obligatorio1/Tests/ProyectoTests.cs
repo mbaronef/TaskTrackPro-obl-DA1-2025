@@ -135,5 +135,19 @@ namespace Tests
             Assert.IsTrue(proyecto.Tareas.Contains(tarea1));
             Assert.AreEqual(1, proyecto.Tareas.Count);
         }
+        
+        [TestMethod]
+        public void AsignarMiembro_DeberiaAgregarUsuarioALaListaDeMiembros()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
+
+            Usuario nuevoMiembro = new Usuario();
+
+            proyecto.AsignarMiembro(nuevoMiembro);
+
+            Assert.IsTrue(proyecto.Miembros.Contains(nuevoMiembro));
+        }
     }
 }
