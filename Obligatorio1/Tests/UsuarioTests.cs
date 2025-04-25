@@ -97,6 +97,14 @@ namespace Tests
             DateTime fechaNacimiento = new DateTime(2000, 9, 1);
             Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "minuscula");
         }
+        
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void IngresoDeContrasenaSinMinusculas()
+        {
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "MAYUSCULA");
+        }
     }
 
 }
