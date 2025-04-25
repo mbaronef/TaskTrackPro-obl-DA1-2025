@@ -136,7 +136,7 @@ namespace Tests
             DateTime fechaNacimiento = new DateTime(2000, 9, 1);
             Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@adinet.com", "Contrase#a3");
 
-            string nuevaContrasena = "CoNtRaSeN@";
+            string nuevaContrasena = "CoNtRaSeN1@";
             usuario.CambiarContrasena(nuevaContrasena);
             Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
         }
