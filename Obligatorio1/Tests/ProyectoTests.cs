@@ -133,7 +133,7 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
-            List<Tarea> tareas = new List<Tarea>();>
+            List<Tarea> tareas = new List<Tarea>();
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
             Tarea tarea1 = new Tarea();
