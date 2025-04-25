@@ -58,8 +58,9 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea>();
 
-            Proyecto proyecto = new Proyecto("", "Descripción válida", new List<Tarea>(), admin, miembros);
+            Proyecto proyecto = new Proyecto("", "Descripción válida", tareas, admin, miembros);
         }
         
         [TestMethod]
@@ -68,8 +69,9 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea>();
 
-            Proyecto proyecto = new Proyecto(null, "Descripción válida", new List<Tarea>(), admin, miembros);
+            Proyecto proyecto = new Proyecto(null, "Descripción válida", tareas, admin, miembros);
         }
         
         [TestMethod]
@@ -78,8 +80,9 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea>();
 
-            Proyecto proyecto = new Proyecto("Nombre válido", "", new List<Tarea>(), admin, miembros);
+            Proyecto proyecto = new Proyecto("Nombre válido", "", tareas, admin, miembros);
         }
         
         [TestMethod]
@@ -88,8 +91,9 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea>();
             
-            Proyecto proyecto = new Proyecto("Nombre válido", null, new List<Tarea>(), admin, miembros);
+            Proyecto proyecto = new Proyecto("Nombre válido", null, tareas, admin, miembros);
         }
         
         [TestMethod]
@@ -97,8 +101,9 @@ namespace Tests
         public void ConstructorLanzaExcepcionSiAdministradorEsNull()
         {
             List<Usuario> miembros = new List<Usuario> { new Usuario() };
+            List<Tarea> tareas = new List<Tarea>();
 
-            Proyecto proyecto = new Proyecto("Nombre", "Descripción", new List<Tarea>(), null, miembros);
+            Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, null, miembros);
         }
         
         [TestMethod]
@@ -106,8 +111,9 @@ namespace Tests
         public void ConstructorLanzaExcepcionSiMiembrosEsNull()
         {
             Usuario admin = new Usuario();
+            List<Tarea> tareas = new List<Tarea>();
 
-            Proyecto proyecto = new Proyecto("Nombre", "Descripción", new List<Tarea>(), admin, null);
+            Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, null);
         }
         
         [TestMethod]
@@ -117,8 +123,9 @@ namespace Tests
             Usuario admin = new Usuario();
             Usuario otro = new Usuario();
             List<Usuario> miembros = new List<Usuario> { otro };
+            List<Tarea> tareas = new List<Tarea>();
 
-            Proyecto proyecto = new Proyecto("Nombre", "Descripción", new List<Tarea>(), admin, miembros);
+            Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, miembros);
         }
         
         [TestMethod]
@@ -126,7 +133,8 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
-            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
+            List<Tarea> tareas = new List<Tarea>();>
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
             Tarea tarea1 = new Tarea();
             
@@ -142,7 +150,8 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
-            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
             proyecto.AgregarTarea(null); 
         }
@@ -166,7 +175,8 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
-            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
             Usuario nuevoMiembro = new Usuario();
 
@@ -181,7 +191,8 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
-            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
             proyecto.AsignarMiembro(null); 
         }
