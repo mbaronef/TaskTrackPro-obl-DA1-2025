@@ -23,16 +23,21 @@ public class Usuario
         Contrasena = Usuario.EncriptarContrasena(unaContrasena);
     }
     
-    public static string EncriptarContrasena(string unaContrasena)
+    public static string EncriptarContrasena(string contrasena)
     { 
         StringBuilder resultado = new StringBuilder(); 
-        foreach (char caracter in unaContrasena) 
+        foreach (char caracter in contrasena) 
         {
             resultado.Append((char)(caracter + 3));
         } 
         return resultado.ToString();
     }
-    
+
+    public bool Autenticar(string contrasenaIngresada)
+    {
+        return (this.Contrasena == Usuario.EncriptarContrasena(contrasenaIngresada));
+    }
+
     public bool contrasenaValida()
     {
         return this.Contrasena.Any(char.IsUpper);
