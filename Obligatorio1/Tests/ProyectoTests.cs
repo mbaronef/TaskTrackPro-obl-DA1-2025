@@ -121,6 +121,19 @@ namespace Tests
             Proyecto proyecto = new Proyecto("Nombre", "Descripción", new List<Tarea>(), admin, miembros);
         }
         
-        
+        [TestMethod]
+        public void AgregarTarea_DeberiaAgregarUnaTareaALaLista()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
+
+            Tarea tarea1 = new Tarea();
+            
+            proyecto.AgregarTarea(tarea1); 
+            
+            Assert.IsTrue(proyecto.Tareas.Contains(tarea1));
+            Assert.AreEqual(1, proyecto.Tareas.Count);
+        }
     }
 }
