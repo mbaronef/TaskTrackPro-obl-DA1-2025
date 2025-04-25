@@ -43,4 +43,10 @@ public class Proyecto
     {
         Tareas.Add(tarea);
     }
+
+    public void AsignarMiembro(Usuario usuario)
+    {
+        Miembros.Add(usuario);
+    }
+    
 }
