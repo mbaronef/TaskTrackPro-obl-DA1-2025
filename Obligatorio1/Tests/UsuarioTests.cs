@@ -113,6 +113,14 @@ namespace Tests
             DateTime fechaNacimiento = new DateTime(2000, 9, 1);
             Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "CoNtRaSeN@");
         }
+        
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void IngresoDeContrasenaSinCaracterEspecial()
+        {
+            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "CoNtRaSeN14");
+        }
     }
 
 }
