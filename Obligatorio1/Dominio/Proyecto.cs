@@ -68,4 +68,9 @@ public class Proyecto
     {
         Miembros.Remove(usuario);
     }
+
+    public bool EsAdministrador(Usuario usuario)
+    {
+        return Administrador == usuario;
+    }
 }
