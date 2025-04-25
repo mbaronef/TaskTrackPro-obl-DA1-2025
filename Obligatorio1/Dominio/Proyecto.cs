@@ -38,4 +38,9 @@ public class Proyecto
         Administrador = administrador;
         Miembros = miembros;
     }
+    
+    public void AgregarTarea(Tarea tarea)
+    {
+        Tareas.Add(tarea);
+    }
 }
