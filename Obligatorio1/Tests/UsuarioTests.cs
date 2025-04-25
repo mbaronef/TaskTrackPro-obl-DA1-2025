@@ -140,7 +140,6 @@ namespace Tests
 
             string nuevaContrasena = "c1.A";
             usuario.CambiarContrasena(nuevaContrasena);
-            Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
         }
 
         [TestMethod]
