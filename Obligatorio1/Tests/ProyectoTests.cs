@@ -142,6 +142,21 @@ namespace Tests
             Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, miembros);
         }
         
+        //Costructor con id
+        
+        [TestMethod]
+        public void ConstructorConId_DeberiaAsignarCorrectamenteElId()
+        {
+            Usuario admin = new Usuario();
+            admin.Id = 1;
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea>();
+    
+            Proyecto proyecto = new Proyecto(42, "Proyecto Test", "Descripción de prueba", tareas, admin, miembros);
+
+            Assert.AreEqual(42, proyecto.Id);
+        }
+        
         // validacion de parametros: FechaInicio y FechaFinMasTemprana
         
         [TestMethod]
