@@ -600,6 +600,21 @@ namespace Tests
             }
         }
         
+        // notificarAdministrador
+        [TestMethod]
+        public void NotificarAdministrador_AgregaNotificacionAlAdministrador()
+        {
+            Usuario admin = new Usuario();
+            admin.Id = 1;
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
+
+            proyecto.NotificarAdministrador("Mensaje para admin");
+
+            Assert.IsTrue(admin.Notificaciones.Any(n => n.Mensaje == "Mensaje para admin"));
+        }
+        
         
         
         // falta:
