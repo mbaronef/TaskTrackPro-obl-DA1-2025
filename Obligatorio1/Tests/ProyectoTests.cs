@@ -160,7 +160,7 @@ namespace Tests
         // validacion de parametros: FechaInicio y FechaFinMasTemprana
         
         [TestMethod]
-        public void FechaInicio_InicializadaConFechaActual()
+        public void FechaInicio_InicializadaConFechaActualPorDefecto()
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
@@ -174,7 +174,7 @@ namespace Tests
         }
         
         [TestMethod]
-        public void FechaFinMasTemprana_InicializadaConMinValue()
+        public void FechaFinMasTemprana_InicializadaConMinValuePorDefecto()
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
@@ -348,6 +348,23 @@ namespace Tests
             Assert.IsFalse(resultado);
         }
         
+        //MODIFICACIONES
+        
+        //modificar fechaDeInicio
+        
+        [TestMethod]
+        public void ModificarFechaInicio_ActualizaLaFechaOK()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
+
+            DateTime nuevaFecha = new DateTime(2025, 5, 1);
+            proyecto.ModificarFechaInicio(nuevaFecha);
+
+            Assert.AreEqual(nuevaFecha, proyecto.FechaInicio);
+        }
         
         
         // falta:
