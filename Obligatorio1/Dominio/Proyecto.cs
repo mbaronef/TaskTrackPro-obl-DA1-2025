@@ -106,6 +106,9 @@ public class Proyecto
 
     public void ModificarNombre(string nombreNuevo)
     {
+        if (string.IsNullOrWhiteSpace(nombreNuevo))
+            throw new ExcepcionDominio("El nombre no puede estar vacío");
+        
         Nombre = nombreNuevo;
     }
 }
