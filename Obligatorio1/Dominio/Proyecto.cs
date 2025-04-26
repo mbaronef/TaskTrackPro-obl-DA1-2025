@@ -96,8 +96,11 @@ public class Proyecto
         return Administrador == usuario;
     }
     
-    public void ModificarFechaInicio(DateTime nuevaFecha) // se deberia validar que sea mayor o igual a la fecha de ahora???
+    public void ModificarFechaInicio(DateTime nuevaFecha)
     {
+        if (nuevaFecha < DateTime.Now.Date)
+            throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
+
         FechaInicio = nuevaFecha;
     }
 }

@@ -369,7 +369,7 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void ModificarFechaInicio_LanzaExcepcionSiFechaEsAnteriorAHoy()
+        public void ModificarFechaInicio_LanzaExcepcionSiFechaEsAnteriorAHoy() // capaz no estaria tan bien (?) Podria ser un error al ingresar los datos
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
