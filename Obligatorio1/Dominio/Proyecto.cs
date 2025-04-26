@@ -60,6 +60,11 @@ public class Proyecto
         
         Tareas.Add(tarea);
     }
+    
+    public void EliminarTarea(Tarea tarea)
+    {
+        Tareas.Remove(tarea);
+    }
 
     public void AsignarMiembro(Usuario usuario)
     {

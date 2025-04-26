@@ -185,7 +185,7 @@ namespace Tests
             Assert.AreEqual(DateTime.MinValue, proyecto.FechaFinMasTemprana);
         }
         
-        //AgregarTarea
+        //AgregarTarea (En GESTOR: solo admin proyecto puede)
         
         [TestMethod]
         public void AgregarTarea_AgregarUnaTareaALaLista()
@@ -228,7 +228,7 @@ namespace Tests
             proyecto.AgregarTarea(tarea1);
         }
         
-        //eliminarTarea
+        //eliminarTarea (En GESTOR: solo admin proyecto puede)
         
         [TestMethod]
         public void EliminarTarea_EliminaTareaDeLaLista()
@@ -244,7 +244,35 @@ namespace Tests
             Assert.IsFalse(proyecto.Tareas.Contains(tarea));
         }
         
-        //AsignarMiembro
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarTarea_LanzaExcepcionSiTareaEsNull()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea>();
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
+
+            proyecto.EliminarTarea(null);
+        }
+        
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarTarea_LanzaExcepcionSiTareaNoExisteEnListaDeTareas()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
+
+            Tarea otraTarea = new Tarea();
+
+            proyecto.EliminarTarea(otraTarea);
+        }
+        
+        
+        //AsignarMiembro (En GESTOR: solo admin proyecto puede)
 
         [TestMethod]
         public void AsignarMiembro_AgregarUsuarioALaListaDeMiembros()
@@ -284,7 +312,7 @@ namespace Tests
             proyecto.AsignarMiembro(admin); 
         }
         
-        //EliminarMiembro
+        //EliminarMiembro (En GESTOR: solo admin proyecto puede)
         
         [TestMethod]
         public void EliminarMiembro_EliminaUsuarioCorrectamenteDeLaLista()
@@ -499,7 +527,6 @@ namespace Tests
         // que recorra la lista de tareas y se fije en cada una de ellas cuales son los recursos necesarios
         
         // modificaciones:
-        // descripcion, eliminar tarea (solo admin de proyecto)
         // modificar el admin del proyecto (solo admin de sistema puede cambiarlo)
         
         // fecaha de inicio de las tareas campo necesario (si no depende de ninguna)
