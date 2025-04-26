@@ -5,7 +5,7 @@ namespace Dominio;
 
 public class Proyecto
 {
-    // public int Id { get; private set; }
+    public int Id { get; private set; }
     public string Nombre { get; }
     public string Descripcion { get; set; }
     public List<Tarea> Tareas { get; set; }
@@ -44,11 +44,11 @@ public class Proyecto
     }
     
     // Constructor con Id: lo usaría solo el Gestor
-    //public Proyecto(int id, string nombre, string descripcion, List<Tarea> tareas, Usuario administrador, List<Usuario> miembros)
-     //   : this(nombre, descripcion, tareas, administrador, miembros)
-    //{
-     //   Id = id;
-    //}
+    public Proyecto(int id, string nombre, string descripcion, List<Tarea> tareas, Usuario administrador, List<Usuario> miembros)
+        : this(nombre, descripcion, tareas, administrador, miembros)
+    {
+        Id = id;
+    }
     
     public void AgregarTarea(Tarea tarea)
     {
