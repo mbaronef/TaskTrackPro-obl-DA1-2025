@@ -508,12 +508,36 @@ namespace Tests
             proyecto.ModificarDescripcion(descripcionLarga);
         }
         
+        // reasignar el administrador de proyecto a otro
+        
+        [TestMethod]
+        public void AsignarNuevoAdministrador_CambiaElAdministradorDelProyecto()
+        {
+            Usuario adminOriginal = new Usuario();
+            adminOriginal.Id = 1;
+    
+            Usuario nuevoAdmin = new Usuario();
+            nuevoAdmin.Id = 2;
+    
+            List<Usuario> miembros = new List<Usuario> { adminOriginal, nuevoAdmin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, adminOriginal, miembros);
+
+            proyecto.AsignarNuevoAdministrador(2);
+
+            Assert.AreEqual(nuevoAdmin, proyecto.Administrador);
+        }
+        
         
         // falta:
+        // REFACTOR INITIALIZED, nombres, comentarios
         // agregar admin siempre no lo deberia hacer solo???
         
         // metodos faltantes:
         // calcularRutaCritica()
+        
+        // notificarMiembros(string mensaje)
+        // notificarAdministradores (string mensaje)
         
         // darRecursosFaltantes()
         // que recorra la lista de tareas y se fije en cada una de ellas cuales son los recursos necesarios
@@ -524,9 +548,6 @@ namespace Tests
         // fecaha de inicio de las tareas campo necesario (si no depende de ninguna)
         // recursos solo se pueden dar de baja si no estan en uso
         // usuario debe ser mayor de edad
-        // notificarMiembros(string mensaje)
-        // notificarAdministradores (string mensaje)
-        // falta eliminar tarea que no esta en UML !!!!!!!
         
     }
 }
