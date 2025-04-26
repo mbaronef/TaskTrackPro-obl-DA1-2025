@@ -174,4 +174,10 @@ public class Proyecto
             usuario.AgregarNotificacion(nuevaNotificacion);
         }
     }
+
+    public void NotificarAdministrador(string mensaje)
+    {
+        Notificacion notificacion = new Notificacion(mensaje);
+        Administrador.AgregarNotificacion(notificacion);
+    }
 }
