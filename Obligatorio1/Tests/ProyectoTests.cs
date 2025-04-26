@@ -235,40 +235,32 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
+    
             Tarea tarea = new Tarea();
+            tarea.Id = 1;
+    
             List<Tarea> tareas = new List<Tarea> { tarea };
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
-            proyecto.EliminarTarea(tarea);
+            proyecto.EliminarTarea(1);
 
-            Assert.IsFalse(proyecto.Tareas.Contains(tarea));
+            Assert.IsFalse(proyecto.Tareas.Any(t => t.Id == 1));
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void EliminarTarea_LanzaExcepcionSiTareaEsNull()
+        public void EliminarTarea_LanzaExcepcionSiTareaNoExiste()
         {
             Usuario admin = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin };
-            List<Tarea> tareas = new List<Tarea>();
+    
+            Tarea tarea = new Tarea();
+            tarea.Id = 1;
+    
+            List<Tarea> tareas = new List<Tarea> { tarea };
             Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
 
-            proyecto.EliminarTarea(null);
-        }
-        
-        
-        [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
-        public void EliminarTarea_LanzaExcepcionSiTareaNoExisteEnListaDeTareas()
-        {
-            Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
-            List<Tarea> tareas = new List<Tarea> { new Tarea() };
-            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
-
-            Tarea otraTarea = new Tarea();
-
-            proyecto.EliminarTarea(otraTarea);
+            proyecto.EliminarTarea(2); // ID que no existe
         }
         
         

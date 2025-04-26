@@ -61,15 +61,23 @@ public class Proyecto
         Tareas.Add(tarea);
     }
     
-    public void EliminarTarea(Tarea tarea)
+    public void EliminarTarea(int idTarea)
     {
-        if (tarea is null)
-            throw new ExcepcionDominio("No se puede eliminar una tarea null.");
+        Tarea tareaAEliminar = null;
 
-        if (!Tareas.Contains(tarea))
+        foreach (Tarea tarea in Tareas)
+        {
+            if (tarea.Id == idTarea)
+            {
+                tareaAEliminar = tarea;
+                break;
+            }
+        }
+
+        if (tareaAEliminar is null)
             throw new ExcepcionDominio("La tarea no pertenece al proyecto.");
-        
-        Tareas.Remove(tarea);
+
+        Tareas.Remove(tareaAEliminar);
     }
 
     public void AsignarMiembro(Usuario usuario)
