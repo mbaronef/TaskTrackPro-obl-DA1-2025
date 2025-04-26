@@ -350,7 +350,7 @@ namespace Tests
         
         //MODIFICACIONES
         
-        //modificar fechaDeInicio
+        //modificarFechaDeInicio (EN GESTOR: puede ser modificada por admin sistema o por admin proyecto)
         
         [TestMethod]
         public void ModificarFechaInicio_ActualizaLaFechaOK()
@@ -379,9 +379,25 @@ namespace Tests
             DateTime fechaPasada = DateTime.Now.AddDays(-1);
 
             proyecto.ModificarFechaInicio(fechaPasada);
+        } 
+        
+        // modificarNombre (En GESTOR:)
+        
+        [TestMethod]
+        public void ModificarNombre_DeberiaActualizarElNombre()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("nombre viejo", "Desc", tareas, admin, miembros);
+
+            proyecto.ModificarNombre("nombre nuevo");
+
+            Assert.AreEqual("nombre nuevo", proyecto.Nombre);
         }
         
         // falta:
+        // agregar admin siempre no lo deberia hacer solo???
         
         // metodos faltantes:
         // calcularRutaCritica()
@@ -389,11 +405,10 @@ namespace Tests
         // darRecursosFaltantes()
         // que recorra la lista de tareas y se fije en cada una de ellas cuales son los recursos necesarios
         
-        // modificaciones
-        // fechaDeInicio puede ser modificada por admin sistema o por admin proyecto 
-        // nombre, descripcion, lista de tareas, lista de usuarios
-        
+        // modificaciones:
+        // descripcion, eliminar tarea (solo admin de proyecto)
         // modificar el admin del proyecto (solo admin de sistema puede cambiarlo)
+        
         // fecaha de inicio de las tareas campo necesario (si no depende de ninguna)
         // recursos solo se pueden dar de baja si no estan en uso
         // usuario debe ser mayor de edad
