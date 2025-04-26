@@ -650,8 +650,5 @@ namespace Tests
         // metodos faltantes:
         // calcularRutaCritica()
         
-        // darRecursosFaltantes()
-        // que recorra la lista de tareas y se fije en cada una de ellas cuales son los recursos necesarios
-        
     }
 }

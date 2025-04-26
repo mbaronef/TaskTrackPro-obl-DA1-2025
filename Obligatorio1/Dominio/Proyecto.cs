@@ -180,4 +180,22 @@ public class Proyecto
         Notificacion notificacion = new Notificacion(mensaje);
         Administrador.AgregarNotificacion(notificacion);
     }
+    
+    public List<Recurso> DarRecursosFaltantes()
+    {
+        List<Recurso> faltantes = new List<Recurso>();
+
+        foreach (Tarea tarea in Tareas)
+        {
+            foreach (Recurso recurso in tarea.RecursosNecesarios)
+            {
+                if (!recurso.EnUso && !faltantes.Any(r => r.Id == recurso.Id))
+                {
+                    faltantes.Add(recurso);
+                }
+            }
+        }
+
+        return faltantes;
+    }
 }
