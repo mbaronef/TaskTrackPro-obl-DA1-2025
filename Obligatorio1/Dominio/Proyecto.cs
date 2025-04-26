@@ -70,6 +70,10 @@ public class Proyecto
         {
             if (usuario.Id == idUsuario)
             {
+                if (usuario == Administrador)
+                    throw new ExcepcionDominio(
+                        "No se puede eliminar al administrador actual. Asigne un nuevo administrador antes.");
+                    
                 Miembros.Remove(usuario);
                 return; 
             }
