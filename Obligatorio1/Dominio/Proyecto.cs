@@ -64,10 +64,21 @@ public class Proyecto
         Miembros.Add(usuario);
     }
 
-   // public void EliminarMiembro(Usuario usuario)
-    //{
-    //    Miembros.Remove(usuario);
-    //}
+    public void EliminarMiembro(int idUsuario)
+    {
+        Usuario usuarioAEliminar = null;
+
+        foreach (Usuario usuario in Miembros)
+        {
+            if (usuario.Id == idUsuario)
+            {
+                usuarioAEliminar = usuario;
+                break;
+            }
+        }
+        
+        Miembros.Remove(usuarioAEliminar);
+    }
 
     public bool EsAdministrador(Usuario usuario)
     {

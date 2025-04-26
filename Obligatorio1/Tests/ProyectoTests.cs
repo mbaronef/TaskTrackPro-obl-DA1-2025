@@ -248,7 +248,7 @@ namespace Tests
         }
         
         [TestMethod]
-        public void EliminarMiembro_DeberiaEliminarUsuarioCorrectamenteDeLaLista()
+        public void EliminarMiembro_EliminaUsuarioCorrectamenteDeLaLista()
         {
             Usuario admin = new Usuario();
             admin.Id = 1;
