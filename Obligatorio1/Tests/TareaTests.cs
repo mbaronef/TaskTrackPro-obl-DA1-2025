@@ -1,4 +1,5 @@
 ﻿namespace Tests;
+using Dominio;
 
 [TestClass]
 
