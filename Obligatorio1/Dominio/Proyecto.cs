@@ -66,18 +66,17 @@ public class Proyecto
 
     public void EliminarMiembro(int idUsuario)
     {
-        Usuario usuarioAEliminar = null;
-
         foreach (Usuario usuario in Miembros)
         {
             if (usuario.Id == idUsuario)
             {
-                usuarioAEliminar = usuario;
-                break;
+                Miembros.Remove(usuario);
+                return; 
             }
         }
-        
-        Miembros.Remove(usuarioAEliminar);
+
+        // Si llega hasta aca el usuario no esta en miembros
+        throw new ExcepcionDominio("El usuario no es miembro del proyecto.");
     }
 
     public bool EsAdministrador(Usuario usuario)
