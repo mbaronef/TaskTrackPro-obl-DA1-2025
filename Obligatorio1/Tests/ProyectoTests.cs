@@ -8,6 +8,8 @@ namespace Tests
     [TestClass]
     public class ProyectoTests
     {
+        
+        //Constructor
         [TestMethod]
         public void ConstructorConParametrosAsignadosCorrectamente()
         {
@@ -168,6 +170,8 @@ namespace Tests
             Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, miembros);
         }
         
+        //AgregarTarea
+        
         [TestMethod]
         public void AgregarTarea_DeberiaAgregarUnaTareaALaLista()
         {
@@ -208,6 +212,8 @@ namespace Tests
             
             proyecto.AgregarTarea(tarea1);
         }
+        
+        //AsignarMiembro
 
         [TestMethod]
         public void AsignarMiembro_DeberiaAgregarUsuarioALaListaDeMiembros()
@@ -247,6 +253,8 @@ namespace Tests
             proyecto.AsignarMiembro(admin); 
         }
         
+        //EliminarMiembro
+        
         [TestMethod]
         public void EliminarMiembro_EliminaUsuarioCorrectamenteDeLaLista()
         {
@@ -266,7 +274,23 @@ namespace Tests
         }
         
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarMiembro_DeberiaLanzarExcepcionSiElUsuarioNoExisteEnMiembros()
+        {
+            Usuario admin = new Usuario();
+            admin.Id = 1;
+            Usuario miembro = new Usuario();
+            miembro.Id = 2;
+
+            List<Usuario> miembros = new List<Usuario> { admin, miembro };
+            List<Tarea> tareas = new List<Tarea>();
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
+
+            proyecto.EliminarMiembro(3); // ID que no existe
+        }
         
+        //EsAdministrador
         [TestMethod]
         public void EsAdministrador_RetornaTrueSiUsuarioEsAdministrador()
         {
