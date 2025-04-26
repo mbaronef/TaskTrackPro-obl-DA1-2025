@@ -646,6 +646,7 @@ namespace Tests
         // falta:
         // REFACTOR INITIALIZED, nombres, comentarios
         // agregar admin siempre no lo deberia hacer solo???
+        // validaciones de recursos(?)
         
         // metodos faltantes:
         // calcularRutaCritica()
