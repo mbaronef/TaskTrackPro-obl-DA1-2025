@@ -153,6 +153,6 @@ public class Proyecto
             }
         }
 
-        //throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
+        throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
     }
 }
