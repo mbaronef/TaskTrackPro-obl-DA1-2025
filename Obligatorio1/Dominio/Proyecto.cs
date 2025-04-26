@@ -141,4 +141,18 @@ public class Proyecto
 
         Descripcion = nuevaDescripcion;
     }
+    
+    public void AsignarNuevoAdministrador(int idNuevoAdministrador)
+    {
+        foreach (Usuario usuario in Miembros)
+        {
+            if (usuario.Id == idNuevoAdministrador)
+            {
+                Administrador = usuario;
+                return;
+            }
+        }
+
+        //throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
+    }
 }
