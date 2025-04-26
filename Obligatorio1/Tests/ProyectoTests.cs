@@ -336,8 +336,6 @@ namespace Tests
         
         
         // falta:
-        // que no deje eliminar usuario que no exista en miembros
-        // que no deje eliminar al admin "se debe asignar a otro administrador de proyecto previamente"
         
         // metodos faltantes:
         // calcularRutaCritica()
