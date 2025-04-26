@@ -111,4 +111,9 @@ public class Proyecto
         
         Nombre = nombreNuevo;
     }
+
+    public void ModificarDescripcion(string descripcion)
+    {
+        Descripcion = descripcion;
+    }
 }
