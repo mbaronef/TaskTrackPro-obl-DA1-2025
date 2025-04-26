@@ -11,13 +11,13 @@ namespace Tests
         
         //Constructor
         [TestMethod]
-        public void ConstructorConParametrosAsignadosCorrectamente()
+        public void Constructor_ConParametrosAsignadosCorrectamente()
         {
             string nombre = "Proyecto 1";
             string descripcion = "Descripción";
             List<Tarea> tareas = new List<Tarea>();
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin }; // debe agregar al admin a la lista de miembros
+            List<Usuario> miembros = new List<Usuario>(); // debe agregar al admin a la lista de miembros
             
             Proyecto proyecto = new Proyecto (nombre, descripcion, tareas, admin, miembros);
             
@@ -30,10 +30,10 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void Constructor_DeberiaLanzarExcepcionSiDescripcionSupera400Caracteres()
+        public void Constructor_LanzaExcepcionSiDescripcionSupera400Caracteres()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             string descripcion = new string('a', 401); 
             List<Tarea> tareas = new List<Tarea>();
 
@@ -41,10 +41,10 @@ namespace Tests
         }
         
         [TestMethod]
-        public void Constructor_DeberiaPermitirDescripcionConMenosDe400Caracteres()
+        public void Constructor_PermiteDescripcionConMenosDe400Caracteres()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             string descripcion = new string('a', 399);
             List<Tarea> tareas = new List<Tarea>();
 
@@ -54,10 +54,10 @@ namespace Tests
         }
         
         [TestMethod]
-        public void Constructor_DeberiaPermitirDescripcionDeHasta400Caracteres()
+        public void Constructor_PermiteDescripcionDeHasta400Caracteres()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             string descripcion = new string('a', 400); // 400 caracteres exactos
             List<Tarea> tareas = new List<Tarea>();
 
@@ -71,7 +71,7 @@ namespace Tests
         public void Constructor_LanzaExcepcionSiNombreEsVacio()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea>();
 
             Proyecto proyecto = new Proyecto("", "Descripción válida", tareas, admin, miembros);
@@ -82,7 +82,7 @@ namespace Tests
         public void Constructor_LanzaExcepcionSiNombreEsNull()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea>();
 
             Proyecto proyecto = new Proyecto(null, "Descripción válida", tareas, admin, miembros);
@@ -93,7 +93,7 @@ namespace Tests
         public void Constructor_LanzaExcepcionSiDescripcionEsVacia()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea>();
 
             Proyecto proyecto = new Proyecto("Nombre válido", "", tareas, admin, miembros);
@@ -104,7 +104,7 @@ namespace Tests
         public void Constructor_LanzaExcepcionSiDescripcionEsNull()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea>();
             
             Proyecto proyecto = new Proyecto("Nombre válido", null, tareas, admin, miembros);
@@ -114,10 +114,11 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiAdministradorEsNull()
         {
-            List<Usuario> miembros = new List<Usuario> { new Usuario() };
+            Usuario admin = null;
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea>();
 
-            Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, null, miembros);
+            Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, miembros);
         }
         
         [TestMethod]
@@ -126,18 +127,7 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             List<Tarea> tareas = new List<Tarea>();
-
-            Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, null);
-        }
-        
-        [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
-        public void Constructor_LanzaExcepcionSiMiembrosNoContieneAdministrador() // este no se si alguna vez pasa porque lo pusimos que cuando se crea lo agrega
-        {
-            Usuario admin = new Usuario();
-            Usuario otro = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { otro };
-            List<Tarea> tareas = new List<Tarea>();
+            List<Usuario> miembros = null;
 
             Proyecto proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, miembros);
         }
@@ -149,7 +139,7 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             admin.Id = 1;
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea>();
     
             Proyecto proyecto = new Proyecto(42, "Proyecto Test", "Descripción de prueba", tareas, admin, miembros);
@@ -163,7 +153,7 @@ namespace Tests
         public void FechaInicio_InicializadaConFechaActualPorDefecto()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea>();
 
             DateTime antes = DateTime.Now;
@@ -177,7 +167,7 @@ namespace Tests
         public void FechaFinMasTemprana_InicializadaConMinValuePorDefecto()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea>();
 
             var proyecto = new Proyecto("Nombre", "Descripción", tareas, admin, miembros);
@@ -191,7 +181,7 @@ namespace Tests
         public void AgregarTarea_AgregarUnaTareaALaLista()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea>();
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
@@ -208,7 +198,7 @@ namespace Tests
         public void AgregarTarea_LanzarExcepcionSiTareaEsNull()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
@@ -220,7 +210,7 @@ namespace Tests
         public void AgregarTarea_LanzarExcepcionSiTareaYaEstaEnTareas()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             Tarea  tarea1 = new Tarea();
             List<Tarea> tareas = new List<Tarea> { tarea1 };
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción",  tareas, admin, miembros);
@@ -234,7 +224,7 @@ namespace Tests
         public void EliminarTarea_EliminaTareaDeLaLista()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
     
             Tarea tarea = new Tarea();
             tarea.Id = 1;
@@ -252,7 +242,7 @@ namespace Tests
         public void EliminarTarea_LanzaExcepcionSiTareaNoExiste()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
     
             Tarea tarea = new Tarea();
             tarea.Id = 1;
@@ -270,8 +260,8 @@ namespace Tests
         public void AsignarMiembro_AgregarUsuarioALaListaDeMiembros()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
-            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            List<Usuario> miembros = new List<Usuario>();
+            List<Tarea> tareas = new List<Tarea>();
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
             Usuario nuevoMiembro = new Usuario();
@@ -286,7 +276,7 @@ namespace Tests
         public void AsignarMiembro_LanzarExcepcionSiUsuarioEsNull()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
@@ -298,7 +288,7 @@ namespace Tests
         public void AsignarMiembro_LanzarExcepcionSiUsuarioYaEstaEnMiembros()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
 
             proyecto.AsignarMiembro(admin); 
@@ -314,7 +304,7 @@ namespace Tests
             Usuario miembro = new Usuario();
             miembro.Id = 2;
     
-            List<Usuario> miembros = new List<Usuario> { admin, miembro };
+            List<Usuario> miembros = new List<Usuario> { miembro };
             List<Tarea> tareas = new List<Tarea>();
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
@@ -327,14 +317,14 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void EliminarMiembro_LanzarExcepcionSiElUsuarioNoExisteEnMiembros()
+        public void EliminarMiembro_LanzaExcepcionSiElUsuarioNoExisteEnMiembros()
         {
             Usuario admin = new Usuario();
             admin.Id = 1;
             Usuario miembro = new Usuario();
             miembro.Id = 2;
 
-            List<Usuario> miembros = new List<Usuario> { admin, miembro };
+            List<Usuario> miembros = new List<Usuario> { miembro };
             List<Tarea> tareas = new List<Tarea>();
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
@@ -343,14 +333,14 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void EliminarMiembro_LanzarExcepcionSiUsuarioEsAdministrador()
+        public void EliminarMiembro_LanzaExcepcionSiUsuarioEsAdministrador()
         {
             Usuario admin = new Usuario();
             admin.Id = 1;
             Usuario miembro = new Usuario();
             miembro.Id = 2;
 
-            List<Usuario> miembros = new List<Usuario> { admin, miembro };
+            List<Usuario> miembros = new List<Usuario> { miembro };
             List<Tarea> tareas = new List<Tarea>();
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
@@ -362,7 +352,7 @@ namespace Tests
         public void EsAdministrador_RetornaTrueSiUsuarioEsAdministrador()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
@@ -376,7 +366,7 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             Usuario otro = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin, otro };
+            List<Usuario> miembros = new List<Usuario> { otro };
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", new List<Tarea>(), admin, miembros);
 
             bool resultado = proyecto.EsAdministrador(otro);
@@ -392,7 +382,7 @@ namespace Tests
         public void ModificarFechaInicio_ActualizaLaFechaOK()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
@@ -408,7 +398,7 @@ namespace Tests
         public void ModificarFechaInicio_LanzaExcepcionSiFechaEsAnteriorAHoy() // capaz no estaria tan bien (?) Podria ser un error al ingresar los datos
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
 
@@ -423,7 +413,7 @@ namespace Tests
         public void ModificarNombre_DeberiaActualizarElNombre()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("nombre viejo", "Desc", tareas, admin, miembros);
 
@@ -437,7 +427,7 @@ namespace Tests
         public void ModificarNombre_LanzaExcepcionSiNombreEsNull()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", tareas, admin, miembros);
 
@@ -449,7 +439,7 @@ namespace Tests
         public void ModificarNombre_LanzaExcepcionSiNombreEsVacio()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", tareas, admin, miembros);
 
@@ -462,7 +452,7 @@ namespace Tests
         public void ModificarDescripcion_ActualizaLaDescripcion()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto", "Descripcion vieja", tareas, admin, miembros);
 
@@ -473,10 +463,10 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void ModificarDescripcion_DeberiaLanzarExcepcion_SiDescripcionEsNull()
+        public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsNull()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", tareas, admin, miembros);
 
@@ -485,10 +475,10 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void ModificarDescripcion_DeberiaLanzarExcepcion_SiDescripcionEsVacia()
+        public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsVacia()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", tareas, admin, miembros);
 
@@ -497,10 +487,10 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void ModificarDescripcion_DeberiaLanzarExcepcion_SiDescripcionSupera400Caracteres()
+        public void ModificarDescripcion_LanzaExcepcionSiDescripcionSupera400Caracteres()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", new List<Tarea>(), admin, miembros);
 
             string descripcionLarga = new string('a', 401); // 401 caracteres
@@ -519,7 +509,7 @@ namespace Tests
             Usuario nuevoAdmin = new Usuario();
             nuevoAdmin.Id = 2;
     
-            List<Usuario> miembros = new List<Usuario> { adminOriginal, nuevoAdmin };
+            List<Usuario> miembros = new List<Usuario> { nuevoAdmin };
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, adminOriginal, miembros);
 
@@ -530,7 +520,7 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void AsignarNuevoAdministrador_DeberiaLanzarExcepcion_SiIdNoCorrespondeAMiembro()
+        public void AsignarNuevoAdministrador_LanzaExcepcionSiIdNoCorrespondeAMiembro()
         {
             Usuario adminOriginal = new Usuario();
             adminOriginal.Id = 1;
@@ -538,7 +528,7 @@ namespace Tests
             Usuario miembro = new Usuario();
             miembro.Id = 2;
 
-            List<Usuario> miembros = new List<Usuario> { adminOriginal };
+            List<Usuario> miembros = new List<Usuario>();
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, adminOriginal, miembros);
 
@@ -555,7 +545,7 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             Usuario miembro = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin, miembro };
+            List<Usuario> miembros = new List<Usuario> { miembro };
             List<Tarea> tareas = new List<Tarea> { new Tarea() };
             Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
 
@@ -572,7 +562,7 @@ namespace Tests
         public void DarListaTareas_DevuelveListaDeTareas()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
             Tarea tarea = new Tarea();
             List<Tarea> tareas = new List<Tarea> { tarea };
             Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
@@ -592,8 +582,8 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             Usuario miembro = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin, miembro };
-            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            List<Usuario> miembros = new List<Usuario> { miembro };
+            List<Tarea> tareas = new List<Tarea>();
             Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
 
             proyecto.NotificarMiembros("Se modificó el proyecto.");
@@ -610,8 +600,8 @@ namespace Tests
         {
             Usuario admin = new Usuario();
             admin.Id = 1;
-            List<Usuario> miembros = new List<Usuario> { admin };
-            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            List<Usuario> miembros = new List<Usuario>();
+            List<Tarea> tareas = new List<Tarea>();
             Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
 
             proyecto.NotificarAdministrador("Mensaje para admin");
@@ -625,7 +615,7 @@ namespace Tests
         public void DarRecursosFaltantes_DevuelveRecursosNoEnUso()
         {
             Usuario admin = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Usuario> miembros = new List<Usuario>();
 
             Recurso recurso1 = new Recurso { Id = 1, EnUso = false };
             Recurso recurso2 = new Recurso { Id = 2, EnUso = true };
@@ -643,10 +633,11 @@ namespace Tests
         }
         
         
+        
+        
         // falta:
         // REFACTOR INITIALIZED, nombres, comentarios
-        // agregar admin siempre no lo deberia hacer solo???
-        // validaciones de recursos(?)
+        // validaciones de recursos(?? Esperar a que definamos bien recurso)
         
         // metodos faltantes:
         // calcularRutaCritica()

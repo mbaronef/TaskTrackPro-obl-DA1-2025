@@ -31,7 +31,9 @@ public class Proyecto
             throw new ExcepcionDominio("La lista de miembros no puede ser null.");
 
         if (!miembros.Contains(administrador))
-            throw new ExcepcionDominio("El administrador debe estar incluido en la lista de miembros.");
+        {
+            miembros.Add(administrador); // ASEGURA QUE EL ADMIN SIEMPRE ESTE EN MIEMBROS DEL PROYECTO
+        }
         
         if (descripcion.Length > 400)
             throw new ExcepcionDominio("La descripción del proyecto no puede superar los 400 caracteres.");
