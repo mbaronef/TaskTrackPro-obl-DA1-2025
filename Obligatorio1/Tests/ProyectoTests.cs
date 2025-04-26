@@ -561,12 +561,5 @@ namespace Tests
         // darRecursosFaltantes()
         // que recorra la lista de tareas y se fije en cada una de ellas cuales son los recursos necesarios
         
-        // modificaciones:
-        // modificar el admin del proyecto (solo admin de sistema puede cambiarlo)
-        
-        // fecaha de inicio de las tareas campo necesario (si no depende de ninguna)
-        // recursos solo se pueden dar de baja si no estan en uso
-        // usuario debe ser mayor de edad
-        
     }
 }
