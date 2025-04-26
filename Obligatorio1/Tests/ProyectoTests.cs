@@ -583,6 +583,10 @@ namespace Tests
             Assert.IsTrue(lista.Contains(tarea));
         }
         
+        //NOTIFICACIONES (habria que validar si el mensaje es null???)
+        //(GESTOR: se encarga de cuando haya una modificacion mandar una notificacion)
+        
+        //notificarMiembros
         [TestMethod]
         public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
         {
@@ -615,6 +619,28 @@ namespace Tests
             Assert.IsTrue(admin.Notificaciones.Any(n => n.Mensaje == "Mensaje para admin"));
         }
         
+        //darRecursosFaltantes
+        
+        [TestMethod]
+        public void DarRecursosFaltantes_DevuelveRecursosNoEnUso()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+
+            Recurso recurso1 = new Recurso { Id = 1, EnUso = false };
+            Recurso recurso2 = new Recurso { Id = 2, EnUso = true };
+
+            Tarea tarea = new Tarea();
+            tarea.RecursosNecesarios = new List<Recurso> { recurso1, recurso2 };
+
+            List<Tarea> tareas = new List<Tarea> { tarea };
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
+
+            List<Recurso> faltantes = proyecto.DarRecursosFaltantes();
+
+            Assert.AreEqual(1, faltantes.Count);
+            Assert.IsTrue(faltantes.Any(r => r.Id == 1));
+        }
         
         
         // falta:
@@ -623,9 +649,6 @@ namespace Tests
         
         // metodos faltantes:
         // calcularRutaCritica()
-        
-        // notificarMiembros(string mensaje)
-        // notificarAdministradores (string mensaje)
         
         // darRecursosFaltantes()
         // que recorra la lista de tareas y se fije en cada una de ellas cuales son los recursos necesarios
