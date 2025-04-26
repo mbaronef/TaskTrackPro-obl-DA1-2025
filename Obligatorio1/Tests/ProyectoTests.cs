@@ -381,7 +381,7 @@ namespace Tests
             proyecto.ModificarFechaInicio(fechaPasada);
         } 
         
-        // modificarNombre (En GESTOR:)
+        // modificarNombre (En GESTOR: solo admin proyecto puede)
         
         [TestMethod]
         public void ModificarNombre_DeberiaActualizarElNombre()
@@ -395,6 +395,34 @@ namespace Tests
 
             Assert.AreEqual("nombre nuevo", proyecto.Nombre);
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarNombre_LanzaExcepcionSiNombreEsNull()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", tareas, admin, miembros);
+
+            proyecto.ModificarNombre(null);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarNombre_LanzaExcepcionSiNombreEsVacio()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", tareas, admin, miembros);
+
+            proyecto.ModificarNombre("");
+        }
+        
+        // modificarDescripcion (En GESTOR: solo admin proyecto puede)
+        
+        
         
         // falta:
         // agregar admin siempre no lo deberia hacer solo???
