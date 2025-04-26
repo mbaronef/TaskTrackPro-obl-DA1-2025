@@ -228,6 +228,22 @@ namespace Tests
             proyecto.AgregarTarea(tarea1);
         }
         
+        //eliminarTarea
+        
+        [TestMethod]
+        public void EliminarTarea_EliminaTareaDeLaLista()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            Tarea tarea = new Tarea();
+            List<Tarea> tareas = new List<Tarea> { tarea };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
+
+            proyecto.EliminarTarea(tarea);
+
+            Assert.IsFalse(proyecto.Tareas.Contains(tarea));
+        }
+        
         //AsignarMiembro
 
         [TestMethod]
