@@ -546,6 +546,44 @@ namespace Tests
         }
         
         
+        // DAR LISTAS:
+        
+        // de miembros:
+        
+        [TestMethod]
+        public void DarListaMiembros_DevuelveListaDeMiembros()
+        {
+            Usuario admin = new Usuario();
+            Usuario miembro = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin, miembro };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
+
+            List<Usuario> lista = proyecto.DarListaMiembros();
+
+            Assert.AreEqual(2, lista.Count);
+            Assert.IsTrue(lista.Contains(admin));
+            Assert.IsTrue(lista.Contains(miembro));
+        }
+        
+        //de tareas:
+        
+        [TestMethod]
+        public void DarListaTareas_DevuelveListaDeTareas()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            Tarea tarea = new Tarea();
+            List<Tarea> tareas = new List<Tarea> { tarea };
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
+
+            List<Tarea> lista = proyecto.DarListaTareas();
+
+            Assert.AreEqual(1, lista.Count);
+            Assert.IsTrue(lista.Contains(tarea));
+        }
+        
+        
         
         
         // falta:
