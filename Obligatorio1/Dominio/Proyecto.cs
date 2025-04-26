@@ -165,4 +165,13 @@ public class Proyecto
     {
         return Tareas;
     }
+    
+    public void NotificarMiembros(string mensaje)
+    {
+        foreach (Usuario usuario in Miembros)
+        {
+            Notificacion nuevaNotificacion = new Notificacion(mensaje);
+            usuario.AgregarNotificacion(nuevaNotificacion);
+        }
+    }
 }

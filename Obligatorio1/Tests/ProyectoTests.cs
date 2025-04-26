@@ -584,12 +584,13 @@ namespace Tests
         }
         
         [TestMethod]
-        public void NotificarMiembros_DeberiaAgregarNotificacionATodosLosMiembros()
+        public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
         {
             Usuario admin = new Usuario();
             Usuario miembro = new Usuario();
             List<Usuario> miembros = new List<Usuario> { admin, miembro };
-            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", new List<Tarea>(), admin, miembros);
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
 
             proyecto.NotificarMiembros("Se modificó el proyecto.");
 
