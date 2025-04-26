@@ -112,8 +112,14 @@ public class Proyecto
         Nombre = nombreNuevo;
     }
 
-    public void ModificarDescripcion(string descripcion)
+    public void ModificarDescripcion(string nuevaDescripcion)
     {
-        Descripcion = descripcion;
+        if (string.IsNullOrWhiteSpace(nuevaDescripcion))
+            throw new ExcepcionDominio("La descripción no puede estar vacía");
+
+        if (nuevaDescripcion.Length > 400)
+            throw new ExcepcionDominio("La descripción no puede superar los 400 caracteres");
+
+        Descripcion = nuevaDescripcion;
     }
 }
