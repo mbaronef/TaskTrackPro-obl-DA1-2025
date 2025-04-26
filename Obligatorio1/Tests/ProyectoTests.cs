@@ -422,6 +422,18 @@ namespace Tests
         
         // modificarDescripcion (En GESTOR: solo admin proyecto puede)
         
+        [TestMethod]
+        public void ModificarDescripcion_ActualizaLaDescripcion()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripcion vieja", tareas, admin, miembros);
+
+            proyecto.ModificarDescripcion("Descripcion nueva");
+
+            Assert.AreEqual("Descripcion nueva", proyecto.Descripcion);
+        }
         
         
         // falta:
