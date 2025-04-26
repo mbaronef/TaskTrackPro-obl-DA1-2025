@@ -528,6 +528,25 @@ namespace Tests
             Assert.AreEqual(nuevoAdmin, proyecto.Administrador);
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void AsignarNuevoAdministrador_DeberiaLanzarExcepcion_SiIdNoCorrespondeAMiembro()
+        {
+            Usuario adminOriginal = new Usuario();
+            adminOriginal.Id = 1;
+    
+            Usuario miembro = new Usuario();
+            miembro.Id = 2;
+
+            List<Usuario> miembros = new List<Usuario> { adminOriginal };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, adminOriginal, miembros);
+
+            proyecto.AsignarNuevoAdministrador(2); // ID 2 no está en miembros
+        }
+        
+        
+        
         
         // falta:
         // REFACTOR INITIALIZED, nombres, comentarios
