@@ -63,6 +63,12 @@ public class Proyecto
     
     public void EliminarTarea(Tarea tarea)
     {
+        if (tarea is null)
+            throw new ExcepcionDominio("No se puede eliminar una tarea null.");
+
+        if (!Tareas.Contains(tarea))
+            throw new ExcepcionDominio("La tarea no pertenece al proyecto.");
+        
         Tareas.Remove(tarea);
     }
 
