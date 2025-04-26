@@ -155,4 +155,14 @@ public class Proyecto
 
         throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
     }
+
+    public List<Usuario> DarListaMiembros()
+    {
+        return Miembros;
+    }
+
+    public List<Tarea> DarListaTareas()
+    {
+        return Tareas;
+    }
 }
