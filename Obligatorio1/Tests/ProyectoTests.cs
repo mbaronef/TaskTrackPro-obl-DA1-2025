@@ -247,21 +247,25 @@ namespace Tests
             proyecto.AsignarMiembro(admin); 
         }
         
-        
         [TestMethod]
-        public void EliminarMiembro_DeberiaEliminarUsuarioDeLaLista() // en realidad deberia recibir el id del miembro a eliminar
+        public void EliminarMiembro_DeberiaEliminarUsuarioCorrectamenteDeLaLista()
         {
             Usuario admin = new Usuario();
+            admin.Id = 1;
             Usuario miembro = new Usuario();
+            miembro.Id = 2;
+    
             List<Usuario> miembros = new List<Usuario> { admin, miembro };
             List<Tarea> tareas = new List<Tarea>();
             Proyecto proyecto = new Proyecto("Proyecto 1", "Descripción", tareas, admin, miembros);
 
-            proyecto.EliminarMiembro(miembro);
+            proyecto.EliminarMiembro(2); // Elimino al miembro
 
-            Assert.IsFalse(proyecto.Miembros.Contains(miembro));
+            Assert.IsFalse(proyecto.Miembros.Any(u => u.Id == 2));
             Assert.AreEqual(1, proyecto.Miembros.Count);
         }
+        
+        
         
         [TestMethod]
         public void EsAdministrador_RetornaTrueSiUsuarioEsAdministrador()
@@ -297,9 +301,18 @@ namespace Tests
         
         // metodos faltantes:
         // calcularRutaCritica()
+        
         // darRecursosFaltantes()
-        // esAdministrador(Usuario usuario)
-        // modificaciones (ver que cosas modificar)
+        // que recorra la lista de tareas y se fije en cada una de ellas cuales son los recursos necesarios
+        
+        // modificaciones
+        // fechaDeInicio puede ser modificada por admin sistema o por admin proyecto 
+        // nombre, descripcion, lista de tareas, lista de usuarios
+        
+        // modificar el admin del proyecto (solo admin de sistema puede cambiarlo)
+        // fecaha de inicio de las tareas campo necesario (si no depende de ninguna)
+        // recursos solo se pueden dar de baja si no estan en uso
+        // usuario debe ser mayor de edad
         // notificarMiembros(string mensaje)
         // notificarAdministradores (string mensaje)
         // falta eliminar tarea que no esta en UML !!!!!!!
