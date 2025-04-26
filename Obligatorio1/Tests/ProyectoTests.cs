@@ -367,6 +367,20 @@ namespace Tests
         }
         
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaInicio_LanzaExcepcionSiFechaEsAnteriorAHoy()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", tareas, admin, miembros);
+
+            DateTime fechaPasada = DateTime.Now.AddDays(-1);
+
+            proyecto.ModificarFechaInicio(fechaPasada);
+        }
+        
         // falta:
         
         // metodos faltantes:
