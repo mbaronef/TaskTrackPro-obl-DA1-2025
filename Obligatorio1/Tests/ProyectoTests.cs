@@ -583,6 +583,21 @@ namespace Tests
             Assert.IsTrue(lista.Contains(tarea));
         }
         
+        [TestMethod]
+        public void NotificarMiembros_DeberiaAgregarNotificacionATodosLosMiembros()
+        {
+            Usuario admin = new Usuario();
+            Usuario miembro = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin, miembro };
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripción", new List<Tarea>(), admin, miembros);
+
+            proyecto.NotificarMiembros("Se modificó el proyecto.");
+
+            foreach (Usuario usuario in miembros)
+            {
+                Assert.IsTrue(usuario.Notificaciones.Any(n => n.Mensaje == "Se modificó el proyecto."));
+            }
+        }
         
         
         
