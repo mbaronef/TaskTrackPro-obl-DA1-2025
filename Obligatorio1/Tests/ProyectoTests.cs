@@ -435,6 +435,43 @@ namespace Tests
             Assert.AreEqual("Descripcion nueva", proyecto.Descripcion);
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarDescripcion_DeberiaLanzarExcepcion_SiDescripcionEsNull()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", tareas, admin, miembros);
+
+            proyecto.ModificarDescripcion(null);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarDescripcion_DeberiaLanzarExcepcion_SiDescripcionEsVacia()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            List<Tarea> tareas = new List<Tarea> { new Tarea() };
+            Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", tareas, admin, miembros);
+
+            proyecto.ModificarDescripcion("");
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarDescripcion_DeberiaLanzarExcepcion_SiDescripcionSupera400Caracteres()
+        {
+            Usuario admin = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { admin };
+            Proyecto proyecto = new Proyecto("Proyecto Original", "Descripción", new List<Tarea>(), admin, miembros);
+
+            string descripcionLarga = new string('a', 401); // 401 caracteres
+
+            proyecto.ModificarDescripcion(descripcionLarga);
+        }
+        
         
         // falta:
         // agregar admin siempre no lo deberia hacer solo???
