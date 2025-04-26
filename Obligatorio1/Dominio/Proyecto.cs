@@ -6,7 +6,7 @@ namespace Dominio;
 public class Proyecto
 {
     public int Id { get; private set; }
-    public string Nombre { get; }
+    public string Nombre { get; set; }
     public string Descripcion { get; set; }
     public List<Tarea> Tareas { get; set; }
     public Usuario Administrador { get; set; }
@@ -102,5 +102,10 @@ public class Proyecto
             throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
 
         FechaInicio = nuevaFecha;
+    }
+
+    public void ModificarNombre(string nombreNuevo)
+    {
+        Nombre = nombreNuevo;
     }
 }
