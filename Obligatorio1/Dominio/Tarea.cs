@@ -96,5 +96,10 @@ public class Tarea
         }
         throw new ExcepcionDominio("El usuario con el id dado no está asignado.");
     }
+    
+    public void AsignarUsuario(Usuario usuario)
+    {
+        UsuariosAsignados.Add(usuario);
+    }
 
 }
