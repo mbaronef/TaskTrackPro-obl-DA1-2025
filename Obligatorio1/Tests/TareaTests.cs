@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
-
+﻿
 namespace Tests;
 using Dominio;
 using Dominio.Excepciones;
@@ -234,6 +233,24 @@ public class TareaTests
         Tarea tarea = new Tarea("Titulo", "Descripción", 5);
             
         Assert.AreEqual(DateTime.MinValue, tarea.FechaDeEjecucion);
+    }
+    
+    [TestMethod]
+    public void ConstructorConIdCreaTareaCorrectamente()
+    {
+        int idEsperado = 1;
+        string titulo = "Tarea";
+        string descripcion = "Descripción de la tarea";
+        int duracion = 5;
+        DateTime fechaInicio = DateTime.Today;
+        
+        Tarea tarea = new Tarea(idEsperado, titulo, descripcion, duracion, fechaInicio);
+        
+        Assert.AreEqual(idEsperado, tarea.Id);
+        Assert.AreEqual(titulo, tarea.Titulo);
+        Assert.AreEqual(descripcion, tarea.Descripcion);
+        Assert.AreEqual(duracion, tarea.DuracionEnDias);
+        Assert.AreEqual(fechaInicio, tarea.FechaInicioMasTemprana);
     }
 
 }
