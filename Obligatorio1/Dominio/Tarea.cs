@@ -1,5 +1,6 @@
 ﻿namespace Dominio;
 using Dominio.Dummies;
+using Dominio.Excepciones;
 
 public class Tarea
 {
@@ -15,9 +16,16 @@ public class Tarea
     public List<Recurso> RecursosNecesarios { get; set; }
     public List<Tarea> DependenciasFF { get; set; }
     public List<Tarea> DependenciasFS { get; set; }
+    
+    private void ValidarStringNoVacio(string valor, string mensajeError)
+    {
+        if (valor.Length == 0)
+            throw new ExcepcionDominio(mensajeError);
+    }
 
     public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
     {
+        ValidarStringNoVacio(unTitulo, "El título de la tarea no puede estar vacío.");
         Titulo = unTitulo;
         Descripcion = unDescripcion;
         DuracionEnDias = unaDuracionEnDias;
