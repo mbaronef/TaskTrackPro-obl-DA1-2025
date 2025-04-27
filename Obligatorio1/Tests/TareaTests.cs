@@ -1,4 +1,6 @@
-﻿namespace Tests;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
+
+namespace Tests;
 using Dominio;
 using Dominio.Excepciones;
 using Dominio.Dummies;
@@ -175,7 +177,28 @@ public class TareaTests
         Assert.IsTrue(resultado);
     }
     
+    [TestMethod]
+    public void EsMiembroDevuelveFalseSiElUsuarioNoEstaAsignado()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        Usuario usuarioNoAsignado = new Usuario("nombre", "apellido", "mail@ejemplo.com", "password");
+        
+        bool resultado = tarea.EsMiembro(usuarioNoAsignado);
+        
+        Assert.IsFalse(resultado);
+    }
 
+    [TestMethod]
+    public void EliminarUsuarioAsignadoEliminaUsuarioDeLaLista()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        Usuario usuario = new Usuario("hola", "hola", "hola", "hola") { Id = 1 };
+        tarea.UsuariosAsignados.Add(usuario);
+        
+        tarea.EliminarUsuarioAsignado(usuario.Id);
+        
+        Assert.IsFalse(tarea.UsuariosAsignados.Contains(usuario));
+        }
 }
     
 
