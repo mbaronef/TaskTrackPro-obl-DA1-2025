@@ -227,6 +227,13 @@ public class TareaTests
             
         Assert.AreEqual(DateTime.MinValue, tarea.FechaFinMasTemprana);
     }
+    
+    public void FechaDeEjecucionInicializadaConMinValuePorDefecto()
+    { 
+        Tarea tarea = new Tarea("Titulo", "Descripción", 5);
+            
+        Assert.AreEqual(DateTime.MinValue, tarea.FechaDeEjecucion);
+    }
 
 }
     
