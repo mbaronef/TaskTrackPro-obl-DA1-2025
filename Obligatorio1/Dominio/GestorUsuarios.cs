@@ -1,3 +1,5 @@
+using Dominio.Excepciones;
+
 namespace Dominio;
 
 public class GestorUsuarios
@@ -40,6 +42,10 @@ public class GestorUsuarios
 
     public void AsignarAdministradorProyecto(Usuario solicitante, Usuario nuevoAdministradorProyecto)
     {
+        if (!solicitante.EsAdministradorSistema)
+        {
+            throw new ExcepcionDominio("No tiene los permisos necesarios para asignar administradores de proyectos.");
+        }
         nuevoAdministradorProyecto.CantidadProyectosAdministra++;
     }
 
