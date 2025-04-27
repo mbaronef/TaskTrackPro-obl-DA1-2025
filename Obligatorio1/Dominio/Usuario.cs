@@ -122,6 +122,10 @@ public class Usuario
 
     public void BorrarNotificacion(int idNotificacion)
     {
+        if(! Notificaciones.Any(n => n.Id == idNotificacion))
+        {
+            throw new ExcepcionDominio("No existe la notificación");
+        }
         Notificaciones.RemoveAll(n => n.Id == idNotificacion);
     }
 }
