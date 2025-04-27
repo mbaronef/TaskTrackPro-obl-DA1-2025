@@ -157,5 +157,21 @@ public class GestorUsuariosTests
         
         gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
+
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void ErrorSiSeQuiereElminiarComoAdminProyectoAUnNoAdminDeProyecto()
+    {
+        GestorUsuarios gestorUsuarios = new GestorUsuarios();
+        
+        Usuario usuarioSolicitante = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
+        gestorUsuarios.AgregarUsuario(usuarioSolicitante); // usuario con id 1
+        gestorUsuarios.AgregarAdministradorSistema(1);
+
+        Usuario nuevoAdminProyecto = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
+        gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        
+        gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
+    }
 }
 
