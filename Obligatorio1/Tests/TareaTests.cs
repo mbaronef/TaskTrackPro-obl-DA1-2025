@@ -138,6 +138,17 @@ public class TareaTests
         
         Assert.AreEqual(EstadoTarea.Completada, tarea.Estado);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void CambiarEstadoNoPermiteVolverAPendienteDesdeCompletada()
+    {
+        var tarea = new Tarea("Título", "Descripción", 5);
+        
+        tarea.CambiarEstado(EstadoTarea.Completada);
+        tarea.CambiarEstado(EstadoTarea.Pendiente); 
+    }
+
 
 }
     
