@@ -100,7 +100,7 @@ public class GestorUsuariosTests
         gestorUsuarios.AgregarUsuario(usuarioSolicitante); // usuario con id 1
         gestorUsuarios.AgregarAdministradorSistema(1);
 
-        Usuario nuevoAdminProyecto = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
+        Usuario nuevoAdminProyecto = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
         gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
         gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
         
@@ -114,9 +114,9 @@ public class GestorUsuariosTests
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
         
         Usuario usuarioSolicitante = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
-        gestorUsuarios.AgregarUsuario(usuarioSolicitante); // usuario con id 1
+        gestorUsuarios.AgregarUsuario(usuarioSolicitante);
         
-        Usuario nuevoAdminProyecto = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
+        Usuario nuevoAdminProyecto = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
         gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
         gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
@@ -130,12 +130,32 @@ public class GestorUsuariosTests
         gestorUsuarios.AgregarUsuario(usuarioSolicitante); // usuario con id 1
         gestorUsuarios.AgregarAdministradorSistema(1);
 
-        Usuario nuevoAdminProyecto = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
+        Usuario nuevoAdminProyecto = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
         gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
         gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
         
-       gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
-       Assert.IsFalse(nuevoAdminProyecto.EsAdministradorProyecto);
+        gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
+        Assert.IsFalse(nuevoAdminProyecto.EsAdministradorProyecto);
+    }
+
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void ErrorSiUnNoAdminDeSistemaQuiereEliminarUnAdminDeProyecto()
+    {
+        GestorUsuarios gestorUsuarios = new GestorUsuarios();
+        
+        Usuario adminSistema = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
+        gestorUsuarios.AgregarUsuario(adminSistema); // usuario con id 1
+        gestorUsuarios.AgregarAdministradorSistema(1);
+
+        Usuario nuevoAdminProyecto = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
+        gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        gestorUsuarios.AsignarAdministradorProyecto(adminSistema, nuevoAdminProyecto);
+        
+        Usuario usuarioSolicitante = new Usuario("José", "Perez", new DateTime(1999, 9, 1), "unemail@gmail.com", "Contrase#a9");
+        gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        
+        gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
 }
 
