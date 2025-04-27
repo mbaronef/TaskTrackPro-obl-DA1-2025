@@ -32,4 +32,10 @@ public class GestorUsuarios
         usuario.EsAdministradorSistema = true;
     }
 
+    public void EliminarAdministradorSistema(int idUsuario)
+    {
+        Usuario usuario = Usuarios.Find(u => u.Id == idUsuario);
+        usuario.EsAdministradorSistema = false;
+    }
+
 }
