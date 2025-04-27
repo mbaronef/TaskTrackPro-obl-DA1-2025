@@ -13,7 +13,7 @@ public class Usuario
     public DateTime FechaNacimiento { get; set; }
     public string Email { get; set; }
     public List<Notificacion> Notificaciones { get; private set; } = new List<Notificacion>();
-    public bool EsAdministradorProyecto { get; set; } = false;
+    public bool EsAdministradorSistema { get; set; } = false;
 
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail,

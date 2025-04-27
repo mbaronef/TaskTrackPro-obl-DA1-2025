@@ -10,20 +10,20 @@ public class GestorUsuariosTests
     {
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
         Assert.IsNotNull(gestorUsuarios);
-        Assert.AreEqual(0,gestorUsuarios.Usuarios.Count);
-        Assert.AreEqual(0,gestorUsuarios.AdministradoresSistema.Count);
+        Assert.AreEqual(0, gestorUsuarios.Usuarios.Count);
+        Assert.AreEqual(0, gestorUsuarios.AdministradoresSistema.Count);
     }
 
     [TestMethod]
     public void GestorAgregaUsuariosCorrectamente()
     {
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
-        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
         gestorUsuarios.AgregarUsuario(usuario1);
-        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
         gestorUsuarios.AgregarUsuario(usuario2);
-        
-        Assert.AreEqual(2,gestorUsuarios.Usuarios.Count);
+
+        Assert.AreEqual(2, gestorUsuarios.Usuarios.Count);
         Assert.AreSame(usuario1, gestorUsuarios.Usuarios[0]);
         Assert.AreSame(usuario2, gestorUsuarios.Usuarios[1]);
     }
@@ -32,11 +32,11 @@ public class GestorUsuariosTests
     public void GestorLlevaCuentaDeUsuariosCorrectamenteYAsignaIds()
     {
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
-        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
         gestorUsuarios.AgregarUsuario(usuario1);
-        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
         gestorUsuarios.AgregarUsuario(usuario2);
-        
+
         Assert.AreEqual(1, usuario1.Id);
         Assert.AreEqual(2, usuario2.Id);
     }
@@ -45,11 +45,11 @@ public class GestorUsuariosTests
     public void GestorEliminaUsuariosCorrectamente()
     {
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
-        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
         gestorUsuarios.AgregarUsuario(usuario1);
-        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
         gestorUsuarios.AgregarUsuario(usuario2);
-        
+
         Assert.AreEqual(2, gestorUsuarios.Usuarios.Count);
         gestorUsuarios.EliminarUsuario(2);
         Assert.AreEqual(1, gestorUsuarios.Usuarios.Count);
@@ -60,14 +60,12 @@ public class GestorUsuariosTests
     public void GestorDevuelveUnUsuarioPorId()
     {
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
-        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
         gestorUsuarios.AgregarUsuario(usuario1);
-        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
         gestorUsuarios.AgregarUsuario(usuario2);
-        
+
         Usuario busqueda = gestorUsuarios.ObtenerUsuario(1);
         Assert.AreEqual(usuario1, busqueda);
     }
-
-
 }

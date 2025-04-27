@@ -34,10 +34,10 @@ namespace Tests
         }
 
         [TestMethod]
-        public void UnNuevoUsuarioNoEsAdministradorDeProyectoPorDefecto()
+        public void UnNuevoUsuarioNoEsAdministradorDeSistemaPorDefecto()
         {
             Usuario usuario = CrearUsuarioValido();
-            Assert.IsFalse(usuario.EsAdministradorProyecto);
+            Assert.IsFalse(usuario.EsAdministradorSistema);
         }
 
         [TestMethod]
