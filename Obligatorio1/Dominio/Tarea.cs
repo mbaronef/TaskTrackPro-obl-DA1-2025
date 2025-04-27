@@ -11,7 +11,7 @@ public class Tarea
     // public DateTime FechaFinMasTemprana;
     // public DateTime FechaDeEjecucion;
     public EstadoTarea Estado { get; set; } = EstadoTarea.Pendiente;
-    // public float Holgura;
+    public float Holgura {get; set;}
     public List<Usuario> UsuariosAsignados { get; set; }
     public List<Recurso> RecursosNecesarios { get; set; }
     public List<Tarea> DependenciasFF { get; set; }
@@ -63,7 +63,10 @@ public class Tarea
         Estado = nuevoEstado;
     }
     
-    
+    public bool EsCritica()
+    {
+        return Holgura == 0;
+    }
     
 
 }
