@@ -63,5 +63,7 @@ public class Tarea
         Estado = nuevoEstado;
     }
     
+    
+    
 
 }

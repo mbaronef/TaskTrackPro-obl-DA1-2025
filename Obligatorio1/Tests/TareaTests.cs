@@ -104,6 +104,8 @@ public class TareaTests
         Tarea tarea = new Tarea("Titulo", "", 8, fechaInicioEstimada);
     }
     
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiDescripcionEsNull()
     {
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
@@ -148,7 +150,18 @@ public class TareaTests
         tarea.CambiarEstado(EstadoTarea.Completada);
         tarea.CambiarEstado(EstadoTarea.Pendiente); 
     }
-
+    
+    [TestMethod]
+    public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
+    {
+        Tarea tarea = new Tarea("Tarea Crítica", "Descripción", 5);
+        
+        tarea.Holgura = 0;
+        bool esCritica = tarea.EsCritica();
+        
+        Assert.IsTrue(esCritica);
+    }
+    
 
 }
     
