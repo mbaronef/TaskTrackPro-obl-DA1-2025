@@ -23,16 +23,16 @@ public class Tarea
             throw new ExcepcionDominio(mensajeError);
     }
 
-    private void ValidarIntNoNegativo(int valor, string mensajeError)
+    private void ValidarIntNoNegativoNiCero(int valor, string mensajeError)
     {
-        if (valor < 0)
+        if (valor <= 0)
             throw new ExcepcionDominio(mensajeError);
     }
 
     public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
     {
         ValidarStringNoVacioNiNull(unTitulo, "El título de la tarea no puede estar vacío o ser nulo.");
-        ValidarIntNoNegativo(unaDuracionEnDias, "La duración no puede ser un número negativo.");
+        ValidarIntNoNegativoNiCero(unaDuracionEnDias, "La duración no puede ser un número negativo.");
         Titulo = unTitulo;
         Descripcion = unDescripcion;
         DuracionEnDias = unaDuracionEnDias;
