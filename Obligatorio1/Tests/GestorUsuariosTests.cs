@@ -18,10 +18,14 @@ public class GestorUsuariosTests
     public void GestorAgregaUsuariosCorrectamente()
     {
         GestorUsuario gestorUsuarios = new GestorUsuario();
-        Usuario usuario = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
-        gestorUsuarios.AgregarUsuario(usuario);
-        Assert.AreEqual(1,gestorUsuarios.Usuarios.Count);
-        Assert.AreSame(usuario, gestorUsuarios.Usuarios[0]);
+        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        gestorUsuarios.AgregarUsuario(usuario1);
+        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        gestorUsuarios.AgregarUsuario(usuario2);
+        
+        Assert.AreEqual(2,gestorUsuarios.Usuarios.Count);
+        Assert.AreSame(usuario1, gestorUsuarios.Usuarios[0]);
+        Assert.AreSame(usuario2, gestorUsuarios.Usuarios[1]);
     }
 
 }
