@@ -210,6 +210,16 @@ public class TareaTests
         
         tarea.EliminarUsuarioAsignado(1);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void EliminarUsuarioAsignadoLanzaExcepcionSiUsuarioNoEstaAsignado()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        
+        tarea.EliminarUsuarioAsignado(1);
+    }
+
 }
     
 
