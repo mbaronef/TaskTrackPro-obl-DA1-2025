@@ -110,5 +110,17 @@ public class Tarea
             throw new ExcepcionDominio("El usuario ya fue agregado a la tarea.");
         UsuariosAsignados.Add(usuario);
     }
+    
+    private Usuario BuscarUsuarioPorId(int id)
+    {
+        return UsuariosAsignados.FirstOrDefault(u => u.Id == id);
+    }
+    
+    public void EliminarUsuario(int idUsu)
+    {
+        Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsu);
+
+        UsuariosAsignados.Remove(usuarioAEliminar);
+    }
 
 }
