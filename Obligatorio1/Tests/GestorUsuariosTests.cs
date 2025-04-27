@@ -145,7 +145,7 @@ public class GestorUsuariosTests
 
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
-    public void  NoAdminSistemaNoPuedeEliminarAdministradorProyecto()
+    public void NoAdminSistemaNoPuedeEliminarAdministradorProyecto()
     {
         Usuario adminSistema = CrearUsuario1();
         _gestorUsuarios.AgregarUsuario(adminSistema);
@@ -184,6 +184,18 @@ public class GestorUsuariosTests
 
         _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
         Assert.IsTrue(usuarioObjetivo.Autenticar("TaskTrackPro@2025"));
+    }
+
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void NoAdminSistemaNiAdminProyectoNoPuedeReiniciarContrasena()
+    {
+        Usuario usuarioSolicitante = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        Usuario usuarioObjetivo = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+
+        _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
     }
 }
 
