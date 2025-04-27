@@ -5,6 +5,7 @@ namespace Dominio;
 public class GestorUsuarios
 {
     private static int _cantidadUsuarios;
+    private string _contrasenaPorDefecto = "TaskTrackPro@2025";
     public List<Usuario> Usuarios { get; private set; } = new List<Usuario>();
 
     public GestorUsuarios()
@@ -61,5 +62,10 @@ public class GestorUsuarios
             throw new ExcepcionDominio("El usuario a eliminar no es administrador de proyectos.");
         }
         administradorProyecto.EsAdministradorProyecto = false;
+    }
+
+    public void ReiniciarContrasena(Usuario administrador, Usuario usuarioObjetivo)
+    {
+        usuarioObjetivo.CambiarContrasena("TaskTrackPro@2025");
     }
 }
