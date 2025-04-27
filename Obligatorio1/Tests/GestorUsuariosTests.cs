@@ -78,4 +78,15 @@ public class GestorUsuariosTests
         gestorUsuarios.AgregarAdministradorSistema(1);
         Assert.IsTrue(usuario.EsAdministradorSistema);
     }
+
+    [TestMethod]
+    public void GestorEliminaAdministradorDeSistemaCorrectamente()
+    {
+        GestorUsuarios gestorUsuarios = new GestorUsuarios();
+        Usuario usuario = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
+        gestorUsuarios.AgregarUsuario(usuario); // usuario con id 1
+        gestorUsuarios.AgregarAdministradorSistema(1);
+        gestorUsuarios.EliminarAdministradorSistema(1);
+        Assert.IsFalse(usuario.EsAdministradorSistema);
+    }
 }
