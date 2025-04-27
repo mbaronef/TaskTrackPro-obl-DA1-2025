@@ -33,6 +33,7 @@ public class Tarea
     {
         ValidarStringNoVacioNiNull(unTitulo, "El título de la tarea no puede estar vacío o ser nulo.");
         ValidarIntNoNegativoNiCero(unaDuracionEnDias, "La duración no puede ser un número negativo.");
+        ValidarStringNoVacioNiNull(unDescripcion, "La descrición no puede estar vacía ni nula.");
         Titulo = unTitulo;
         Descripcion = unDescripcion;
         DuracionEnDias = unaDuracionEnDias;
