@@ -16,5 +16,10 @@ public class GestorUsuario
         usuario.Id = _cantidadUsuarios;
         Usuarios.Add(usuario);
     }
+    
+    public Usuario ObtenerUsuario(int idUsuario)
+    {
+        return Usuarios.Find(u => u.Id == idUsuario);
+    }
 
 }
