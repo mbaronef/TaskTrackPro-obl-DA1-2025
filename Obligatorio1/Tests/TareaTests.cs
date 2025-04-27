@@ -252,6 +252,19 @@ public class TareaTests
         Assert.AreEqual(duracion, tarea.DuracionEnDias);
         Assert.AreEqual(fechaInicio, tarea.FechaInicioMasTemprana);
     }
+    
+    [TestMethod]
+    public void AsignarUsuario_AsignarUsuarioALista()
+    {
+        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+
+        Usuario usu = new Usuario();
+            
+        tarea.AsignarUsuario(usu); 
+            
+        Assert.IsTrue(tarea.UsuariosAsignados.Contains(usu));
+        Assert.AreEqual(1, tarea.UsuariosAsignados.Count);
+    }
 
 }
     
