@@ -274,6 +274,16 @@ public class TareaTests
         Usuario usu = null;
         tarea.AsignarUsuario(usu); 
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AsignarUsuario_LanzarExcepcionSiUsuarioYaEstaEnUsuariosAsignados()
+    {
+        Usuario usu = new Usuario(); 
+        Tarea tarea = new Tarea("tarea", "descr", 87);
+        tarea.AsignarUsuario(usu);
+        tarea.AsignarUsuario(usu);
+    }
 
 }
     
