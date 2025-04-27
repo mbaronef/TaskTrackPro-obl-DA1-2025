@@ -73,5 +73,16 @@ public class Tarea
         return UsuariosAsignados.Contains(usuario);
     }
     
+    public void EliminarUsuarioAsignado(int id)
+    {
+        for (int i = 0; i < UsuariosAsignados.Count; i++)
+        {
+            if (UsuariosAsignados[i].Id == id)
+            {
+                UsuariosAsignados.RemoveAt(i);
+                return;
+            }
+        }
+    }
 
 }
