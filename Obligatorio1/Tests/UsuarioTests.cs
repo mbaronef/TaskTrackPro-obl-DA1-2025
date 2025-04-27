@@ -1,5 +1,4 @@
 using Dominio;
-using Dominio.Dummies;
 using Dominio.Excepciones;
 
 namespace Tests
