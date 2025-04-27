@@ -51,6 +51,10 @@ public class GestorUsuarios
 
     public void EliminarAdministradorProyecto(Usuario solicitante, Usuario administradorProyecto)
     {
+        if (!solicitante.EsAdministradorSistema)
+        {
+            throw new ExcepcionDominio("No tiene los permisos necesarios para eliminar administradores de proyectos.");
+        }
         administradorProyecto.EsAdministradorProyecto = false;
     }
 }
