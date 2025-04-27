@@ -66,6 +66,10 @@ public class GestorUsuarios
 
     public void ReiniciarContrasena(Usuario administrador, Usuario usuarioObjetivo)
     {
+        if (!administrador.EsAdministradorSistema && !administrador.EsAdministradorProyecto)
+        {
+            throw new ExcepcionDominio("No tiene los permisos necesarios para reiniciar la contraseña del usuario.");
+        }
         usuarioObjetivo.CambiarContrasena("TaskTrackPro@2025");
     }
 }
