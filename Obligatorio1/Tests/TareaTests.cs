@@ -119,6 +119,16 @@ public class TareaTests
         
         Tarea tarea = new Tarea("Titulo", " ",  8, fechaInicioEstimada);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_LanzaExcepcionSiFechaInicioEsMenorQueHoy()
+    {
+        DateTime fechaInicioAnterior = DateTime.Today.AddDays(-1); 
+
+        Tarea tarea = new Tarea("Titulo", "Descripción válida", 5, fechaInicioAnterior);
+    }
+    
 }
     
 
