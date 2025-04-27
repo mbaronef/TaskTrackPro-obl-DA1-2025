@@ -16,7 +16,7 @@ public class Proyecto
     
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MinValue;
 
-    public Proyecto(string nombre, string descripcion, List<Tarea> tareas, Usuario administrador, List<Usuario> miembros)
+    public Proyecto(string nombre, string descripcion, Usuario administrador, List<Usuario> miembros)
     {
         if (string.IsNullOrWhiteSpace(nombre))
             throw new ExcepcionDominio("El nombre del proyecto no puede estar vacío o null.");
@@ -40,14 +40,14 @@ public class Proyecto
 
         Nombre = nombre;
         Descripcion = descripcion;
-        Tareas = tareas;
+        Tareas = new List<Tarea>();
         Administrador = administrador;
         Miembros = miembros;
     }
     
     // Constructor con Id: lo usaría solo el Gestor
-    public Proyecto(int id, string nombre, string descripcion, List<Tarea> tareas, Usuario administrador, List<Usuario> miembros)
-        : this(nombre, descripcion, tareas, administrador, miembros)
+    public Proyecto(int id, string nombre, string descripcion, Usuario administrador, List<Usuario> miembros)
+        : this(nombre, descripcion, administrador, miembros)
     {
         Id = id;
     }
