@@ -6,7 +6,7 @@ public class Tarea
     public string Titulo;
     public string Descripcion;
     public int DuracionEnDias;
-    public DateTime FechaInicioMasTemprana;
+    public DateTime? FechaInicioMasTemprana; //nullable
     // public DateTime FechaFinMasTemprana;
     // public DateTime FechaDeEjecucion;
     public EstadoTarea Estado = EstadoTarea.Pendiente;
@@ -16,7 +16,7 @@ public class Tarea
     public List<Tarea> DependenciasFF;
     public List<Tarea> DependenciasFS;
 
-    public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime unaFechaInicioMasTemprana)
+    public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
     {
         Titulo = unTitulo;
         Descripcion = unDescripcion;
