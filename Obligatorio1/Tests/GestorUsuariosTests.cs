@@ -174,12 +174,29 @@ public class GestorUsuariosTests
     }
 
     [TestMethod]
-    public void SeReiniciaLaContraseñaDeUnUsuarioCorrectamente() //puede adminSistema y adminProyecto
+    public void AdminSistemaReiniciaLaContraseñaDeUnUsuarioCorrectamente()
     {
         Usuario usuarioSolicitante = CrearUsuario1();
         _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
         _gestorUsuarios.AgregarAdministradorSistema(usuarioSolicitante.Id);
         Usuario usuarioObjetivo = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+
+        _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
+        Assert.IsTrue(usuarioObjetivo.Autenticar("TaskTrackPro@2025"));
+    }
+    
+    [TestMethod]
+    public void AdminProyectoReiniciaLaContraseñaDeUnUsuarioCorrectamente()
+    {
+        Usuario administrador = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(administrador);
+        _gestorUsuarios.AgregarAdministradorSistema(administrador.Id);
+        Usuario usuarioSolicitante = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AsignarAdministradorProyecto(administrador, usuarioSolicitante);
+        
+        Usuario usuarioObjetivo = new Usuario("José", "Perez", new DateTime(1999, 9, 1), "unemail@gmail.com", "Contrase#a9");
         _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
 
         _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
