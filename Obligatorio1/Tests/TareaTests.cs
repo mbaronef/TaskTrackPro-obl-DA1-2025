@@ -104,7 +104,21 @@ public class TareaTests
         Tarea tarea = new Tarea("Titulo", "", 8, fechaInicioEstimada);
     }
     
+    public void Constructor_LanzaExcepcionSiDescripcionEsNull()
+    {
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        
+        Tarea tarea = new Tarea("Titulo", null,  8, fechaInicioEstimada);
+    }
     
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_LanzaExcepcionSiDescripcionEsEspacio()
+    {
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        
+        Tarea tarea = new Tarea("Titulo", " ",  8, fechaInicioEstimada);
+    }
 }
     
 
