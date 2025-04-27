@@ -56,6 +56,10 @@ public class Tarea
     
     public void CambiarEstado(EstadoTarea nuevoEstado)
     {
+        if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Pendiente)
+        {
+            throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a pendiente.");
+        }
         Estado = nuevoEstado;
     }
     
