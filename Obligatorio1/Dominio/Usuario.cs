@@ -23,6 +23,10 @@ public class Usuario
         SetContrasenaEncriptada(unaContrasena);
         Nombre = unNombre;
         Apellido = unApellido;
+        if (unaFechaNacimiento.AddYears(18) > DateTime.Today)
+        {
+            throw new  ExcepcionDominio("El usuario debe ser mayor de edad (18 años o más)");
+        }
         FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
     }
