@@ -50,14 +50,14 @@ public class NotificacionTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiMensajeEsNull()
     {
-        Notificacion notificacion = new Notificacion(null);
+        Notificacion notificacionNull = new Notificacion(null);
     }
     
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiMensajeEsVacio()
     {
-        Notificacion notificacion = new Notificacion("");
+        Notificacion notificacionVacia = new Notificacion("");
     }
     
 }
