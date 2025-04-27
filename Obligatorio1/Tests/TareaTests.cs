@@ -49,4 +49,13 @@ public class TareaTests
         
     }
     
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_LanzaExcepcionSiTituloEsVacio()
+    { 
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        
+        Tarea tarea = new Tarea("", "Descripción válida", 8, fechaInicioEstimada);
+    }
+    
 }

@@ -3,18 +3,18 @@ using Dominio.Dummies;
 
 public class Tarea
 {
-    public string Titulo;
-    public string Descripcion;
-    public int DuracionEnDias;
-    public DateTime? FechaInicioMasTemprana; //nullable
+    public string Titulo { get; set; }
+    public string Descripcion { get; set; }
+    public int DuracionEnDias { get; set; }
+    public DateTime? FechaInicioMasTemprana { get; set; } //nullable
     // public DateTime FechaFinMasTemprana;
     // public DateTime FechaDeEjecucion;
-    public EstadoTarea Estado = EstadoTarea.Pendiente;
+    public EstadoTarea Estado { get; set; } = EstadoTarea.Pendiente;
     // public float Holgura;
-    public List<Usuario> UsuariosAsignados;
-    public List<Recurso> RecursosNecesarios;
-    public List<Tarea> DependenciasFF;
-    public List<Tarea> DependenciasFS;
+    public List<Usuario> UsuariosAsignados { get; set; }
+    public List<Recurso> RecursosNecesarios { get; set; }
+    public List<Tarea> DependenciasFF { get; set; }
+    public List<Tarea> DependenciasFS { get; set; }
 
     public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
     {
