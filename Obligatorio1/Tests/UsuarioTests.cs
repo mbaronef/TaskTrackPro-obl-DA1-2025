@@ -173,5 +173,16 @@ namespace Tests
             usuario.RecibirNotificacion(notificacion); // se agrega notificación con ID 1
             usuario.BorrarNotificacion(2); 
         }
+        
+        [TestMethod]
+        public void EqualsRetornaTrueSiLosIdsSonIguales()
+        {
+            GestorUsuarios gestor = new GestorUsuarios();
+            Usuario usuario1 = CrearUsuarioValido();
+            gestor.AgregarUsuario(usuario1);
+            Usuario usuario2 = gestor.ObtenerUsuarioPorId(usuario1.Id);
+            bool sonIguales = usuario1.Equals(usuario2);
+            Assert.IsTrue(sonIguales);
+        }
     }
 }
