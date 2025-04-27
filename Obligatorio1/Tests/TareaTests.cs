@@ -1,5 +1,6 @@
 ﻿namespace Tests;
 using Dominio;
+using Dominio.Excepciones;
 
 [TestClass]
 
