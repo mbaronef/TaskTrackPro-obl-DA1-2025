@@ -119,6 +119,8 @@ public class Tarea
     public void EliminarUsuario(int idUsu)
     {
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsu);
+        
+        ValidarObjetoNoNull(usuarioAEliminar,"El usuario no está asignado a la tarea.");
 
         UsuariosAsignados.Remove(usuarioAEliminar);
     }
