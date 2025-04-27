@@ -41,6 +41,13 @@ namespace Tests
         }
 
         [TestMethod]
+        public void UnNuevoUsuarioNoAdministraProyectosPorDefecto()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Assert.AreEqual(0, usuario.CantidadProyectosAdministra);
+        }
+
+        [TestMethod]
         public void ContrasenaEncriptadaEsDistintaALaOriginal()
         {
             string unaContrasena = "Contrase#a3";
