@@ -513,7 +513,7 @@ namespace Tests
         }
         
         // falta:
-        // REFACTOR INITIALIZED, nombres, comentarios
+        // REFACTOR (?)
         // validaciones de recursos(?? Esperar a que definamos bien recurso)
         
         // metodos faltantes:
