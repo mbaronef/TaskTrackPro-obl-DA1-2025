@@ -75,6 +75,10 @@ public class Tarea
     
     public void EliminarUsuarioAsignado(int id)
     {
+        if (UsuariosAsignados == null)
+        {
+            throw new ExcepcionDominio("La lista de usuarios asignados está vacía o no está inicializada.");
+        }
         for (int i = 0; i < UsuariosAsignados.Count; i++)
         {
             if (UsuariosAsignados[i].Id == id)
