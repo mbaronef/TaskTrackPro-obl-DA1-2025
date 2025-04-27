@@ -120,5 +120,22 @@ public class GestorUsuariosTests
         gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
         gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
+
+    [TestMethod]
+    public void GestorEliminaAdministradorDeProyectoCorrectamente()
+    {
+        GestorUsuarios gestorUsuarios = new GestorUsuarios();
+        
+        Usuario usuarioSolicitante = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
+        gestorUsuarios.AgregarUsuario(usuarioSolicitante); // usuario con id 1
+        gestorUsuarios.AgregarAdministradorSistema(1);
+
+        Usuario nuevoAdminProyecto = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
+        gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
+        
+       gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
+       Assert.IsFalse(nuevoAdminProyecto.EsAdministradorProyecto);
+    }
 }
 
