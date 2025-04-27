@@ -1,4 +1,5 @@
 using Dominio;
+using Dominio.Excepciones;
 
 namespace Tests;
 
@@ -104,6 +105,20 @@ public class GestorUsuariosTests
         gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
         
         Assert.IsTrue(nuevoAdminProyecto.EsAdministradorProyecto());
+    }
+
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void GestorNoAsginaAdministradorDeProyectoSiLoSolicitaUnNoAdminDeSistema()
+    {
+        GestorUsuarios gestorUsuarios = new GestorUsuarios();
+        
+        Usuario usuarioSolicitante = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
+        gestorUsuarios.AgregarUsuario(usuarioSolicitante); // usuario con id 1
+        
+        Usuario nuevoAdminProyecto = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a4");
+        gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
 }
 

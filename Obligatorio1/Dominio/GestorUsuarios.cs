@@ -38,4 +38,9 @@ public class GestorUsuarios
         usuario.EsAdministradorSistema = false;
     }
 
+    public void AsignarAdministradorProyecto(Usuario solicitante, Usuario nuevoAdministradorProyecto)
+    {
+        nuevoAdministradorProyecto.CantidadProyectosAdministra++;
+    }
+
 }
