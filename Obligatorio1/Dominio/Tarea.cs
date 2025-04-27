@@ -87,6 +87,7 @@ public class Tarea
                 return;
             }
         }
+        throw new ExcepcionDominio("El usuario con el id dado no está asignado.");
     }
 
 }
