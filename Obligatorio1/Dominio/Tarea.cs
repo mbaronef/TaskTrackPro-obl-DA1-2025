@@ -19,7 +19,7 @@ public class Tarea
     
     private void ValidarStringNoVacioNiNull(string valor, string mensajeError)
     {
-        if (string.IsNullOrEmpty(valor))
+        if (string.IsNullOrWhiteSpace(valor))
             throw new ExcepcionDominio(mensajeError);
     }
 
