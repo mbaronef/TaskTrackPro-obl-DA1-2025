@@ -1,6 +1,7 @@
 ﻿namespace Tests;
 using Dominio;
 using Dominio.Excepciones;
+using Dominio.Dummies;
 
 [TestClass]
 
@@ -160,6 +161,18 @@ public class TareaTests
         bool esCritica = tarea.EsCritica();
         
         Assert.IsTrue(esCritica);
+    }
+    
+    [TestMethod]
+    public void EsMiembroDevuelveTrueSiElUsuarioEstaAsignado()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        Usuario usuario = new Usuario("nombre", "apellido", "mail@ejemplo.com", "password");
+        tarea.UsuariosAsignados.Add(usuario);
+        
+        bool resultado = tarea.EsMiembro(usuario);
+        
+        Assert.IsTrue(resultado);
     }
     
 
