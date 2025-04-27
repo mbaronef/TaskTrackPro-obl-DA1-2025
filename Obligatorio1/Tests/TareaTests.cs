@@ -198,7 +198,18 @@ public class TareaTests
         tarea.EliminarUsuarioAsignado(usuario.Id);
         
         Assert.IsFalse(tarea.UsuariosAsignados.Contains(usuario));
-        }
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void EliminarUsuarioAsignadoLanzaExcepcionSiUsuariosAsignadosEsNull()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        
+        tarea.UsuariosAsignados = null;
+        
+        tarea.EliminarUsuarioAsignado(1);
+    }
 }
     
 
