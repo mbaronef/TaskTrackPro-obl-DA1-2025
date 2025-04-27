@@ -12,6 +12,7 @@ public class Notificacion
 
     public Notificacion(string mensaje)
     {
+        if()
         Mensaje = mensaje;
         Fecha = DateTime.Today;
         Id = ++_cantidadNotificaciones;

@@ -52,4 +52,12 @@ public class NotificacionTests
     {
         Notificacion notificacion = new Notificacion(null);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_LanzaExcepcionSiMensajeEsVacio()
+    {
+        Notificacion notificacion = new Notificacion("");
+    }
+    
 }
