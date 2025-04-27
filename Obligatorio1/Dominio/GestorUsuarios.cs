@@ -49,4 +49,8 @@ public class GestorUsuarios
         nuevoAdministradorProyecto.EsAdministradorProyecto = true;
     }
 
+    public void EliminarAdministradorProyecto(Usuario solicitante, Usuario administradorProyecto)
+    {
+        administradorProyecto.EsAdministradorProyecto = false;
+    }
 }
