@@ -265,6 +265,15 @@ public class TareaTests
         Assert.IsTrue(tarea.UsuariosAsignados.Contains(usu));
         Assert.AreEqual(1, tarea.UsuariosAsignados.Count);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AsignarUsuario_LanzarExcepcionSiUsuarioEsNull()
+    {
+        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+        Usuario usu = null;
+        tarea.AsignarUsuario(usu); 
+    }
 
 }
     
