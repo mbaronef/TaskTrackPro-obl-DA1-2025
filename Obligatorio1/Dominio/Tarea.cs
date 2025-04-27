@@ -4,6 +4,7 @@ using Dominio.Excepciones;
 
 public class Tarea
 {
+    public int Id {get; set;}
     public string Titulo { get; set; }
     public string Descripcion { get; set; }
     public int DuracionEnDias { get; set; }
@@ -52,6 +53,12 @@ public class Tarea
         RecursosNecesarios = new List<Recurso>();
         DependenciasFF = new List<Tarea>();
         DependenciasFS = new List<Tarea>();
+    }
+    
+    public Tarea(int unId, string unTitulo, string unaDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
+        : this(unTitulo, unaDescripcion, unaDuracionEnDias, unaFechaInicioMasTemprana)
+    {
+        Id = unId;
     }
     
     public void CambiarEstado(EstadoTarea nuevoEstado)

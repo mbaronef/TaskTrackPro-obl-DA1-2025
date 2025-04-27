@@ -238,15 +238,15 @@ public class TareaTests
     [TestMethod]
     public void ConstructorConIdCreaTareaCorrectamente()
     {
-        int idEsperado = 1;
+        int id = 1;
         string titulo = "Tarea";
         string descripcion = "Descripción de la tarea";
         int duracion = 5;
         DateTime fechaInicio = DateTime.Today;
         
-        Tarea tarea = new Tarea(idEsperado, titulo, descripcion, duracion, fechaInicio);
+        Tarea tarea = new Tarea(id, titulo, descripcion, duracion, fechaInicio);
         
-        Assert.AreEqual(idEsperado, tarea.Id);
+        Assert.AreEqual(id, tarea.Id);
         Assert.AreEqual(titulo, tarea.Titulo);
         Assert.AreEqual(descripcion, tarea.Descripcion);
         Assert.AreEqual(duracion, tarea.DuracionEnDias);
