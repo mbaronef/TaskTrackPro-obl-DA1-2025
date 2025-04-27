@@ -219,6 +219,14 @@ public class TareaTests
         
         tarea.EliminarUsuarioAsignado(1);
     }
+    
+    [TestMethod]
+    public void FechaFinMasTempranaInicializadaConMinValuePorDefecto()
+    { 
+        Tarea tarea = new Tarea("Titulo", "Descripción", 5);
+            
+        Assert.AreEqual(DateTime.MinValue, tarea.FechaFinMasTemprana);
+    }
 
 }
     
