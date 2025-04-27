@@ -30,6 +30,11 @@ public class Usuario
         Email = unEmail;
     }
 
+    public bool EsAdministradorProyecto()
+    {
+        return CantidadProyectosAdministra > 0;
+    }
+
     private void SetContrasenaEncriptada(string contrasena)
     {
         ValidarContrasena(contrasena);

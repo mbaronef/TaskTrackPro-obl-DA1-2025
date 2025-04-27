@@ -45,6 +45,7 @@ namespace Tests
         {
             Usuario usuario = CrearUsuarioValido();
             Assert.AreEqual(0, usuario.CantidadProyectosAdministra);
+            Assert.IsFalse(usuario.EsAdministradorProyecto());
         }
 
         [TestMethod]
