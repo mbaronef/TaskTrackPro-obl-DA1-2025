@@ -7,16 +7,20 @@ namespace Tests
     [TestClass]
     public class UsuarioTests
     {
+        private DateTime _fechaNacimientoValida = new DateTime(2000, 9, 1);
+        private Usuario CrearUsuarioValido(string email = "unemail@gmail.com", string contrasena = "Contrase#a3")
+        {
+            return new Usuario("Juan", "Perez", _fechaNacimientoValida, email, contrasena);
+        }
+        
         [TestMethod]
         public void ConstructorConParametrosAsignaCorrectamente()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
+            Usuario usuario = CrearUsuarioValido();
 
             Assert.AreEqual("Juan", usuario.Nombre);
             Assert.AreEqual("Perez", usuario.Apellido);
-            Assert.AreEqual(fechaNacimiento, usuario.FechaNacimiento);
+            Assert.AreEqual(_fechaNacimientoValida, usuario.FechaNacimiento);
             Assert.AreEqual("unemail@gmail.com", usuario.Email);
             Assert.IsTrue(usuario.Autenticar("Contrase#a3"));
         }
@@ -24,10 +28,7 @@ namespace Tests
         [TestMethod]
         public void UsuarioSeCreaConListaNotificacionesVacia()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
-
+            Usuario usuario = CrearUsuarioValido();
             Assert.IsNotNull(usuario.Notificaciones);
             Assert.AreEqual(0, usuario.Notificaciones.Count);
         }
@@ -35,10 +36,7 @@ namespace Tests
         [TestMethod]
         public void UnNuevoUsuarioNoEsAdministradorDeProyectoPorDefecto()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
-
+            Usuario usuario = CrearUsuarioValido();
             Assert.IsFalse(usuario.EsAdministradorProyecto);
         }
 
@@ -54,10 +52,7 @@ namespace Tests
         public void CompararContrasenaDadaConContrasenaDeUsuarioOk()
         {
             string contrasenaIngresada = "Contrase#a3";
-
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
-
+            Usuario usuario = CrearUsuarioValido();
             Assert.IsTrue(usuario.Autenticar(contrasenaIngresada));
         }
 
@@ -65,10 +60,7 @@ namespace Tests
         public void CompararContrasenaDadaConContrasenaDeUsuarioIncorrecto()
         {
             string contrasenaIngresada = "OtraContraseña";
-
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "Contrase#a3");
-
+            Usuario usuario = CrearUsuarioValido();
             Assert.IsFalse(usuario.Autenticar(contrasenaIngresada));
         }
 
@@ -76,56 +68,56 @@ namespace Tests
         [TestMethod]
         public void IngresoDeContrasenaMuyCorta()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "P3e.");
+            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "P3e.");
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
         [TestMethod]
         public void IngresoDeContrasenaSinMayusculas()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "minuscula1@");
+            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "minuscula1@");
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
         [TestMethod]
         public void IngresoDeContrasenaSinMinusculas()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "MAYUSCULA1@");
+            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "MAYUSCULA1@");
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
         [TestMethod]
         public void IngresoDeContrasenaSinNumeros()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "CoNtRaSeN@");
+            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "CoNtRaSeN@");
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
         [TestMethod]
         public void IngresoDeContrasenaSinCaracterEspecial()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@gmail.com", "CoNtRaSeN14");
+            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "CoNtRaSeN14");
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
         [TestMethod]
         public void IngresoDeEmailInvalido()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "emailinvalido", "Contrase#a3");
+            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "emailinvalido", "Contrase#a3");
         }
 
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void DaErrorSiElUsuarioEsMenorDeEdad()
+        {
+            DateTime fechaNacimiento = new DateTime(2020, 1, 6);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "6onTrase}a3");
+        }
+        
         [TestMethod]
         public void SeCambiaContrasenaCorrectamente()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@adinet.com", "Contrase#a3");
-
+            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@adinet.com", "Contrase#a3");
             string nuevaContrasena = "CoNtRaSeN1@";
             usuario.CambiarContrasena(nuevaContrasena);
             Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
@@ -135,23 +127,27 @@ namespace Tests
         [TestMethod]
         public void DaErrorSiSeCambiaContrasenaInvalida()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@adinet.com", "Contrase#a3");
-
+            Usuario usuario = CrearUsuarioValido();
             string nuevaContrasena = "c1.A";
             usuario.CambiarContrasena(nuevaContrasena);
-            Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
+        }
+
+        [TestMethod]
+        public void NoSeCambiaContrasenaInvalida()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            string nuevaContrasena = "c1.A";
+            Assert.IsFalse(usuario.Autenticar("c1.A"));
         }
 
         [TestMethod]
         public void SeRecibeUnaNotificacionCorrectamente()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "6onTrase}a3");
+            Usuario usuario = CrearUsuarioValido();
             Notificacion notificacion = new Notificacion("un mensaje de notificación");
             
             usuario.RecibirNotificacion(notificacion);
-
+            
             Assert.AreEqual(1, usuario.Notificaciones.Count);
             Assert.AreSame(notificacion, usuario.Notificaciones.ElementAt(0));
         }
@@ -159,22 +155,13 @@ namespace Tests
         [TestMethod]
         public void SeBorraUnaNotificacionCorrectamente()
         {
-            DateTime fechaNacimiento = new DateTime(2000, 9, 1);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "6onTrase}a3");
+            Usuario usuario = CrearUsuarioValido();
             Notificacion notificacion = new Notificacion("un mensaje de notificación");
             int id = notificacion.Id;
             usuario.RecibirNotificacion(notificacion);
 
             usuario.BorrarNotificacion(id);
             Assert.AreEqual(0, usuario.Notificaciones.Count);
-        }
-
-        [ExpectedException(typeof(ExcepcionDominio))]
-        [TestMethod]
-        public void DaErrorSiElUsuarioEsMenorDeEdad()
-        {
-            DateTime fechaNacimiento = new DateTime(2020, 1, 6);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "6onTrase}a3");
         }
     }
 }

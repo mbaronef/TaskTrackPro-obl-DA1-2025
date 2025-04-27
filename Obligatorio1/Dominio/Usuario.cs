@@ -98,7 +98,7 @@ public class Usuario
     {
         if (fechaNacimiento.AddYears(18) > DateTime.Today)
         {
-            throw new  ExcepcionDominio("El usuario debe ser mayor de edad (18 años o más)");
+            throw new ExcepcionDominio("El usuario debe ser mayor de edad (18 años o más)");
         }
     }
 
