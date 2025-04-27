@@ -9,9 +9,9 @@ namespace Tests
     public class UsuarioTests
     {
         private DateTime _fechaNacimientoValida = new DateTime(2000, 9, 1);
-        private Usuario CrearUsuarioValido(string email = "unemail@gmail.com", string contrasena = "Contrase#a3")
+        private Usuario CrearUsuarioValido()
         {
-            return new Usuario("Juan", "Perez", _fechaNacimientoValida, email, contrasena);
+            return new Usuario("Juan", "Perez", _fechaNacimientoValida,  "unemail@gmail.com", "Contrase#a3");
         }
         
         [TestMethod]

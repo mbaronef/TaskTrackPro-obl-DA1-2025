@@ -9,4 +9,9 @@ public class GestorUsuario
     {
     }
 
+    public void AgregarUsuario(Usuario usuario)
+    {
+        Usuarios.Add(usuario);
+    }
+
 }
