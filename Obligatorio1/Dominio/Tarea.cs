@@ -17,15 +17,15 @@ public class Tarea
     public List<Tarea> DependenciasFF { get; set; }
     public List<Tarea> DependenciasFS { get; set; }
     
-    private void ValidarStringNoVacio(string valor, string mensajeError)
+    private void ValidarStringNoVacioNiNull(string valor, string mensajeError)
     {
-        if (valor.Length == 0)
+        if (string.IsNullOrEmpty(valor))
             throw new ExcepcionDominio(mensajeError);
     }
 
     public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
     {
-        ValidarStringNoVacio(unTitulo, "El título de la tarea no puede estar vacío.");
+        ValidarStringNoVacioNiNull(unTitulo, "El título de la tarea no puede estar vacío.");
         Titulo = unTitulo;
         Descripcion = unDescripcion;
         DuracionEnDias = unaDuracionEnDias;
