@@ -54,6 +54,10 @@ public class Tarea
         DependenciasFS = new List<Tarea>();
     }
     
+    public void CambiarEstado(EstadoTarea nuevoEstado)
+    {
+        Estado = nuevoEstado;
+    }
     
 
 }
