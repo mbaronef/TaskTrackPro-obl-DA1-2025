@@ -95,7 +95,15 @@ public class TareaTests
         Tarea tareaNegativa = new Tarea("Tarea negativa", "Descripción válida", 0, fechaInicioEstimada);
     }
     
-
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_LanzaExcepcionSiDescripcionEsVacia()
+    { 
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        
+        Tarea tarea = new Tarea("Titulo", "", 8, fechaInicioEstimada);
+    }
+    
     
 }
     
