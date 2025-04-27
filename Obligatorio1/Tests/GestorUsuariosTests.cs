@@ -28,4 +28,19 @@ public class GestorUsuariosTests
         Assert.AreSame(usuario2, gestorUsuarios.Usuarios[1]);
     }
 
+    [TestMethod]
+    public void GestorLlevaCuentaDeUsuariosCorrectamenteYAsignaIds()
+    {
+        GestorUsuario gestorUsuarios = new GestorUsuario();
+        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        gestorUsuarios.AgregarUsuario(usuario1);
+        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        gestorUsuarios.AgregarUsuario(usuario2);
+        
+        Assert.AreEqual(1, usuario1.Id);
+        Assert.AreEqual(2, usuario2.Id);
+    }
+
+
+
 }
