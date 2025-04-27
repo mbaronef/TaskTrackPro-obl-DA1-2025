@@ -15,6 +15,8 @@ public class Usuario
     public List<Notificacion> Notificaciones { get; private set; } = new List<Notificacion>();
     public bool EsAdministradorSistema { get; set; } = false;
 
+    public int CantidadProyectosAdministra { get; set; } = 0;
+
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail,
         string unaContrasena)
