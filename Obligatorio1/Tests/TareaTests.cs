@@ -284,6 +284,18 @@ public class TareaTests
         tarea.AsignarUsuario(usu);
         tarea.AsignarUsuario(usu);
     }
+    
+    [TestMethod]
+    public void EliminarUsuario_EliminarUsuarioDeAsignados()
+    {
+        Usuario usu = new Usuario();
+        usu.Id = 1;
+        Tarea tarea = new Tarea("tarea", "descr", 87);
+        tarea.AsignarUsuario(usu);
+        tarea.EliminarUsuario(1);
+
+        Assert.IsFalse(tarea.UsuariosAsignados.Any(t => t.Id == 1));
+    }
 
 }
     
