@@ -1,4 +1,5 @@
 using Dominio;
+using Dominio.Dummies;
 using Dominio.Excepciones;
 
 namespace Tests
@@ -180,7 +181,7 @@ namespace Tests
             GestorUsuarios gestor = new GestorUsuarios();
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(usuario1);
-            Usuario usuario2 = gestor.ObtenerUsuarioPorId(usuario1.Id);
+            Usuario usuario2 = gestor.ObtenerUsuario(usuario1.Id);
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsTrue(sonIguales);
         }

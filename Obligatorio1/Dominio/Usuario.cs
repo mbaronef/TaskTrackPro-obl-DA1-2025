@@ -128,4 +128,8 @@ public class Usuario
         }
         Notificaciones.RemoveAll(n => n.Id == idNotificacion);
     }
+    public override bool Equals(object? obj)
+    {
+        return obj is Usuario usuario && usuario.Id == Id;
+    }
 }
