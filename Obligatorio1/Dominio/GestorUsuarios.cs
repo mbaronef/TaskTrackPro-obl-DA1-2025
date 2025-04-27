@@ -26,4 +26,10 @@ public class GestorUsuarios
         return Usuarios.Find(u => u.Id == idUsuario);
     }
 
+    public void AgregarAdministradorSistema(int idUsuario)
+    {
+        Usuario usuario = Usuarios.Find(u => u.Id == idUsuario);
+        usuario.EsAdministradorSistema = true;
+    }
+
 }
