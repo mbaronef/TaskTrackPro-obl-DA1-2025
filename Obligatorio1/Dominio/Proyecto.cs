@@ -32,21 +32,15 @@ public class Proyecto
     public Proyecto(string nombre, string descripcion, Usuario administrador, List<Usuario> miembros)
     {
         ValidarStringNoVacioNiNull(nombre, "El nombre del proyecto no puede estar vacío o null.");
-
         ValidarStringNoVacioNiNull(descripcion, "La descripción del proyecto no puede estar vacía o null.");
-
         ValidarObjetoNoNull(administrador, "El proyecto debe tener un administrador.");
-
         ValidarObjetoNoNull(miembros,"La lista de miembros no puede ser null.");
-
         if (!miembros.Contains(administrador))
         {
             miembros.Add(administrador); // ASEGURA QUE EL ADMIN SIEMPRE ESTE EN MIEMBROS DEL PROYECTO
         }
-        
-        if (descripcion.Length > 400)
+        if (descripcion.Length > MaximoCaracteresDescripcion)
             throw new ExcepcionDominio("La descripción del proyecto no puede superar los 400 caracteres.");
-
         Nombre = nombre;
         Descripcion = descripcion;
         Tareas = new List<Tarea>();
@@ -93,52 +87,43 @@ public class Proyecto
     public void AsignarMiembro(Usuario usuario)
     {
         ValidarObjetoNoNull(usuario,"No se puede agregar un miembro null.");
-        
         if (Miembros.Contains(usuario))
             throw new ExcepcionDominio("El miembro ya pertenece al proyecto.");
-        
         Miembros.Add(usuario);
     }
 
     public void EliminarMiembro(int idUsuario)
     {
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsuario);
-
         ValidarObjetoNoNull(usuarioAEliminar,"El usuario no es miembro del proyecto.");
-
         if (EsAdministrador(usuarioAEliminar))
             throw new ExcepcionDominio("No se puede eliminar al administrador actual. Asigne un nuevo administrador antes.");
-
         Miembros.Remove(usuarioAEliminar);
     }
 
     public bool EsAdministrador(Usuario usuario)
     {
-        return Administrador == usuario;
+        return Administrador.Id == usuario.Id;
     }
     
     public void ModificarFechaInicio(DateTime nuevaFecha)
     {
         if (nuevaFecha < DateTime.Now.Date)
             throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
-
         FechaInicio = nuevaFecha;
     }
 
     public void ModificarNombre(string nombreNuevo)
     {
         ValidarStringNoVacioNiNull(nombreNuevo,"El nombre no puede estar vacío");
-        
         Nombre = nombreNuevo;
     }
 
     public void ModificarDescripcion(string nuevaDescripcion)
     {
         ValidarStringNoVacioNiNull(nuevaDescripcion,"La descripción no puede estar vacía");
-
         if (nuevaDescripcion.Length > MaximoCaracteresDescripcion)
             throw new ExcepcionDominio($"La descripción no puede superar los {MaximoCaracteresDescripcion} caracteres");
-
         Descripcion = nuevaDescripcion;
     }
     
@@ -152,39 +137,26 @@ public class Proyecto
                 return;
             }
         }
-
         throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
     }
-
-    public List<Usuario> DarListaMiembros()
-    {
-        return Miembros;
-    }
-
-    public List<Tarea> DarListaTareas()
-    {
-        return Tareas;
-    }
-    
     public void NotificarMiembros(string mensaje)
     {
         foreach (Usuario usuario in Miembros)
         {
             Notificacion nuevaNotificacion = new Notificacion(mensaje);
-            usuario.AgregarNotificacion(nuevaNotificacion);
+            usuario.RecibirNotificacion(nuevaNotificacion);
         }
     }
 
     public void NotificarAdministrador(string mensaje)
     {
         Notificacion notificacion = new Notificacion(mensaje);
-        Administrador.AgregarNotificacion(notificacion);
+        Administrador.RecibirNotificacion(notificacion);
     }
     
     public List<Recurso> DarRecursosFaltantes()
     {
         List<Recurso> faltantes = new List<Recurso>();
-
         foreach (Tarea tarea in Tareas)
         {
             foreach (Recurso recurso in tarea.RecursosNecesarios)
@@ -195,7 +167,6 @@ public class Proyecto
                 }
             }
         }
-
         return faltantes;
     }
 }

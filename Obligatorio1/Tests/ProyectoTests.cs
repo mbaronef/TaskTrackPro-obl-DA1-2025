@@ -440,7 +440,7 @@ namespace Tests
             
             proyecto.AsignarMiembro(miembro);
 
-            List<Usuario> lista = proyecto.DarListaMiembros();
+            List<Usuario> lista = proyecto.Miembros;
 
             Assert.AreEqual(2, lista.Count);
             Assert.IsTrue(lista.Contains(admin));
@@ -456,14 +456,11 @@ namespace Tests
             proyecto = new Proyecto("Proyecto", "Descripción",  admin, miembros);
             
             proyecto.AgregarTarea(tarea);
-            List<Tarea> lista = proyecto.DarListaTareas();
+            List<Tarea> lista = proyecto.Tareas;
 
             Assert.AreEqual(1, lista.Count);
             Assert.IsTrue(lista.Contains(tarea));
         }
-        
-        //NOTIFICACIONES (habria que validar si el mensaje es null???)
-        //(GESTOR: se encarga de cuando haya una modificacion mandar una notificacion)
         
         //notificarMiembros
         [TestMethod]
@@ -515,6 +512,7 @@ namespace Tests
         // falta:
         // REFACTOR (?)
         // validaciones de recursos(?? Esperar a que definamos bien recurso)
+        //(GESTOR: se encarga de cuando haya una modificacion mandar una notificacion)
         
         // metodos faltantes:
         // calcularRutaCritica()
