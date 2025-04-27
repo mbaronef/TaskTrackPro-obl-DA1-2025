@@ -296,6 +296,18 @@ public class TareaTests
 
         Assert.IsFalse(tarea.UsuariosAsignados.Any(t => t.Id == 1));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void EliminarUsuario_LanzaExcepcionSiUsuarioNoExiste()
+    {
+        Usuario usu = new Usuario();
+        usu.Id = 1;
+            
+        Tarea tarea = new Tarea("tarea", "descr", 87);
+        tarea.AsignarUsuario(usu);
+        tarea.EliminarUsuario(3);
+    }
 
 }
     
