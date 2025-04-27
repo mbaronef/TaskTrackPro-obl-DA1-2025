@@ -16,7 +16,12 @@ public class GestorUsuarios
         usuario.Id = _cantidadUsuarios;
         Usuarios.Add(usuario);
     }
-    
+
+    public void EliminarUsuario(int id)
+    {
+        Usuarios.RemoveAll(u => u.Id == id);
+    }
+
     public Usuario ObtenerUsuario(int idUsuario)
     {
         return Usuarios.Find(u => u.Id == idUsuario);
