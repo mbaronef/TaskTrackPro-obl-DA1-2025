@@ -12,7 +12,9 @@ public class Notificacion
 
     public Notificacion(string mensaje)
     {
-        if()
+        if (string.IsNullOrWhiteSpace(mensaje))
+            throw new ExcepcionDominio("El mensaje de la notificación no puede estar vacío o null.");
+
         Mensaje = mensaje;
         Fecha = DateTime.Today;
         Id = ++_cantidadNotificaciones;
