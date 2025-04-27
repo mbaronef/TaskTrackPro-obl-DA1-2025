@@ -168,5 +168,13 @@ namespace Tests
             usuario.BorrarNotificacion(id);
             Assert.AreEqual(0, usuario.Notificaciones.Count);
         }
+
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void DaErrorSiElUsuarioEsMenorDeEdad()
+        {
+            DateTime fechaNacimiento = new DateTime(2020, 1, 6);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "6onTrase}a3");
+        }
     }
 }
