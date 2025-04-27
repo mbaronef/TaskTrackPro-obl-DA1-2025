@@ -37,6 +37,12 @@ public class Tarea
             throw new ExcepcionDominio("La fecha de inicio debe ser igual o posterior a la fecha de hoy.");
         }
     }
+    
+    private void ValidarObjetoNoNull(object objeto, string mensajeError)
+    {
+        if (objeto is null)
+            throw new ExcepcionDominio(mensajeError);
+    }
 
     public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
     {
@@ -99,6 +105,7 @@ public class Tarea
     
     public void AsignarUsuario(Usuario usuario)
     {
+        ValidarObjetoNoNull(usuario,"No se puede asignar una tarea a un usuario null.");
         UsuariosAsignados.Add(usuario);
     }
 
