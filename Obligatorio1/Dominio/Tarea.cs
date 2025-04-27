@@ -28,12 +28,21 @@ public class Tarea
         if (valor <= 0)
             throw new ExcepcionDominio(mensajeError);
     }
+    
+    private void ValidarFechaInicio(DateTime? fechaInicio)
+    {
+        if (fechaInicio.HasValue && fechaInicio.Value.Date < DateTime.Today)
+        {
+            throw new ExcepcionDominio("La fecha de inicio debe ser igual o posterior a la fecha de hoy.");
+        }
+    }
 
     public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
     {
         ValidarStringNoVacioNiNull(unTitulo, "El título de la tarea no puede estar vacío o ser nulo.");
         ValidarIntNoNegativoNiCero(unaDuracionEnDias, "La duración no puede ser un número negativo.");
         ValidarStringNoVacioNiNull(unDescripcion, "La descrición no puede estar vacía ni nula.");
+        ValidarFechaInicio(unaFechaInicioMasTemprana);
         Titulo = unTitulo;
         Descripcion = unDescripcion;
         DuracionEnDias = unaDuracionEnDias;
