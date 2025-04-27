@@ -67,4 +67,15 @@ public class GestorUsuariosTests
         Usuario busqueda = gestorUsuarios.ObtenerUsuario(1);
         Assert.AreEqual(usuario1, busqueda);
     }
+
+    [TestMethod]
+    public void GestorAsignaAdministradorDeSistema()
+    {
+        GestorUsuarios gestorUsuarios = new GestorUsuarios();
+        Usuario usuario = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3");
+        gestorUsuarios.AgregarUsuario(usuario); // usuario con id 1
+
+        gestorUsuarios.AgregarAdministradorSistema(1);
+        Assert.IsTrue(usuario.EsAdministradorSistema);
+    }
 }
