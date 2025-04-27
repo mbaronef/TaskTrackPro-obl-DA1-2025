@@ -163,5 +163,15 @@ namespace Tests
             usuario.BorrarNotificacion(id);
             Assert.AreEqual(0, usuario.Notificaciones.Count);
         }
+        
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void BorrarNotificacionInexistenteDaError()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Notificacion notificacion = new Notificacion("un mensaje de notificación");
+            usuario.RecibirNotificacion(notificacion); // se agrega notificación con ID 1
+            usuario.BorrarNotificacion(2); 
+        }
     }
 }
