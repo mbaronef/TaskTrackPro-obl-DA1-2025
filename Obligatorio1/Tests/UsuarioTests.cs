@@ -185,5 +185,17 @@ namespace Tests
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsTrue(sonIguales);
         }
+
+        [TestMethod]
+        public void EqualsRetornaFalseSiLosIdsNoSonIguales()
+        {
+            GestorUsuarios gestor = new GestorUsuarios();
+            Usuario usuario1 = CrearUsuarioValido();
+            gestor.AgregarUsuario(usuario1);
+            Usuario usuario2 = CrearUsuarioValido();
+            gestor.AgregarUsuario(usuario1);
+            bool sonIguales = usuario1.Equals(usuario2);
+            Assert.IsFalse(sonIguales);
+        }
     }
 }
