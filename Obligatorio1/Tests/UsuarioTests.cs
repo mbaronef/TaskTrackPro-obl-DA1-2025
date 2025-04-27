@@ -193,7 +193,7 @@ namespace Tests
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(usuario1);
             Usuario usuario2 = CrearUsuarioValido();
-            gestor.AgregarUsuario(usuario1);
+            gestor.AgregarUsuario(usuario2);
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsFalse(sonIguales);
         }
