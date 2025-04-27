@@ -106,6 +106,8 @@ public class Tarea
     public void AsignarUsuario(Usuario usuario)
     {
         ValidarObjetoNoNull(usuario,"No se puede asignar una tarea a un usuario null.");
+        if(UsuariosAsignados.Contains(usuario))
+            throw new ExcepcionDominio("El usuario ya fue agregado a la tarea.");
         UsuariosAsignados.Add(usuario);
     }
 
