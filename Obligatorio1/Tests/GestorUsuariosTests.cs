@@ -41,6 +41,19 @@ public class GestorUsuariosTests
         Assert.AreEqual(2, usuario2.Id);
     }
 
+    [TestMethod]
+    public void GestorDevuelveUnUsuarioPorId()
+    {
+        GestorUsuario gestorUsuarios = new GestorUsuario();
+        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        gestorUsuarios.AgregarUsuario(usuario1);
+        Usuario usuario2 = new Usuario("Mateo", "Perez", new DateTime(2000, 9, 1), "unemail@gmail.com", "Contrase#a3"); 
+        gestorUsuarios.AgregarUsuario(usuario2);
+        
+        Usuario busqueda = gestorUsuarios.ObtenerUsuario(1);
+        Assert.AreEqual(usuario1, busqueda);
+
+    }
 
 
 }
