@@ -214,5 +214,19 @@ public class GestorUsuariosTests
 
         _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
     }
+
+    [TestMethod]
+    public void SeAutogeneraUnaContraseñaCorrectamente()
+    {
+        Usuario usuarioSolicitante = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarAdministradorSistema(usuarioSolicitante.Id);
+        Usuario usuarioObjetivo = new Usuario("José", "Perez", new DateTime(1999, 9, 1), "unemail@gmail.com", "Contrase#a9");
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        
+        string nuevaContrasena = _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
+        Assert.IsFalse(usuarioObjetivo.Autenticar("Contrase#a9"));
+        Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
+    }
 }
 
