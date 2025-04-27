@@ -172,5 +172,18 @@ public class GestorUsuariosTests
         
         _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
+
+    [TestMethod]
+    public void SeReiniciaLaContraseñaDeUnUsuarioCorrectamente() //puede adminSistema y adminProyecto
+    {
+        Usuario usuarioSolicitante = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarAdministradorSistema(usuarioSolicitante.Id);
+        Usuario usuarioObjetivo = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+
+        _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
+        Assert.IsTrue(usuarioObjetivo.Autenticar("TaskTrackPro@2025"));
+    }
 }
 
