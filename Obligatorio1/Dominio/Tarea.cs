@@ -8,7 +8,7 @@ public class Tarea
     public string Descripcion { get; set; }
     public int DuracionEnDias { get; set; }
     public DateTime? FechaInicioMasTemprana { get; set; } //nullable
-    // public DateTime FechaFinMasTemprana;
+    public DateTime FechaFinMasTemprana { get; set; } = DateTime.MinValue;
     // public DateTime FechaDeEjecucion;
     public EstadoTarea Estado { get; set; } = EstadoTarea.Pendiente;
     public float Holgura {get; set;}
