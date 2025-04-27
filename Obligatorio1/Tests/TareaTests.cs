@@ -129,6 +129,16 @@ public class TareaTests
         Tarea tarea = new Tarea("Titulo", "Descripción válida", 5, fechaInicioAnterior);
     }
     
+    [TestMethod]
+    public void CambiarEstadoDePendienteAFinalizada()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        
+        tarea.CambiarEstado(EstadoTarea.Completada);
+        
+        Assert.AreEqual(EstadoTarea.Completada, tarea.Estado);
+    }
+
 }
     
 
