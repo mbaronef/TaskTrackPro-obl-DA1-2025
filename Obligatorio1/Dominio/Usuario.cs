@@ -19,14 +19,11 @@ public class Usuario
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail,
         string unaContrasena)
     {
+        ValidarEdad(unaFechaNacimiento);
         ValidarEmail(unEmail);
         SetContrasenaEncriptada(unaContrasena);
         Nombre = unNombre;
         Apellido = unApellido;
-        if (unaFechaNacimiento.AddYears(18) > DateTime.Today)
-        {
-            throw new  ExcepcionDominio("El usuario debe ser mayor de edad (18 años o más)");
-        }
         FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
     }
@@ -94,6 +91,14 @@ public class Usuario
         {
             throw new ExcepcionDominio(
                 "La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).");
+        }
+    }
+
+    private void ValidarEdad(DateTime fechaNacimiento)
+    {
+        if (fechaNacimiento.AddYears(18) > DateTime.Today)
+        {
+            throw new  ExcepcionDominio("El usuario debe ser mayor de edad (18 años o más)");
         }
     }
 
