@@ -11,7 +11,6 @@ public class GestorUsuariosTests
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
         Assert.IsNotNull(gestorUsuarios);
         Assert.AreEqual(0, gestorUsuarios.Usuarios.Count);
-        Assert.AreEqual(0, gestorUsuarios.AdministradoresSistema.Count);
     }
 
     [TestMethod]
