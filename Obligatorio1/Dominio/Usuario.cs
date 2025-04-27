@@ -3,22 +3,21 @@ using Dominio.Excepciones;
 
 namespace Dominio;
 
-using System.Text;
-
 public class Usuario
 {
     private string _contrasena;
-    
+
     public int Id { get; set; }
     public string Nombre { get; set; }
     public string Apellido { get; set; }
     public DateTime FechaNacimiento { get; set; }
     public string Email { get; set; }
     public List<Notificacion> Notificaciones { get; private set; } = new List<Notificacion>();
-    public bool EsAdministradorProyecto { get; set; } =  false;
-    
+    public bool EsAdministradorProyecto { get; set; } = false;
 
-    public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
+
+    public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail,
+        string unaContrasena)
     {
         ValidarEmail(unEmail);
         SetContrasenaEncriptada(unaContrasena);
@@ -27,15 +26,18 @@ public class Usuario
         FechaNacimiento = unaFechaNacimiento;
         Email = unEmail;
     }
+
     private void SetContrasenaEncriptada(string contrasena)
-    { 
+    {
         ValidarContrasena(contrasena);
         _contrasena = Usuario.EncriptarContrasena(contrasena);
     }
+
     public static string EncriptarContrasena(string contrasena)
-    { 
+    {
         return BCrypt.Net.BCrypt.HashPassword(contrasena);
     }
+
     public bool Autenticar(string contrasenaIngresada)
     {
         return BCrypt.Net.BCrypt.Verify(contrasenaIngresada, _contrasena);
@@ -78,16 +80,19 @@ public class Usuario
     {
         if (!contrasena.Any(char.IsDigit))
         {
-            throw new ExcepcionDominio("La contraseña debe incluir al menos un número (0-9).");
+            throw new ExcepcionDominio("La contraseña debe incluir al menos una número (0-9).");
+        }
     }
 
     private void ValidarAlgunCaracterEspecialContrasena(string contrasena)
     {
         if (!Regex.IsMatch(contrasena, "[^a-zA-Z0-9]"))
         {
-            throw new ExcepcionDominio("La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).");
+            throw new ExcepcionDominio(
+                "La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).");
         }
     }
+
     private void ValidarEmail(string email)
     {
         if (!Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
