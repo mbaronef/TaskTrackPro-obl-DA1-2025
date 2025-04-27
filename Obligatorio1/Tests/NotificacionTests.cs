@@ -1,6 +1,8 @@
 namespace Tests;
 
 using Dominio;
+using Dominio.Excepciones;
+
 
 [TestClass]
 [DoNotParallelize]
@@ -42,5 +44,12 @@ public class NotificacionTests
         Assert.AreEqual(2,segundaNotificacion.Id);
         Notificacion terceraNotificacion = new Notificacion("Mensaje de una tercera notificación");
         Assert.AreEqual(3,terceraNotificacion.Id);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_LanzaExcepcionSiMensajeEsNull()
+    {
+        Notificacion notificacion = new Notificacion(null);
     }
 }
