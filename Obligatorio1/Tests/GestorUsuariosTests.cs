@@ -104,7 +104,7 @@ public class GestorUsuariosTests
         gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
         gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
         
-        Assert.IsTrue(nuevoAdminProyecto.EsAdministradorProyecto());
+        Assert.IsTrue(nuevoAdminProyecto.EsAdministradorProyecto);
     }
 
     [ExpectedException(typeof(ExcepcionDominio))]

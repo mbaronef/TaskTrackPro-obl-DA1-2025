@@ -44,8 +44,7 @@ namespace Tests
         public void UnNuevoUsuarioNoAdministraProyectosPorDefecto()
         {
             Usuario usuario = CrearUsuarioValido();
-            Assert.AreEqual(0, usuario.CantidadProyectosAdministra);
-            Assert.IsFalse(usuario.EsAdministradorProyecto());
+            Assert.IsFalse(usuario.EsAdministradorProyecto);
         }
 
         [TestMethod]

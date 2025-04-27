@@ -46,7 +46,7 @@ public class GestorUsuarios
         {
             throw new ExcepcionDominio("No tiene los permisos necesarios para asignar administradores de proyectos.");
         }
-        nuevoAdministradorProyecto.CantidadProyectosAdministra++;
+        nuevoAdministradorProyecto.EsAdministradorProyecto = true;
     }
 
 }
