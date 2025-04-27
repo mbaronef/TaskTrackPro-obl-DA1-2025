@@ -68,5 +68,10 @@ public class Tarea
         return Holgura == 0;
     }
     
+    public bool EsMiembro(Usuario usuario)
+    {
+        return UsuariosAsignados.Contains(usuario);
+    }
+    
 
 }
