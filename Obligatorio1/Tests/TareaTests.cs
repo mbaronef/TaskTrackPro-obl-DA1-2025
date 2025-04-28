@@ -154,6 +154,16 @@ public class TareaTests
     }
     
     [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void CambiarEstadoNoPermiteVolverAEnProcesoDesdeCompletada()
+    {
+        var tarea = new Tarea("Título", "Descripción", 5);
+        
+        tarea.CambiarEstado(EstadoTarea.Completada);
+        tarea.CambiarEstado(EstadoTarea.EnProceso); 
+    }
+    
+    [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
     {
         Tarea tarea = new Tarea("Tarea Crítica", "Descripción", 5);
@@ -485,7 +495,6 @@ public class TareaTests
     
     
     //TO DO:
-    // Tests de modificar duracionEnDias
     // Tests de cambiar de un estado a otro válidos
     // Ver si faltan tests de holgura
     // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
