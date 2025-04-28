@@ -148,6 +148,14 @@ namespace Tests
         }
 
         [TestMethod]
+        public void SeCambiaEmailCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            usuario.CambiarEmail("otroEmail@fi365.ort.edu.uy");
+            Assert.AreEqual("otroEmail@fi365.ort.edu.uy", usuario.Email);
+        }
+
+        [TestMethod]
         public void SeRecibeUnaNotificacionCorrectamente()
         {
             Usuario usuario = CrearUsuarioValido();
