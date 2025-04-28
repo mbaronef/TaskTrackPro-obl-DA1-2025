@@ -127,6 +127,7 @@ public class Tarea
     
     public void AgregarRecurso(Recurso recurso)
     {
+        ValidarObjetoNoNull(recurso,"No se puede agregar un recurso null.");
         RecursosNecesarios.Add(recurso);
     }
 
