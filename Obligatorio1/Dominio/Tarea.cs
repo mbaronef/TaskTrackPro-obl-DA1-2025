@@ -154,6 +154,7 @@ public class Tarea
     
     public void ModificarDescripcion(string nuevaDesc)
     {
+        ValidarStringNoVacioNiNull(nuevaDesc,"La descripción no puede estar vacía");
         Descripcion = nuevaDesc;
     }
 
