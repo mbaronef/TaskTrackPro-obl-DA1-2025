@@ -173,5 +173,10 @@ public class Tarea
         FechaDeEjecucion = fechaNueva;
     }
     
+    public void ModificarDuracion(int nuevaDuracion)
+    {
+        DuracionEnDias = nuevaDuracion;
+    }
+    
 
 }
