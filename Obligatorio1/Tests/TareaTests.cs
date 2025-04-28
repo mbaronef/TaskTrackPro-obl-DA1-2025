@@ -352,6 +352,18 @@ public class TareaTests
 
         Assert.IsFalse(tarea.RecursosNecesarios.Any(t => t.Id == 1));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void EliminarRecurso_LanzaExcepcionSiRecursoNoExiste()
+    {
+        Recurso rec = new Recurso();
+        rec.Id = 1;
+            
+        Tarea tarea = new Tarea("tarea", "descr", 87);
+        tarea.AgregarRecurso(rec);
+        tarea.EliminarRecurso(3);
+    }
 
 }
     
