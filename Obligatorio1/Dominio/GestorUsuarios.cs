@@ -120,7 +120,6 @@ public class GestorUsuarios
         int indice = ObtenerNumeroAleatorio(0, caracteres.Length - 1, rng);
         return caracteres[indice];
     }
-
     private static string MezclarCaracteres(string input, RandomNumberGenerator rng)
     {
         char[] array = input.ToCharArray(); // Convierte la cadena en un array de caracteres para poder recorrerla char a char
@@ -130,5 +129,15 @@ public class GestorUsuarios
             (array[i], array[j]) = (array[j], array[i]);
         }
         return new string(array); // Convierte el array de nuevo a una cadena
+    }
+
+    public Usuario LogIn(string email, string contrasena)
+    {
+        Usuario usuario = Usuarios.Find(u => u.Email.Equals(email));
+        if (usuario.Autenticar(contrasena))
+        {
+            return usuario;
+        } 
+        return null;
     }
 }

@@ -264,7 +264,7 @@ public class GestorUsuariosTests
     {
         Usuario usuario =  CrearUsuario1();
         _gestorUsuarios.AgregarUsuario(usuario);
-        Usuario obtenido = _gestorUsuarios.Login(usuario.Email, "Contrase#a3");
+        Usuario obtenido = _gestorUsuarios.LogIn(usuario.Email, "Contrase#a3");
         Assert.AreEqual(usuario,obtenido);
     }
 }
