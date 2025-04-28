@@ -184,6 +184,7 @@ public class Tarea
         if (fechaInicioNueva < DateTime.Now.Date)
             throw new ExcepcionDominio("La fecha de inicio más temprana no puede ser anterior a hoy.");
         FechaInicioMasTemprana = fechaInicioNueva;
+        CalcularFechaFinMasTemprana();
     }
     
     public void ModificarFechaDeEjecucion(DateTime fechaNueva)
