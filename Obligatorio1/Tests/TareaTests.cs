@@ -602,9 +602,7 @@ public class TareaTests
 
     
     //TO DO:
-    // Ver si faltan tests de holgura
     // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
-    // Ver tema fecha de finalizacion mas temprana
     
 }
     
