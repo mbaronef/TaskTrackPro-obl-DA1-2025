@@ -168,6 +168,8 @@ public class Tarea
     
     public void ModificarFechaDeEjecucion(DateTime fechaNueva)
     {
+        if (fechaNueva < DateTime.Now.Date)
+            throw new ExcepcionDominio("La fecha de ejecucuión no puede ser anterior a hoy.");
         FechaDeEjecucion = fechaNueva;
     }
     
