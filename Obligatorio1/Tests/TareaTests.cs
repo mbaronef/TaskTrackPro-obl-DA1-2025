@@ -463,10 +463,18 @@ public class TareaTests
         DateTime fechaPasada = DateTime.Now.AddDays(-1);
 
         tarea.ModificarFechaDeEjecucion(fechaPasada);
-    } 
+    }
+
+    [TestMethod]
+    public void ModificarDuracion_ActualizaLaDuracionOK()
+    {
+        Tarea tarea = new Tarea("t", "Desc",  2);
+        tarea.ModificarDuracion(4);
+        Assert.AreEqual(4, tarea.DuracionEnDias);
+    }
+    
     
     //TO DO:
-    // Tests de modificar fechas
     // Tests de modificar duracionEnDias
     // Tests de cambiar de un estado a otro válidos
     // Ver si faltan tests de holgura
