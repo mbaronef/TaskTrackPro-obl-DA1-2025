@@ -228,5 +228,17 @@ public class GestorUsuariosTests
         Assert.IsFalse(usuarioObjetivo.Autenticar("Contrase#a9"));
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
+
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void NoAdminDeSistemaNiDeProyectoPuedeAutogenerarContrasena()
+    {
+        Usuario usuarioSolicitante = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        Usuario usuarioObjetivo = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+
+        _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
+    }
 }
 
