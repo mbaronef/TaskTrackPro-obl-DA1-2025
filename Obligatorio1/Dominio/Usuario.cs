@@ -23,6 +23,10 @@ public class Usuario
         ValidarEdad(unaFechaNacimiento);
         ValidarEmail(unEmail);
         SetContrasenaEncriptada(unaContrasena);
+        if (string.IsNullOrEmpty(unNombre))
+        {
+         throw new ExcepcionDominio("El nombre no puede estar vacio");   
+        }
         Nombre = unNombre;
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;

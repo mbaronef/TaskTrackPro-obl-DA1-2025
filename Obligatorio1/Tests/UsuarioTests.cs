@@ -31,7 +31,7 @@ namespace Tests
         {
             Usuario usuario = new Usuario("", "Perez", _fechaNacimientoValida,  "unemail@gmail.com", "Contrase#a3");
         }
-
+        
         [TestMethod]
         public void UsuarioSeCreaConListaNotificacionesVacia()
         {
