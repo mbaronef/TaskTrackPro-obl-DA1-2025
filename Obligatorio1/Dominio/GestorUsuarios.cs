@@ -136,6 +136,10 @@ public class GestorUsuarios
 
     public void ModificarContrasena(Usuario solicitante, Usuario usuarioObjetivo, string nuevaContrasena)
     {
+        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
+        {
+            throw new ExcepcionDominio("No tiene los permisos necesarios para modificar la contraseña del usuario.");
+        }
         usuarioObjetivo.CambiarContrasena(nuevaContrasena);
     }
 
