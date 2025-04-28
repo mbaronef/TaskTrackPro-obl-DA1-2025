@@ -6,7 +6,7 @@ namespace Tests
 
 {
     [TestClass]
-    public class GestorUsuariosTests
+    public class GestorProyectosTests
     {
         //crearProyecto
         [TestMethod]
