@@ -587,6 +587,18 @@ public class TareaTests
         
         Assert.AreEqual(fechaInicio.AddDays(5), tarea.FechaFinMasTemprana);
     }
+    
+    [TestMethod]
+    public void ModificarFechaInicioMasTempranaActualizaFechaFinMasTemprana()
+    {
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Tarea tarea = new Tarea("Titulo", "Descripcion", 3, fechaInicio);
+        
+        DateTime nuevaFechaInicio = fechaInicio.AddDays(2);
+        tarea.ModificarFechaInicioMasTemprana(nuevaFechaInicio);
+        
+        Assert.AreEqual(nuevaFechaInicio.AddDays(3), tarea.FechaFinMasTemprana);
+    }
 
     
     //TO DO:
