@@ -334,6 +334,21 @@ public class GestorUsuariosTests
         string nuevaContrasena = "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuarioSolicitante, usuarioObjetivo, nuevaContrasena);
     }
+
+    [TestMethod]
+    public void SeNotificaReinicioDeContrasena()
+    {
+        Usuario usuarioSolicitante = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarAdministradorSistema(usuarioSolicitante.Id);
+        Usuario usuarioObjetivo = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+
+        _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
+        Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
+        Assert.Equals("Se reinició su contraseña. La nueva contraseña es TaskTrackPro@2025", ultimaNotificacion.Mensaje);
+        Assert.Equals(DateTime.Today, ultimaNotificacion.Fecha);
+    }
     
     [TestMethod]
     public void LoginCorrecto()
