@@ -77,6 +77,11 @@ public class GestorUsuarios
 
     public string AutogenerarContrasena(Usuario administrador, Usuario usuarioObjetivo)
     {
+        if (!administrador.EsAdministradorSistema && !administrador.EsAdministradorProyecto)
+        {
+            throw new ExcepcionDominio("No tiene los permisos necesarios para autogenerar la contraseña del usuario.");
+        }
+
         string minusculas = "abcdefghijklmnopqrstuvwxyz";
         string mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         string numeros = "1234567890";
@@ -118,4 +123,5 @@ public class GestorUsuarios
 
 
     // refactor :private string GenerarContrasenaValida() y usar RandomNumberGenerator
+    // refactor: private void validar solicitante(Usuario usuario, string mensaje)
 }
