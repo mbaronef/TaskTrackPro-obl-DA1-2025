@@ -308,6 +308,19 @@ public class TareaTests
         tarea.AsignarUsuario(usu);
         tarea.EliminarUsuario(3);
     }
+    
+    [TestMethod]
+    public void AgregarRecurso_AgregarRecursoALista()
+    {
+        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+
+        Recurso recurso = new Recurso();
+            
+        tarea.AgregarRecurso(recurso); 
+            
+        Assert.IsTrue(tarea.RecursosNecesarios.Contains(recurso));
+        Assert.AreEqual(1, tarea.RecursosNecesarios.Count);
+    }
 
 }
     
