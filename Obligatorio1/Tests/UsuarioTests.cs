@@ -155,6 +155,14 @@ namespace Tests
             Assert.AreEqual("otroEmail@fi365.ort.edu.uy", usuario.Email);
         }
 
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void DaErrorSiSeCambiaEmailInvalido()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            usuario.CambiarEmail("email");
+        }
+
         [TestMethod]
         public void SeRecibeUnaNotificacionCorrectamente()
         {
