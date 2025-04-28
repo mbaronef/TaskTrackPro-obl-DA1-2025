@@ -280,12 +280,31 @@ public class GestorUsuariosTests
     }
 
     [TestMethod]
-    public void PuedeModificarContraseñaDeUsuarioCorrectamente()
+    public void AdminSistemaPuedeModificarContraseñaDeUsuarioCorrectamente()
     {
         Usuario usuarioSolicitante = CrearUsuario1();
         _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
         _gestorUsuarios.AgregarAdministradorSistema(usuarioSolicitante.Id);
         Usuario usuarioObjetivo = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+
+        string nuevaContrasena = "NuevaContraseña/1";
+        _gestorUsuarios.ModificarContrasena(usuarioSolicitante,usuarioObjetivo, nuevaContrasena);
+        Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
+    }
+    
+    [TestMethod]
+    public void AdminProyectoPuedeModificarContraseñaDeUsuarioCorrectamente()
+    {
+        Usuario administrador = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(administrador);
+        _gestorUsuarios.AgregarAdministradorSistema(administrador.Id);
+        Usuario usuarioSolicitante = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AsignarAdministradorProyecto(administrador, usuarioSolicitante);
+
+        Usuario usuarioObjetivo =
+            new Usuario("José", "Perez", new DateTime(1999, 9, 1), "unemail@gmail.com", "Contrase#a9");
         _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
 
         string nuevaContrasena = "NuevaContraseña/1";
