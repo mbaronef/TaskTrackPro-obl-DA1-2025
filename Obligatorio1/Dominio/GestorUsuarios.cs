@@ -69,9 +69,9 @@ public class GestorUsuarios
         administradorProyecto.EsAdministradorProyecto = false;
     }
 
-    public void ReiniciarContrasena(Usuario administrador, Usuario usuarioObjetivo)
+    public void ReiniciarContrasena(Usuario solicitante, Usuario usuarioObjetivo)
     {
-        if (!administrador.EsAdministradorSistema && !administrador.EsAdministradorProyecto && !administrador.Equals(usuarioObjetivo))
+        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto && !solicitante.Equals(usuarioObjetivo))
         {
             throw new ExcepcionDominio("No tiene los permisos necesarios para reiniciar la contraseña del usuario.");
         }
@@ -85,8 +85,8 @@ public class GestorUsuarios
             throw new ExcepcionDominio("No tiene los permisos necesarios para autogenerar la contraseña del usuario.");
         }
 
-        string minusculas = "abcdefghijklmnopqrstuvwxyz";
-        string mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        string minusculas = "abcdefghijklmnñopqrstuvwxyz";
+        string mayusculas = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
         string numeros = "1234567890";
         string simbolos = "!@#$%^&*()-_=+<>?{}[].,:;¡¿?'/~|°";
         string todosLosCaracteres = minusculas + mayusculas + numeros + simbolos;
