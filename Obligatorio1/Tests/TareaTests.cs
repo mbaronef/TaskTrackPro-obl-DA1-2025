@@ -330,6 +330,16 @@ public class TareaTests
         Recurso recurso = null;
         tarea.AgregarRecurso(recurso); 
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AgregarRecurso_LanzarExcepcionSiRecursoYaEstaEnRecursosNecesarios()
+    {
+        Recurso recurso = new Recurso(); 
+        Tarea tarea = new Tarea("tarea", "descr", 87);
+        tarea.AgregarRecurso(recurso);
+        tarea.AgregarRecurso(recurso);
+    }
 
 }
     
