@@ -148,6 +148,7 @@ public class Tarea
     
     public void ModificarTitulo(string tituloNuevo)
     {
+        ValidarStringNoVacioNiNull(tituloNuevo,"El titulo no puede estar vacío");
         Titulo = tituloNuevo;
     }
     
