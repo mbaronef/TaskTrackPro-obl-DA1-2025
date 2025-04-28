@@ -25,6 +25,13 @@ namespace Tests
             Assert.IsTrue(usuario.Autenticar("Contrase#a3"));
         }
 
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void ConstructorValidaNombreNoVacio()
+        {
+            Usuario usuario = new Usuario("", "Perez", _fechaNacimientoValida,  "unemail@gmail.com", "Contrase#a3");
+        }
+
         [TestMethod]
         public void UsuarioSeCreaConListaNotificacionesVacia()
         {
