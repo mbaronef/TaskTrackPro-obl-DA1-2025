@@ -340,6 +340,18 @@ public class TareaTests
         tarea.AgregarRecurso(recurso);
         tarea.AgregarRecurso(recurso);
     }
+    
+    [TestMethod]
+    public void EliminarRecurso_EliminarRecursoDeNecesarios()
+    {
+        Recurso recurso = new Recurso();
+        recurso.Id = 1;
+        Tarea tarea = new Tarea("tarea", "descr", 87);
+        tarea.AgregarRecurso(recurso);
+        tarea.EliminarRecurso(1);
+
+        Assert.IsFalse(tarea.RecursosNecesarios.Any(t => t.Id == 1));
+    }
 
 }
     
