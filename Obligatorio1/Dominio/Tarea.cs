@@ -73,6 +73,10 @@ public class Tarea
         {
             throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a pendiente.");
         }
+        if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.EnProceso)
+        {
+            throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a en proceso.");
+        }
         Estado = nuevoEstado;
     }
     
