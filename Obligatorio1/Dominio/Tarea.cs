@@ -132,5 +132,17 @@ public class Tarea
             throw new ExcepcionDominio("El recurso ya fue agregado.");
         RecursosNecesarios.Add(recurso);
     }
+    
+    private Recurso BuscarRecursoPorId(int id)
+    {
+        return RecursosNecesarios.FirstOrDefault(u => u.Id == id);
+    }
+    public void EliminarRecurso(int idRec)
+    {
+        Recurso recursoAEliminar = BuscarRecursoPorId(idRec);
+
+        RecursosNecesarios.Remove(recursoAEliminar);
+    }
+    
 
 }
