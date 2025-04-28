@@ -258,5 +258,14 @@ public class GestorUsuariosTests
 
         _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
     }
+
+    [TestMethod]
+    public void LoginCorrecto()
+    {
+        Usuario usuario =  CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuario);
+        Usuario obtenido = _gestorUsuarios.Login(usuario.Email, "Contrase#a3");
+        Assert.AreEqual(usuario,obtenido);
+    }
 }
 
