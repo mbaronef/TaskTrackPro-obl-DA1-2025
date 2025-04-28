@@ -133,11 +133,15 @@ public class GestorUsuarios
 
     public Usuario LogIn(string email, string contrasena)
     {
-        Usuario usuario = Usuarios.Find(u => u.Email.Equals(email));
-        if (usuario.Autenticar(contrasena))
+        if (!Usuarios.Any(u => u.Email == email))
         {
-            return usuario;
+            throw new ExcepcionDominio("Correo electrónico no registrado.");
         }
-        throw new ExcepcionDominio("La contraseña ingresada es incorrecta.");
+        Usuario usuario = Usuarios.Find(u => u.Email.Equals(email));
+        if (!usuario.Autenticar(contrasena))
+        {
+            throw new ExcepcionDominio("La contraseña ingresada es incorrecta.");
+        }
+        return usuario;
     }
 }
