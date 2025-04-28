@@ -231,15 +231,17 @@ namespace Tests
         }
 
         [TestMethod]
-        public void SeBorraUnaNotificacionCorrectamente()
+        public void SeBorranNotificacionesCorrectamente()
         {
             Usuario usuario = CrearUsuarioValido();
-            Notificacion notificacion = new Notificacion("un mensaje de notificación");
-            int id = notificacion.Id;
-            usuario.RecibirNotificacion(notificacion);
+            Notificacion notificacion1 = new Notificacion("un mensaje de notificación");
+            Notificacion notificacion2= new Notificacion("un mensaje de notificación");
+            usuario.RecibirNotificacion(notificacion1);
+            usuario.RecibirNotificacion(notificacion2);
+            int id1 = notificacion1.Id;
 
-            usuario.BorrarNotificacion(id);
-            Assert.AreEqual(0, usuario.Notificaciones.Count);
+            usuario.BorrarNotificacion(id1);
+            Assert.AreEqual(1, usuario.Notificaciones.Count);
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
@@ -247,8 +249,19 @@ namespace Tests
         public void BorrarNotificacionInexistenteDaError()
         {
             Usuario usuario = CrearUsuarioValido();
-            Notificacion notificacion = new Notificacion("un mensaje de notificación");
-            usuario.RecibirNotificacion(notificacion); // se agrega notificación con ID 1
+            Notificacion notificacion1 = new Notificacion("un mensaje de notificación");
+            Notificacion notificacion2= new Notificacion("un mensaje de notificación");
+            // se agregan notificaciones con id 1 e id 2
+            usuario.RecibirNotificacion(notificacion1);
+            usuario.RecibirNotificacion(notificacion2);
+            usuario.BorrarNotificacion(5);
+        }
+        
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void BorrarNotificacionEnListaVaciaDaError()
+        {
+            Usuario usuario = CrearUsuarioValido();
             usuario.BorrarNotificacion(2);
         }
 

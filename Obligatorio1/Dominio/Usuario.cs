@@ -12,7 +12,7 @@ public class Usuario
     public string Apellido { get; set; }
     public DateTime FechaNacimiento { get; set; }
     public string Email { get; set; }
-    public List<Notificacion> Notificaciones { get; private set; } = new List<Notificacion>();
+    public List<Notificacion> Notificaciones { get; } = new List<Notificacion>();
     public bool EsAdministradorSistema { get; set; } = false;
 
     public bool EsAdministradorProyecto { get; set; } = false;
@@ -137,7 +137,7 @@ public class Usuario
 
     public void BorrarNotificacion(int idNotificacion)
     {
-        if(! Notificaciones.Any(n => n.Id == idNotificacion))
+        if(Notificaciones.All(n => n.Id != idNotificacion))
         {
             throw new ExcepcionDominio("No existe la notificación");
         }
