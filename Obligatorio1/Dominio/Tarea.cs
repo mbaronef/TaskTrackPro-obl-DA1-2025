@@ -152,6 +152,9 @@ public class Tarea
         Titulo = tituloNuevo;
     }
     
-    
+    public void ModificarDescripcion(string nuevaDesc)
+    {
+        Descripcion = nuevaDesc;
+    }
 
 }
