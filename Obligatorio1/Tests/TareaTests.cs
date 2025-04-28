@@ -473,6 +473,16 @@ public class TareaTests
         Assert.AreEqual(4, tarea.DuracionEnDias);
     }
     
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void ModificarDuracion_LanzaExcepcionSiEsCeroONegativa()
+    {
+        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+
+        tarea.ModificarDuracion(-2);
+        tarea.ModificarDuracion(0);
+    }
+    
     
     //TO DO:
     // Tests de modificar duracionEnDias
