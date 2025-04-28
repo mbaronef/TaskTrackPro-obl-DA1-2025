@@ -22,11 +22,11 @@ public class Usuario
     {
         if (string.IsNullOrEmpty(unNombre))
         {
-            throw new ExcepcionDominio("El nombre no puede estar vacio");   
+            throw new ExcepcionDominio("El nombre no puede estar vacío");   
         }
         if (string.IsNullOrEmpty(unApellido))
         {
-            throw new ExcepcionDominio("El apellido no puede estar vacio");
+            throw new ExcepcionDominio("El apellido no puede estar vacío");
         }
         ValidarEdad(unaFechaNacimiento);
         ValidarEmail(unEmail);
