@@ -140,6 +140,8 @@ public class Tarea
     public void EliminarRecurso(int idRec)
     {
         Recurso recursoAEliminar = BuscarRecursoPorId(idRec);
+        
+        ValidarObjetoNoNull(recursoAEliminar,"El recurso no se encuentra dentro de los recursos necesarios.");
 
         RecursosNecesarios.Remove(recursoAEliminar);
     }
