@@ -563,10 +563,23 @@ public class TareaTests
         }
     }
     
+    [TestMethod] 
+    public void FechaFinMasTempranaSeCalculaCorrectamente() 
+    {
+        string titulo = "Título de prueba";
+        string descripcion = "Descripción de prueba";
+        int duracion = 5;
+        DateTime fechaInicio = new DateTime(2025, 5, 1);
+        DateTime fechaEsperada = fechaInicio.AddDays(duracion);
+        
+        Tarea tarea = new Tarea(titulo, descripcion, duracion, fechaInicio);
+        
+        Assert.AreEqual(fechaEsperada, tarea.FechaFinMasTemprana);
+    }
+    
     //TO DO:
     // Ver si faltan tests de holgura
     // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
-    // Método NotificarMiembros
     // Ver tema fecha de finalizacion mas temprana
     
 }
