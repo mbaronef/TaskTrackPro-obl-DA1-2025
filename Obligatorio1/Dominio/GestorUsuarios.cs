@@ -28,6 +28,10 @@ public class GestorUsuarios
 
     public Usuario ObtenerUsuario(int idUsuario)
     {
+        if (!Usuarios.Any(u => u.Id == idUsuario))
+        {
+            throw new ExcepcionDominio("El usuario no existe");
+        }
         return Usuarios.Find(u => u.Id == idUsuario);
     }
 
