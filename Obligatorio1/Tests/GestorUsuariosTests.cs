@@ -293,6 +293,19 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
     
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void NoAdminSistemaNiAdminProyectoNoPuedeModificarContrasena()
+    {
+        Usuario usuarioSolicitante = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        Usuario usuarioObjetivo = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        
+        string nuevaContrasena = "NuevaContraseña/1";
+        _gestorUsuarios.ModificarContrasena(usuarioSolicitante, usuarioObjetivo, nuevaContrasena);
+    }
+    
     [TestMethod]
     public void LoginCorrecto()
     {
