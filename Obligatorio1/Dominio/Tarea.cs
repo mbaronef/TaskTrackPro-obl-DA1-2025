@@ -77,6 +77,10 @@ public class Tarea
         {
             throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a en proceso.");
         }
+        if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Bloqueada)
+        {
+            throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a bloqueada.");
+        }
         Estado = nuevoEstado;
     }
     
