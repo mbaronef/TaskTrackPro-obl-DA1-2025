@@ -175,6 +175,8 @@ public class Tarea
     
     public void ModificarDuracion(int nuevaDuracion)
     {
+        if (nuevaDuracion <= 0)
+            throw new ExcepcionDominio("La fecha de duración no puede ser cero o negativa.");
         DuracionEnDias = nuevaDuracion;
     }
     
