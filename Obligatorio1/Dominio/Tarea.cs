@@ -128,6 +128,8 @@ public class Tarea
     public void AgregarRecurso(Recurso recurso)
     {
         ValidarObjetoNoNull(recurso,"No se puede agregar un recurso null.");
+        if(RecursosNecesarios.Contains(recurso))
+            throw new ExcepcionDominio("El recurso ya fue agregado.");
         RecursosNecesarios.Add(recurso);
     }
 
