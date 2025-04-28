@@ -183,6 +183,8 @@ public class TareaTests
         tarea.CambiarEstado(EstadoTarea.Pendiente); 
     }
     
+    //Ver si hay algun otro camino que no se pueda hacer (pendiente directo a completada se puede??)
+    
     [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
     {
@@ -513,14 +515,29 @@ public class TareaTests
         tarea.ModificarDuracion(0);
     }
     
+    [TestMethod]
+    public void DarListaAsignados_DevuelveListaDeUsuariosAsignados()
+    {
+        Usuario asignado = new Usuario();
+        Usuario asignado2 = new Usuario();
+        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+            
+        tarea.AsignarUsuario(asignado);
+        tarea.AsignarUsuario(asignado2);
+
+        List<Usuario> lista = tarea.UsuariosAsignados;
+
+        Assert.AreEqual(2, lista.Count);
+        Assert.IsTrue(lista.Contains(asignado));
+        Assert.IsTrue(lista.Contains(asignado2));
+    }
+    
     
     //TO DO:
-    // Tests de cambiar de un estado a otro válidos
     // Ver si faltan tests de holgura
     // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
     // Método NotificarMiembros
-    // Método EsMiembro
-    // Metodo dar Lista (s)
+    // Metodo dar Lista(s)
     // Ver tema fecha de finalizacion mas temprana
     
 }
