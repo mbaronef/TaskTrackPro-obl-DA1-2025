@@ -108,6 +108,7 @@ public class GestorUsuarios
             
         string nuevaContrasena = MezclarCaracteres(contrasenaAutogenerada.ToString(), rng);
         usuarioObjetivo.CambiarContrasena(nuevaContrasena);
+        Notificar(usuarioObjetivo, $"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}");
         return nuevaContrasena; // devuelve la contraseña en texto plano para mostrársela una vez al usuario cuando se genera
     }
     private static int ObtenerNumeroAleatorio(int min, int max, RandomNumberGenerator rng)
