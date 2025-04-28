@@ -321,6 +321,15 @@ public class TareaTests
         Assert.IsTrue(tarea.RecursosNecesarios.Contains(recurso));
         Assert.AreEqual(1, tarea.RecursosNecesarios.Count);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AgregarRecurso_LanzarExcepcionSiRecursoEsNull()
+    {
+        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+        Recurso recurso = null;
+        tarea.AgregarRecurso(recurso); 
+    }
 
 }
     
