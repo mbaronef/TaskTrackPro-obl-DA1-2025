@@ -349,7 +349,22 @@ public class GestorUsuariosTests
         Assert.AreEqual("Se reinició su contraseña. La nueva contraseña es TaskTrackPro@2025", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-    
+
+    [TestMethod]
+    public void SeNotificaContrasenaAutogenerada()
+    {
+        Usuario usuarioSolicitante = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarAdministradorSistema(usuarioSolicitante.Id);
+        Usuario usuarioObjetivo = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+
+        string nuevaContrasena = _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
+        Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
+        Assert.AreEqual($"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
+    }
+
     [TestMethod]
     public void LoginCorrecto()
     {
