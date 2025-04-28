@@ -454,6 +454,17 @@ public class TareaTests
         Assert.AreEqual(nuevaFecha, tarea.FechaDeEjecucion);
     }
     
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void ModificarFechaDeEjecucion_LanzaExcepcionSiFechaEsAnteriorAHoy()
+    {
+        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+
+        DateTime fechaPasada = DateTime.Now.AddDays(-1);
+
+        tarea.ModificarFechaDeEjecucion(fechaPasada);
+    } 
+    
     //TO DO:
     // Tests de modificar fechas
     // Tests de modificar duracionEnDias
@@ -463,6 +474,7 @@ public class TareaTests
     // Método NotificarMiembros
     // Método EsMiembro
     // Metodo dar Lista (s)
+    // Ver tema fecha de finalizacion mas temprana
     
 }
     
