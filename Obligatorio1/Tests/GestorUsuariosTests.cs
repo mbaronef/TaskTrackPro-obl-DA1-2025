@@ -391,6 +391,19 @@ public class GestorUsuariosTests
     }
 
     [TestMethod]
+    public void NoSeNotificaSiElPropioUsuarioModificaSuContrasena()
+    {
+        Usuario usuario = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuario);
+        string nuevaContrasena =  "NuevaContraseña/1";
+        _gestorUsuarios.ModificarContrasena(usuario, usuario, nuevaContrasena);
+        
+        Notificacion ultimaNotificacion = usuario.Notificaciones.Last();
+        Assert.AreNotEqual($"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}", ultimaNotificacion.Mensaje);
+        Assert.AreNotEqual(DateTime.Today, ultimaNotificacion.Fecha);
+    }
+    
+    [TestMethod]
     public void LoginCorrecto()
     {
         Usuario usuario = CrearUsuario1(); // contraseña: Contrase#a3
