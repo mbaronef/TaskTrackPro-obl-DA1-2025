@@ -10,40 +10,39 @@ public class GestorUsuarios
     private string _contrasenaPorDefecto = "TaskTrackPro@2025";
     public List<Usuario> Usuarios { get; private set; } = new List<Usuario>();
 
-    public GestorUsuarios()
-    {
-    }
-
+    public GestorUsuarios() { }
+    
     public void AgregarUsuario(Usuario usuario)
     {
-        _cantidadUsuarios++;
-        usuario.Id = _cantidadUsuarios;
+        usuario.Id = ++_cantidadUsuarios;
         Usuarios.Add(usuario);
     }
 
     public void EliminarUsuario(int id)
     {
-        Usuarios.RemoveAll(u => u.Id == id);
+        Usuario usuario = ObtenerUsuario(id);
+        Usuarios.Remove(usuario);
     }
 
     public Usuario ObtenerUsuario(int idUsuario)
     {
-        if (!Usuarios.Any(u => u.Id == idUsuario))
+        Usuario usuario = Usuarios.FirstOrDefault(u => u.Id == idUsuario);
+        if (usuario == null)
         {
             throw new ExcepcionDominio("El usuario no existe");
         }
-        return Usuarios.Find(u => u.Id == idUsuario);
+        return usuario;
     }
 
     public void AgregarAdministradorSistema(int idUsuario)
     {
-        Usuario usuario = Usuarios.Find(u => u.Id == idUsuario);
+        Usuario usuario = ObtenerUsuario(idUsuario);
         usuario.EsAdministradorSistema = true;
     }
 
     public void EliminarAdministradorSistema(int idUsuario)
     {
-        Usuario usuario = Usuarios.Find(u => u.Id == idUsuario);
+        Usuario usuario = ObtenerUsuario(idUsuario);
         usuario.EsAdministradorSistema = false;
     }
 
@@ -137,11 +136,11 @@ public class GestorUsuarios
 
     public Usuario LogIn(string email, string contrasena)
     {
-        if (!Usuarios.Any(u => u.Email == email))
+        Usuario usuario = Usuarios.FirstOrDefault(u => u.Email == email);
+        if (usuario == null)
         {
             throw new ExcepcionDominio("Correo electrónico no registrado.");
         }
-        Usuario usuario = Usuarios.Find(u => u.Email.Equals(email));
         if (!usuario.Autenticar(contrasena))
         {
             throw new ExcepcionDominio("La contraseña ingresada es incorrecta.");
