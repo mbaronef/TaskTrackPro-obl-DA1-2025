@@ -383,6 +383,15 @@ public class TareaTests
 
         tarea.ModificarTitulo(null);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void ModificarTitulo_LanzaExcepcionSiTituloEsVacio()
+    {
+        Tarea tarea = new Tarea("titulo viejo", "Desc",  2);
+
+        tarea.ModificarTitulo("");
+    }
 
 }
     
