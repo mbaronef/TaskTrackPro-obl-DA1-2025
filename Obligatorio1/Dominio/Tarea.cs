@@ -166,6 +166,10 @@ public class Tarea
 
     }
     
+    public void ModificarFechaDeEjecucion(DateTime fechaNueva)
+    {
+        FechaDeEjecucion = fechaNueva;
+    }
     
 
 }
