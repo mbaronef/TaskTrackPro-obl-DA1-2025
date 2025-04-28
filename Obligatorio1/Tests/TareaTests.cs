@@ -393,6 +393,15 @@ public class TareaTests
         tarea.ModificarTitulo("");
     }
 
+    [TestMethod]
+    public void ModificarDescripcion_DeberiaActualizarLaDescripcion()
+    {
+        Tarea tarea = new Tarea("titulo", "Desc vieja",  2);
+
+        tarea.ModificarDescripcion("Desc nueva");
+
+        Assert.AreEqual("Desc nueva", tarea.Descripcion);
+    }
 }
     
 
