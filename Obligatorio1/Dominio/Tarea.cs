@@ -59,6 +59,9 @@ public class Tarea
         RecursosNecesarios = new List<Recurso>();
         DependenciasFF = new List<Tarea>();
         DependenciasFS = new List<Tarea>();
+        FechaFinMasTemprana = unaFechaInicioMasTemprana.HasValue 
+            ? unaFechaInicioMasTemprana.Value.AddDays(unaDuracionEnDias) 
+            : DateTime.MinValue;
     }
     
     public Tarea(int unId, string unTitulo, string unaDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
