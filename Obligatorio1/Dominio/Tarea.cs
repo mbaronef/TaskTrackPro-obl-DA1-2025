@@ -191,6 +191,14 @@ public class Tarea
             throw new ExcepcionDominio("La fecha de duración no puede ser cero o negativa.");
         DuracionEnDias = nuevaDuracion;
     }
-    
+
+    public void NotificarMiembros(string mensaje)
+    {
+        foreach (Usuario usuario in UsuariosAsignados)
+        { 
+            Notificacion nuevaNotificacion = new Notificacion(mensaje); 
+            usuario.RecibirNotificacion(nuevaNotificacion);
+        }
+    }
 
 }
