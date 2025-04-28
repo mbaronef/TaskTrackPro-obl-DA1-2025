@@ -346,8 +346,8 @@ public class GestorUsuariosTests
 
         _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
-        Assert.Equals("Se reinició su contraseña. La nueva contraseña es TaskTrackPro@2025", ultimaNotificacion.Mensaje);
-        Assert.Equals(DateTime.Today, ultimaNotificacion.Fecha);
+        Assert.AreEqual("Se reinició su contraseña. La nueva contraseña es TaskTrackPro@2025", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
     [TestMethod]
