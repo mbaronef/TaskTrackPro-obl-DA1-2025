@@ -137,11 +137,13 @@ public class Usuario
 
     public void BorrarNotificacion(int idNotificacion)
     {
-        if(Notificaciones.All(n => n.Id != idNotificacion))
+        int indice = Notificaciones.FindIndex(n => n.Id == idNotificacion);
+        if (indice == -1)
         {
             throw new ExcepcionDominio("No existe la notificación");
         }
-        Notificaciones.RemoveAll(n => n.Id == idNotificacion);
+        Notificaciones.RemoveAt(indice);
+
     }
     public override bool Equals(object? otro)
     {

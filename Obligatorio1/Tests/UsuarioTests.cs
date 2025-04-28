@@ -254,7 +254,7 @@ namespace Tests
             // se agregan notificaciones con id 1 e id 2
             usuario.RecibirNotificacion(notificacion1);
             usuario.RecibirNotificacion(notificacion2);
-            usuario.BorrarNotificacion(5);
+            usuario.BorrarNotificacion(0);
         }
         
         [ExpectedException(typeof(ExcepcionDominio))]
