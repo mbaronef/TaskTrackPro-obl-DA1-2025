@@ -577,6 +577,18 @@ public class TareaTests
         Assert.AreEqual(fechaEsperada, tarea.FechaFinMasTemprana);
     }
     
+    [TestMethod]
+    public void ModificarDuracionActualizaFechaFinMasTemprana()
+    {
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Tarea tarea = new Tarea("Titulo", "Descripcion", 3, fechaInicio);
+        
+        tarea.ModificarDuracion(5);
+        
+        Assert.AreEqual(fechaInicio.AddDays(5), tarea.FechaFinMasTemprana);
+    }
+
+    
     //TO DO:
     // Ver si faltan tests de holgura
     // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
