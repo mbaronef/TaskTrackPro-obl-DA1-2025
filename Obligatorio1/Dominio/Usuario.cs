@@ -153,4 +153,8 @@ public class Usuario
         }
         return retorno;
     }
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
 }
