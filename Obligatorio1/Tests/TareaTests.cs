@@ -421,6 +421,18 @@ public class TareaTests
         tarea.ModificarTitulo("");
     }
     
+    [TestMethod]
+    public void ModificarFechaInicioMasTemprana_ActualizaLaFechaOK()
+    { 
+        Tarea tarea = new Tarea("t", "Desc",  2);
+
+        DateTime nuevaFecha = new DateTime(2025, 5, 1);
+        tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
+
+        Assert.AreEqual(nuevaFecha, tarea.FechaInicioMasTemprana);
+    }
+    
+    
     //TO DO:
     // Tests de modificar fechas
     // Tests de modificar duracionEnDias
@@ -429,6 +441,7 @@ public class TareaTests
     // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
     // Método NotificarMiembros
     // Método EsMiembro
+    // Metodo dar Lista (s)
     
 }
     
