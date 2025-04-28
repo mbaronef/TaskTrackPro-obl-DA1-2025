@@ -443,6 +443,17 @@ public class TareaTests
         tarea.ModificarFechaInicioMasTemprana(fechaPasada);
     } 
     
+    [TestMethod]
+    public void ModificarFechaDeEjecucion_ActualizaLaFechaOK()
+    { 
+        Tarea tarea = new Tarea("t", "Desc",  2);
+
+        DateTime nuevaFecha = new DateTime(2025, 5, 1);
+        tarea.ModificarFechaDeEjecucion(nuevaFecha);
+
+        Assert.AreEqual(nuevaFecha, tarea.FechaDeEjecucion);
+    }
+    
     //TO DO:
     // Tests de modificar fechas
     // Tests de modificar duracionEnDias
