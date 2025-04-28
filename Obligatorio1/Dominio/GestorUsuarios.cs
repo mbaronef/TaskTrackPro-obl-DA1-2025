@@ -76,9 +76,7 @@ public class GestorUsuarios
             throw new ExcepcionDominio("No tiene los permisos necesarios para reiniciar la contraseña del usuario.");
         }
         usuarioObjetivo.CambiarContrasena("TaskTrackPro@2025");
-        Notificacion notificacion =
-            new Notificacion("Se reinició su contraseña. La nueva contraseña es TaskTrackPro@2025");
-        usuarioObjetivo.RecibirNotificacion(notificacion);
+        Notificar(usuarioObjetivo, "Se reinició su contraseña. La nueva contraseña es TaskTrackPro@2025");
     }
 
     public string AutogenerarContrasena(Usuario administrador, Usuario usuarioObjetivo)
@@ -144,6 +142,12 @@ public class GestorUsuarios
             throw new ExcepcionDominio("No tiene los permisos necesarios para modificar la contraseña del usuario.");
         }
         usuarioObjetivo.CambiarContrasena(nuevaContrasena);
+    }
+    
+    private void Notificar(Usuario usuario, string mensajeNotificacion)
+    {
+        Notificacion notificacion = new Notificacion(mensajeNotificacion);
+        usuario.RecibirNotificacion(notificacion);
     }
 
     public Usuario LogIn(string email, string contrasena)
