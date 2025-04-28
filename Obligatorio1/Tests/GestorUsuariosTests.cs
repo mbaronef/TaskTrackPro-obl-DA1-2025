@@ -267,5 +267,14 @@ public class GestorUsuariosTests
         Usuario obtenido = _gestorUsuarios.LogIn(usuario.Email, "Contrase#a3");
         Assert.AreEqual(usuario,obtenido);
     }
+
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void LoginIncorrectoConContraseñaIncorrecta()
+    {
+        Usuario usuario =  CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuario);
+        Usuario obtenido = _gestorUsuarios.LogIn(usuario.Email, "ContraseñaIncorrecta");
+    }
 }
 
