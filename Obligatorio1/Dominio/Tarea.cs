@@ -157,6 +157,12 @@ public class Tarea
         ValidarStringNoVacioNiNull(nuevaDesc,"La descripción no puede estar vacía");
         Descripcion = nuevaDesc;
     }
+
+    public void ModificarFechaInicioMasTemprana(DateTime fechaInicioNueva)
+    {
+        FechaInicioMasTemprana = fechaInicioNueva;
+
+    }
     
     
 
