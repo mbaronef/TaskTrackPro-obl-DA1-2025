@@ -164,6 +164,21 @@ namespace Tests
         }
 
         [TestMethod]
+        public void NoSeCambiaEmailInvalido()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            string nuevoEmail = "email";
+            try
+            {
+                usuario.CambiarEmail(nuevoEmail);
+            }
+            catch (ExcepcionDominio) { } // Ignorar la excepción
+            
+            Assert.AreNotEqual(nuevoEmail, usuario.Email);
+            Assert.AreEqual("unemail@gmail.com", usuario.Email);
+        }
+        
+        [TestMethod]
         public void SeRecibeUnaNotificacionCorrectamente()
         {
             Usuario usuario = CrearUsuarioValido();
