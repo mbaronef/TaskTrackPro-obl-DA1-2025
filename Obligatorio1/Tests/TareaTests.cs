@@ -174,6 +174,16 @@ public class TareaTests
     }
     
     [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void CambiarEstadoNoPermiteVolverAPendienteDesdeEnProceso()
+    {
+        var tarea = new Tarea("Título", "Descripción", 5);
+        
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
+        tarea.CambiarEstado(EstadoTarea.Pendiente); 
+    }
+    
+    [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
     {
         Tarea tarea = new Tarea("Tarea Crítica", "Descripción", 5);
