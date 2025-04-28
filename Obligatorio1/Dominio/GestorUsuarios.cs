@@ -134,6 +134,11 @@ public class GestorUsuarios
         return new string(array); // Convierte el array de nuevo a una cadena
     }
 
+    public void ModificarContrasena(Usuario solicitante, Usuario usuarioObjetivo, string nuevaContrasena)
+    {
+        usuarioObjetivo.CambiarContrasena(nuevaContrasena);
+    }
+
     public Usuario LogIn(string email, string contrasena)
     {
         Usuario usuario = Usuarios.FirstOrDefault(u => u.Email == email);
