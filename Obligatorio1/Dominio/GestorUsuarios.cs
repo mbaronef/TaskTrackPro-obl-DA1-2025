@@ -79,7 +79,7 @@ public class GestorUsuarios
         Notificar(usuarioObjetivo, "Se reinició su contraseña. La nueva contraseña es TaskTrackPro@2025");
     }
 
-    public string AutogenerarContrasena(Usuario administrador, Usuario usuarioObjetivo)
+    public void AutogenerarContrasena(Usuario administrador, Usuario usuarioObjetivo)
     {
         if (!administrador.EsAdministradorSistema && !administrador.EsAdministradorProyecto)
         {
@@ -109,7 +109,6 @@ public class GestorUsuarios
         string nuevaContrasena = MezclarCaracteres(contrasenaAutogenerada.ToString(), rng);
         usuarioObjetivo.CambiarContrasena(nuevaContrasena);
         Notificar(usuarioObjetivo, $"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}");
-        return nuevaContrasena; // devuelve la contraseña en texto plano para mostrársela una vez al usuario cuando se genera
     }
     private static int ObtenerNumeroAleatorio(int min, int max, RandomNumberGenerator rng)
     {

@@ -213,7 +213,7 @@ public class GestorUsuariosTests
     }
 
     [TestMethod]
-    public void UnUsuarioPuedeResetearSuContraseñaCorrectamente()
+    public void UnUsuarioPuedeReiniciarSuContraseñaCorrectamente()
     {
         Usuario usuario = CrearUsuario1();
         _gestorUsuarios.AgregarUsuario(usuario);
@@ -243,7 +243,9 @@ public class GestorUsuariosTests
             new Usuario("José", "Perez", new DateTime(1999, 9, 1), "unemail@gmail.com", "Contrase#a9");
         _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
 
-        string nuevaContrasena = _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
+        _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
+        Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
+        string nuevaContrasena = ultimaNotificacion.Mensaje.Replace("Se modificó su contraseña. La nueva contraseña es ", "");
         Assert.IsFalse(usuarioObjetivo.Autenticar("Contrase#a9"));
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
@@ -262,7 +264,9 @@ public class GestorUsuariosTests
             new Usuario("José", "Perez", new DateTime(1999, 9, 1), "unemail@gmail.com", "Contrase#a9");
         _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
 
-        string nuevaContrasena = _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
+        _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
+        Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
+        string nuevaContrasena = ultimaNotificacion.Mensaje.Replace("Se modificó su contraseña. La nueva contraseña es ", "");
         Assert.IsFalse(usuarioObjetivo.Autenticar("Contrase#a9"));
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
@@ -359,9 +363,13 @@ public class GestorUsuariosTests
         Usuario usuarioObjetivo = CrearUsuario2();
         _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
 
-        string nuevaContrasena = _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
+        _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
-        Assert.AreEqual($"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}", ultimaNotificacion.Mensaje);
+        string mensajeEsperadoInicio = "Se modificó su contraseña. La nueva contraseña es ";
+        string nuevaContrasena = ultimaNotificacion.Mensaje.Replace(mensajeEsperadoInicio, "");
+        
+        Assert.IsTrue(ultimaNotificacion.Mensaje.StartsWith(mensajeEsperadoInicio));
+        Assert.IsFalse(string.IsNullOrEmpty(nuevaContrasena)); // asegurar que hay una nueva contraseña en el mensaje
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
