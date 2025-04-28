@@ -137,7 +137,7 @@ public class GestorUsuarios
         if (usuario.Autenticar(contrasena))
         {
             return usuario;
-        } 
-        return null;
+        }
+        throw new ExcepcionDominio("La contraseña ingresada es incorrecta.");
     }
 }
