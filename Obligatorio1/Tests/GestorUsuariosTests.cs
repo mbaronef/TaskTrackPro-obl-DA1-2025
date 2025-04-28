@@ -212,6 +212,15 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuarioObjetivo.Autenticar("TaskTrackPro@2025"));
     }
 
+    [TestMethod]
+    public void UnUsuarioPuedeResetearSuContraseñaCorrectamente()
+    {
+        Usuario usuario = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuario);
+        _gestorUsuarios.ReiniciarContrasena(usuario, usuario);
+        Assert.IsTrue(usuario.Autenticar("TaskTrackPro@2025"));
+    }
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoNoPuedeReiniciarContrasena()
