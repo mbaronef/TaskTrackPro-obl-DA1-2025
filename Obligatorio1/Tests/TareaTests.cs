@@ -364,6 +364,16 @@ public class TareaTests
         tarea.AgregarRecurso(rec);
         tarea.EliminarRecurso(3);
     }
+    
+    [TestMethod]
+    public void ModificarTitulo_DeberiaActualizarElTitulo()
+    {
+        Tarea tarea = new Tarea("titulo viejo", "Desc",  2);
+
+        tarea.ModificarTitulo("titulo nuevo");
+
+        Assert.AreEqual("titulo nuevo", tarea.Titulo);
+    }
 
 }
     
