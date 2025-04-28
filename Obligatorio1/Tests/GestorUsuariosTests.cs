@@ -280,7 +280,7 @@ public class GestorUsuariosTests
     }
 
     [TestMethod]
-    public void AdminSistemaPuedeModificarContraseñaDeUsuarioCorrectamente()
+    public void AdminSistemaPuedeModificarContrasenaDeUsuarioCorrectamente()
     {
         Usuario usuarioSolicitante = CrearUsuario1();
         _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
@@ -294,7 +294,7 @@ public class GestorUsuariosTests
     }
     
     [TestMethod]
-    public void AdminProyectoPuedeModificarContraseñaDeUsuarioCorrectamente()
+    public void AdminProyectoPuedeModificarContrasenaDeUsuarioCorrectamente()
     {
         Usuario administrador = CrearUsuario1();
         _gestorUsuarios.AgregarUsuario(administrador);
@@ -311,7 +311,17 @@ public class GestorUsuariosTests
         _gestorUsuarios.ModificarContrasena(usuarioSolicitante,usuarioObjetivo, nuevaContrasena);
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
-    
+
+    [TestMethod]
+    public void UsuarioPuedeModificarSuContrasena()
+    {
+        Usuario usuario = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(usuario);
+        string nuevaContrasena =  "NuevaContraseña/1";
+        _gestorUsuarios.ModificarContrasena(usuario, usuario, nuevaContrasena);
+        Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
+    }
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoNoPuedeModificarContrasena()
