@@ -198,7 +198,7 @@ public class Tarea
         if (nuevaDuracion <= 0)
             throw new ExcepcionDominio("La fecha de duración no puede ser cero o negativa.");
         DuracionEnDias = nuevaDuracion;
-
+        CalcularFechaFinMasTemprana();
     }
 
     public void NotificarMiembros(string mensaje)
