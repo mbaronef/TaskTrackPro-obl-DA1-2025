@@ -32,6 +32,13 @@ namespace Tests
             Usuario usuario = new Usuario("", "Perez", _fechaNacimientoValida,  "unemail@gmail.com", "Contrase#a3");
         }
         
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void ConstructorValidaNombreNoNull()
+        {
+            Usuario usuario = new Usuario(null, "Perez", _fechaNacimientoValida,  "unemail@gmail.com", "Contrase#a3");
+        }
+        
         [TestMethod]
         public void UsuarioSeCreaConListaNotificacionesVacia()
         {
