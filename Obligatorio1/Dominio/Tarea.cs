@@ -46,7 +46,7 @@ public class Tarea
     
     private void CalcularFechaFinMasTemprana()
     {
-        FechaFinMasTemprana = FechaInicioMasTemprana.HasValue
+        this.FechaFinMasTemprana = FechaInicioMasTemprana.HasValue
             ? FechaInicioMasTemprana.Value.AddDays(DuracionEnDias)
             : DateTime.MinValue;
     }
@@ -58,22 +58,22 @@ public class Tarea
         ValidarIntNoNegativoNiCero(unaDuracionEnDias, "La duración no puede ser un número negativo.");
         ValidarStringNoVacioNiNull(unDescripcion, "La descrición no puede estar vacía ni nula.");
         ValidarFechaInicio(unaFechaInicioMasTemprana);
-        Titulo = unTitulo;
-        Descripcion = unDescripcion;
-        DuracionEnDias = unaDuracionEnDias;
-        FechaInicioMasTemprana  = unaFechaInicioMasTemprana;
-        Estado = EstadoTarea.Pendiente;
-        UsuariosAsignados = new List<Usuario>();
-        RecursosNecesarios = new List<Recurso>();
-        DependenciasFF = new List<Tarea>();
-        DependenciasFS = new List<Tarea>();
+        this.Titulo = unTitulo;
+        this.Descripcion = unDescripcion;
+        this.DuracionEnDias = unaDuracionEnDias;
+        this.FechaInicioMasTemprana  = unaFechaInicioMasTemprana;
+        this.Estado = EstadoTarea.Pendiente;
+        this.UsuariosAsignados = new List<Usuario>();
+        this.RecursosNecesarios = new List<Recurso>();
+        this.DependenciasFF = new List<Tarea>();
+        this.DependenciasFS = new List<Tarea>();
         CalcularFechaFinMasTemprana();
     }
     
     public Tarea(int unId, string unTitulo, string unaDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
         : this(unTitulo, unaDescripcion, unaDuracionEnDias, unaFechaInicioMasTemprana)
     {
-        Id = unId;
+        this.Id = unId;
     }
     
     public void CambiarEstado(EstadoTarea nuevoEstado)
@@ -109,15 +109,15 @@ public class Tarea
     
     public void EliminarUsuarioAsignado(int id)
     {
-        if (UsuariosAsignados == null)
+        if (this.UsuariosAsignados == null)
         {
             throw new ExcepcionDominio("La lista de usuarios asignados está vacía o no está inicializada.");
         }
-        for (int i = 0; i < UsuariosAsignados.Count; i++)
+        for (int i = 0; i < this.UsuariosAsignados.Count; i++)
         {
-            if (UsuariosAsignados[i].Id == id)
+            if (this.UsuariosAsignados[i].Id == id)
             {
-                UsuariosAsignados.RemoveAt(i);
+                this.UsuariosAsignados.RemoveAt(i);
                 return;
             }
         }
