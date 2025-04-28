@@ -398,9 +398,7 @@ public class GestorUsuariosTests
         string nuevaContrasena =  "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuario, usuario, nuevaContrasena);
         
-        Notificacion ultimaNotificacion = usuario.Notificaciones.Last();
-        Assert.AreNotEqual($"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}", ultimaNotificacion.Mensaje);
-        Assert.AreNotEqual(DateTime.Today, ultimaNotificacion.Fecha);
+        Assert.AreEqual(0, usuario.Notificaciones.Count());
     }
     
     [TestMethod]
