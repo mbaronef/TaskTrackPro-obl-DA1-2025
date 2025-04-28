@@ -216,7 +216,7 @@ public class GestorUsuariosTests
     }
 
     [TestMethod]
-    public void SeAutogeneraUnaContraseñaCorrectamente()
+    public void AdminSistemaAutogeneraUnaContraseñaCorrectamente()
     {
         Usuario usuarioSolicitante = CrearUsuario1();
         _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
@@ -224,6 +224,24 @@ public class GestorUsuariosTests
         Usuario usuarioObjetivo = new Usuario("José", "Perez", new DateTime(1999, 9, 1), "unemail@gmail.com", "Contrase#a9");
         _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
         
+        string nuevaContrasena = _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
+        Assert.IsFalse(usuarioObjetivo.Autenticar("Contrase#a9"));
+        Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
+    }
+
+    [TestMethod]
+    public void AdminProyectoAutogeneraUnaContraseñaCorrectamente()
+    {
+        Usuario administrador = CrearUsuario1();
+        _gestorUsuarios.AgregarUsuario(administrador);
+        _gestorUsuarios.AgregarAdministradorSistema(administrador.Id);
+        Usuario usuarioSolicitante = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AsignarAdministradorProyecto(administrador, usuarioSolicitante);
+        
+        Usuario usuarioObjetivo = new Usuario("José", "Perez", new DateTime(1999, 9, 1), "unemail@gmail.com", "Contrase#a9");
+        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+
         string nuevaContrasena = _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
         Assert.IsFalse(usuarioObjetivo.Autenticar("Contrase#a9"));
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
