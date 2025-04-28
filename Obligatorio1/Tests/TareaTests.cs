@@ -374,6 +374,15 @@ public class TareaTests
 
         Assert.AreEqual("titulo nuevo", tarea.Titulo);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void ModificarTitulo_LanzaExcepcionSiTituloEsNull()
+    {
+        Tarea tarea = new Tarea("titulo viejo", "Desc",  2);
+
+        tarea.ModificarTitulo(null);
+    }
 
 }
     
