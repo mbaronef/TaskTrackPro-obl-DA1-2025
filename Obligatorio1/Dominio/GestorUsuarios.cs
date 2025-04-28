@@ -71,7 +71,7 @@ public class GestorUsuarios
 
     public void ReiniciarContrasena(Usuario administrador, Usuario usuarioObjetivo)
     {
-        if (!administrador.EsAdministradorSistema && !administrador.EsAdministradorProyecto)
+        if (!administrador.EsAdministradorSistema && !administrador.EsAdministradorProyecto && !administrador.Equals(usuarioObjetivo))
         {
             throw new ExcepcionDominio("No tiene los permisos necesarios para reiniciar la contraseña del usuario.");
         }
