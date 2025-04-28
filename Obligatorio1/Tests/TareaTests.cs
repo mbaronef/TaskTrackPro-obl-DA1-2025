@@ -531,6 +531,23 @@ public class TareaTests
         Assert.IsTrue(lista.Contains(asignado));
         Assert.IsTrue(lista.Contains(asignado2));
     }
+    [TestMethod]
+    public void DarListaRecursosNecesarios_DevuelveListaDeRecursosNecesarios()
+    {
+        Recurso necesario = new Recurso();
+        Recurso necesario2 = new Recurso();
+        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+            
+        tarea.AgregarRecurso(necesario);
+        tarea.AgregarRecurso(necesario2);
+
+        List<Recurso> lista = tarea.RecursosNecesarios;
+
+        Assert.AreEqual(2, lista.Count);
+        Assert.IsTrue(lista.Contains(necesario));
+        Assert.IsTrue(lista.Contains(necesario2));
+    }
+    
     
     
     //TO DO:
