@@ -119,6 +119,7 @@ public class Usuario
 
     public void CambiarEmail(string nuevoEmail)
     {
+        ValidarEmail(nuevoEmail);
         Email = nuevoEmail;
     }
 
