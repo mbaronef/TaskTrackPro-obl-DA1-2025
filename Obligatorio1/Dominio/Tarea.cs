@@ -124,5 +124,10 @@ public class Tarea
 
         UsuariosAsignados.Remove(usuarioAEliminar);
     }
+    
+    public void AgregarRecurso(Recurso recurso)
+    {
+        RecursosNecesarios.Add(recurso);
+    }
 
 }
