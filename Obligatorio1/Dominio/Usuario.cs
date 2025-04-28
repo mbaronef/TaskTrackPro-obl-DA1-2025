@@ -20,13 +20,17 @@ public class Usuario
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
     {
+        if (string.IsNullOrEmpty(unNombre))
+        {
+            throw new ExcepcionDominio("El nombre no puede estar vacio");   
+        }
+        if (string.IsNullOrEmpty(unApellido))
+        {
+            throw new ExcepcionDominio("El apellido no puede estar vacio");
+        }
         ValidarEdad(unaFechaNacimiento);
         ValidarEmail(unEmail);
         SetContrasenaEncriptada(unaContrasena);
-        if (string.IsNullOrEmpty(unNombre))
-        {
-         throw new ExcepcionDominio("El nombre no puede estar vacio");   
-        }
         Nombre = unNombre;
         Apellido = unApellido;
         FechaNacimiento = unaFechaNacimiento;
