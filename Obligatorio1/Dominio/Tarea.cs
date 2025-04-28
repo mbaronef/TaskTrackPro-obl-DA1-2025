@@ -43,6 +43,14 @@ public class Tarea
         if (objeto is null)
             throw new ExcepcionDominio(mensajeError);
     }
+    
+    private void CalcularFechaFinMasTemprana()
+    {
+        FechaFinMasTemprana = FechaInicioMasTemprana.HasValue
+            ? FechaInicioMasTemprana.Value.AddDays(DuracionEnDias)
+            : DateTime.MinValue;
+    }
+
 
     public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
     {
@@ -59,9 +67,7 @@ public class Tarea
         RecursosNecesarios = new List<Recurso>();
         DependenciasFF = new List<Tarea>();
         DependenciasFS = new List<Tarea>();
-        FechaFinMasTemprana = unaFechaInicioMasTemprana.HasValue 
-            ? unaFechaInicioMasTemprana.Value.AddDays(unaDuracionEnDias) 
-            : DateTime.MinValue;
+        CalcularFechaFinMasTemprana();
     }
     
     public Tarea(int unId, string unTitulo, string unaDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
@@ -178,7 +184,6 @@ public class Tarea
         if (fechaInicioNueva < DateTime.Now.Date)
             throw new ExcepcionDominio("La fecha de inicio más temprana no puede ser anterior a hoy.");
         FechaInicioMasTemprana = fechaInicioNueva;
-
     }
     
     public void ModificarFechaDeEjecucion(DateTime fechaNueva)
@@ -193,6 +198,7 @@ public class Tarea
         if (nuevaDuracion <= 0)
             throw new ExcepcionDominio("La fecha de duración no puede ser cero o negativa.");
         DuracionEnDias = nuevaDuracion;
+
     }
 
     public void NotificarMiembros(string mensaje)
