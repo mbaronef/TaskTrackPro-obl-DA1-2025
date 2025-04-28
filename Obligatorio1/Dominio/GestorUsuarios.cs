@@ -8,7 +8,7 @@ public class GestorUsuarios
 {
     private static int _cantidadUsuarios;
     private string _contrasenaPorDefecto = "TaskTrackPro@2025";
-    public List<Usuario> Usuarios { get; private set; } = new List<Usuario>();
+    public List<Usuario> Usuarios { get; } = new List<Usuario>();
 
     public GestorUsuarios() { }
     

@@ -275,6 +275,8 @@ public class GestorUsuariosTests
     {
         Usuario usuario = CrearUsuario1(); // contraseña: Contrase#a3
         _gestorUsuarios.AgregarUsuario(usuario);
+        Usuario otro = CrearUsuario2();
+        _gestorUsuarios.AgregarUsuario(otro);
         Usuario obtenido = _gestorUsuarios.LogIn(usuario.Email, "Contrase#a3");
         Assert.AreEqual(usuario, obtenido);
     }
