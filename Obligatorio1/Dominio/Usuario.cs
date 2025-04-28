@@ -117,6 +117,11 @@ public class Usuario
         SetContrasenaEncriptada(nuevaContrasena);
     }
 
+    public void CambiarEmail(string nuevoEmail)
+    {
+        Email = nuevoEmail;
+    }
+
     public void RecibirNotificacion(Notificacion notificacion)
     {
         Notificaciones.Add(notificacion);
