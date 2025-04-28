@@ -146,5 +146,10 @@ public class Tarea
         RecursosNecesarios.Remove(recursoAEliminar);
     }
     
+    public void ModificarTitulo(string tituloNuevo)
+    {
+        Titulo = tituloNuevo;
+    }
+    
 
 }
