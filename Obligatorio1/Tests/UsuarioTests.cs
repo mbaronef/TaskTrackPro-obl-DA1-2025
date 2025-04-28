@@ -144,7 +144,13 @@ namespace Tests
         {
             Usuario usuario = CrearUsuarioValido();
             string nuevaContrasena = "c1.A";
-            Assert.IsFalse(usuario.Autenticar("c1.A"));
+            try
+            {
+                usuario.CambiarContrasena(nuevaContrasena);
+            }
+            catch { } // Ignorar la excepción
+            Assert.IsFalse(usuario.Autenticar(nuevaContrasena));
+            Assert.IsTrue(usuario.Autenticar("Contrase#a3"));
         }
 
         [TestMethod]
