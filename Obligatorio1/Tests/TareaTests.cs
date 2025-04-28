@@ -402,6 +402,24 @@ public class TareaTests
 
         Assert.AreEqual("Desc nueva", tarea.Descripcion);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsNull()
+    {
+        Tarea tarea = new Tarea("t", "Desc",  2);
+
+        tarea.ModificarDescripcion(null);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsVacia()
+    {
+        Tarea tarea = new Tarea("t", "Desc",  2);
+
+        tarea.ModificarTitulo("");
+    }
 }
     
 
