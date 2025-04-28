@@ -164,6 +164,16 @@ public class TareaTests
     }
     
     [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void CambiarEstadoNoPermiteVolverABloqueadaDesdeCompletada()
+    {
+        var tarea = new Tarea("Título", "Descripción", 5);
+        
+        tarea.CambiarEstado(EstadoTarea.Completada);
+        tarea.CambiarEstado(EstadoTarea.Bloqueada); 
+    }
+    
+    [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
     {
         Tarea tarea = new Tarea("Tarea Crítica", "Descripción", 5);
