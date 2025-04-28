@@ -268,5 +268,24 @@ namespace Tests
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsFalse(sonIguales);
         }
+        
+        [TestMethod]
+        public void EqualsRetornaFalseSiUnObjetoEsNull()
+        {
+            Usuario usuario1 = CrearUsuarioValido();
+            bool sonIguales = usuario1.Equals(null);
+            Assert.IsFalse(sonIguales);
+        }
+        
+        [TestMethod]
+        public void EqualsRetornaFalseSiUnObjetoNoEsUsuario()
+        {
+            Usuario usuario1 = CrearUsuarioValido();
+            int otro = 0;
+            bool sonIguales = usuario1.Equals(otro);
+            Assert.IsFalse(sonIguales);
+        }
+        
+        
     }
 }
