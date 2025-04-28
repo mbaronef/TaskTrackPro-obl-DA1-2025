@@ -420,6 +420,16 @@ public class TareaTests
 
         tarea.ModificarTitulo("");
     }
+    
+    //TO DO:
+    // Tests de modificar fechas
+    // Tests de modificar duracionEnDias
+    // Tests de cambiar de un estado a otro válidos
+    // Ver si faltan tests de holgura
+    // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
+    // Método NotificarMiembros
+    // Método EsMiembro
+    
 }
     
 
