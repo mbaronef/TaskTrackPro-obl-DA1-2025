@@ -12,8 +12,7 @@ public class GestorUsuariosTests
     public void SetUp()
     {
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(GestorUsuarios).GetField("_cantidadUsuarios",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        typeof(GestorUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
 
         _gestorUsuarios = new GestorUsuarios();
     }
@@ -83,6 +82,13 @@ public class GestorUsuariosTests
 
         Usuario busqueda = _gestorUsuarios.ObtenerUsuario(usuario1.Id);
         Assert.AreEqual(usuario1, busqueda);
+    }
+
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void ErrorSiSeBuscaUnUsuarioNoRegistrado()
+    {
+        Usuario busqueda = _gestorUsuarios.ObtenerUsuario(4);
     }
 
     [TestMethod]
