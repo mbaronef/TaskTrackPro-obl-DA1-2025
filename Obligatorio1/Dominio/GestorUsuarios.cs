@@ -142,6 +142,7 @@ public class GestorUsuarios
             throw new ExcepcionDominio("No tiene los permisos necesarios para modificar la contraseña del usuario.");
         }
         usuarioObjetivo.CambiarContrasena(nuevaContrasena);
+        Notificar(usuarioObjetivo,$"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}");
     }
     
     private void Notificar(Usuario usuario, string mensajeNotificacion)
