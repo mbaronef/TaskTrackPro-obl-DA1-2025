@@ -546,15 +546,27 @@ public class TareaTests
         Assert.AreEqual(2, lista.Count);
         Assert.IsTrue(lista.Contains(necesario));
         Assert.IsTrue(lista.Contains(necesario2));
+    
     }
     
-    
+    [TestMethod]
+    public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
+    {
+        Usuario miembro = new Usuario();
+        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+        tarea.AsignarUsuario(miembro);
+        tarea.NotificarMiembros("Se modificó el proyecto.");
+
+        foreach (Usuario u in tarea.UsuariosAsignados)
+        {
+            Assert.IsTrue(u.Notificaciones.Any(n => n.Mensaje == "Se modificó el proyecto."));
+        }
+    }
     
     //TO DO:
     // Ver si faltan tests de holgura
     // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
     // Método NotificarMiembros
-    // Metodo dar Lista(s)
     // Ver tema fecha de finalizacion mas temprana
     
 }
