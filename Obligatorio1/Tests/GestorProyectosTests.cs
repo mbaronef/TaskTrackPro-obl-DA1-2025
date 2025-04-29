@@ -362,6 +362,27 @@ namespace Tests
             gestor.ModificarFechaDeInicioDelProyecto(proyecto.Id, nuevaFecha, noAdmin);
         }
         
+        [TestMethod]
+        
+        public void ModificarFechaDeInicioDelProyecto_ModificaFechaDeInicioDelProyecto()
+        {
+            Usuario admin = new Usuario();
+            admin.EsAdministradorProyecto = true;
+            Usuario noAdmin = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            
+            gestor.CrearProyecto(proyecto, admin);
+            
+            DateTime nuevaFecha = DateTime.Now;
+
+            gestor.ModificarFechaDeInicioDelProyecto(proyecto.Id, nuevaFecha, admin);
+            
+            Assert.AreEqual(proyecto.FechaInicio, nuevaFecha);
+        }
+        
         
         
         
@@ -372,7 +393,7 @@ namespace Tests
         
         //TODO:
         
-        // modificarFechaInicioDelProyecto (admin proyecto)
+        // modificarFechaInicioDelProyecto
         // manda notificacion a cada uno de los miembros del proyecto
         
         // cambiarAdminProyecto (admin de sistema)
