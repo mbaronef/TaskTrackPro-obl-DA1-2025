@@ -110,6 +110,18 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuario.EsAdministradorSistema);
     }
 
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void SoloUnAdminDeSistemaPuedeAsignarOtro()
+    {
+        Usuario usuario1 = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        Usuario usuario2 = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
+        _gestorUsuarios.AgregarUsuario(usuario1);
+        _gestorUsuarios.AgregarUsuario(usuario2);
+        
+        _gestorUsuarios.AgregarAdministradorSistema(usuario1, usuario2.Id);
+    }
+
     [TestMethod]
     public void GestorAsignaAdministradorDeProyectoCorrectamente()
     {
