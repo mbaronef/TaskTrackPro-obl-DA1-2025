@@ -383,6 +383,28 @@ namespace Tests
             Assert.AreEqual(proyecto.FechaInicio, nuevaFecha);
         }
         
+        [TestMethod]
+        public void ModificarFechaDeInicioDelProyecto_NotificaALosMiembrosDelProyecto()
+        {
+            Usuario admin = new Usuario();
+            admin.EsAdministradorProyecto = true;
+            Usuario noAdmin = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            
+            gestor.CrearProyecto(proyecto, admin);
+            
+            DateTime nuevaFecha = DateTime.Now;
+
+            gestor.ModificarFechaDeInicioDelProyecto(proyecto.Id, nuevaFecha, admin);
+            
+            Assert.AreEqual(2, noAdmin.Notificaciones.Count);
+            Assert.AreEqual(2, admin.Notificaciones.Count);
+            Assert.AreEqual("Se cambió la fecha de inicio del proyecto 'Proyecto B' a '{nuevaFecha:dd/MM/yyyy}'.", noAdmin.Notificaciones[1].Mensaje);
+            Assert.AreEqual("Se cambió la fecha de inicio del proyecto 'Proyecto B' a '{nuevaFecha:dd/MM/yyyy}'.", admin.Notificaciones[1].Mensaje);
+        }
         
         
         
@@ -392,8 +414,6 @@ namespace Tests
         
         
         //TODO:
-        
-        // modificarFechaInicioDelProyecto
         // manda notificacion a cada uno de los miembros del proyecto
         
         // cambiarAdminProyecto (admin de sistema)
