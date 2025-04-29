@@ -48,7 +48,6 @@ public class Proyecto
         Miembros = miembros;
     }
     
-    // Constructor con Id: lo usaría solo el Gestor
     public void AsignarId(int id)
     {
         Id = id;

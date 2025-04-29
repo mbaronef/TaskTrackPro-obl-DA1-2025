@@ -46,6 +46,18 @@ public class GestorProyectos
         
         proyecto.NotificarMiembros($"Se eliminó el proyecto '{proyecto.Nombre}'.");
     }
-    
-    
+
+    public void ModificarNombreDelProyecto(int idProyecto, string nuevoNombre, Usuario solicitante)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+
+        if (!proyecto.EsAdministrador(solicitante))
+            throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar el nombre.");
+
+        if (!proyecto.EsAdministrador(solicitante))
+            throw new ExcepcionDominio("Solo el administrador del proyecto puede eliminarlo.");
+        
+    }
+
+
 }
