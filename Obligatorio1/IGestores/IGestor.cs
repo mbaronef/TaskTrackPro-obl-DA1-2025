@@ -1,7 +1,9 @@
-﻿namespace IGestores;
+﻿using Dominio.Dummies;
+
+namespace IGestores;
 
 public interface IGestor<T>
 {
-    void Agregar(T objeto); 
+    void Agregar(Usuario solicitante, T objeto); 
     void Eliminar(int id);
 }
