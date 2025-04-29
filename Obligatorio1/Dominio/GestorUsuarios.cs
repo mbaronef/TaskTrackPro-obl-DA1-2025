@@ -25,6 +25,10 @@ public class GestorUsuarios
 
     public void EliminarUsuario(int id)
     {
+        if (id == 0)
+        {
+            throw new ExcepcionDominio("No se puede eliminar al primer administrador del sistema");
+        }
         Usuario usuario = ObtenerUsuario(id);
         Usuarios.Remove(usuario);
     }
