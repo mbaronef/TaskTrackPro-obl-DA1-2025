@@ -322,6 +322,27 @@ namespace Tests
             Assert.AreEqual(proyecto.Descripcion, "Nueva Descripcion");
         }
         
+        [TestMethod]
+        public void ModificarDescripcionDelProyecto_NotificaALosMiembrosDelProyecto()
+        {
+            Usuario admin = new Usuario();
+            admin.EsAdministradorProyecto = true;
+            Usuario noAdmin = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.ModificarNombreDelProyecto(proyecto.Id, "Nueva Descripcion", admin);
+            
+            Assert.AreEqual(2, noAdmin.Notificaciones.Count);
+            Assert.AreEqual(2, admin.Notificaciones.Count);
+            Assert.AreEqual("Se cambió la descripcion del proyecto 'Proyecto B' a 'Nueva Descripcion'.", noAdmin.Notificaciones[1].Mensaje);
+            Assert.AreEqual("Se cambió la descripcion del proyecto 'Proyecto B' a 'Nueva Descripcion'.", admin.Notificaciones[1].Mensaje);
+        }
+        
         
         
         
@@ -332,7 +353,6 @@ namespace Tests
         
         //TODO:
         
-        // modificarDescripcionDelProyecto (admin proyecto)
         // manda notificacion a cada uno de los miembros del proyecto
         
         // modificarFechaInicioDelProyecto (admin proyecto)
