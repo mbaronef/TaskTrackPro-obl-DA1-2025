@@ -58,7 +58,6 @@ public class GestorProyectos
             throw new ExcepcionDominio("Ya existe un proyecto con ese nombre.");
         
         proyecto.NotificarMiembros($"Se cambió el nombre del proyecto '{proyecto.Nombre}' a '{nuevoNombre}'.");
-
     }
     
 
