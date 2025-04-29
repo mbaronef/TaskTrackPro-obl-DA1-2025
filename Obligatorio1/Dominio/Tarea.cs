@@ -208,5 +208,10 @@ public class Tarea
             usuario.RecibirNotificacion(nuevaNotificacion);
         }
     }
+    
+    public void AgregarDependencia(Dependencia dependencia)
+    {
+        Dependencias.Add(dependencia);
+    }
 
 }
