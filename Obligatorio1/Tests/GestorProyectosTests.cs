@@ -198,10 +198,10 @@ namespace Tests
             gestor.CrearProyecto(proyecto, solicitante);
             gestor.EliminarProyecto(proyecto.Id, solicitante);
 
-            Assert.AreEqual(1, miembro1.Notificaciones.Count);
-            Assert.AreEqual(1, miembro2.Notificaciones.Count);
-            Assert.AreEqual("Se eliminió el proyecto 'Proyecto A Eliminar'.", miembro1.Notificaciones[0].Mensaje);
-            Assert.AreEqual("Se eliminó el proyecto 'Proyecto A Eliminar'.", miembro2.Notificaciones[0].Mensaje);
+            Assert.AreEqual(2, miembro1.Notificaciones.Count);
+            Assert.AreEqual(2, miembro2.Notificaciones.Count);
+            Assert.AreEqual("Se eliminó el proyecto 'Proyecto A Eliminar'.", miembro1.Notificaciones[1].Mensaje);
+            Assert.AreEqual("Se eliminó el proyecto 'Proyecto A Eliminar'.", miembro2.Notificaciones[1].Mensaje);
         }  
         
         

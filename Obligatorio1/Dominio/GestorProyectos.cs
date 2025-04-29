@@ -44,6 +44,7 @@ public class GestorProyectos
         solicitante.EstaAdministrandoProyecto = false;
         Proyectos.Remove(proyecto);
         
+        proyecto.NotificarMiembros($"Se eliminó el proyecto '{proyecto.Nombre}'.");
     }
     
     
