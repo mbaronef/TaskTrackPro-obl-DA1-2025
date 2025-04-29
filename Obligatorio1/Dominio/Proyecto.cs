@@ -49,8 +49,7 @@ public class Proyecto
     }
     
     // Constructor con Id: lo usaría solo el Gestor
-    public Proyecto(int id, string nombre, string descripcion, Usuario administrador, List<Usuario> miembros)
-        : this(nombre, descripcion, administrador, miembros)
+    public void AsignarId(int id)
     {
         Id = id;
     }

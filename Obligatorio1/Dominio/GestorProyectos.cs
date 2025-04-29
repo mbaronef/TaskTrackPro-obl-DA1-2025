@@ -1,4 +1,5 @@
 using Dominio.Dummies;
+using Dominio.Excepciones;
 
 namespace Dominio;
 
@@ -7,10 +8,15 @@ public class GestorProyectos
     private static int _cantidadProyectos;
     public List<Proyecto> Proyectos { get; private set; } = new List<Proyecto>();
 
-    public void CrearProyecto(Proyecto proyecto, Usuario solicitante) // no se si no es mejor un metodo en proyecto que sea asignar id en vez del constructor
+    public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
     {
+        if (!solicitante.EsAdministradorProyecto)
+            throw new ExcepcionDominio("El usuario no tiene permiso para crear un proyecto.");
+
         _cantidadProyectos++;
-        Proyecto proyectoConId = new Proyecto(_cantidadProyectos, proyecto.Nombre, proyecto.Descripcion, proyecto.Administrador, proyecto.Miembros);
-        Proyectos.Add(proyectoConId);
+        proyecto.AsignarId(_cantidadProyectos);
+        Proyectos.Add(proyecto);
     }
+    
+    
 }

@@ -108,14 +108,14 @@ namespace Tests
             _proyecto = new Proyecto("Nombre", "Descripción",  _admin, null);
         }
         
-        //Costructor con id
+        //Asignar ID
         
         [TestMethod]
-        public void ConstructorConId_DeberiaAsignarCorrectamenteElId()
+        public void AsignarID_DeberiaAsignarCorrectamenteElId()
         {
             _admin.Id = 1;
-            _proyecto = new Proyecto(42, "Proyecto Test", "Descripción de prueba", _admin, _miembros);
-
+            _proyecto = new Proyecto( "Proyecto Test", "Descripción de prueba", _admin, _miembros);
+            _proyecto.AsignarId(42);
             Assert.AreEqual(42, _proyecto.Id);
         }
         
