@@ -627,6 +627,14 @@ public class TareaTests
         Assert.AreEqual(1, tarea.Dependencias.Count);
     }
     
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AgregarDependencia_LanzarExcepcionSiDependenciaEsNull()
+    {
+        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+        Dependencia dependencia = null;
+        tarea.AgregarDependencia(dependencia); 
+    }
 
     
     //TO DO:
