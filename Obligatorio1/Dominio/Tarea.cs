@@ -225,6 +225,8 @@ public class Tarea
     {
         Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
         
+        ValidarObjetoNoNull(dependenciaAEliminar,"La dependencia no se encuentra dentro de la lista de dependencias.");
+        
         Dependencias.Remove(dependenciaAEliminar);
     }
      
