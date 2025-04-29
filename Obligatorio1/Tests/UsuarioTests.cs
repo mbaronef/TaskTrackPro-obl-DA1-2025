@@ -270,7 +270,7 @@ namespace Tests
             GestorUsuarios gestor = new GestorUsuarios(adminSistema);
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(adminSistema,usuario1);
-            Usuario usuario2 = gestor.ObtenerUsuario(usuario1.Id);
+            Usuario usuario2 = gestor.ObtenerUsuarioPorId(usuario1.Id);
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsTrue(sonIguales);
         }

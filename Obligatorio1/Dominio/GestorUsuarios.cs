@@ -33,11 +33,11 @@ public class GestorUsuarios
         {
             throw new ExcepcionDominio("No se puede eliminar al primer administrador del sistema");
         }
-        Usuario usuario = ObtenerUsuario(id);
+        Usuario usuario = ObtenerUsuarioPorId(id);
         Usuarios.Remove(usuario);
     }
 
-    public Usuario ObtenerUsuario(int idUsuario)
+    public Usuario ObtenerUsuarioPorId(int idUsuario)
     {
         Usuario usuario = Usuarios.FirstOrDefault(u => u.Id == idUsuario);
         if (usuario == null)
@@ -53,21 +53,23 @@ public class GestorUsuarios
         {
             throw new ExcepcionDominio("No tiene los permisos necesarios para asignar un administrador de sistema.");
         }
-        Usuario usuario = ObtenerUsuario(idUsuario);
+        Usuario usuario = ObtenerUsuarioPorId(idUsuario);
         usuario.EsAdministradorSistema = true;
     }
 
-    public void AsignarAdministradorProyecto(Usuario solicitante, Usuario nuevoAdministradorProyecto)
+    public void AsignarAdministradorProyecto(Usuario solicitante, int idUsuario)
     {
         if (!solicitante.EsAdministradorSistema)
         {
             throw new ExcepcionDominio("No tiene los permisos necesarios para asignar administradores de proyectos.");
         }
+        Usuario nuevoAdministradorProyecto = ObtenerUsuarioPorId(idUsuario);
         nuevoAdministradorProyecto.EsAdministradorProyecto = true;
     }
 
-    public void EliminarAdministradorProyecto(Usuario solicitante, Usuario administradorProyecto)
+    public void EliminarAdministradorProyecto(Usuario solicitante, int idUsuario)
     {
+        Usuario administradorProyecto = ObtenerUsuarioPorId(idUsuario);
         if (!solicitante.EsAdministradorSistema)
         {
             throw new ExcepcionDominio("No tiene los permisos necesarios para eliminar administradores de proyectos.");
@@ -85,8 +87,9 @@ public class GestorUsuarios
         administradorProyecto.EsAdministradorProyecto = false;
     }
 
-    public void ReiniciarContrasena(Usuario solicitante, Usuario usuarioObjetivo)
+    public void ReiniciarContrasena(Usuario solicitante, int idUsuarioObjetivo)
     {
+        Usuario usuarioObjetivo = ObtenerUsuarioPorId(idUsuarioObjetivo);
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto && !solicitante.Equals(usuarioObjetivo))
         {
             throw new ExcepcionDominio("No tiene los permisos necesarios para reiniciar la contraseña del usuario.");
@@ -95,7 +98,7 @@ public class GestorUsuarios
         Notificar(usuarioObjetivo, $"Se reinició su contraseña. La nueva contraseña es {_contrasenaPorDefecto}");
     }
 
-    public void AutogenerarContrasena(Usuario administrador, Usuario usuarioObjetivo)
+    public void AutogenerarContrasena(Usuario administrador, int idUsuarioObjetivo)
     {
         if (!administrador.EsAdministradorSistema && !administrador.EsAdministradorProyecto)
         {
@@ -121,8 +124,8 @@ public class GestorUsuarios
             
         while (contrasenaAutogenerada.Length < largo)
             contrasenaAutogenerada.Append(ObtenerCaracterAleatorio(todosLosCaracteres, rng)); // agrega a la contraseña caracteres random hasta cumplir longitud
-            
         string nuevaContrasena = MezclarCaracteres(contrasenaAutogenerada.ToString(), rng);
+        Usuario usuarioObjetivo = ObtenerUsuarioPorId(idUsuarioObjetivo);
         usuarioObjetivo.CambiarContrasena(nuevaContrasena);
         Notificar(usuarioObjetivo, $"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}");
     }
@@ -151,8 +154,9 @@ public class GestorUsuarios
         return new string(array); // Convierte el array de nuevo a una cadena
     }
 
-    public void ModificarContrasena(Usuario solicitante, Usuario usuarioObjetivo, string nuevaContrasena)
+    public void ModificarContrasena(Usuario solicitante, int idUsuarioObjetivo, string nuevaContrasena)
     {
+        Usuario usuarioObjetivo = ObtenerUsuarioPorId(idUsuarioObjetivo);
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto && !solicitante.Equals(usuarioObjetivo))
         {
             throw new ExcepcionDominio("No tiene los permisos necesarios para modificar la contraseña del usuario.");
