@@ -46,7 +46,7 @@ namespace Tests
         {
             Usuario solicitante = new Usuario();
             solicitante.EsAdministradorProyecto = true;
-            solicitante.EstaAdministrandoProyecto = true; // Ya está administrando uno
+            solicitante.EstaAdministrandoProyecto = true; 
 
             GestorProyectos gestor = new GestorProyectos();
             Proyecto proyecto = new Proyecto("Proyecto A", "Descripción", solicitante, new List<Usuario>());
@@ -84,9 +84,8 @@ namespace Tests
             Proyecto proyecto1 = new Proyecto("nombre", "descripcion1", adminSistema, miembros);
             gestor.CrearProyecto(proyecto1, adminSistema);
 
-            // Segundo proyecto con el mismo nombre -> debería fallar
             Proyecto proyecto2 = new Proyecto("nombre", "descripcion2", adminSistema, miembros);
-            gestor.CrearProyecto(proyecto2, adminSistema); // Debe lanzar ExcepcionDominio
+            gestor.CrearProyecto(proyecto2, adminSistema); 
         }
         
         [TestMethod]
@@ -110,11 +109,12 @@ namespace Tests
             Assert.AreEqual("Se creó el proyecto 'Proyecto Notificado'.", miembro1.Notificaciones[0].Mensaje);
             Assert.AreEqual("Se creó el proyecto 'Proyecto Notificado'.", miembro2.Notificaciones[0].Mensaje);
         }   
+        
         // eliminarProyecto
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void EliminarProyecto_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto() // no se porque me sigue dando mal
+        public void EliminarProyecto_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto()
         {
             Usuario admin = new Usuario();
             admin.EsAdministradorProyecto = true;
@@ -124,11 +124,11 @@ namespace Tests
             Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
 
             GestorProyectos gestor = new GestorProyectos();
-            gestor.CrearProyecto(proyecto, admin); // admin es admin real
+            gestor.CrearProyecto(proyecto, admin); 
             
             Assert.IsFalse(proyecto.EsAdministrador(noAdmin)); 
 
-            gestor.EliminarProyecto(proyecto.Id, noAdmin); // noAdmin no es admin
+            gestor.EliminarProyecto(proyecto.Id, noAdmin); 
         }
         
         [TestMethod]
@@ -186,7 +186,7 @@ namespace Tests
         
         
         
-        //TO DO:
+        //TODO:
         
         // eliminarProyecto 
         // admin.estaAdministrandoProyecto cambiarlo a false

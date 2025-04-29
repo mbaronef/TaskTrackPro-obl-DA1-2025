@@ -40,8 +40,10 @@ public class GestorProyectos
 
         if (!proyecto.EsAdministrador(solicitante))
             throw new ExcepcionDominio("Solo el administrador del proyecto puede eliminarlo.");
-
+        
+        solicitante.EstaAdministrandoProyecto = false;
         Proyectos.Remove(proyecto);
+        
     }
     
     
