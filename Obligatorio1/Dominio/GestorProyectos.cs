@@ -63,7 +63,15 @@ public class GestorProyectos
         
         proyecto.NotificarMiembros($"Se cambió el nombre del proyecto '{nombreAnterior}' a '{proyecto.Nombre}'.");
     }
-    
+
+    public void ModificarDescripcionDelProyecto(int idProyecto, string descripcion, Usuario solicitante)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+
+        if (!proyecto.EsAdministrador(solicitante))
+            throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar el nombre.");
+    }
+
 
 
 }
