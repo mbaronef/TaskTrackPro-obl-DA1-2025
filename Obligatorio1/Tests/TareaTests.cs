@@ -661,6 +661,18 @@ public class TareaTests
 
         Assert.IsFalse(tarea.Dependencias.Any(d => d.Tarea.Id == 1));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void EliminarDependencia_LanzaExcepcionSiDepenciaNoExiste()
+    {
+        Dependencia dep = new Dependencia();
+        dep.Tarea.Id = 1;
+            
+        Tarea tarea = new Tarea("tarea", "descr", 87);
+        tarea.AgregarDependencia(dep);
+        tarea.EliminarDependencia(3);
+    }
 
     
     //TO DO:
