@@ -666,13 +666,18 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarDependencia_LanzaExcepcionSiDepenciaNoExiste()
     {
-        Dependencia dep = new Dependencia();
-        dep.Tarea.Id = 1;
-            
+        Tarea tareaDependiente = new Tarea(1, "dep", "desc", 5);
+        Dependencia dep = new Dependencia
+        {
+            Tarea = tareaDependiente
+        };
+    
         Tarea tarea = new Tarea("tarea", "descr", 87);
         tarea.AgregarDependencia(dep);
+        
         tarea.EliminarDependencia(3);
     }
+
 
     
     //TO DO:

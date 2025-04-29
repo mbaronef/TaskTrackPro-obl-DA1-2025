@@ -224,7 +224,7 @@ public class Tarea
     public void EliminarDependencia(int idTarea)
     {
         Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
-
+        
         Dependencias.Remove(dependenciaAEliminar);
     }
      
