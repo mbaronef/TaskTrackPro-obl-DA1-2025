@@ -131,6 +131,18 @@ namespace Tests
             gestor.EliminarProyecto(proyecto.Id, noAdmin); // noAdmin no es admin
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarProyecto_LanzaExcepcionSiProyectoNoExiste()
+        {
+            //Solicitante es admin de proyecto, pero el id no está en la lista
+            Usuario admin = new Usuario( );
+            admin.EsAdministradorProyecto = true;
+            GestorProyectos gestor = new GestorProyectos();
+
+            gestor.EliminarProyecto(1000, admin);   
+        }
+        
         
         
         

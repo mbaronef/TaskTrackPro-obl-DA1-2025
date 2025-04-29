@@ -35,9 +35,6 @@ public class GestorProyectos
     {
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
 
-        if (proyecto is null)
-            throw new ExcepcionDominio("No se encontró el proyecto.");
-
         if (!proyecto.EsAdministrador(solicitante))
             throw new ExcepcionDominio("Solo el administrador del proyecto puede eliminarlo.");
 
