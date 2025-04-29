@@ -216,7 +216,16 @@ public class Tarea
             throw new ExcepcionDominio("La dependencia ya fue agregada.");
         Dependencias.Add(dependencia);
     }
+    
+    private Dependencia BuscarDependenciaPorIdDeTarea (int id)
+    {
+        return Dependencias.FirstOrDefault(d =>d.Tarea.Id  == id);
+    }
+    public void EliminarDependencia(int idTarea)
+    {
+        Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
 
-
-
+        Dependencias.Remove(dependenciaAEliminar);
+    }
+    
 }
