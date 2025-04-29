@@ -304,6 +304,24 @@ namespace Tests
             gestor.ModificarDescripcionDelProyecto(proyecto.Id, "Nueva Descripcion", noAdmin);
         }
         
+        [TestMethod]
+        public void ModificarDescripcionDelProyecto_ModificaDescripcionDelProyecto()
+        {
+            Usuario admin = new Usuario();
+            admin.EsAdministradorProyecto = true;
+            Usuario noAdmin = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.ModificarDescripcionDelProyecto(proyecto.Id, "Nueva Descripcion", admin);
+            
+            Assert.AreEqual(proyecto.Descripcion, "Nueva Descripcion");
+        }
+        
         
         
         
