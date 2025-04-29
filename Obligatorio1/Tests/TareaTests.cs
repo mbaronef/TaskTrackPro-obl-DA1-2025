@@ -252,6 +252,22 @@ public class TareaTests
     }
     
     [TestMethod]
+    public void EliminarUsuarioAsignado_UsuarioEnSegundaPosicion_SeEliminaCorrectamente()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        Usuario usuario1 = new Usuario("a", "a", "a", "a") { Id = 1 };
+        Usuario usuario2 = new Usuario("b", "b", "b", "b") { Id = 2 };
+        tarea.UsuariosAsignados.Add(usuario1);
+        tarea.UsuariosAsignados.Add(usuario2);
+
+        tarea.EliminarUsuarioAsignado(2);
+
+        Assert.IsFalse(tarea.UsuariosAsignados.Contains(usuario2));
+        Assert.IsTrue(tarea.UsuariosAsignados.Contains(usuario1));
+    }
+
+    
+    [TestMethod]
     public void FechaFinMasTempranaInicializadaConMinValuePorDefecto()
     { 
         Tarea tarea = new Tarea("Titulo", "Descripción", 5);
