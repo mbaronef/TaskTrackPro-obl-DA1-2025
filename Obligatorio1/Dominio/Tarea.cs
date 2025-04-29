@@ -211,6 +211,7 @@ public class Tarea
     
     public void AgregarDependencia(Dependencia dependencia)
     {
+        ValidarObjetoNoNull(dependencia,"No se puede agregar una dependencia null.");
         Dependencias.Add(dependencia);
     }
 
