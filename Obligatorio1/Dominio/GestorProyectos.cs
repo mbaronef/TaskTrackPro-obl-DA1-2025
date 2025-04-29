@@ -19,6 +19,8 @@ public class GestorProyectos
         _cantidadProyectos++;
         proyecto.AsignarId(_cantidadProyectos);
         Proyectos.Add(proyecto);
+        
+        solicitante.EstaAdministrandoProyecto = true;
     }
     
     
