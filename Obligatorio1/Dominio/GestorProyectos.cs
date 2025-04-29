@@ -12,6 +12,9 @@ public class GestorProyectos
     {
         if (!solicitante.EsAdministradorProyecto)
             throw new ExcepcionDominio("El usuario no tiene permiso para crear un proyecto.");
+        
+        if (solicitante.EstaAdministrandoProyecto)
+            throw new ExcepcionDominio("El usuario ya está administrando un proyecto.");
 
         _cantidadProyectos++;
         proyecto.AsignarId(_cantidadProyectos);
