@@ -172,6 +172,19 @@ public class GestorUsuariosTests
 
         _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
+    
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void ErrorEliminarAdministradorProyectoSiUsuarioEstaAdministrandoUnProyecto()
+    {
+        Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
+        Usuario nuevoAdminProyecto = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
+        _gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
+        nuevoAdminProyecto.EstaAdministrandoUnProyecto = true; // esto lo gestiona el gestor de proyectos
+
+        _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
+    }
 
     [TestMethod]
     public void AdminSistemaReiniciaLaContraseñaDeUnUsuarioCorrectamente()
