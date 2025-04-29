@@ -12,8 +12,9 @@ public class GestorUsuarios
 
     public GestorUsuarios(Usuario adminSistema)
     {
-        AgregarUsuario(adminSistema);
+        Usuarios.Add(adminSistema);
         adminSistema.EsAdministradorSistema = true;
+        //No se manejan ids, el primer administrador tiene id 0
     }
     
     public void AgregarUsuario(Usuario usuario)

@@ -16,7 +16,7 @@ public class GestorUsuariosTests
         typeof(GestorUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         
         _adminSistema = new Usuario("admin", "admin", new DateTime(0001,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
-        _gestorUsuarios = new GestorUsuarios(_adminSistema);
+        _gestorUsuarios = new GestorUsuarios(_adminSistema); // Primer admin sistema siempre tiene ID 0
     }
     
     private Usuario CrearUsuario(string nombre, string apellido, string email, string contrasena)
@@ -47,9 +47,9 @@ public class GestorUsuariosTests
         _gestorUsuarios.AgregarUsuario(usuario1);
         _gestorUsuarios.AgregarUsuario(usuario2);
 
-        Assert.AreEqual(2, _gestorUsuarios.Usuarios.Count);
-        Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[0]);
-        Assert.AreSame(usuario2, _gestorUsuarios.Usuarios[1]);
+        Assert.AreEqual(3, _gestorUsuarios.Usuarios.Count);
+        Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[1]);
+        Assert.AreSame(usuario2, _gestorUsuarios.Usuarios[2]);
     }
 
     [TestMethod]
@@ -73,8 +73,8 @@ public class GestorUsuariosTests
         _gestorUsuarios.AgregarUsuario(usuario2);
 
         _gestorUsuarios.EliminarUsuario(usuario2.Id);
-        Assert.AreEqual(1, _gestorUsuarios.Usuarios.Count);
-        Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[0]);
+        Assert.AreEqual(2, _gestorUsuarios.Usuarios.Count);
+        Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[1]);
     }
 
     [TestMethod]
