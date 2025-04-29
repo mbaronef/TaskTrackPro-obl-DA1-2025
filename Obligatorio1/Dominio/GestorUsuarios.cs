@@ -150,8 +150,7 @@ public class GestorUsuarios
     
     private void Notificar(Usuario usuario, string mensajeNotificacion)
     {
-        Notificacion notificacion = new Notificacion(mensajeNotificacion);
-        usuario.RecibirNotificacion(notificacion);
+        usuario.RecibirNotificacion(mensajeNotificacion);
     }
 
     public Usuario LogIn(string email, string contrasena)

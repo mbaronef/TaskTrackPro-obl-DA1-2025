@@ -130,8 +130,9 @@ public class Usuario
         Email = nuevoEmail;
     }
 
-    public void RecibirNotificacion(Notificacion notificacion)
+    public void RecibirNotificacion(string mensaje)
     {
+        Notificacion notificacion = new Notificacion(mensaje);
         Notificaciones.Add(notificacion);
     }
 

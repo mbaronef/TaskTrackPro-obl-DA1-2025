@@ -222,23 +222,22 @@ namespace Tests
         public void SeRecibeUnaNotificacionCorrectamente()
         {
             Usuario usuario = CrearUsuarioValido();
-            Notificacion notificacion = new Notificacion("un mensaje de notificación");
-
-            usuario.RecibirNotificacion(notificacion);
+            string mensaje = "un mensje de notificación";
+            usuario.RecibirNotificacion(mensaje);
 
             Assert.AreEqual(1, usuario.Notificaciones.Count);
-            Assert.AreSame(notificacion, usuario.Notificaciones.ElementAt(0));
+            Assert.AreEqual("un mensje de notificación", usuario.Notificaciones.ElementAt(0).Mensaje);
+            Assert.AreEqual(DateTime.Today, usuario.Notificaciones.ElementAt(0).Fecha);
         }
 
         [TestMethod]
         public void SeBorranNotificacionesCorrectamente()
         {
             Usuario usuario = CrearUsuarioValido();
-            Notificacion notificacion1 = new Notificacion("un mensaje de notificación");
-            Notificacion notificacion2= new Notificacion("un mensaje de notificación");
-            usuario.RecibirNotificacion(notificacion1);
-            usuario.RecibirNotificacion(notificacion2);
-            int id1 = notificacion1.Id;
+            string mensaje = "un mensje de notificación";
+            usuario.RecibirNotificacion(mensaje);
+            usuario.RecibirNotificacion(mensaje);
+            int id1 = usuario.Notificaciones.ElementAt(0).Id;
 
             usuario.BorrarNotificacion(id1);
             Assert.AreEqual(1, usuario.Notificaciones.Count);
@@ -249,11 +248,10 @@ namespace Tests
         public void BorrarNotificacionInexistenteDaError()
         {
             Usuario usuario = CrearUsuarioValido();
-            Notificacion notificacion1 = new Notificacion("un mensaje de notificación");
-            Notificacion notificacion2= new Notificacion("un mensaje de notificación");
+            string mensaje = "un mensje de notificación";
+            usuario.RecibirNotificacion(mensaje);
+            usuario.RecibirNotificacion(mensaje);
             // se agregan notificaciones con id 1 e id 2
-            usuario.RecibirNotificacion(notificacion1);
-            usuario.RecibirNotificacion(notificacion2);
             usuario.BorrarNotificacion(0);
         }
         
