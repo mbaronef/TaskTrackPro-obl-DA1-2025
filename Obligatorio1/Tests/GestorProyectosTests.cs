@@ -414,15 +414,15 @@ namespace Tests
         {
             Usuario admin = new Usuario { EsAdministradorProyecto = true };
             admin.EsAdministradorSistema = false;
-            Usuario miembro = new Usuario();
+            Usuario miembroASerNuevoAdmin = new Usuario();
 
             GestorProyectos gestor = new GestorProyectos();
-            List<Usuario> miembros = new List<Usuario> { miembro };
+            List<Usuario> miembros = new List<Usuario> { miembroASerNuevoAdmin };
             Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
             
             gestor.CrearProyecto(proyecto, admin);
 
-            gestor.CambiarAdministradorDeProyecto(proyecto.Id, miembro, admin);
+            gestor.CambiarAdministradorDeProyecto(admin, proyecto.Id, miembroASerNuevoAdmin.Id);
         }
         
         
