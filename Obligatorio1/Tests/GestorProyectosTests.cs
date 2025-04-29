@@ -204,7 +204,7 @@ namespace Tests
             Assert.AreEqual("Se eliminó el proyecto 'Proyecto A Eliminar'.", miembro2.Notificaciones[1].Mensaje);
         }  
         
-        //modificacion de nombre
+        //modificacion de nombre del proyecto
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
@@ -279,7 +279,6 @@ namespace Tests
 
             gestor.ModificarNombreDelProyecto(proyecto.Id, "Nuevo Nombre", admin);
             
-            
             Assert.AreEqual(2, noAdmin.Notificaciones.Count);
             Assert.AreEqual(2, admin.Notificaciones.Count);
             Assert.AreEqual("Se cambió el nombre del proyecto 'Proyecto B' a 'Nuevo Nombre'.", noAdmin.Notificaciones[1].Mensaje);
@@ -287,12 +286,33 @@ namespace Tests
         }
         
         
+        // modificacion de la descripcion del proyecto
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarDescripcionDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario noAdmin = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.ModificarDescripcionDelProyecto(proyecto.Id, "Nueva Descripcion", noAdmin);
+        }
+        
+        
+        
+        
+        
+        
         
         
         
         //TODO:
-        
-        // modificarNombreDelProyecto 
         
         // modificarDescripcionDelProyecto (admin proyecto)
         // manda notificacion a cada uno de los miembros del proyecto
