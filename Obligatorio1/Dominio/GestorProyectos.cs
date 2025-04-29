@@ -34,6 +34,9 @@ public class GestorProyectos
     public void EliminarProyecto(int idProyecto, Usuario solicitante)
     {
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        
+        if (proyecto is null)
+            throw new ExcepcionDominio("El proyecto no existe.");
 
         if (!proyecto.EsAdministrador(solicitante))
             throw new ExcepcionDominio("Solo el administrador del proyecto puede eliminarlo.");
