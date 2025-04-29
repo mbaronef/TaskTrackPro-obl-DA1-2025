@@ -409,6 +409,26 @@ namespace Tests
         // cambiar administrador de proyecto
         
         [TestMethod]
+        public void CambiarAdministradorDeProyecto_AsignaNuevoAdminOK()
+        {
+            Usuario adminSistema = new Usuario { EsAdministradorSistema = true };
+            Usuario adminProyectoActual = new Usuario { EsAdministradorProyecto = true };
+            Usuario nuevoAdmin = new Usuario { EsAdministradorProyecto = true };
+
+            List<Usuario> miembros = new List<Usuario>{ nuevoAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto X", "Desc", adminProyectoActual, miembros);
+
+            GestorProyectos gestor = new();
+            gestor.CrearProyecto(proyecto, adminProyectoActual);
+            
+            gestor.CambiarAdministradorDeProyecto(adminSistema, proyecto.Id, nuevoAdmin.Id);
+            
+            Assert.AreSame(nuevoAdmin, proyecto.Administrador);
+            Assert.IsFalse(adminProyectoActual.EstaAdministrandoProyecto);
+            Assert.IsTrue(nuevoAdmin.EstaAdministrandoProyecto);
+        }
+        
+        [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void CambiarAdministradorDeProyecto_LanzaExcepcionSiSolicitanteNoEsAdminSistema()
         {
