@@ -76,6 +76,13 @@ public class GestorUsuariosTests
         Assert.AreEqual(2, _gestorUsuarios.Usuarios.Count);
         Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[1]);
     }
+    
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void GestorNoEliminaPrimerAdministradorSistema()
+    {
+        _gestorUsuarios.EliminarUsuario(0);
+    }
 
     [TestMethod]
     public void GestorDevuelveUnUsuarioPorId()
