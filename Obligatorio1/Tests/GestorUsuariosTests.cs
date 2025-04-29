@@ -52,6 +52,16 @@ public class GestorUsuariosTests
         Assert.AreSame(usuario2, _gestorUsuarios.Usuarios[2]);
     }
 
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void NoAdminDeSistemaNoPuedeAgregarUsuario()
+    {   
+        Usuario solicitante = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        _gestorUsuarios.AgregarUsuario(_adminSistema,solicitante);
+        Usuario nuevoUsuario = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
+        _gestorUsuarios.AgregarUsuario(solicitante,nuevoUsuario);
+    }
+
     [TestMethod]
     public void GestorLlevaCuentaDeUsuariosCorrectamenteYAsignaIdsIncrementales()
     {
