@@ -343,6 +343,25 @@ namespace Tests
             Assert.AreEqual("Se cambió la descripción del proyecto 'Proyecto B' a 'Nueva Descripcion'.", admin.Notificaciones[1].Mensaje);
         }
         
+        // modificacion de la fecha de inicio del proyecto
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaDeInicioDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario noAdmin = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            
+            gestor.CrearProyecto(proyecto, admin);
+            DateTime nuevaFecha = DateTime.Now;
+
+            gestor.ModificarFechaDeInicioDelProyecto(proyecto.Id, nuevaFecha, noAdmin);
+        }
+        
         
         
         
@@ -352,8 +371,6 @@ namespace Tests
         
         
         //TODO:
-        
-        // manda notificacion a cada uno de los miembros del proyecto
         
         // modificarFechaInicioDelProyecto (admin proyecto)
         // manda notificacion a cada uno de los miembros del proyecto
