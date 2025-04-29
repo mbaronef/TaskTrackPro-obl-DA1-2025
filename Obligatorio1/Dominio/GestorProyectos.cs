@@ -54,6 +54,8 @@ public class GestorProyectos
         if (!proyecto.EsAdministrador(solicitante))
             throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar el nombre.");
         
+        if (Proyectos.Any(p => p.Nombre == nuevoNombre && p.Id != idProyecto))
+            throw new ExcepcionDominio("Ya existe un proyecto con ese nombre.");
     }
 
 
