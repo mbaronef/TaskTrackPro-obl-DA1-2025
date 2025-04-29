@@ -2,5 +2,5 @@
 
 public class Dependencia
 {
-    
+    public Tarea Tarea { get; set; }
 }

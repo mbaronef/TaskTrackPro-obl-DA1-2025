@@ -649,14 +649,19 @@ public class TareaTests
     [TestMethod]
     public void EliminarDependencia_EliminarDependenciaDeDependencias()
     {
-        Dependencia dependencia = new Dependencia();
-        dependencia.Id = 1;
+        Tarea tareaDependiente = new Tarea(1, "dep", "desc", 5);
+        Dependencia dependencia = new Dependencia
+        {
+            Tarea = tareaDependiente
+        };
+
         Tarea tarea = new Tarea("tarea", "descr", 87);
         tarea.AgregarDependencia(dependencia);
         tarea.EliminarDependencia(1);
 
-        Assert.IsFalse(tarea.Dependencias.Any(t => t.Id == 1));
+        Assert.IsFalse(tarea.Dependencias.Any(d => d.Tarea.Id == 1));
     }
+
     
     //TO DO:
     // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
