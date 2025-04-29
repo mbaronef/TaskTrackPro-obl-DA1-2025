@@ -13,8 +13,9 @@ public class GestorUsuariosTests
     {
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(GestorUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-
-        _gestorUsuarios = new GestorUsuarios();
+        
+        Usuario adminSistema = new Usuario("admin", "admin", DateTime.Now, "admin@admin.com", "AdminTaskTrackPro@2025");
+        _gestorUsuarios = new GestorUsuarios(adminSistema);
     }
     
     private Usuario CrearUsuario(string nombre, string apellido, string email, string contrasena)
@@ -34,7 +35,7 @@ public class GestorUsuariosTests
     public void ConstructorSinParametrosCreaGestorValido()
     {
         Assert.IsNotNull(_gestorUsuarios);
-        Assert.AreEqual(0, _gestorUsuarios.Usuarios.Count);
+        Assert.AreEqual(1, _gestorUsuarios.Usuarios.Count); // se crea solo con administrador
     }
 
     [TestMethod]
