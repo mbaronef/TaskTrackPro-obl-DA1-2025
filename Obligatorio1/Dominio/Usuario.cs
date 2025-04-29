@@ -16,6 +16,8 @@ public class Usuario
     public bool EsAdministradorSistema { get; set; } = false;
 
     public bool EsAdministradorProyecto { get; set; } = false;
+    
+    public bool EstaAdministrandoUnProyecto { get; set; } = false;
 
 
     public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)

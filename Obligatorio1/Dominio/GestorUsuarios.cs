@@ -66,6 +66,11 @@ public class GestorUsuarios
         {
             throw new ExcepcionDominio("El usuario a eliminar no es administrador de proyectos.");
         }
+
+        if (administradorProyecto.EstaAdministrandoUnProyecto)
+        {
+            throw new ExcepcionDominio("No se puede quitar permisos de proyecto a un usuario que tiene un proyecto a su cargo.");
+        }
         administradorProyecto.EsAdministradorProyecto = false;
     }
 
