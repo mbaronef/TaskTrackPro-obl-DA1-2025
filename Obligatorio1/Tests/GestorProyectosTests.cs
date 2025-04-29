@@ -110,13 +110,27 @@ namespace Tests
             Assert.AreEqual("Se creó el proyecto 'Proyecto Notificado'.", miembro1.Notificaciones[0].Mensaje);
             Assert.AreEqual("Se creó el proyecto 'Proyecto Notificado'.", miembro2.Notificaciones[0].Mensaje);
         }   
+        // eliminarProyecto
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarProyecto_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto()
+        {
+            Usuario admin = new Usuario();
+            admin.EsAdministradorProyecto = true;
+            Usuario noAdmin = new Usuario(); // No es admin
+
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+
+            GestorProyectos gestor = new GestorProyectos();
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.EliminarProyecto(proyecto.Id, noAdmin); // No tiene permiso
+        }
+        
         
         //TO DO:
-        // crearProyecto ( tiene que ser un usuario con el bool EsAdminProyecto en true y estaAdministrandoProyecto en false)
-        // si estaAdministrandoProyecto en false y EsAdminProyecto true -> puede crearlo, usuario.estaAdministrandoProyecto cambiar a true
-        // verificar que no exista un proyecto con el mismo nombre antes de ser creado (recorro la lista de proyectos)
-        // verificar que se asigne bien el id al proyecto
-        // manda notificacion a los miembros del proyecto que se creo
         
         // eliminarProyecto (admin de ese proyecto)
         // verificar que el proyecto exista
