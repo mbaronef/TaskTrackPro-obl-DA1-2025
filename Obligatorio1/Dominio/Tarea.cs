@@ -212,6 +212,8 @@ public class Tarea
     public void AgregarDependencia(Dependencia dependencia)
     {
         ValidarObjetoNoNull(dependencia,"No se puede agregar una dependencia null.");
+        if (Dependencias.Contains(dependencia))
+            throw new ExcepcionDominio("La dependencia ya fue agregada.");
         Dependencias.Add(dependencia);
     }
 
