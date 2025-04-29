@@ -402,8 +402,8 @@ namespace Tests
             
             Assert.AreEqual(2, noAdmin.Notificaciones.Count);
             Assert.AreEqual(2, admin.Notificaciones.Count);
-            Assert.AreEqual("Se cambió la fecha de inicio del proyecto 'Proyecto B' a '{nuevaFecha:dd/MM/yyyy}'.", noAdmin.Notificaciones[1].Mensaje);
-            Assert.AreEqual("Se cambió la fecha de inicio del proyecto 'Proyecto B' a '{nuevaFecha:dd/MM/yyyy}'.", admin.Notificaciones[1].Mensaje);
+            Assert.AreEqual($"Se cambió la fecha de inicio del proyecto 'Proyecto B' a '{nuevaFecha:dd/MM/yyyy}'.", noAdmin.Notificaciones[1].Mensaje);
+            Assert.AreEqual($"Se cambió la fecha de inicio del proyecto 'Proyecto B' a '{nuevaFecha:dd/MM/yyyy}'.", admin.Notificaciones[1].Mensaje);
         }
         
         

@@ -84,6 +84,8 @@ public class GestorProyectos
             throw new ExcepcionDominio("Solo el admin de proyecto puede cambiar la fecha de inicio del proyecto.");
         
         proyecto.ModificarFechaInicio(nuevaFecha);
+        
+        proyecto.NotificarMiembros($"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
     }
 
 
