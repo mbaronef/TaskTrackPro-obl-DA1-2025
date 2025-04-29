@@ -204,16 +204,30 @@ namespace Tests
             Assert.AreEqual("Se eliminó el proyecto 'Proyecto A Eliminar'.", miembro2.Notificaciones[1].Mensaje);
         }  
         
+        //modificacion de nombre
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarNombreDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario noAdmin = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.ModificarNombreDelProyecto(proyecto.Id, "Nuevo Nombre", noAdmin);
+        }
+        
         
         
         
         
         
         //TODO:
-        
-        // eliminarProyecto 
-        // admin.estaAdministrandoProyecto cambiarlo a false
-        // manda notificacion a cada uno de los miembros del proyecto
         
         // modificarNombreDelProyecto (admin de ESE proyecto)
         // verificar que el nombre nuevo no lo tenga otro proyecto
