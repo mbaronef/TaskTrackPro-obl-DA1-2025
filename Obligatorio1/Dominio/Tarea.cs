@@ -15,8 +15,7 @@ public class Tarea
     public float Holgura {get; set;}
     public List<Usuario> UsuariosAsignados { get; set; }
     public List<Recurso> RecursosNecesarios { get; set; }
-    public List<Tarea> DependenciasFF { get; set; }
-    public List<Tarea> DependenciasFS { get; set; }
+    public List<Dependencia> Dependencias { get; set; }
     
     private void ValidarStringNoVacioNiNull(string valor, string mensajeError)
     {
@@ -65,8 +64,7 @@ public class Tarea
         this.Estado = EstadoTarea.Pendiente;
         this.UsuariosAsignados = new List<Usuario>();
         this.RecursosNecesarios = new List<Recurso>();
-        this.DependenciasFF = new List<Tarea>();
-        this.DependenciasFS = new List<Tarea>();
+        this.Dependencias = new List<Dependencia>();
         CalcularFechaFinMasTemprana();
     }
     

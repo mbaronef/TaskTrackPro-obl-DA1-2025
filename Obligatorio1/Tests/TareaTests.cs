@@ -613,6 +613,20 @@ public class TareaTests
         
         Assert.AreEqual(nuevaFechaInicio.AddDays(3), tarea.FechaFinMasTemprana);
     }
+    
+    [TestMethod]
+    public void AgregarDependencia_AgregarDependenciaALista()
+    {
+        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+
+        Dependencia dependencia = new Dependencia();
+            
+        tarea.AgregarDependencia(dependencia); 
+            
+        Assert.IsTrue(tarea.Dependencias.Contains(dependencia));
+        Assert.AreEqual(1, tarea.Dependencias.Count);
+    }
+    
 
     
     //TO DO:
