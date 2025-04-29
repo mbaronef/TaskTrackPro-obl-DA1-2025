@@ -677,11 +677,6 @@ public class TareaTests
         
         tarea.EliminarDependencia(3);
     }
-
-
-    
-    //TO DO:
-    // Ver como hacemos con las listas de dependencias, y segun como se modifiquen hacer esos tests
     
 }
     
