@@ -53,9 +53,6 @@ public class GestorProyectos
 
         if (!proyecto.EsAdministrador(solicitante))
             throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar el nombre.");
-
-        if (!proyecto.EsAdministrador(solicitante))
-            throw new ExcepcionDominio("Solo el administrador del proyecto puede eliminarlo.");
         
     }
 

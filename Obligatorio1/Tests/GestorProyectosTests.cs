@@ -222,6 +222,29 @@ namespace Tests
             gestor.ModificarNombreDelProyecto(proyecto.Id, "Nuevo Nombre", noAdmin);
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarNombreDelProyecto_LanzaExcepcionSiNombreYaExiste()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario noAdmin = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto A", "desc", admin, miembros);
+            
+            
+            Usuario admin2 = new Usuario { EsAdministradorProyecto = true };
+            Usuario noAdmin2 = new Usuario();
+            List<Usuario> miembros2 = new List<Usuario> { noAdmin2 };
+            Proyecto proyecto2 = new Proyecto("Proyecto B", "desc", admin2, miembros2);
+            
+            gestor.CrearProyecto(proyecto, admin);
+            gestor.CrearProyecto(proyecto2, admin2);
+
+            gestor.ModificarNombreDelProyecto(proyecto2.Id, "Proyecto A", admin2);
+        }
+        
         
         
         
