@@ -72,6 +72,10 @@ public class GestorProyectos
             throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar el nombre.");
         
         proyecto.ModificarDescripcion(descripcion);
+        
+        proyecto.NotificarMiembros($"Se cambió la descripción del proyecto '{proyecto.Nombre}' a '{proyecto.Descripcion}'.");
+
+        
     }
 
 

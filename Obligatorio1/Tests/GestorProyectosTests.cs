@@ -335,12 +335,12 @@ namespace Tests
             
             gestor.CrearProyecto(proyecto, admin);
 
-            gestor.ModificarNombreDelProyecto(proyecto.Id, "Nueva Descripcion", admin);
+            gestor.ModificarDescripcionDelProyecto(proyecto.Id, "Nueva Descripcion", admin);
             
             Assert.AreEqual(2, noAdmin.Notificaciones.Count);
             Assert.AreEqual(2, admin.Notificaciones.Count);
-            Assert.AreEqual("Se cambió la descripcion del proyecto 'Proyecto B' a 'Nueva Descripcion'.", noAdmin.Notificaciones[1].Mensaje);
-            Assert.AreEqual("Se cambió la descripcion del proyecto 'Proyecto B' a 'Nueva Descripcion'.", admin.Notificaciones[1].Mensaje);
+            Assert.AreEqual("Se cambió la descripción del proyecto 'Proyecto B' a 'Nueva Descripcion'.", noAdmin.Notificaciones[1].Mensaje);
+            Assert.AreEqual("Se cambió la descripción del proyecto 'Proyecto B' a 'Nueva Descripcion'.", admin.Notificaciones[1].Mensaje);
         }
         
         
