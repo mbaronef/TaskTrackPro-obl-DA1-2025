@@ -102,14 +102,6 @@ public class GestorUsuariosTests
     }
 
     [TestMethod]
-    public void GestorEliminaAdministradorDeSistemaCorrectamente()
-    {
-        Usuario usuario = CrearYAsignarAdminSistema();
-        _gestorUsuarios.EliminarAdministradorSistema(usuario.Id);
-        Assert.IsFalse(usuario.EsAdministradorSistema);
-    }
-
-    [TestMethod]
     public void GestorAsignaAdministradorDeProyectoCorrectamente()
     {
         Usuario usuarioSolicitante = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");

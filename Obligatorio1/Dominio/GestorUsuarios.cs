@@ -40,12 +40,6 @@ public class GestorUsuarios
         usuario.EsAdministradorSistema = true;
     }
 
-    public void EliminarAdministradorSistema(int idUsuario)
-    {
-        Usuario usuario = ObtenerUsuario(idUsuario);
-        usuario.EsAdministradorSistema = false;
-    }
-
     public void AsignarAdministradorProyecto(Usuario solicitante, Usuario nuevoAdministradorProyecto)
     {
         if (!solicitante.EsAdministradorSistema)
