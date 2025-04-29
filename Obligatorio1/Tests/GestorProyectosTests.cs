@@ -259,7 +259,7 @@ namespace Tests
             
             gestor.CrearProyecto(proyecto, admin);
 
-            gestor.ModificarNombreDelProyecto(proyecto.Id, "Nuevo Nombre", noAdmin);
+            gestor.ModificarNombreDelProyecto(proyecto.Id, "Nuevo Nombre", admin);
             
             
             Assert.AreEqual(2, noAdmin.Notificaciones.Count);
