@@ -8,5 +8,6 @@ public class GestorUsuarios
     {
         cantidadUsuarios++;
         u.Id = cantidadUsuarios;
+        
     }
 }
