@@ -19,6 +19,10 @@ public class GestorUsuarios
     
     public void AgregarUsuario(Usuario solicitante, Usuario usuario)
     {
+        if (!solicitante.EsAdministradorSistema)
+        {
+            throw new ExcepcionDominio("No tiene los permisos para crear usuarios");
+        }
         usuario.Id = ++_cantidadUsuarios;
         Usuarios.Add(usuario);
     }
