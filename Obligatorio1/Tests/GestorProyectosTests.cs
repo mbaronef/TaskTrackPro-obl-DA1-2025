@@ -54,10 +54,24 @@ namespace Tests
             gestor.CrearProyecto(proyecto, solicitante);
         }
         
+        [TestMethod]
+        public void CrearProyecto_EstableceEstaAdministrandoProyectoEnTrue()
+        {
+            Usuario solicitante = new Usuario();
+            solicitante.EsAdministradorProyecto = true;
+            solicitante.EstaAdministrandoProyecto = false;
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario>();
+            Proyecto proyecto = new Proyecto("Proyecto X", "Una descripción", solicitante, miembros);
+
+            gestor.CrearProyecto(proyecto, solicitante);
+
+            Assert.IsTrue(solicitante.EstaAdministrandoProyecto);
+        }
+        
         //TO DO:
         // crearProyecto ( tiene que ser un usuario con el bool EsAdminProyecto en true y estaAdministrandoProyecto en false)
-        // si estaAdministrandoProyecto en true  -> excepcion (no puede, ya es administrador de un proyecto)
-        // si EsAdminProyecto en false -> excepcion (no tiene permiso de crear un proyecto)
         // si estaAdministrandoProyecto en false y EsAdminProyecto true -> puede crearlo, usuario.estaAdministrandoProyecto cambiar a true
         // verificar que no exista un proyecto con el mismo nombre antes de ser creado (recorro la lista de proyectos)
         // verificar que se asigne bien el id al proyecto
