@@ -13,6 +13,9 @@ namespace Tests
         public void CrearProyecto_AsignarIdCorrectamente()
         {
             Usuario adminSistema = new Usuario();
+            adminSistema.Id = 1;
+            adminSistema.EsAdministradorProyecto = true;
+            adminSistema.EstaAdministrandoProyecto = false;
             GestorProyectos gestor = new GestorProyectos();
             List<Usuario> miembros = new List<Usuario>();
             Proyecto proyecto = new Proyecto("nombre", "descripcion", adminSistema, miembros);
@@ -30,6 +33,20 @@ namespace Tests
             Usuario solicitante = new Usuario();
             solicitante.EsAdministradorProyecto = false;
             solicitante.EstaAdministrandoProyecto = false;
+
+            GestorProyectos gestor = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("Proyecto A", "Descripción", solicitante, new List<Usuario>());
+
+            gestor.CrearProyecto(proyecto, solicitante);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void CrearProyecto_LanzaExcepcionSiSolicitanteYaAdministraOtroProyecto()
+        {
+            Usuario solicitante = new Usuario();
+            solicitante.EsAdministradorProyecto = true;
+            solicitante.EstaAdministrandoProyecto = true; // Ya está administrando uno
 
             GestorProyectos gestor = new GestorProyectos();
             Proyecto proyecto = new Proyecto("Proyecto A", "Descripción", solicitante, new List<Usuario>());
