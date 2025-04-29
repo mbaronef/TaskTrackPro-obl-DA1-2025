@@ -26,6 +26,8 @@ public class GestorProyectos
         Proyectos.Add(proyecto);
         
         solicitante.EstaAdministrandoProyecto = true;
+        
+        proyecto.NotificarMiembros($"Se creó el proyecto '{proyecto.Nombre}'.");
     }
     
     
