@@ -17,7 +17,7 @@ public class GestorUsuarios
         //No se manejan ids, el primer administrador tiene id 0
     }
     
-    public void AgregarUsuario(Usuario usuario)
+    public void AgregarUsuario(Usuario solicitante, Usuario usuario)
     {
         usuario.Id = ++_cantidadUsuarios;
         Usuarios.Add(usuario);
@@ -179,3 +179,5 @@ public class GestorUsuarios
         return usuario;
     }
 }
+
+// notificar a todos los admin de sistema cuando se crea un nuevo usuario y cuando se elimina

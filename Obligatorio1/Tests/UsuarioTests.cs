@@ -222,7 +222,7 @@ namespace Tests
         public void SeRecibeUnaNotificacionCorrectamente()
         {
             Usuario usuario = CrearUsuarioValido();
-            string mensaje = "un mensje de notificación";
+            string mensaje = "un mensaje de notificación";
             usuario.RecibirNotificacion(mensaje);
 
             Assert.AreEqual(1, usuario.Notificaciones.Count);
@@ -269,7 +269,7 @@ namespace Tests
             Usuario adminSistema = new Usuario("admin", "admin", new DateTime(0001,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
             GestorUsuarios gestor = new GestorUsuarios(adminSistema);
             Usuario usuario1 = CrearUsuarioValido();
-            gestor.AgregarUsuario(usuario1);
+            gestor.AgregarUsuario(adminSistema,usuario1);
             Usuario usuario2 = gestor.ObtenerUsuario(usuario1.Id);
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsTrue(sonIguales);
@@ -281,9 +281,9 @@ namespace Tests
             Usuario adminSistema = new Usuario("admin", "admin", new DateTime(0001,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
             GestorUsuarios gestor = new GestorUsuarios(adminSistema);
             Usuario usuario1 = CrearUsuarioValido();
-            gestor.AgregarUsuario(usuario1);
+            gestor.AgregarUsuario(adminSistema, usuario1);
             Usuario usuario2 = CrearUsuarioValido();
-            gestor.AgregarUsuario(usuario2);
+            gestor.AgregarUsuario(adminSistema, usuario2);
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsFalse(sonIguales);
         }

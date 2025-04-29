@@ -27,7 +27,7 @@ public class GestorUsuariosTests
     private Usuario CrearYAsignarAdminSistema()
     {
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuario);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
         _gestorUsuarios.AgregarAdministradorSistema(_adminSistema, usuario.Id);
         return usuario;
     }
@@ -44,8 +44,8 @@ public class GestorUsuariosTests
     {
         Usuario usuario1 = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         Usuario usuario2 = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuario1);
-        _gestorUsuarios.AgregarUsuario(usuario2);
+        _gestorUsuarios.AgregarUsuario(_adminSistema,usuario1);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
 
         Assert.AreEqual(3, _gestorUsuarios.Usuarios.Count);
         Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[1]);
@@ -57,8 +57,8 @@ public class GestorUsuariosTests
     {
         Usuario usuario1 = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         Usuario usuario2 = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuario1);
-        _gestorUsuarios.AgregarUsuario(usuario2);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario1);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
 
         Assert.AreEqual(1, usuario1.Id);
         Assert.AreEqual(2, usuario2.Id);
@@ -69,8 +69,8 @@ public class GestorUsuariosTests
     {
         Usuario usuario1 = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         Usuario usuario2 = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuario1);
-        _gestorUsuarios.AgregarUsuario(usuario2);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario1);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
 
         _gestorUsuarios.EliminarUsuario(usuario2.Id);
         Assert.AreEqual(2, _gestorUsuarios.Usuarios.Count);
@@ -89,8 +89,8 @@ public class GestorUsuariosTests
     {
         Usuario usuario1 = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         Usuario usuario2 = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuario1);
-        _gestorUsuarios.AgregarUsuario(usuario2);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario1);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
 
         Usuario busqueda = _gestorUsuarios.ObtenerUsuario(usuario1.Id);
         Assert.AreEqual(usuario1, busqueda);
@@ -116,8 +116,8 @@ public class GestorUsuariosTests
     {
         Usuario usuario1 = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         Usuario usuario2 = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuario1);
-        _gestorUsuarios.AgregarUsuario(usuario2);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario1);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
         
         _gestorUsuarios.AgregarAdministradorSistema(usuario1, usuario2.Id);
     }
@@ -127,7 +127,7 @@ public class GestorUsuariosTests
     {
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario nuevoAdminProyecto = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, nuevoAdminProyecto);
 
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
         Assert.IsTrue(nuevoAdminProyecto.EsAdministradorProyecto);
@@ -138,9 +138,9 @@ public class GestorUsuariosTests
     public void NoAdminSistemaNoPuedeAsignarAdministradorProyecto()
     {
         Usuario usuarioSolicitante = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioSolicitante);
         Usuario nuevoAdminProyecto = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, nuevoAdminProyecto);
 
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
@@ -150,7 +150,7 @@ public class GestorUsuariosTests
     {
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario nuevoAdminProyecto = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, nuevoAdminProyecto);
 
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
         _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
@@ -164,11 +164,11 @@ public class GestorUsuariosTests
     {
         Usuario adminSistema = CrearYAsignarAdminSistema();
         Usuario nuevoAdminProyecto = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, nuevoAdminProyecto);
         _gestorUsuarios.AsignarAdministradorProyecto(adminSistema, nuevoAdminProyecto);
 
         Usuario usuarioSolicitante = CrearUsuario("José", "Pérez", "unemail@gmail.com", "Contrase#a9");
-        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioSolicitante);
 
         _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
@@ -179,7 +179,7 @@ public class GestorUsuariosTests
     {
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario nuevoAdminProyecto = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, nuevoAdminProyecto);
 
         _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
     }
@@ -190,7 +190,7 @@ public class GestorUsuariosTests
     {
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario nuevoAdminProyecto = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, nuevoAdminProyecto);
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto);
         nuevoAdminProyecto.EstaAdministrandoUnProyecto = true; // esto lo gestiona el gestor de proyectos
 
@@ -202,7 +202,7 @@ public class GestorUsuariosTests
     {
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario usuarioObjetivo = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
         Assert.IsTrue(usuarioObjetivo.Autenticar("TaskTrackPro@2025"));
@@ -213,11 +213,11 @@ public class GestorUsuariosTests
     {
         Usuario administrador = CrearYAsignarAdminSistema();
         Usuario usuarioSolicitante = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioSolicitante);
         _gestorUsuarios.AsignarAdministradorProyecto(administrador, usuarioSolicitante);
 
         Usuario usuarioObjetivo = CrearUsuario("José", "Pérez", "unemail@gmail.com", "Contrase#a9");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
         Assert.IsTrue(usuarioObjetivo.Autenticar("TaskTrackPro@2025"));
@@ -227,7 +227,7 @@ public class GestorUsuariosTests
     public void UnUsuarioPuedeReiniciarSuContraseñaCorrectamente()
     {
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuario);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
         _gestorUsuarios.ReiniciarContrasena(usuario, usuario);
         Assert.IsTrue(usuario.Autenticar("TaskTrackPro@2025"));
     }
@@ -237,9 +237,9 @@ public class GestorUsuariosTests
     public void NoAdminSistemaNiAdminProyectoNoPuedeReiniciarContrasena()
     {
         Usuario usuarioSolicitante = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioSolicitante);
         Usuario usuarioObjetivo = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
     }
@@ -250,7 +250,7 @@ public class GestorUsuariosTests
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario usuarioObjetivo =
             new Usuario("José", "Perez", new DateTime(1999, 9, 1), "unemail@gmail.com", "Contrase#a9");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
@@ -264,11 +264,11 @@ public class GestorUsuariosTests
     {
         Usuario administrador = CrearYAsignarAdminSistema();
         Usuario usuarioSolicitante = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioSolicitante);
         _gestorUsuarios.AsignarAdministradorProyecto(administrador, usuarioSolicitante);
 
         Usuario usuarioObjetivo = CrearUsuario("José", "Pérez", "unemail@gmail.com", "Contrase#a9");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
@@ -282,9 +282,9 @@ public class GestorUsuariosTests
     public void NoAdminDeSistemaNiDeProyectoPuedeAutogenerarContrasena()
     {
         Usuario usuarioSolicitante = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioSolicitante);
         Usuario usuarioObjetivo = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
     }
@@ -294,7 +294,7 @@ public class GestorUsuariosTests
     {
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario usuarioObjetivo = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         string nuevaContrasena = "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuarioSolicitante,usuarioObjetivo, nuevaContrasena);
@@ -306,11 +306,11 @@ public class GestorUsuariosTests
     {
         Usuario administrador = CrearYAsignarAdminSistema();
         Usuario usuarioSolicitante = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioSolicitante);
         _gestorUsuarios.AsignarAdministradorProyecto(administrador, usuarioSolicitante);
 
         Usuario usuarioObjetivo = CrearUsuario("José", "Pérez", "unemail@gmail.com", "Contrase#a9");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         string nuevaContrasena = "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuarioSolicitante,usuarioObjetivo, nuevaContrasena);
@@ -321,7 +321,7 @@ public class GestorUsuariosTests
     public void UsuarioPuedeModificarSuContrasena()
     {
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuario);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
         string nuevaContrasena =  "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuario, usuario, nuevaContrasena);
         Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
@@ -332,9 +332,9 @@ public class GestorUsuariosTests
     public void NoAdminSistemaNiAdminProyectoNoPuedeModificarContrasena()
     {
         Usuario usuarioSolicitante = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioSolicitante);
         Usuario usuarioObjetivo = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
         
         string nuevaContrasena = "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuarioSolicitante, usuarioObjetivo, nuevaContrasena);
@@ -345,7 +345,7 @@ public class GestorUsuariosTests
     {
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario usuarioObjetivo = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         _gestorUsuarios.ReiniciarContrasena(usuarioSolicitante, usuarioObjetivo);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
@@ -358,7 +358,7 @@ public class GestorUsuariosTests
     {
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario usuarioObjetivo = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
@@ -375,7 +375,7 @@ public class GestorUsuariosTests
     {
         Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario usuarioObjetivo = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(usuarioObjetivo);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioObjetivo);
 
         string nuevaContrasena = "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuarioSolicitante,usuarioObjetivo, nuevaContrasena);
@@ -389,7 +389,7 @@ public class GestorUsuariosTests
     public void NoSeNotificaSiElPropioUsuarioModificaSuContrasena()
     {
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuario);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
         string nuevaContrasena =  "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuario, usuario, nuevaContrasena);
         
@@ -400,9 +400,9 @@ public class GestorUsuariosTests
     public void LoginCorrecto()
     {
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3"); 
-        _gestorUsuarios.AgregarUsuario(usuario);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
         Usuario otro = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(otro);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, otro);
         Usuario obtenido = _gestorUsuarios.LogIn(usuario.Email, "Contrase#a3");
         Assert.AreEqual(usuario, obtenido);
     }
@@ -412,7 +412,7 @@ public class GestorUsuariosTests
     public void LoginIncorrectoConContraseñaIncorrecta()
     {
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuario);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
         Usuario obtenido = _gestorUsuarios.LogIn(usuario.Email, "ContraseñaIncorrecta");
     }
 
