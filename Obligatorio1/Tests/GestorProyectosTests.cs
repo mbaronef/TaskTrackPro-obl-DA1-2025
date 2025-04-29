@@ -143,13 +143,31 @@ namespace Tests
             gestor.EliminarProyecto(1000, admin);   
         }
         
+        [TestMethod]
+        public void EliminarProyecto_EliminaDeListaAlProyecto()
+        {
+            Usuario admin = new Usuario();
+            admin.EsAdministradorProyecto = true;
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> ();
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            gestor.CrearProyecto(proyecto, admin);
+            
+            Assert.IsTrue(admin.EstaAdministrandoProyecto);
+            Assert.AreEqual(1, gestor.Proyectos.Count);
+            
+            gestor.EliminarProyecto(proyecto.Id, admin);
+            
+            Assert.AreEqual(0, gestor.Proyectos.Count); 
+        }
+        
         
         
         
         //TO DO:
         
-        // eliminarProyecto (admin de ese proyecto)
-        // verificar que el proyecto exista
+        // eliminarProyecto 
         // admin.estaAdministrandoProyecto cambiarlo a false
         // manda notificacion a cada uno de los miembros del proyecto
         
