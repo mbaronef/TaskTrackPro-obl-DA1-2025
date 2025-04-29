@@ -264,6 +264,29 @@ namespace Tests
         }
         
         
+        [TestMethod]
+        public void ModificarNombreDelProyecto_NotificaALosMiembrosDelProyecto()
+        {
+            Usuario admin = new Usuario();
+            admin.EsAdministradorProyecto = true;
+            Usuario noAdmin = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.ModificarNombreDelProyecto(proyecto.Id, "Nuevo Nombre", admin);
+            
+            
+            Assert.AreEqual(2, noAdmin.Notificaciones.Count);
+            Assert.AreEqual(2, admin.Notificaciones.Count);
+            Assert.AreEqual("Se cambió el nombre del proyecto 'Proyecto B' a 'Nuevo Nombre'.", noAdmin.Notificaciones[1].Mensaje);
+            Assert.AreEqual("Se cambió el nombre del proyecto 'Proyecto B' a 'Nuevo Nombre'.", admin.Notificaciones[1].Mensaje);
+        }
+        
+        
         
         
         

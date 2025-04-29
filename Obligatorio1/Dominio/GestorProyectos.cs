@@ -57,7 +57,11 @@ public class GestorProyectos
         if (Proyectos.Any(p => p.Nombre == nuevoNombre && p.Id != idProyecto))
             throw new ExcepcionDominio("Ya existe un proyecto con ese nombre.");
         
-        proyecto.NotificarMiembros($"Se cambió el nombre del proyecto '{proyecto.Nombre}' a '{nuevoNombre}'.");
+        string nombreAnterior = proyecto.Nombre;
+        
+        proyecto.ModificarNombre(nuevoNombre);
+        
+        proyecto.NotificarMiembros($"Se cambió el nombre del proyecto '{nombreAnterior}' a '{proyecto.Nombre}'.");
     }
     
 
