@@ -406,6 +406,25 @@ namespace Tests
             Assert.AreEqual($"Se cambió la fecha de inicio del proyecto 'Proyecto B' a '{nuevaFecha:dd/MM/yyyy}'.", admin.Notificaciones[1].Mensaje);
         }
         
+        // cambiar administrador de proyecto
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void CambiarAdministradorDeProyecto_LanzaExcepcionSiSolicitanteNoEsAdminSistema()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            admin.EsAdministradorSistema = false;
+            Usuario miembro = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> { miembro };
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.CambiarAdministradorDeProyecto(proyecto.Id, miembro, admin);
+        }
+        
         
         
         
@@ -414,7 +433,6 @@ namespace Tests
         
         
         //TODO:
-        // manda notificacion a cada uno de los miembros del proyecto
         
         // cambiarAdminProyecto (admin de sistema)
         // verificar nuevoAdmin.estaAdministrandoProyecto en true  -> excepcion (no puede, ya es administrador de otro proyecto)

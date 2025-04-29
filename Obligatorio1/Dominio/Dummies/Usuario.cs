@@ -6,6 +6,8 @@ public class Usuario
     public int Id { get; set; }
     public bool  EsAdministradorProyecto { get; set; }
     
+    public bool EsAdministradorSistema { get; set; }
+    
     public bool EstaAdministrandoProyecto { get; set; }
     public List<Notificacion>  Notificaciones { get; set; }  = new List<Notificacion>();
 
