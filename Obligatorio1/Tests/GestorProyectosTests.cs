@@ -162,6 +162,27 @@ namespace Tests
             Assert.AreEqual(0, gestor.Proyectos.Count); 
         }
         
+        [TestMethod]
+        public void EliminarProyecto_CambiaLaFLagEstaAdministrandoProyectoDelAdministrador()
+        {
+            Usuario admin = new Usuario();
+            admin.EsAdministradorProyecto = true;
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario> ();
+            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            gestor.CrearProyecto(proyecto, admin);
+            
+            Assert.IsTrue(admin.EstaAdministrandoProyecto);
+            Assert.AreEqual(1, gestor.Proyectos.Count);
+            
+            gestor.EliminarProyecto(proyecto.Id, admin);
+            
+            Assert.IsFalse(admin.EstaAdministrandoProyecto); 
+        }
+        
+        
+        
         
         
         
