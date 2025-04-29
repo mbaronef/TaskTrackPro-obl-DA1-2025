@@ -114,20 +114,24 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void EliminarProyecto_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto()
+        public void EliminarProyecto_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto() // no se porque me sigue dando mal
         {
             Usuario admin = new Usuario();
             admin.EsAdministradorProyecto = true;
-            Usuario noAdmin = new Usuario(); // No es admin
+            Usuario noAdmin = new Usuario();
 
-            List<Usuario> miembros = new List<Usuario> { noAdmin };
+            List<Usuario> miembros = new List<Usuario> { noAdmin }; 
             Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
 
             GestorProyectos gestor = new GestorProyectos();
-            gestor.CrearProyecto(proyecto, admin);
+            gestor.CrearProyecto(proyecto, admin); // admin es admin real
+            
+            Assert.IsFalse(proyecto.EsAdministrador(noAdmin)); 
 
-            gestor.EliminarProyecto(proyecto.Id, noAdmin); // No tiene permiso
+            gestor.EliminarProyecto(proyecto.Id, noAdmin); // noAdmin no es admin
         }
+        
+        
         
         
         //TO DO:

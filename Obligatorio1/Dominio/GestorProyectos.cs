@@ -1,5 +1,6 @@
 using Dominio.Dummies;
 using Dominio.Excepciones;
+using Dominio;
 
 namespace Dominio;
 
@@ -28,6 +29,19 @@ public class GestorProyectos
         solicitante.EstaAdministrandoProyecto = true;
         
         proyecto.NotificarMiembros($"Se creó el proyecto '{proyecto.Nombre}'.");
+    }
+    
+    public void EliminarProyecto(int idProyecto, Usuario solicitante)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+
+        if (proyecto is null)
+            throw new ExcepcionDominio("No se encontró el proyecto.");
+
+        if (!proyecto.EsAdministrador(solicitante))
+            throw new ExcepcionDominio("Solo el administrador del proyecto puede eliminarlo.");
+
+        
     }
     
     
