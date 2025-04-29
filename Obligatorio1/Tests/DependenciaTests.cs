@@ -1,7 +1,5 @@
 ﻿namespace Tests;
 using Dominio;
-using Dominio.Excepciones;
-using Dominio.Dummies;
 
 [TestClass]
 
