@@ -226,7 +226,7 @@ namespace Tests
             usuario.RecibirNotificacion(mensaje);
 
             Assert.AreEqual(1, usuario.Notificaciones.Count);
-            Assert.AreEqual("un mensje de notificación", usuario.Notificaciones.ElementAt(0).Mensaje);
+            Assert.AreEqual("un mensaje de notificación", usuario.Notificaciones.ElementAt(0).Mensaje);
             Assert.AreEqual(DateTime.Today, usuario.Notificaciones.ElementAt(0).Fecha);
         }
 
