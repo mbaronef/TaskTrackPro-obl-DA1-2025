@@ -69,13 +69,19 @@ public class GestorProyectos
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
 
         if (!proyecto.EsAdministrador(solicitante))
-            throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar el nombre.");
+            throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar la descripción.");
         
         proyecto.ModificarDescripcion(descripcion);
         
         proyecto.NotificarMiembros($"Se cambió la descripción del proyecto '{proyecto.Nombre}' a '{proyecto.Descripcion}'.");
+    }
 
+    public void ModificarFechaDeInicioDelProyecto(int idProyecto, DateTime fecha, Usuario solicitante)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
         
+        if(!proyecto.EsAdministrador(solicitante))
+            throw new ExcepcionDominio("Solo el admin de proyecto puede cambiar la fecha de inicio del proyecto.");
     }
 
 
