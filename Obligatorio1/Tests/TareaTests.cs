@@ -25,8 +25,7 @@ public class TareaTests
         Assert.AreEqual(fechaInicioEstimada, tarea.FechaInicioMasTemprana);
         Assert.AreEqual(EstadoTarea.Pendiente, tarea.Estado); // Estado por defecto
         Assert.IsNotNull(tarea.UsuariosAsignados);
-        Assert.IsNotNull(tarea.DependenciasFF);
-        Assert.IsNotNull(tarea.DependenciasFS);
+        Assert.IsNotNull(tarea.Dependencias);
         Assert.IsNotNull(tarea.RecursosNecesarios);
 
     }
@@ -47,9 +46,8 @@ public class TareaTests
         Assert.AreEqual(EstadoTarea.Pendiente, tarea.Estado);
         Assert.IsNotNull(tarea.UsuariosAsignados);
         Assert.IsNotNull(tarea.RecursosNecesarios);
-        Assert.IsNotNull(tarea.DependenciasFF);
-        Assert.IsNotNull(tarea.DependenciasFS);
-        
+        Assert.IsNotNull(tarea.Dependencias);
+
     }
     
     [TestMethod]
