@@ -13,7 +13,7 @@ public class GestorUsuarios
     public GestorUsuarios(Usuario adminSistema)
     {
         AgregarUsuario(adminSistema);
-        AgregarAdministradorSistema(adminSistema.Id);
+        adminSistema.EsAdministradorSistema = true;
     }
     
     public void AgregarUsuario(Usuario usuario)
@@ -38,8 +38,12 @@ public class GestorUsuarios
         return usuario;
     }
 
-    public void AgregarAdministradorSistema(int idUsuario)
+    public void AgregarAdministradorSistema(Usuario solicitante, int idUsuario)
     {
+        if (!solicitante.EsAdministradorSistema)
+        {
+            throw new ExcepcionDominio("No tiene los permisos necesarios para asignar un administrador de sistema.");
+        }
         Usuario usuario = ObtenerUsuario(idUsuario);
         usuario.EsAdministradorSistema = true;
     }

@@ -7,6 +7,7 @@ namespace Tests;
 public class GestorUsuariosTests
 {
     private GestorUsuarios _gestorUsuarios;
+    private Usuario _adminSistema;
 
     [TestInitialize]
     public void SetUp()
@@ -14,8 +15,8 @@ public class GestorUsuariosTests
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(GestorUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         
-        Usuario adminSistema = new Usuario("admin", "admin", new DateTime(0001,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
-        _gestorUsuarios = new GestorUsuarios(adminSistema);
+        _adminSistema = new Usuario("admin", "admin", new DateTime(0001,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
+        _gestorUsuarios = new GestorUsuarios(_adminSistema);
     }
     
     private Usuario CrearUsuario(string nombre, string apellido, string email, string contrasena)
@@ -27,7 +28,7 @@ public class GestorUsuariosTests
     {
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         _gestorUsuarios.AgregarUsuario(usuario);
-        _gestorUsuarios.AgregarAdministradorSistema(usuario.Id);
+        _gestorUsuarios.AgregarAdministradorSistema(_adminSistema, usuario.Id);
         return usuario;
     }
 
@@ -105,9 +106,7 @@ public class GestorUsuariosTests
     [TestMethod]
     public void GestorAsignaAdministradorDeProyectoCorrectamente()
     {
-        Usuario usuarioSolicitante = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.AgregarUsuario(usuarioSolicitante);
-        _gestorUsuarios.AgregarAdministradorSistema(usuarioSolicitante.Id);
+        Usuario usuarioSolicitante = CrearYAsignarAdminSistema();
         Usuario nuevoAdminProyecto = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
         _gestorUsuarios.AgregarUsuario(nuevoAdminProyecto);
 
