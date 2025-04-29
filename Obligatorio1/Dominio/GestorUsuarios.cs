@@ -10,7 +10,11 @@ public class GestorUsuarios
     private string _contrasenaPorDefecto = "TaskTrackPro@2025";
     public List<Usuario> Usuarios { get; } = new List<Usuario>();
 
-    public GestorUsuarios() { }
+    public GestorUsuarios(Usuario adminSistema)
+    {
+        AgregarUsuario(adminSistema);
+        AgregarAdministradorSistema(adminSistema.Id);
+    }
     
     public void AgregarUsuario(Usuario usuario)
     {
