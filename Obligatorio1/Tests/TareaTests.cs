@@ -635,6 +635,16 @@ public class TareaTests
         Dependencia dependencia = null;
         tarea.AgregarDependencia(dependencia); 
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AgregarDependencia_LanzarExcepcionSiDependenciaYaEstaEnDependencias()
+    {
+        Dependencia dependencia = new Dependencia(); 
+        Tarea tarea = new Tarea("tarea", "descr", 87);
+        tarea.AgregarDependencia(dependencia);
+        tarea.AgregarDependencia(dependencia);
+    }
 
     
     //TO DO:
