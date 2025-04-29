@@ -89,6 +89,28 @@ namespace Tests
             gestor.CrearProyecto(proyecto2, adminSistema); // Debe lanzar ExcepcionDominio
         }
         
+        [TestMethod]
+        public void CrearProyecto_NotificaAMiembrosDelProyecto()
+        {
+            Usuario solicitante = new Usuario();
+            solicitante.EsAdministradorProyecto = true;
+            solicitante.EstaAdministrandoProyecto = false;
+
+            Usuario miembro1 = new Usuario();
+            Usuario miembro2 = new Usuario();
+            List<Usuario> miembros = new List<Usuario> { miembro1, miembro2 };
+
+            GestorProyectos gestor = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("Proyecto Notificado", "Descripción", solicitante, miembros);
+
+            gestor.CrearProyecto(proyecto, solicitante);
+
+            Assert.AreEqual(1, miembro1.Notificaciones.Count);
+            Assert.AreEqual(1, miembro2.Notificaciones.Count);
+            Assert.AreEqual("Se creó el proyecto 'Proyecto Notificado'.", miembro1.Notificaciones[0].Mensaje);
+            Assert.AreEqual("Se creó el proyecto 'Proyecto Notificado'.", miembro2.Notificaciones[0].Mensaje);
+        }   
+        
         //TO DO:
         // crearProyecto ( tiene que ser un usuario con el bool EsAdminProyecto en true y estaAdministrandoProyecto en false)
         // si estaAdministrandoProyecto en false y EsAdminProyecto true -> puede crearlo, usuario.estaAdministrandoProyecto cambiar a true
