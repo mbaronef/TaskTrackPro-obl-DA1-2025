@@ -15,6 +15,11 @@ public class GestorProyectos
         
         if (solicitante.EstaAdministrandoProyecto)
             throw new ExcepcionDominio("El usuario ya está administrando un proyecto.");
+        
+        if (Proyectos.Any(p => p.Nombre == proyecto.Nombre))
+        {
+            throw new ExcepcionDominio("Ya existe un proyecto con ese nombre.");
+        }
 
         _cantidadProyectos++;
         proyecto.AsignarId(_cantidadProyectos);

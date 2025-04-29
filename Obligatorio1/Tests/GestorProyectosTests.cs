@@ -70,6 +70,25 @@ namespace Tests
             Assert.IsTrue(solicitante.EstaAdministrandoProyecto);
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void CrearProyecto_LanzaExcepcionSiNombreYaExiste()
+        {
+            Usuario adminSistema = new Usuario();
+            adminSistema.EsAdministradorProyecto = true;
+            adminSistema.EstaAdministrandoProyecto = false;
+
+            GestorProyectos gestor = new GestorProyectos();
+            List<Usuario> miembros = new List<Usuario>();
+
+            Proyecto proyecto1 = new Proyecto("nombre", "descripcion1", adminSistema, miembros);
+            gestor.CrearProyecto(proyecto1, adminSistema);
+
+            // Segundo proyecto con el mismo nombre -> debería fallar
+            Proyecto proyecto2 = new Proyecto("nombre", "descripcion2", adminSistema, miembros);
+            gestor.CrearProyecto(proyecto2, adminSistema); // Debe lanzar ExcepcionDominio
+        }
+        
         //TO DO:
         // crearProyecto ( tiene que ser un usuario con el bool EsAdminProyecto en true y estaAdministrandoProyecto en false)
         // si estaAdministrandoProyecto en false y EsAdminProyecto true -> puede crearlo, usuario.estaAdministrandoProyecto cambiar a true
