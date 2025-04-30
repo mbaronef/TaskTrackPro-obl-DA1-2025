@@ -130,8 +130,12 @@ public class GestorProyectos
 
         if (proyecto is null)
             throw new ExcepcionDominio("El proyecto no existe.");
+        
         if (!solicitante.EsAdministradorProyecto)
             throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
+        
+        if (!proyecto.Administrador.Equals(solicitante))
+            throw new ExcepcionDominio("Solo el administrador del proyecto puede agregar miembros.");
             
 
         

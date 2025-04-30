@@ -632,8 +632,8 @@ namespace Tests
             Usuario solicitante = new Usuario { EsAdministradorProyecto = true };
             Usuario nuevo = new Usuario();
 
-            var gestor   = new GestorProyectos();
-            var proyecto = new Proyecto("P","D", adminProyecto, new List<Usuario>());
+            GestorProyectos gestor   = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("P","D", adminProyecto, new List<Usuario>());
             gestor.CrearProyecto(proyecto, adminProyecto);
 
             gestor.AgregarMiembroAProyecto(proyecto.Id, solicitante, nuevo.Id);
@@ -643,7 +643,6 @@ namespace Tests
 
         //TODO:
         
-        // lo puede hacer unicamente si es admin de proyecto
         // manda notificacion a cada uno de los miembros del proyecto 
         
         // eliminarMiembroDelProyecto (lo puede hacer solo si es admin de proyecto)
