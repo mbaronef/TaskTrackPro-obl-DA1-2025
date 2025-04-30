@@ -242,7 +242,7 @@ namespace Tests
         public void SeBorranNotificacionesCorrectamente()
         {
             Usuario usuario = CrearUsuarioValido();
-            string mensaje = "un mensje de notificación";
+            string mensaje = "un mensaje de notificación";
             usuario.RecibirNotificacion(mensaje);
             usuario.RecibirNotificacion(mensaje);
             int id1 = usuario.Notificaciones.ElementAt(0).Id;
