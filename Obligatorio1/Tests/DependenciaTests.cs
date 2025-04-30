@@ -58,6 +58,13 @@ public class DependenciaTests
         Assert.AreEqual("FF", dependencia.Tipo);
     }
 
+    [TestMethod]
+    public void Constructor_AceptaTipoFS()
+    {
+        Tarea tarea = new Tarea("titulo", "descripcion", 6);
+        Dependencia dependencia = new Dependencia("FS", tarea);
+        Assert.AreEqual("FS", dependencia.Tipo);
+    }
 
 
 }
