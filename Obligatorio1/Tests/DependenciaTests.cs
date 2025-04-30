@@ -47,7 +47,7 @@ public class DependenciaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTareaEsNull()
     { 
-        Dependencia dependencia = new Dependencia("", null);
+        Dependencia dependencia = new Dependencia("FF", null);
     }
 
     [TestMethod]
