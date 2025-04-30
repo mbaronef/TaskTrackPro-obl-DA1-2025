@@ -434,6 +434,7 @@ public class GestorUsuariosTests
         
         Notificacion ultimaNotificacion = admin2.Notificaciones.Last();
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
+        Assert.AreEqual("Se creó un nuevo usuario. Nombre: Juan, Apellido: Pérez", ultimaNotificacion.Mensaje);
     }
 
     [TestMethod]
@@ -442,6 +443,18 @@ public class GestorUsuariosTests
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
         Assert.AreEqual(0, _adminSistema.Notificaciones.Count());
+    }
+    
+    [TestMethod]
+    public void SeNotificaAAdministradoresSistemaCuandoSeEliminaUnUsuario()
+    {
+        Usuario admin2 = CrearYAsignarAdminSistema();
+        Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        _gestorUsuarios.EliminarUsuario(_adminSistema, usuario.Id);
+        
+        Notificacion ultimaNotificacion = admin2.Notificaciones.Last();
+        Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
+        Assert.AreEqual("Se eliminó un nuevo usuario. Nombre: Juan, Apellido: Pérez", ultimaNotificacion.Mensaje);
     }
 
     [TestMethod]
