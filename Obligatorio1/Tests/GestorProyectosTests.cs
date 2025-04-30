@@ -461,8 +461,7 @@ namespace Tests
         {
             Usuario adminSis   = new Usuario { EsAdministradorSistema = true };
 
-            Usuario adminViejo = new Usuario { EsAdministradorProyecto = true,
-                EstaAdministrandoProyecto = true };
+            Usuario adminViejo = new Usuario { EsAdministradorProyecto = true};
 
             Usuario adminNuevo = new Usuario { EsAdministradorProyecto = true };
 
