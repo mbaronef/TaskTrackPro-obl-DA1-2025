@@ -146,6 +146,14 @@ public class GestorProyectos
             $"Se agregó a un nuevo miembro (id {nuevoMiembro.Id}) al proyecto '{proyecto.Nombre}'.");
 
     }
+    
+    public void EliminarMiembroDelProyecto(int idProyecto, Usuario solicitante, int idMiembroAEliminar)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        
+        if (proyecto is null)
+            throw new ExcepcionDominio("No se encontró el proyecto.");
+    }
 
     public List<Proyecto> ObtenerTodosLosProyectos()
     {
