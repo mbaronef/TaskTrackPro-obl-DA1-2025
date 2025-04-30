@@ -189,7 +189,7 @@ public class GestorProyectos
         proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
     }
 
-    public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idNuevaTarea)
+    public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idTareaAEliminar)
     {
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
         
@@ -201,6 +201,9 @@ public class GestorProyectos
         
         if(!proyecto.Administrador.Equals(solicitante))
             throw new ExcepcionDominio("Unicamente el administrador del proyecto puede eliminar una tarea del proyecto");
+        
+        proyecto.EliminarTarea(idTareaAEliminar);
+        proyecto.NotificarMiembros($"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
         
     }
 

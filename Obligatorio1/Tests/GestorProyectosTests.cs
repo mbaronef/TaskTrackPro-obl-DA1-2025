@@ -948,14 +948,58 @@ namespace Tests
 
             gestor.EliminarTareaDelProyecto(proyecto.Id, noAdmin, tarea.Id);
         }
-    }
 
+        [TestMethod]
+        public void EliminarTareaDelProyecto_EliminaTareaOK()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            GestorProyectos gestor = new GestorProyectos();
 
-    //TODO:
+            Proyecto proyecto = new Proyecto("Proyecto X", "Desc", admin, new List<Usuario>());
+            gestor.CrearProyecto(proyecto, admin);
+
+            Tarea tarea = new Tarea { Id = 10 };
+
+            gestor.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+            gestor.EliminarTareaDelProyecto(proyecto.Id, admin, tarea.Id);
+
+            Assert.AreEqual(0, proyecto.Tareas.Count);
+            Assert.IsFalse(proyecto.Tareas.Contains(tarea));
+        }
         
+        
+        [TestMethod]
+        public void EliminarTareaDelProyecto_NotificaAMiembros()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario miembro = new Usuario();
+            GestorProyectos gestor = new GestorProyectos();
+
+            Proyecto proyecto = new Proyecto("Proyecto X", "Desc", admin, new List<Usuario>() { miembro });
+            gestor.CrearProyecto(proyecto, admin);
+
+            Tarea tarea = new Tarea { Id = 10 };
+
+            gestor.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+            gestor.EliminarTareaDelProyecto(proyecto.Id, admin, tarea.Id);
+
+            string mensaje = $"Se eliminó la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+
+            Assert.AreEqual(3, admin.Notificaciones.Count);
+            Assert.AreEqual(mensaje, admin.Notificaciones[2].Mensaje);
+
+            Assert.AreEqual(3, miembro.Notificaciones.Count);
+            Assert.AreEqual(mensaje, miembro.Notificaciones[2].Mensaje);
+        }
+
+
+        //TODO:
+
         // eliminarTareaDelProyecto (admin de proyecto y que sea el admin de ese proyecto) 
         // proyecto existente
         // se elimina ok
         // manda notificacion a cada uno de los miembros del proyecto
-        
+
+    }
+
 }
