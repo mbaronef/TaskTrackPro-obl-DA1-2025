@@ -66,5 +66,12 @@ public class DependenciaTests
         Assert.AreEqual("FS", dependencia.Tipo);
     }
 
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_LanzaExcepcionSiTipoNoEsFFNiFS()
+    {
+        Tarea tarea = new Tarea("titulo", "descripcion", 6);
+        Dependencia dependencia = new Dependencia("SS", tarea);
+    }
 
 }
