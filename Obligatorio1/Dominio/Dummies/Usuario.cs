@@ -9,7 +9,7 @@ public class Usuario
     public bool EsAdministradorSistema { get; set; }
     
     public bool EstaAdministrandoProyecto { get; set; }
-    public List<Notificacion>  Notificaciones { get; set; }  = new List<Notificacion>();
+    public List<Notificacion>  Notificaciones { get; }  = new List<Notificacion>();
 
     public void RecibirNotificacion(Notificacion notificacion)
     {

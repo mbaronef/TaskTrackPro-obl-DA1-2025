@@ -88,10 +88,17 @@ public class GestorProyectos
         proyecto.NotificarMiembros($"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
     }
 
-    public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdministrador)
+    public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdmin)
     {
         if (!solicitante.EsAdministradorSistema)
             throw new ExcepcionDominio("Solo un administrador de sistema puede cambiar el administrador del proyecto.");
+        
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+
+        Usuario nuevoAdmin = proyecto.Miembros.FirstOrDefault(u => u.Id == idNuevoAdmin);
+
+        
+        proyecto.Administrador = nuevoAdmin;
     }
 
 
