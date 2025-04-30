@@ -811,12 +811,24 @@ namespace Tests
             Assert.AreEqual(proyecto1, listaProyectosMiembro2[0]);
         }
         
+        //agregr tarea al proyecto
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void AgregarTareaAlProyecto_LanzaExcepcionSiProyectoNoExiste()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            GestorProyectos gestor = new GestorProyectos();
+            Tarea tarea = new Tarea();
+
+            gestor.AgregarTareaAlProyecto(100, admin, tarea;
+        }
+        
+        //eliminar tarea del proyecto
+        
         
         
         //TODO:
-        
-        // eliminarMiembroDelProyecto
-        // manda notificacion a cada uno de los miembros del proyecto 
         
         // agregarTareaDelProyecto (lo puede hacer si es admin de proyecto) seria crearTarea (cuando se crea se agrega a la lista de tareas)
         // manda notificacion a cada uno de los miembros del proyecto 
