@@ -905,6 +905,22 @@ namespace Tests
             gestor.EliminarTareaDelProyecto(100, admin, tarea.Id);
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarTareaDelProyectoo_LanzaExcepcionSiSolicitanteNoEsAdmin()
+        {
+            Usuario admin   = new Usuario { EsAdministradorProyecto = true };
+            Usuario noAdmin = new Usuario();
+            GestorProyectos gestor  = new GestorProyectos();
+
+            Proyecto proyecto = new Proyecto("Proyecto X","Descripcion",admin,new List<Usuario>());
+            gestor.CrearProyecto(proyecto, admin);
+            Tarea tarea = new Tarea();
+            gestor.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+
+            gestor.EliminarTareaDelProyecto(proyecto.Id, noAdmin, tarea.Id);
+        }
+        
         
         
         //TODO:
