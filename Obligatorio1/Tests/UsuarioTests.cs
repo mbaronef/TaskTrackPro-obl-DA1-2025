@@ -59,6 +59,7 @@ namespace Tests
         public void ConstructorValidaEdadMaxima()
         {
             DateTime fechaHace100Años = new DateTime(1925, 04, 30);
+            Usuario usuario = new Usuario("Juan", "Perez", fechaHace100Años, "unemail@gmail.com", "Contrase#a3");
         }
 
         [TestMethod]

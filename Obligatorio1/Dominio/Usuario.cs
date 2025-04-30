@@ -111,6 +111,11 @@ public class Usuario
         {
             throw new ExcepcionDominio("El usuario debe ser mayor de edad (18 años o más)");
         }
+
+        if (fechaNacimiento.AddYears(100) <= DateTime.Today)
+        {
+            throw new ExcepcionDominio("El usuario debe tener menos de 100 años");
+        }
     }
 
     private void ValidarEmail(string email)
