@@ -418,6 +418,14 @@ public class GestorUsuariosTests
     }
 
     [TestMethod]
+    public void NoSeNotificaAlUsuarioQueCreaUnUsuario()
+    {
+        Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
+        Assert.AreEqual(0, _adminSistema.Notificaciones.Count());
+    }
+
+    [TestMethod]
     public void LoginCorrecto()
     {
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3"); 
