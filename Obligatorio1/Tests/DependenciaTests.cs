@@ -9,7 +9,7 @@ public class DependenciaTests
     [TestMethod]
     public void ConstructorConParametrosAsignadosCorrectamente()
     {
-        string tipo = "tipo";
+        string tipo = "FF";
         Tarea tarea = new Tarea("titulo", "descripcion", 6);
         
         Dependencia dependencia = new Dependencia(tipo, tarea);
