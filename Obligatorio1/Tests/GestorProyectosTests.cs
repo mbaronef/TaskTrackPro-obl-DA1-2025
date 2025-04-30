@@ -852,6 +852,23 @@ namespace Tests
             gestor.AgregarTareaAlProyecto(proyecto.Id, noAdmin, tarea);
         }
         
+        [TestMethod]
+        public void AgregarTareaAlProyecto_AgregaTareaOK()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            GestorProyectos gestor = new GestorProyectos();
+
+            Proyecto proyecto = new Proyecto("Proyecto X", "Desc", admin, new List<Usuario>());
+            gestor.CrearProyecto(proyecto, admin);
+
+            Tarea tarea = new Tarea { Id = 10 };
+
+            gestor.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+
+            Assert.AreEqual(1, proyecto.Tareas.Count);
+            Assert.IsTrue(proyecto.Tareas.Contains(tarea));
+        }
+        
         //eliminar tarea del proyecto
         
         
