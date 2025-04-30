@@ -654,6 +654,23 @@ namespace Tests
             Assert.IsTrue(proyecto.Miembros.Contains(miembro));
         }
 
+        [TestMethod]
+        public void AgregarMiembro_NotificaALosMiembros()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario nuevoMiembro = new Usuario();
+            GestorProyectos gestor = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripcion", admin, new List<Usuario> {});
+            gestor.CrearProyecto(proyecto, admin);
+            gestor.AgregarMiembroAProyecto(proyecto.Id, admin, nuevoMiembro);
+            
+            string esperado = $"Se agregó a un nuevo miembro (id {nuevoMiembro.Id}) al proyecto 'P'.";
+            Assert.AreEqual(2, admin.Notificaciones.Count);  
+            Assert.AreEqual(1, nuevoMiembro.Notificaciones.Count);
+            Assert.AreEqual(esperado, admin.Notificaciones[1].Mensaje);
+            Assert.AreEqual(esperado, nuevoMiembro.Notificaciones[1].Mensaje);
+        }
+
 
         //TODO:
         
