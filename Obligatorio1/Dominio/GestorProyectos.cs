@@ -86,6 +86,9 @@ public class GestorProyectos
     {
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
         
+        if (proyecto is null)
+            throw new ExcepcionDominio("El proyecto no existe.");
+        
         if(!proyecto.EsAdministrador(solicitante))
             throw new ExcepcionDominio("Solo el admin de proyecto puede cambiar la fecha de inicio del proyecto.");
         
