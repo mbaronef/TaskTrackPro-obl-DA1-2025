@@ -438,7 +438,6 @@ namespace Tests
         }
         
         // cambiar administrador de proyecto
-        /*
         [TestMethod]
         public void CambiarAdministradorDeProyecto_AsignaNuevoAdminOK()
         {
@@ -449,7 +448,7 @@ namespace Tests
             List<Usuario> miembros = new List<Usuario>{ nuevoAdmin };
             Proyecto proyecto = new Proyecto("Proyecto X", "Desc", adminProyectoActual, miembros);
 
-            GestorProyectos gestor = new();
+            GestorProyectos gestor = new GestorProyectos();
             gestor.CrearProyecto(proyecto, adminProyectoActual);
             
             gestor.CambiarAdministradorDeProyecto(adminSistema, proyecto.Id, nuevoAdmin.Id);
@@ -458,7 +457,6 @@ namespace Tests
             Assert.IsFalse(adminProyectoActual.EstaAdministrandoProyecto);
             Assert.IsTrue(nuevoAdmin.EstaAdministrandoProyecto);
         }
-        */
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
@@ -541,7 +539,6 @@ namespace Tests
         
         //TODO:
         
-        // verficar nuevoAdmin.EsAdminProyecto en false -> excepcion (no tiene permiso de crear un proyecto)
         // verificar caso feliz y nuevoAdmin.estaAdministrandoProyecto cambiar a true y exAdmin.estaAdministrandoProyecto cambiarlo a false 
         // manda notificacion a cada uno de los miembros del proyecto
         
