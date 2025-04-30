@@ -12,6 +12,7 @@ public class Dependencia
     }
     public Dependencia(string unTipo, Tarea unaTarea)
     {
+        ValidarStringNoVacio(unTipo,"No se puede ingresar un tipo vacío");
         this.Tipo = unTipo;
         this.Tarea = unaTarea;
     }
