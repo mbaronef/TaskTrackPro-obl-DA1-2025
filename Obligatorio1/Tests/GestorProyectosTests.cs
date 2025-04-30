@@ -869,6 +869,29 @@ namespace Tests
             Assert.IsTrue(proyecto.Tareas.Contains(tarea));
         }
         
+        [TestMethod]
+        public void AgregarTareaAlProyecto_NotificaAMiembros()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario miembro = new Usuario();
+            GestorProyectos gestor = new GestorProyectos();
+
+            Proyecto proyecto = new Proyecto("Proyecto X", "Desc", admin, new List<Usuario>(){ miembro });
+            gestor.CrearProyecto(proyecto, admin);
+
+            Tarea tarea = new Tarea { Id = 10 };
+
+            gestor.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+
+            string mensaje = $"Se agregó la tarea (id 10) al proyecto 'Proyecto X'.";
+
+            Assert.AreEqual(2, admin.Notificaciones.Count);
+            Assert.AreEqual(mensaje, admin.Notificaciones[1].Mensaje);
+
+            Assert.AreEqual(2, miembro.Notificaciones.Count);
+            Assert.AreEqual(mensaje, miembro.Notificaciones[1].Mensaje);
+        }
+        
         //eliminar tarea del proyecto
         
         
