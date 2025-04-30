@@ -73,25 +73,45 @@ public class Tarea
     {
         this.Id = unId;
     }
-    
-    public void CambiarEstado(EstadoTarea nuevoEstado)
+
+    private void EstadoCompletadaAPendiente(EstadoTarea nuevoEstado)
     {
         if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Pendiente)
         {
             throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a pendiente.");
         }
+    }
+    
+    private void EstadoCompletadaAEnProceso(EstadoTarea nuevoEstado)
+    {
         if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.EnProceso)
         {
             throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a en proceso.");
         }
+    }
+    
+    private void EstadoCompletadaABloqueada(EstadoTarea nuevoEstado)
+    {
         if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Bloqueada)
         {
             throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a bloqueada.");
         }
+    }
+    
+    private void EstadoEnProcesoAPendiente(EstadoTarea nuevoEstado)
+    {
         if (Estado == EstadoTarea.EnProceso && nuevoEstado == EstadoTarea.Pendiente)
         {
             throw new ExcepcionDominio("No se puede cambiar una tarea en proceso a pendiente.");
         }
+    }
+    
+    public void CambiarEstado(EstadoTarea nuevoEstado)
+    {
+        EstadoCompletadaAPendiente(nuevoEstado);
+        EstadoCompletadaAEnProceso(nuevoEstado);
+        EstadoCompletadaABloqueada(nuevoEstado);
+        EstadoEnProcesoAPendiente(nuevoEstado);
         Estado = nuevoEstado;
     }
     
@@ -138,9 +158,7 @@ public class Tarea
     public void EliminarUsuario(int idUsu)
     {
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsu);
-        
         ValidarObjetoNoNull(usuarioAEliminar,"El usuario no está asignado a la tarea.");
-
         UsuariosAsignados.Remove(usuarioAEliminar);
     }
     
@@ -159,9 +177,7 @@ public class Tarea
     public void EliminarRecurso(int idRec)
     {
         Recurso recursoAEliminar = BuscarRecursoPorId(idRec);
-        
         ValidarObjetoNoNull(recursoAEliminar,"El recurso no se encuentra dentro de los recursos necesarios.");
-
         RecursosNecesarios.Remove(recursoAEliminar);
     }
     
@@ -224,9 +240,7 @@ public class Tarea
     public void EliminarDependencia(int idTarea)
     {
         Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
-        
         ValidarObjetoNoNull(dependenciaAEliminar,"La dependencia no se encuentra dentro de la lista de dependencias.");
-        
         Dependencias.Remove(dependenciaAEliminar);
     }
      
