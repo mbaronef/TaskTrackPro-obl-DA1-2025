@@ -674,7 +674,7 @@ namespace Tests
         //eliminar miembro del proyecto
         
         // obtenerTodosLosProyectos
-        
+
         [TestMethod]
         public void ObtenerTodosLosProyectos_DevuelveListaCompleta()
         {
@@ -682,20 +682,46 @@ namespace Tests
             Usuario admin2 = new Usuario { EsAdministradorProyecto = true };
 
             GestorProyectos gestor = new GestorProyectos();
-            Proyecto proyecto1 = new Proyecto("Proyecto 1", "Desc", admin1, new List<Usuario>{  });
-            Proyecto proyecto2 = new Proyecto("Proyecto 2", "Desc", admin2, new List<Usuario>{  });
+            Proyecto proyecto1 = new Proyecto("Proyecto 1", "Desc", admin1, new List<Usuario> { });
+            Proyecto proyecto2 = new Proyecto("Proyecto 2", "Desc", admin2, new List<Usuario> { });
 
             gestor.CrearProyecto(proyecto1, admin1);
             gestor.CrearProyecto(proyecto2, admin2);
-            
+
             List<Proyecto> lista = gestor.ObtenerTodosLosProyectos();
 
             Assert.AreEqual(2, lista.Count);
             CollectionAssert.Contains(lista, proyecto1);
             CollectionAssert.Contains(lista, proyecto2);
         }
+
+        // obtenerProyectosPorUsuario
         
-        // obtenerProyectoPorUsuario
+        [TestMethod]
+        public void ObtenerProyectosPorUsuario_DevuelveProyectosDelMiembro()
+        {
+            Usuario admin1   = new Usuario { EsAdministradorProyecto = true };
+            Usuario admin2 = new Usuario { EsAdministradorProyecto = true };
+            Usuario miembro1 = new Usuario();
+            Usuario miembro2    = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+
+            Proyecto proyecto1 = new Proyecto("P1", "Desc", admin1, new List<Usuario>{ miembro1, miembro2});
+            Proyecto proyecto2 = new Proyecto("P2", "Desc", admin2, new List<Usuario>{miembro1});
+            gestor.CrearProyecto(proyecto1, admin1);
+            gestor.CrearProyecto(proyecto2, admin2);
+
+            List<Proyecto> listaProyectosMiembro1 = gestor.ObtenerProyectosPorUsuario(miembro1.Id);
+            List<Proyecto> listaProyectosMiembro2 = gestor.ObtenerProyectosPorUsuario(miembro2.Id);
+
+            Assert.AreEqual(2, listaProyectosMiembro1.Count);
+            Assert.AreEqual(proyecto1, listaProyectosMiembro1[0]);
+            Assert.AreEqual(proyecto2, listaProyectosMiembro1[1]);
+            
+            Assert.AreEqual(2, listaProyectosMiembro2.Count);
+            Assert.AreEqual(proyecto1, listaProyectosMiembro2[0]);
+        }
 
 
         //TODO:
@@ -703,10 +729,6 @@ namespace Tests
         // eliminarMiembroDelProyecto (lo puede hacer solo si es admin de proyecto)
         // verificar que el proyecto exista
         // manda notificacion a cada uno de los miembros del proyecto 
-        
-        // obtenerTodosLosProyectos (metodo privado (?))
-        
-        // obtenerProyectoPorUsuario (metodo privado (?))
         
         // agregarTareaDelProyecto (lo puede hacer si es admin de proyecto) seria crearTarea (cuando se crea se agrega a la lista de tareas)
         // manda notificacion a cada uno de los miembros del proyecto 
