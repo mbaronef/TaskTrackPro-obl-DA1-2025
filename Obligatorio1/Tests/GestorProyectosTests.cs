@@ -623,6 +623,21 @@ namespace Tests
 
             gestor.AgregarMiembroAProyecto(proyecto.Id, solicitante, miembro.Id);
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void AgregarMiembro_SolicitanteNoEsAdministradorDelProyecto_LanzaExcepcion()
+        { 
+            Usuario adminProyecto = new Usuario { EsAdministradorProyecto = true };
+            Usuario solicitante = new Usuario { EsAdministradorProyecto = true };
+            Usuario nuevo = new Usuario();
+
+            var gestor   = new GestorProyectos();
+            var proyecto = new Proyecto("P","D", adminProyecto, new List<Usuario>());
+            gestor.CrearProyecto(proyecto, adminProyecto);
+
+            gestor.AgregarMiembroAProyecto(proyecto.Id, solicitante, nuevo.Id);
+        }
 
 
 
