@@ -160,6 +160,12 @@ public class GestorProyectos
         if (!proyecto.Administrador.Equals(solicitante))
             throw new ExcepcionDominio("Unicamente el administrador del proyecto puede eliminar un miembro.");
 
+        Usuario usuarioAEliminar = proyecto.Miembros.FirstOrDefault(u => u.Id == idMiembroAEliminar);
+        
+        if (usuarioAEliminar is null)
+            throw new ExcepcionDominio("El usuario no es miembro del proyecto.");
+
+
     }
 
     public List<Proyecto> ObtenerTodosLosProyectos()
