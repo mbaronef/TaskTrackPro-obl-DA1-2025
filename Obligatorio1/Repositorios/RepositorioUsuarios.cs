@@ -39,6 +39,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 
     public void ActualizarContrasena(int idUsuario, string contrasena)
     {
-        throw new NotImplementedException();
+        Usuario usuario = ObtenerPorId(idUsuario);
+        usuario.EstablecerContrasena(contrasena);
     }
 }
