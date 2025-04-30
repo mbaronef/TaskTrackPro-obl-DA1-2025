@@ -700,10 +700,10 @@ namespace Tests
         [TestMethod]
         public void ObtenerProyectosPorUsuario_DevuelveProyectosDelMiembro()
         {
-            Usuario admin1   = new Usuario { EsAdministradorProyecto = true };
+            Usuario admin1 = new Usuario { EsAdministradorProyecto = true };
             Usuario admin2 = new Usuario { EsAdministradorProyecto = true };
             Usuario miembro1 = new Usuario();
-            Usuario miembro2    = new Usuario();
+            Usuario miembro2 = new Usuario();
 
             GestorProyectos gestor = new GestorProyectos();
 
@@ -719,7 +719,7 @@ namespace Tests
             Assert.AreEqual(proyecto1, listaProyectosMiembro1[0]);
             Assert.AreEqual(proyecto2, listaProyectosMiembro1[1]);
             
-            Assert.AreEqual(2, listaProyectosMiembro2.Count);
+            Assert.AreEqual(1, listaProyectosMiembro2.Count);
             Assert.AreEqual(proyecto1, listaProyectosMiembro2[0]);
         }
 
