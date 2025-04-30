@@ -620,7 +620,7 @@ public class TareaTests
         Tarea tareaD = new Tarea("Titulo", "Descripción", 3);
         Tarea tarea = new Tarea("Titulo", "Descripción", 3);
 
-        Dependencia dependencia = new Dependencia("tipo", tareaD);
+        Dependencia dependencia = new Dependencia("FF", tareaD);
             
         tarea.AgregarDependencia(dependencia); 
             
@@ -653,7 +653,7 @@ public class TareaTests
     public void EliminarDependencia_EliminarDependenciaDeDependencias()
     {
         Tarea tareaD = new Tarea(1, "Titulo", "Descripción", 3);
-        Dependencia dependencia = new Dependencia("tipo", tareaD);
+        Dependencia dependencia = new Dependencia("FF", tareaD);
         Tarea tarea = new Tarea("tarea", "descr", 87);
         tarea.AgregarDependencia(dependencia);
         tarea.EliminarDependencia(1);
