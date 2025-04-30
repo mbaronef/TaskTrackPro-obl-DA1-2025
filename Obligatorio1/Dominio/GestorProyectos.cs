@@ -152,7 +152,7 @@ public class GestorProyectos
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
         
         if (proyecto is null)
-            throw new ExcepcionDominio("No se encontró el proyecto.");
+            throw new ExcepcionDominio("El proyecto no existe.");
         
         if(!solicitante.EsAdministradorProyecto)
             throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
@@ -170,6 +170,14 @@ public class GestorProyectos
         proyecto.NotificarMiembros($"Se eliminó a el miembro (id {idMiembroAEliminar}) del proyecto '{proyecto.Nombre}'.");
 
 
+    }
+
+    public void AgregarTareaAlProyecto(int idProyecto,  Usuario solicitante, Tarea nuevoTarea)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        
+        if (proyecto is null)
+            throw new ExcepcionDominio("El proyecto no existe.");
     }
 
     public List<Proyecto> ObtenerTodosLosProyectos()

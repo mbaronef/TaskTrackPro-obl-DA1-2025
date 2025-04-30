@@ -821,7 +821,7 @@ namespace Tests
             GestorProyectos gestor = new GestorProyectos();
             Tarea tarea = new Tarea();
 
-            gestor.AgregarTareaAlProyecto(100, admin, tarea;
+            gestor.AgregarTareaAlProyecto(100, admin, tarea);
         }
         
         //eliminar tarea del proyecto
