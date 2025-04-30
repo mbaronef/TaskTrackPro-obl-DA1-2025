@@ -315,6 +315,16 @@ namespace Tests
         }
         
         [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarDescripcionDelProyecto_LanzaExcepcionSiProyectoNoExiste()
+        {
+            Usuario adminProyecto = new Usuario { EsAdministradorProyecto = true };
+            GestorProyectos gestor = new GestorProyectos();
+
+            gestor.ModificarDescripcionDelProyecto(100, "nueva desc", adminProyecto);
+        }
+        
+        [TestMethod]
         public void ModificarDescripcionDelProyecto_ModificaDescripcionDelProyecto()
         {
             Usuario admin = new Usuario();
