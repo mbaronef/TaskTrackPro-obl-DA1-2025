@@ -837,6 +837,20 @@ namespace Tests
 
             gestor.AgregarTareaAlProyecto(proyecto.Id, noAdmin, new Tarea());
         }
+
+        [TestMethod] [ExpectedException(typeof(ExcepcionDominio))]
+        public void AgregarTareaAlProyecto_LanzaExcepcionSiSolicitanteNoElAdministradorDelProyecto()
+        {
+            Usuario admin   = new Usuario { EsAdministradorProyecto = true };
+            Usuario noAdmin = new Usuario{EsAdministradorProyecto = true};
+            GestorProyectos gestor  = new GestorProyectos();
+
+            Proyecto proyecto = new Proyecto("Proyecto X","Descripcion", admin,new List<Usuario>());
+            gestor.CrearProyecto(proyecto, admin);
+            Tarea  tarea = new Tarea();
+
+            gestor.AgregarTareaAlProyecto(proyecto.Id, noAdmin, tarea);
+        }
         
         //eliminar tarea del proyecto
         
