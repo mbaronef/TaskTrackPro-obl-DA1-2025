@@ -187,7 +187,14 @@ public class GestorProyectos
         
         proyecto.AgregarTarea(nuevaTarea);
         proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
+    }
 
+    public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idNuevaTarea)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        
+        if (proyecto is null)
+            throw new ExcepcionDominio("El proyecto no existe.");
     }
 
     public List<Proyecto> ObtenerTodosLosProyectos()
