@@ -164,6 +164,8 @@ public class GestorProyectos
         
         if (usuarioAEliminar is null)
             throw new ExcepcionDominio("El usuario no es miembro del proyecto.");
+        
+        proyecto.EliminarMiembro(idMiembroAEliminar);
 
 
     }
