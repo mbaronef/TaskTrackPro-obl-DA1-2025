@@ -606,7 +606,7 @@ namespace Tests
             Usuario adminSis = new Usuario { EsAdministradorProyecto = true, EstaAdministrandoProyecto = true};
             GestorProyectos gestor   = new GestorProyectos();
             Usuario aAgregar = new Usuario();
-            gestor.AgregarMiembroAProyecto(99, adminSis, aAgregar.Id);
+            gestor.AgregarMiembroAProyecto(99, adminSis, aAgregar);
         }
         
         [TestMethod]
@@ -621,7 +621,7 @@ namespace Tests
             Proyecto proyecto = new Proyecto("Proyecto","Descripcion", adminProj, new List<Usuario>{ miembro });
             gestor.CrearProyecto(proyecto, adminProj);
 
-            gestor.AgregarMiembroAProyecto(proyecto.Id, solicitante, miembro.Id);
+            gestor.AgregarMiembroAProyecto(proyecto.Id, solicitante, miembro);
         }
         
         [TestMethod]
@@ -636,7 +636,7 @@ namespace Tests
             Proyecto proyecto = new Proyecto("P","D", adminProyecto, new List<Usuario>());
             gestor.CrearProyecto(proyecto, adminProyecto);
 
-            gestor.AgregarMiembroAProyecto(proyecto.Id, solicitante, nuevo.Id);
+            gestor.AgregarMiembroAProyecto(proyecto.Id, solicitante, nuevo);
         }
 
         [TestMethod]
@@ -649,7 +649,7 @@ namespace Tests
             Proyecto proyecto = new Proyecto("Proyecto", "Descripcion", admin, new List<Usuario> ());
             gestor.CrearProyecto(proyecto, admin); 
 
-            gestor.AgregarMiembroAProyecto(proyecto.Id, admin, miembro.Id);
+            gestor.AgregarMiembroAProyecto(proyecto.Id, admin, miembro);
 
             Assert.IsTrue(proyecto.Miembros.Contains(miembro));
         }

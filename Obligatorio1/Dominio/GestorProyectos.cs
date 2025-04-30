@@ -124,7 +124,7 @@ public class GestorProyectos
         proyecto.NotificarMiembros($"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{nuevoAdmin}'.");
     }
 
-    public void AgregarMiembroAProyecto(int idProyecto, Usuario solicitante, int idNuevoMiembro)
+    public void AgregarMiembroAProyecto(int idProyecto, Usuario solicitante, Usuario nuevoMiembro)
     {
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
 
@@ -137,7 +137,7 @@ public class GestorProyectos
         if (!proyecto.Administrador.Equals(solicitante))
             throw new ExcepcionDominio("Solo el administrador del proyecto puede agregar miembros.");
             
-
+        proyecto.AsignarMiembro(nuevoMiembro);
         
     }
 
