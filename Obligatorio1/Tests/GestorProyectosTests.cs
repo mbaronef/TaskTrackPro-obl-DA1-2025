@@ -603,9 +603,11 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void AgregarMiembro_LanzaExcepcionSiProyectoNoExiste()
         {
-            Usuario adminSis = new Usuario { EsAdministradorSistema = true };
+            Usuario adminSis = new Usuario { EsAdministradorProyecto = true, EstaAdministrandoProyecto = true};
             GestorProyectos gestor   = new GestorProyectos();
-            gestor.AgregarMiembroAProyecto(99, adminSis, new Usuario());
+            Usuario aAgregar = new Usuario();
+            gestor.AgregarMiembroAProyecto(99, adminSis, aAgregar.Id);
+            
         }
 
 

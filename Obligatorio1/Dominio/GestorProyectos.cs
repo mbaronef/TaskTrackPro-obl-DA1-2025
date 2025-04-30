@@ -122,8 +122,15 @@ public class GestorProyectos
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoProyecto = true;
         proyecto.NotificarMiembros($"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{nuevoAdmin}'.");
-        
+    }
 
+    public void AgregarMiembroAProyecto(int idProyecto, Usuario solicitante, int idNuevoMiembro)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+
+        if (proyecto is null)
+            throw new ExcepcionDominio("El proyecto no existe.");
+        
     }
 
 
