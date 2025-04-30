@@ -596,28 +596,39 @@ namespace Tests
             Assert.AreEqual($"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{candidato}'.", candidato.Notificaciones[1].Mensaje);
             Assert.AreEqual($"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{candidato}'.", miembro.Notificaciones[1].Mensaje);
         }
+        
+        //agregar miembro al proyecto
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void AgregarMiembro_LanzaExcepcionSiProyectoNoExiste()
+        {
+            Usuario adminSis = new Usuario { EsAdministradorSistema = true };
+            GestorProyectos gestor   = new GestorProyectos();
+            gestor.AgregarMiembroAProyecto(99, adminSis, new Usuario());
+        }
 
 
 
         //TODO:
         
-        // manda notificacion a cada uno de los miembros del proyecto
-        
-        // agregarMiembroAProyecto (admin de proyecto)
+        // agregarMiembroAProyecto (lo puede hacer unicamente si es admin de proyecto)
+        // verificar que el proyecto exista
         // manda notificacion a cada uno de los miembros del proyecto 
         
-        // eliminarMiembroDelProyecto (admin de proyecto)
+        // eliminarMiembroDelProyecto (lo puede hacer solo si es admin de proyecto)
+        // verificar que el proyecto exista
         // manda notificacion a cada uno de los miembros del proyecto 
-        
-        // agregarTareaDelProyecto (admin de proyecto) seria crearTarea (cuando se crea se agrega a la lista de tareas)
-        // manda notificacion a cada uno de los miembros del proyecto 
-        
-        // eliminarTareaDelProyecto (admin de proyecto) seria eliminarTarea
-        // manda notificacion a cada uno de los miembros del proyecto
         
         // obtenerTodosLosProyectos (metodo privado (?))
         
         // obtenerProyectoPorUsuario (metodo privado (?))
+        
+        // agregarTareaDelProyecto (lo puede hacer si es admin de proyecto) seria crearTarea (cuando se crea se agrega a la lista de tareas)
+        // manda notificacion a cada uno de los miembros del proyecto 
+        
+        // eliminarTareaDelProyecto (admin de proyecto) seria eliminarTarea
+        // manda notificacion a cada uno de los miembros del proyecto
         
     }
 }
