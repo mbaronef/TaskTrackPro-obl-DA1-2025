@@ -104,6 +104,14 @@ public class GestorUsuariosTests
         _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
         _gestorUsuarios.EliminarUsuario(usuario1, usuario2.Id);
     }
+    
+    [TestMethod]
+    public void UsuarioSePuedeEliminarASiMismo()
+    {
+        Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
+        _gestorUsuarios.EliminarUsuario(usuario, usuario.Id);
+    }
 
     [TestMethod]
     public void GestorDevuelveUnUsuarioPorId()
