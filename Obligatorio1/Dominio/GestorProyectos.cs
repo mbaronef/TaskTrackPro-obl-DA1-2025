@@ -139,6 +139,8 @@ public class GestorProyectos
             
         proyecto.AsignarMiembro(nuevoMiembro);
         
+        proyecto.NotificarMiembros($"Se agregó a un nuevo miembro (id {nuevoMiembro.Id}) al proyecto '{proyecto.Nombre}'.");
+        
     }
 
 

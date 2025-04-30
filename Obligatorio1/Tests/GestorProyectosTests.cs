@@ -664,17 +664,15 @@ namespace Tests
             gestor.CrearProyecto(proyecto, admin);
             gestor.AgregarMiembroAProyecto(proyecto.Id, admin, nuevoMiembro);
             
-            string esperado = $"Se agregó a un nuevo miembro (id {nuevoMiembro.Id}) al proyecto 'P'.";
+            string esperado = $"Se agregó a un nuevo miembro (id {nuevoMiembro.Id}) al proyecto 'Proyecto'.";
             Assert.AreEqual(2, admin.Notificaciones.Count);  
             Assert.AreEqual(1, nuevoMiembro.Notificaciones.Count);
             Assert.AreEqual(esperado, admin.Notificaciones[1].Mensaje);
-            Assert.AreEqual(esperado, nuevoMiembro.Notificaciones[1].Mensaje);
+            Assert.AreEqual(esperado, nuevoMiembro.Notificaciones[0].Mensaje);
         }
 
 
         //TODO:
-        
-        // manda notificacion a cada uno de los miembros del proyecto 
         
         // eliminarMiembroDelProyecto (lo puede hacer solo si es admin de proyecto)
         // verificar que el proyecto exista
