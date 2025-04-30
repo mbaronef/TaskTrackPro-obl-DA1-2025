@@ -50,4 +50,12 @@ public class RepositorioUsuariosTests
         Usuario obtenido = _repositorioUsuarios.ObtenerUsuarioPorEmail("admin@sistema.com");
         Assert.AreEqual(admin, obtenido);
     }
+
+    [TestMethod]
+    public void SePuedeModificarContrasenaDeUsuario()
+    {
+        _repositorioUsuarios.ActualizarContrasena(0,"1Admin=Sistema1");
+        Usuario admin = _repositorioUsuarios.ObtenerPorId(0);
+        Assert.IsTrue(admin.Autenticar("1Admin=Sistema1"));
+    }
 }
