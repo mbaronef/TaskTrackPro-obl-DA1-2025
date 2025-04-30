@@ -31,7 +31,7 @@ public class GestorUsuarios
         Usuarios.Where(u => u.EsAdministradorSistema && !u.Equals(solicitante)).ToList().ForEach(u => Notificar(u,mensajeNotificacion));
     }
 
-    public void EliminarUsuario(int id)
+    public void EliminarUsuario(Usuario solicitante, int id)
     {
         if (id == 0)
         {
@@ -191,5 +191,3 @@ public class GestorUsuarios
         return usuario;
     }
 }
-
-// notificar a todos los admin de sistema cuando se crea un nuevo usuario y cuando se elimina

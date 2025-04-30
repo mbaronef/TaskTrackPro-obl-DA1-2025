@@ -82,7 +82,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.AgregarUsuario(_adminSistema, usuario1);
         _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
 
-        _gestorUsuarios.EliminarUsuario(usuario2.Id);
+        _gestorUsuarios.EliminarUsuario(_adminSistema, usuario2.Id);
         Assert.AreEqual(2, _gestorUsuarios.Usuarios.Count);
         Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[1]);
     }
@@ -91,7 +91,7 @@ public class GestorUsuariosTests
     [TestMethod]
     public void GestorNoEliminaPrimerAdministradorSistema()
     {
-        _gestorUsuarios.EliminarUsuario(0);
+        _gestorUsuarios.EliminarUsuario(_adminSistema,0);
     }
 
     [TestMethod]
