@@ -172,7 +172,7 @@ public class GestorProyectos
 
     }
 
-    public void AgregarTareaAlProyecto(int idProyecto,  Usuario solicitante, Tarea nuevoTarea)
+    public void AgregarTareaAlProyecto(int idProyecto,  Usuario solicitante, Tarea nuevaTarea)
     {
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
         
@@ -184,6 +184,8 @@ public class GestorProyectos
         
         if(!proyecto.Administrador.Equals(solicitante))
             throw new ExcepcionDominio("Unicamente el administrador del proyecto puede eliminar un miembro.");
+        
+        proyecto.AgregarTarea(nuevaTarea);
 
     }
 
