@@ -153,6 +153,9 @@ public class GestorProyectos
         
         if (proyecto is null)
             throw new ExcepcionDominio("No se encontró el proyecto.");
+        
+        if(!solicitante.EsAdministradorProyecto)
+            throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
     }
 
     public List<Proyecto> ObtenerTodosLosProyectos()
