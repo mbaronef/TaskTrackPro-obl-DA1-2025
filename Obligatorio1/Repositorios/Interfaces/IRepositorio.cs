@@ -5,6 +5,7 @@ namespace Repositorios.IRepositorios;
 public interface IRepositorio<T>
 {
     void Agregar(T objeto);
-    Usuario ObtenerPorId(int id);
+    T ObtenerPorId(int id);
     void Eliminar(int id);
+    List<T> ObtenerTodos();
 }

@@ -13,6 +13,4 @@ public interface IRepositorioProyectos : IRepositorio<Proyecto>
   void EliminarTarea(int idProyecto, int idTarea);
   void AgregarMiembro(int idProyecto, Usuario miembro);
   void EliminarMiembro(int idProyecto, int idMiembro);
-  
-  
 }
