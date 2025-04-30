@@ -32,4 +32,14 @@ public class RepositorioUsuariosTests
         Usuario ultimoDelRepositorioUsuario = _repositorioUsuarios.ObtenerPorId(1);
         Assert.AreEqual(usuario, ultimoDelRepositorioUsuario);
     }
+
+    [TestMethod]
+    public void SeEliminaUnUsuarioOk()
+    {
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
+        usuario.Id = 1;
+        _repositorioUsuarios.Agregar(usuario);
+        _repositorioUsuarios.Eliminar(usuario.Id);
+        Assert.IsNull(_repositorioUsuarios.ObtenerPorId(1));
+    }
 }
