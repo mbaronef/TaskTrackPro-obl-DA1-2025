@@ -607,15 +607,28 @@ namespace Tests
             GestorProyectos gestor   = new GestorProyectos();
             Usuario aAgregar = new Usuario();
             gestor.AgregarMiembroAProyecto(99, adminSis, aAgregar.Id);
-            
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void AgregarMiembro_LanzaExcepcionSiSolicitanteNoEsAdminProyecto()
+        {
+            Usuario adminProj = new Usuario { EsAdministradorProyecto = true };
+            Usuario solicitante = new Usuario(); // tiene EsAdminDeProyecto = false  
+            Usuario miembro = new Usuario();
+            GestorProyectos gestor = new GestorProyectos();
+
+            Proyecto proyecto = new Proyecto("Proyecto","Descripcion", adminProj, new List<Usuario>{ miembro });
+            gestor.CrearProyecto(proyecto, adminProj);
+
+            gestor.AgregarMiembroAProyecto(proyecto.Id, solicitante, miembro.Id);
         }
 
 
 
         //TODO:
         
-        // agregarMiembroAProyecto (lo puede hacer unicamente si es admin de proyecto)
-        // verificar que el proyecto exista
+        // lo puede hacer unicamente si es admin de proyecto
         // manda notificacion a cada uno de los miembros del proyecto 
         
         // eliminarMiembroDelProyecto (lo puede hacer solo si es admin de proyecto)
