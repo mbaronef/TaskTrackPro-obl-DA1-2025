@@ -1,6 +1,7 @@
 using Dominio;
 using Dominio.Excepciones;
 using Dominio.Dummies;
+using NuGet.Frameworks;
 
 namespace Tests
 
@@ -262,6 +263,16 @@ namespace Tests
             gestor.ModificarNombreDelProyecto(proyecto2.Id, "Proyecto A", admin2);
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarNombreDelProyecto_LanzaExcepcionSiProyectoNoExiste()
+        {
+            Usuario adminProyecto = new Usuario { EsAdministradorProyecto = true };
+            GestorProyectos gestor = new GestorProyectos();
+
+            gestor.ModificarNombreDelProyecto(100, "nuevo", adminProyecto);
+        }
+        
         
         [TestMethod]
         public void ModificarNombreDelProyecto_NotificaALosMiembrosDelProyecto()
@@ -476,10 +487,9 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void CambiarAdmin_LanzaExcepcionNuevoAdminYaAdministraOtroProyecto()
+        public void CambiarAdministradorDeProyecto_LanzaExcepcionNuevoAdminYaAdministraOtroProyecto()
         {
             Usuario adminSistema   = new Usuario { EsAdministradorSistema = true };
-
             Usuario adminProyecto = new Usuario { EsAdministradorProyecto = true };
             Usuario adminB = new Usuario { EsAdministradorProyecto = true, EstaAdministrandoProyecto = true };
 
@@ -490,13 +500,14 @@ namespace Tests
             gestor.CambiarAdministradorDeProyecto(adminSistema, proyecto1.Id, adminB.Id);
         }
         
+        
+        
+        
         //TODO:
         // verificar que el proyecto exista en Modificar 
         
-        // verificar nuevoAdmin.estaAdministrandoProyecto en true  -> excepcion (no puede, ya es administrador de otro proyecto)
         // verficar nuevoAdmin.EsAdminProyecto en false -> excepcion (no tiene permiso de crear un proyecto)
-        // verificar nuevoAdmin.estaAdministrandoProyecto en false y nuevoAdmin.esAdminProyecto true -> se puede cambiar de admin y nuevoAdmin.estaAdministrandoProyecto cambiar a true
-        // exAdmin.estaAdministrandoProyecto cambiarlo a false 
+        // verificar caso feliz y nuevoAdmin.estaAdministrandoProyecto cambiar a true y exAdmin.estaAdministrandoProyecto cambiarlo a false 
         // manda notificacion a cada uno de los miembros del proyecto
         
         // agregarMiembroAProyecto (admin de proyecto)
