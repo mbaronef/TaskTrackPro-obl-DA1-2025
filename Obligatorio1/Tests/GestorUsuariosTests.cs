@@ -94,6 +94,17 @@ public class GestorUsuariosTests
         _gestorUsuarios.EliminarUsuario(_adminSistema,0);
     }
 
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void NoAdminDeSistemaNoPuedeEliminarUsuario()
+    {
+        Usuario usuario1 = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        Usuario usuario2 = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario1);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
+        _gestorUsuarios.EliminarUsuario(usuario1, usuario2.Id);
+    }
+
     [TestMethod]
     public void GestorDevuelveUnUsuarioPorId()
     {
