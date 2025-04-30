@@ -25,6 +25,10 @@ public class GestorUsuarios
         }
         usuario.Id = ++_cantidadUsuarios;
         Usuarios.Add(usuario);
+
+        string mensajeNotificacion =
+            $"Se creó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
+        Usuarios.Where(u => u.EsAdministradorSistema).ToList().ForEach(u => Notificar(u,mensajeNotificacion));
     }
 
     public void EliminarUsuario(int id)
