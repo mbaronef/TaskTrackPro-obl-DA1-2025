@@ -894,14 +894,24 @@ namespace Tests
         
         //eliminar tarea del proyecto
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarTareaDelProyecto_LanzaExcepcionSiProyectoNoExiste()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            GestorProyectos gestor = new GestorProyectos();
+            Tarea tarea = new Tarea();
+
+            gestor.EliminarTareaDelProyecto(100, admin, tarea.Id);
+        }
+        
         
         
         //TODO:
         
-        // agregarTareaDelProyecto (lo puede hacer si es admin de proyecto) seria crearTarea (cuando se crea se agrega a la lista de tareas)
-        // manda notificacion a cada uno de los miembros del proyecto 
-        
-        // eliminarTareaDelProyecto (admin de proyecto) seria eliminarTarea
+        // eliminarTareaDelProyecto (admin de proyecto y que sea el admin de ese proyecto) 
+        // proyecto existente
+        // se elimina ok
         // manda notificacion a cada uno de los miembros del proyecto
         
     }
