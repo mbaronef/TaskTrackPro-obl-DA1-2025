@@ -448,7 +448,7 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void CambiarAdmin_LanzaExcepcionSiProyectoNoExiste()
+        public void CambiarAdministradorDeProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
             Usuario adminSistema = new Usuario { EsAdministradorSistema = true };
             GestorProyectos gestor = new GestorProyectos();
@@ -457,6 +457,23 @@ namespace Tests
         }
         
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void CambiarAdministradorDeProyecto_LanzaExcepcionSiNuevoAdminNoEsMiembro()
+        {
+            Usuario adminSis = new Usuario { EsAdministradorSistema = true };
+            Usuario adminProj = new Usuario { EsAdministradorProyecto = true };
+            Usuario externo = new Usuario { EsAdministradorProyecto = true };
+            
+            List<Usuario> miembros = new List<Usuario>{adminSis};
+
+            Proyecto proyecto = new Proyecto("P", "Desc", adminProj, miembros);
+
+            GestorProyectos gestor = new GestorProyectos();
+            gestor.CrearProyecto(proyecto, adminProj);
+
+            gestor.CambiarAdministradorDeProyecto(adminSis, proyecto.Id, externo.Id);
+        }
         
         
         
@@ -464,6 +481,7 @@ namespace Tests
         
         
         //TODO:
+        // verificar que el proyecto exista en Agregar Eliminar Modificar 
         
         // verificar nuevoAdmin.estaAdministrandoProyecto en true  -> excepcion (no puede, ya es administrador de otro proyecto)
         // verficar nuevoAdmin.EsAdminProyecto en false -> excepcion (no tiene permiso de crear un proyecto)
