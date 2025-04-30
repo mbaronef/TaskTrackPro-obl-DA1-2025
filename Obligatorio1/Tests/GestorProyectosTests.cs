@@ -685,23 +685,21 @@ namespace Tests
             gestor.EliminarMiembroDelProyecto(100, admin, miembro.Id);
         }
         
-        
-        /*
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void EliminarMiembroDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
         {
             Usuario admin   = new Usuario { EsAdministradorProyecto = true };
             Usuario noAdmin = new Usuario();
-            var miembro = new Usuario();
+            Usuario miembro = new Usuario();
 
             GestorProyectos gestor   = new GestorProyectos();
-            Proyecto proyecto = new Proyecto("P","D",admin,new(){ miembro });
+            Proyecto proyecto = new Proyecto("Proyecto","Descripcion" ,admin, new List<Usuario>{ miembro });
             gestor.CrearProyecto(proyecto, admin);
 
             gestor.EliminarMiembroDelProyecto(proyecto.Id, noAdmin, miembro.Id);
         }
-        */
+        
         // obtenerTodosLosProyectos
 
         [TestMethod]
