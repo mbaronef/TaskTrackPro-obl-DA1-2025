@@ -883,7 +883,7 @@ namespace Tests
 
             gestor.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
 
-            string mensaje = $"Se agregó la tarea (id 10) al proyecto 'Proyecto X'.";
+            string mensaje = $"Se agregó la tarea (id {tarea.Id}) al proyecto '{proyecto.Nombre}'.";
 
             Assert.AreEqual(2, admin.Notificaciones.Count);
             Assert.AreEqual(mensaje, admin.Notificaciones[1].Mensaje);

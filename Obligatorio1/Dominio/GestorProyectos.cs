@@ -186,6 +186,7 @@ public class GestorProyectos
             throw new ExcepcionDominio("Unicamente el administrador del proyecto puede eliminar un miembro.");
         
         proyecto.AgregarTarea(nuevaTarea);
+        proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
 
     }
 
