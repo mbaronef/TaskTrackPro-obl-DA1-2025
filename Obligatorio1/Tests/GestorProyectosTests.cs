@@ -383,6 +383,17 @@ namespace Tests
         }
         
         [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaDeInicioDelProyecto_LanzaExcepcionSiProyectoNoExiste()
+        {
+            Usuario adminProyecto = new Usuario { EsAdministradorProyecto = true };
+            GestorProyectos gestor = new GestorProyectos();
+            DateTime nuevaFecha = DateTime.Now;
+
+            gestor.ModificarFechaDeInicioDelProyecto(100, nuevaFecha, adminProyecto);
+        }
+        
+        [TestMethod]
         
         public void ModificarFechaDeInicioDelProyecto_ModificaFechaDeInicioDelProyecto()
         {
