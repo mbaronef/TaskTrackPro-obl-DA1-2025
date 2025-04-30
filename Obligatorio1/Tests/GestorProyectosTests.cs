@@ -521,11 +521,25 @@ namespace Tests
             gestor.CambiarAdministradorDeProyecto(adminSistema, proyecto1.Id, adminB.Id);
         }
         
-        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void CambiarAdministradorDeProyecto_LanzaExcepcion_NuevoAdminNoTienePermisosDeAdminProyecto()
+        {
+            Usuario adminSistema = new Usuario { EsAdministradorSistema = true };
+            Usuario adminproyectoActual = new Usuario { EsAdministradorProyecto = true };
+            Usuario candidato = new Usuario(); // EsAdministradorProyecto = false
+
+            List<Usuario> miembros = new() { candidato };
+            Proyecto proyecto = new Proyecto("Proyecto Z", "Desc", adminproyectoActual, miembros);
+
+            GestorProyectos gestor = new GestorProyectos();
+            gestor.CrearProyecto(proyecto, adminproyectoActual);
+            
+            gestor.CambiarAdministradorDeProyecto(adminSistema, proyecto.Id, candidato.Id);
+        }
         
         
         //TODO:
-        // verificar que el proyecto exista en Modificar 
         
         // verficar nuevoAdmin.EsAdminProyecto en false -> excepcion (no tiene permiso de crear un proyecto)
         // verificar caso feliz y nuevoAdmin.estaAdministrandoProyecto cambiar a true y exAdmin.estaAdministrandoProyecto cambiarlo a false 
