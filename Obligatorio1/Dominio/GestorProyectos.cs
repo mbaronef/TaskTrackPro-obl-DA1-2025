@@ -121,6 +121,7 @@ public class GestorProyectos
         proyecto.Administrador.EstaAdministrandoProyecto = false;
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoProyecto = true;
+        proyecto.NotificarMiembros($"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{nuevoAdmin}'.");
         
 
     }
