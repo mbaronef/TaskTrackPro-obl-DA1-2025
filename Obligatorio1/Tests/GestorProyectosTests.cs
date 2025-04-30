@@ -639,6 +639,20 @@ namespace Tests
             gestor.AgregarMiembroAProyecto(proyecto.Id, solicitante, nuevo.Id);
         }
 
+        [TestMethod]
+        public void AgregarMiembro_AgregaElMiembroALaListaOK()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario miembro = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripcion", admin, new List<Usuario> ());
+            gestor.CrearProyecto(proyecto, admin); 
+
+            gestor.AgregarMiembroAProyecto(proyecto.Id, admin, miembro.Id);
+
+            Assert.IsTrue(proyecto.Miembros.Contains(miembro));
+        }
 
 
         //TODO:
