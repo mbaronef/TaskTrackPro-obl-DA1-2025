@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Interfaces\" />
+      <ProjectReference Include="..\Dominio\Dominio.csproj" />
     </ItemGroup>
 
 </Project>
