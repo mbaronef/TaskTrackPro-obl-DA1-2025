@@ -44,6 +44,15 @@ public class RepositorioUsuariosTests
     }
 
     [TestMethod]
+    public void SeObtieneListaDelRepoOk()
+    {
+        List<Usuario> usuarios = _repositorioUsuarios.ObtenerTodos();
+        Assert.IsNotNull(usuarios);
+        Assert.AreEqual(1, usuarios.Count);
+        Assert.AreEqual("Admin", usuarios.First().Nombre);
+    }
+
+    [TestMethod]
     public void SePuedeObtenerUsuariosPorEmail()
     {
         Usuario admin = _repositorioUsuarios.ObtenerPorId(0);
