@@ -156,6 +156,10 @@ public class GestorProyectos
         
         if(!solicitante.EsAdministradorProyecto)
             throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
+        
+        if (!proyecto.Administrador.Equals(solicitante))
+            throw new ExcepcionDominio("Unicamente el administrador del proyecto puede eliminar un miembro.");
+
     }
 
     public List<Proyecto> ObtenerTodosLosProyectos()
