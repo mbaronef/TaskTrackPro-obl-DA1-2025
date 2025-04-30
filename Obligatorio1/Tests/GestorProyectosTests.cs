@@ -477,6 +477,27 @@ namespace Tests
         }
         
         [TestMethod]
+        public void CambiarAdministradorDeProyecto_ActivaFlagDelAdminNuevo()
+        {
+            Usuario adminSis   = new Usuario { EsAdministradorSistema = true };
+
+            Usuario adminViejo = new Usuario { EsAdministradorProyecto = true};
+
+            Usuario adminNuevo = new Usuario { EsAdministradorProyecto = true };
+
+            List<Usuario> miembros = new List<Usuario> { adminViejo, adminNuevo };
+            Proyecto proyecto = new Proyecto("P", "Desc", adminViejo, miembros);
+
+            GestorProyectos gestor = new GestorProyectos();
+            gestor.CrearProyecto(proyecto, adminViejo);
+            
+            gestor.CambiarAdministradorDeProyecto(adminSis, proyecto.Id, adminNuevo.Id); 
+
+            Assert.IsTrue(adminNuevo.EstaAdministrandoProyecto);
+        }
+
+        
+        [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void CambiarAdministradorDeProyecto_LanzaExcepcionSiSolicitanteNoEsAdminSistema()
         {
@@ -558,7 +579,7 @@ namespace Tests
         
         //TODO:
         
-        // verificar caso feliz y nuevoAdmin.estaAdministrandoProyecto cambiar a true y exAdmin.estaAdministrandoProyecto cambiarlo a false 
+        // verificar caso feliz y nuevoAdmin.estaAdministrandoProyecto cambiar a true  
         // manda notificacion a cada uno de los miembros del proyecto
         
         // agregarMiembroAProyecto (admin de proyecto)
