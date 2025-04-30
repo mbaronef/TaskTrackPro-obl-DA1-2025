@@ -715,6 +715,19 @@ namespace Tests
             gestor.EliminarMiembroDelProyecto(proyecto.Id, solicitante, miembro.Id);
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarMiembro_LanzaExcepcionSiUsuarioNoEsMiembroDelProyecto()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario noMiembro = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("Proyecto","Descripcion" ,admin,new List<Usuario>());
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.EliminarMiembroDelProyecto(proyecto.Id, admin, noMiembro.Id);
+        }
         
         
         // obtenerTodosLosProyectos
@@ -771,8 +784,7 @@ namespace Tests
         
         //TODO:
         
-        // eliminarMiembroDelProyecto (lo puede hacer solo si es admin de proyecto)
-        // verificar que el proyecto exista
+        // eliminarMiembroDelProyecto
         // manda notificacion a cada uno de los miembros del proyecto 
         
         // agregarTareaDelProyecto (lo puede hacer si es admin de proyecto) seria crearTarea (cuando se crea se agrega a la lista de tareas)
