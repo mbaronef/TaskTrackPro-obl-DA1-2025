@@ -113,6 +113,11 @@ public class GestorProyectos
         
         if (nuevoAdmin.EstaAdministrandoProyecto)
             throw new ExcepcionDominio("El usuario ya administra otro proyecto.");
+        
+        if (!nuevoAdmin.EsAdministradorProyecto)
+            throw new ExcepcionDominio("El usuario no tiene los permisos de administrador de proyecto.");
+        
+        
 
     }
 
