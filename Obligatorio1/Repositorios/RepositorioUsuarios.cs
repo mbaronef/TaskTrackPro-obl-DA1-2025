@@ -18,7 +18,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 
     public void Agregar(Usuario objeto)
     {
-        throw new NotImplementedException();
+        _usuarios.Add(objeto);
     }
 
     public Usuario ObtenerPorId(int id)
