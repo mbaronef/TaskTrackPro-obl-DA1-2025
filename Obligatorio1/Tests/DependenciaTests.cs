@@ -49,7 +49,7 @@ public class DependenciaTests
     { 
         Dependencia dependencia = new Dependencia("FF", null);
     }
-
+    
     [TestMethod]
     public void Constructor_AceptaTipoFF()
     {
@@ -73,5 +73,6 @@ public class DependenciaTests
         Tarea tarea = new Tarea("titulo", "descripcion", 6);
         Dependencia dependencia = new Dependencia("SS", tarea);
     }
+    
 
 }
