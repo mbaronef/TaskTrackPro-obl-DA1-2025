@@ -216,54 +216,6 @@ public class TareaTests
         
         Assert.IsFalse(resultado);
     }
-
-    [TestMethod]
-    public void EliminarUsuarioAsignadoEliminaUsuarioDeLaLista()
-    {
-        Tarea tarea = new Tarea("Título", "Descripción", 5);
-        Usuario usuario = new Usuario("hola", "hola", "hola", "hola") { Id = 1 };
-        tarea.UsuariosAsignados.Add(usuario);
-        
-        tarea.EliminarUsuarioAsignado(usuario.Id);
-        
-        Assert.IsFalse(tarea.UsuariosAsignados.Contains(usuario));
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionDominio))]
-    public void EliminarUsuarioAsignadoLanzaExcepcionSiUsuariosAsignadosEsNull()
-    {
-        Tarea tarea = new Tarea("Título", "Descripción", 5);
-        
-        tarea.UsuariosAsignados = null;
-        
-        tarea.EliminarUsuarioAsignado(1);
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionDominio))]
-    public void EliminarUsuarioAsignadoLanzaExcepcionSiUsuarioNoEstaAsignado()
-    {
-        Tarea tarea = new Tarea("Título", "Descripción", 5);
-        
-        tarea.EliminarUsuarioAsignado(1);
-    }
-    
-    [TestMethod]
-    public void EliminarUsuarioAsignado_UsuarioEnSegundaPosicion_SeEliminaCorrectamente()
-    {
-        Tarea tarea = new Tarea("Título", "Descripción", 5);
-        Usuario usuario1 = new Usuario("a", "a", "a", "a") { Id = 1 };
-        Usuario usuario2 = new Usuario("b", "b", "b", "b") { Id = 2 };
-        tarea.UsuariosAsignados.Add(usuario1);
-        tarea.UsuariosAsignados.Add(usuario2);
-
-        tarea.EliminarUsuarioAsignado(2);
-
-        Assert.IsFalse(tarea.UsuariosAsignados.Contains(usuario2));
-        Assert.IsTrue(tarea.UsuariosAsignados.Contains(usuario1));
-    }
-
     
     [TestMethod]
     public void FechaFinMasTempranaInicializadaConMinValuePorDefecto()
@@ -329,6 +281,17 @@ public class TareaTests
         Tarea tarea = new Tarea("tarea", "descr", 87);
         tarea.AsignarUsuario(usu);
         tarea.AsignarUsuario(usu);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void EliminarUsuario_LanzaExcepcionSiUsuariosAsignadosEsNull()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        
+        tarea.UsuariosAsignados = null;
+        
+        tarea.EliminarUsuario(1);
     }
     
     [TestMethod]

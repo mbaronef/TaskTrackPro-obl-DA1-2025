@@ -125,28 +125,16 @@ public class Tarea
         return UsuariosAsignados.Contains(usuario);
     }
     
-    public void EliminarUsuarioAsignado(int id)
+    private void VerificarUsuarioNoEstaAsignado(Usuario usuario)
     {
-        if (this.UsuariosAsignados == null)
-        {
-            throw new ExcepcionDominio("La lista de usuarios asignados está vacía o no está inicializada.");
-        }
-        for (int i = 0; i < this.UsuariosAsignados.Count; i++)
-        {
-            if (this.UsuariosAsignados[i].Id == id)
-            {
-                this.UsuariosAsignados.RemoveAt(i);
-                return;
-            }
-        }
-        throw new ExcepcionDominio("El usuario con el id dado no está asignado.");
+        if(UsuariosAsignados.Contains(usuario))
+            throw new ExcepcionDominio("El usuario ya fue agregado a la tarea.");
     }
     
     public void AsignarUsuario(Usuario usuario)
     {
         ValidarObjetoNoNull(usuario,"No se puede asignar una tarea a un usuario null.");
-        if(UsuariosAsignados.Contains(usuario))
-            throw new ExcepcionDominio("El usuario ya fue agregado a la tarea.");
+        VerificarUsuarioNoEstaAsignado(usuario);
         UsuariosAsignados.Add(usuario);
     }
     
@@ -155,18 +143,32 @@ public class Tarea
         return UsuariosAsignados.FirstOrDefault(u => u.Id == id);
     }
     
+    private void ListaEsNullLanzaExcepcion()
+    {
+        if (this.UsuariosAsignados == null)
+        {
+            throw new ExcepcionDominio("La lista de usuarios asignados está vacía o no está inicializada.");
+        }
+    }
+    
     public void EliminarUsuario(int idUsu)
     {
+        ListaEsNullLanzaExcepcion();
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsu);
         ValidarObjetoNoNull(usuarioAEliminar,"El usuario no está asignado a la tarea.");
         UsuariosAsignados.Remove(usuarioAEliminar);
+    }
+
+    private void VerificarRecursoNoEstaAgregado(Recurso recurso)
+    {
+        if(RecursosNecesarios.Contains(recurso))
+            throw new ExcepcionDominio("El recurso ya fue agregado.");
     }
     
     public void AgregarRecurso(Recurso recurso)
     {
         ValidarObjetoNoNull(recurso,"No se puede agregar un recurso null.");
-        if(RecursosNecesarios.Contains(recurso))
-            throw new ExcepcionDominio("El recurso ya fue agregado.");
+        VerificarRecursoNoEstaAgregado(recurso);
         RecursosNecesarios.Add(recurso);
     }
     
@@ -193,18 +195,22 @@ public class Tarea
         Descripcion = nuevaDesc;
     }
 
+    private void VerificarFechaNoMenorAHoy(DateTime fechaNueva)
+    {
+        if (fechaNueva < DateTime.Now.Date)
+            throw new ExcepcionDominio("La fecha no puede ser anterior a hoy.");
+    }
+
     public void ModificarFechaInicioMasTemprana(DateTime fechaInicioNueva)
     {
-        if (fechaInicioNueva < DateTime.Now.Date)
-            throw new ExcepcionDominio("La fecha de inicio más temprana no puede ser anterior a hoy.");
+        VerificarFechaNoMenorAHoy(fechaInicioNueva);
         FechaInicioMasTemprana = fechaInicioNueva;
         CalcularFechaFinMasTemprana();
     }
     
     public void ModificarFechaDeEjecucion(DateTime fechaNueva)
     {
-        if (fechaNueva < DateTime.Now.Date)
-            throw new ExcepcionDominio("La fecha de ejecucuión no puede ser anterior a hoy.");
+        VerificarFechaNoMenorAHoy(fechaNueva);
         FechaDeEjecucion = fechaNueva;
     }
 
@@ -230,11 +236,16 @@ public class Tarea
         }
     }
     
+    private void VerificarDependenciaNoEstaAgregada(Dependencia dependencia)
+    {
+        if (Dependencias.Contains(dependencia))
+            throw new ExcepcionDominio("La dependencia ya fue agregada.");
+    }
+    
     public void AgregarDependencia(Dependencia dependencia)
     {
         ValidarObjetoNoNull(dependencia,"No se puede agregar una dependencia null.");
-        if (Dependencias.Contains(dependencia))
-            throw new ExcepcionDominio("La dependencia ya fue agregada.");
+        VerificarDependenciaNoEstaAgregada(dependencia);
         Dependencias.Add(dependencia);
     }
     
