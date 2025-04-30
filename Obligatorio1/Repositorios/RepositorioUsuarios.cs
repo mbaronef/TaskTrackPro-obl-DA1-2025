@@ -34,7 +34,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 
     public Usuario ObtenerUsuarioPorEmail(string email)
     {
-        throw new NotImplementedException();
+        return _usuarios.FirstOrDefault(u => u.Email == email);
     }
 
     public void ActualizarContrasena(int idUsuario, string contrasena)
