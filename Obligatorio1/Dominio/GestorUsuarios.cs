@@ -43,6 +43,9 @@ public class GestorUsuarios
             throw new ExcepcionDominio("No tiene los permisos para eliminar usuarios");
         }
         Usuarios.Remove(usuario);
+        string mensajeNotificacion =
+            $"Se eliminó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
+        Usuarios.Where(u => u.EsAdministradorSistema).ToList().ForEach(u => Notificar(u,mensajeNotificacion));
     }
 
     public Usuario ObtenerUsuarioPorId(int idUsuario)
