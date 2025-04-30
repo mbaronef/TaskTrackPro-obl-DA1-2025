@@ -50,6 +50,9 @@ public class GestorProyectos
     public void ModificarNombreDelProyecto(int idProyecto, string nuevoNombre, Usuario solicitante)
     {
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        
+        if (proyecto is null)
+            throw new ExcepcionDominio("El proyecto no existe.");
 
         if (!proyecto.EsAdministrador(solicitante))
             throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar el nombre.");
