@@ -1,5 +1,6 @@
 ﻿namespace Tests;
 using Dominio;
+using Dominio.Excepciones;
 
 [TestClass]
 
@@ -22,7 +23,7 @@ public class DependenciaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTipoEsVacio()
     { 
-        Tarea tarea = new Tarea("titulo", "descripcion", 6);
+        Tarea tarea = new Tarea("", "descripcion", 6);
         Dependencia dependencia = new Dependencia("", tarea);
     }
     
