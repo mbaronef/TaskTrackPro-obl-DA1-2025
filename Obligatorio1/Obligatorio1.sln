@@ -4,11 +4,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dominio", "Dominio\Dominio.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{9150EB24-3FD9-482A-8219-1CFB7DB40A5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logica", "Logica\Logica.csproj", "{2435C6DA-C6B1-44CB-9F9F-A19743186FAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gestores", "Gestores\Gestores.csproj", "{2435C6DA-C6B1-44CB-9F9F-A19743186FAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gestores", "Gestores\Gestores.csproj", "{0560B541-F150-4262-9F4A-0E892EE91CC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositorios", "Repositorios\Repositorios.csproj", "{0560B541-F150-4262-9F4A-0E892EE91CC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IGestores", "IGestores\IGestores.csproj", "{0774538D-AF7C-43D3-8379-9747566E27B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRepositorios", "IRepositorios\IRepositorios.csproj", "{0774538D-AF7C-43D3-8379-9747566E27B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
