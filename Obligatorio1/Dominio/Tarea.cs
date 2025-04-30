@@ -207,11 +207,16 @@ public class Tarea
             throw new ExcepcionDominio("La fecha de ejecucuión no puede ser anterior a hoy.");
         FechaDeEjecucion = fechaNueva;
     }
+
+    private void DuracionNoMenorACero(int duracion)
+    {
+        if (duracion <= 0)
+            throw new ExcepcionDominio("La fecha de duración no puede ser cero o negativa.");
+    }
     
     public void ModificarDuracion(int nuevaDuracion)
     {
-        if (nuevaDuracion <= 0)
-            throw new ExcepcionDominio("La fecha de duración no puede ser cero o negativa.");
+        DuracionNoMenorACero(nuevaDuracion);
         DuracionEnDias = nuevaDuracion;
         CalcularFechaFinMasTemprana();
     }
