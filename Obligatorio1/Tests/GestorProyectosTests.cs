@@ -675,7 +675,7 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void EliminarMiembro_ProyectoNoExiste_LanzaExcepcion()
+        public void EliminarMiembroDelProyecto_ProyectoNoExiste_LanzaExcepcion()
         {
             Usuario admin  = new Usuario { EsAdministradorProyecto = true };
             Usuario miembro = new Usuario();
@@ -717,7 +717,7 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void EliminarMiembro_LanzaExcepcionSiUsuarioNoEsMiembroDelProyecto()
+        public void EliminarMiembroDelProyecto_LanzaExcepcionSiUsuarioNoEsMiembroDelProyecto()
         {
             Usuario admin = new Usuario { EsAdministradorProyecto = true };
             Usuario noMiembro = new Usuario();
@@ -728,8 +728,21 @@ namespace Tests
 
             gestor.EliminarMiembroDelProyecto(proyecto.Id, admin, noMiembro.Id);
         }
-        
-        
+
+        [TestMethod]
+        public void EliminarMiembroDelProyecto_EliminaMiembroOK()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario miembro = new Usuario();
+            GestorProyectos gestor = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripcion", admin, new() { miembro });
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.EliminarMiembroDelProyecto(proyecto.Id, admin, miembro.Id);
+
+            Assert.IsFalse(proyecto.Miembros.Contains(miembro));
+        }
+
         // obtenerTodosLosProyectos
 
         [TestMethod]
