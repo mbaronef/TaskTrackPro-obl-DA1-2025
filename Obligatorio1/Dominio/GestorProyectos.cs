@@ -117,7 +117,7 @@ public class GestorProyectos
         if (!nuevoAdmin.EsAdministradorProyecto)
             throw new ExcepcionDominio("El usuario no tiene los permisos de administrador de proyecto.");
         
-        
+        proyecto.Administrador = nuevoAdmin;
 
     }
 

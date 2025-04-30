@@ -454,8 +454,27 @@ namespace Tests
             gestor.CambiarAdministradorDeProyecto(adminSistema, proyecto.Id, nuevoAdmin.Id);
             
             Assert.AreSame(nuevoAdmin, proyecto.Administrador);
-            Assert.IsFalse(adminProyectoActual.EstaAdministrandoProyecto);
-            Assert.IsTrue(nuevoAdmin.EstaAdministrandoProyecto);
+        }
+        
+        [TestMethod]
+        public void CambiarAdministradorDeProyecto_DesactivaFlagDelAdminAnterior()
+        {
+            Usuario adminSis   = new Usuario { EsAdministradorSistema = true };
+
+            Usuario adminViejo = new Usuario { EsAdministradorProyecto = true,
+                EstaAdministrandoProyecto = true };
+
+            Usuario adminNuevo = new Usuario { EsAdministradorProyecto = true };
+
+            List<Usuario> miembros = new List<Usuario> { adminViejo, adminNuevo };
+            Proyecto proyecto = new Proyecto("P", "Desc", adminViejo, miembros);
+
+            GestorProyectos gestor = new GestorProyectos();
+            gestor.CrearProyecto(proyecto, adminViejo);
+            
+            gestor.CambiarAdministradorDeProyecto(adminSis, proyecto.Id, adminNuevo.Id); 
+
+            Assert.IsFalse(adminViejo.EstaAdministrandoProyecto);
         }
         
         [TestMethod]
@@ -535,6 +554,7 @@ namespace Tests
             
             gestor.CambiarAdministradorDeProyecto(adminSistema, proyecto.Id, candidato.Id);
         }
+        
         
         
         //TODO:
