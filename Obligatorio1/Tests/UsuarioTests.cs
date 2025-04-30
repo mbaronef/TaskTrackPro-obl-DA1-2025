@@ -54,6 +54,13 @@ namespace Tests
             Usuario usuario = new Usuario("Juan", null, _fechaNacimientoValida, "unemail@gmail.com", "Contrase#a3");
         }
 
+        [ExpectedException(typeof(ExcepcionDominio))]
+        [TestMethod]
+        public void ConstructorValidaEdadMaxima()
+        {
+            DateTime fechaHace100Años = new DateTime(1925, 04, 30);
+        }
+
         [TestMethod]
         public void UsuarioSeCreaConListaNotificacionesVacia()
         {
