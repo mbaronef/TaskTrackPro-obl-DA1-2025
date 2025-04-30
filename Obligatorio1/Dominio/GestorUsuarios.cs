@@ -45,7 +45,7 @@ public class GestorUsuarios
         Usuarios.Remove(usuario);
         string mensajeNotificacion =
             $"Se eliminó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
-        Usuarios.Where(u => u.EsAdministradorSistema).ToList().ForEach(u => Notificar(u,mensajeNotificacion));
+        Usuarios.Where(u => u.EsAdministradorSistema && !u.Equals(solicitante)).ToList().ForEach(u => Notificar(u,mensajeNotificacion));
     }
 
     public Usuario ObtenerUsuarioPorId(int idUsuario)
