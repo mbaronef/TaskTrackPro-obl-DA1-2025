@@ -29,7 +29,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 
     public void Eliminar(int id)
     {
-        throw new NotImplementedException();
+        _usuarios.Remove(_usuarios.FirstOrDefault(u => u.Id == id));
     }
 
     public Usuario ObtenerUsuarioPorEmail(string email)
