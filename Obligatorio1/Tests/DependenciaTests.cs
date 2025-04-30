@@ -49,7 +49,15 @@ public class DependenciaTests
     { 
         Dependencia dependencia = new Dependencia("", null);
     }
-    
-    
-    
+
+    [TestMethod]
+    public void Constructor_AceptaTipoFF()
+    {
+        Tarea tarea = new Tarea("titulo", "descripcion", 6);
+        Dependencia dependencia = new Dependencia("FF", tarea);
+        Assert.AreEqual("FF", dependencia.Tipo);
+    }
+
+
+
 }
