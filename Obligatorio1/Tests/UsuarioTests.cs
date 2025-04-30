@@ -163,7 +163,7 @@ namespace Tests
         {
             Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@adinet.com", "Contrase#a3");
             string nuevaContrasena = "CoNtRaSeN1@";
-            usuario.CambiarContrasena(nuevaContrasena);
+            usuario.EstablecerContrasena(nuevaContrasena);
             Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
         }
 
@@ -173,7 +173,7 @@ namespace Tests
         {
             Usuario usuario = CrearUsuarioValido();
             string nuevaContrasena = "c1.A";
-            usuario.CambiarContrasena(nuevaContrasena);
+            usuario.EstablecerContrasena(nuevaContrasena);
         }
 
         [TestMethod]
@@ -183,7 +183,7 @@ namespace Tests
             string nuevaContrasena = "c1.A";
             try
             {
-                usuario.CambiarContrasena(nuevaContrasena);
+                usuario.EstablecerContrasena(nuevaContrasena);
             }
             catch
             {
@@ -274,7 +274,7 @@ namespace Tests
         [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
-            Usuario adminSistema = new Usuario("admin", "admin", new DateTime(0001,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
+            Usuario adminSistema = new Usuario("admin", "admin", new DateTime(1999,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
             GestorUsuarios gestor = new GestorUsuarios(adminSistema);
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(adminSistema,usuario1);
@@ -286,7 +286,7 @@ namespace Tests
         [TestMethod]
         public void EqualsRetornaFalseSiLosIdsNoSonIguales()
         {
-            Usuario adminSistema = new Usuario("admin", "admin", new DateTime(0001,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
+            Usuario adminSistema = new Usuario("admin", "admin", new DateTime(1999,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
             GestorUsuarios gestor = new GestorUsuarios(adminSistema);
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(adminSistema, usuario1);

@@ -24,7 +24,7 @@ public class NotificacionTests
     }
 
     [TestMethod]
-    public void SeAsignaFechaOk()
+    public void ConstructorAsignaFechaOk()
     {
         Assert.AreEqual(DateTime.Today, _nuevaNotificacion.Fecha);
     }

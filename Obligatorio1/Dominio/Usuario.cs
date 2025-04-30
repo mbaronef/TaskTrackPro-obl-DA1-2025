@@ -6,6 +6,9 @@ namespace Dominio;
 public class Usuario
 {
     private string _contrasena;
+    private static readonly int _largoMinimoContrasena = 8;
+    private static readonly int _edadMinima = 18;
+    private static readonly int _edadMaxima = 100;
 
     public int Id { get; set; }
     public string Nombre { get; set; }
@@ -20,26 +23,28 @@ public class Usuario
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
 
 
-    public Usuario(string unNombre, string unApellido, DateTime unaFechaNacimiento, string unEmail, string unaContrasena)
+    public Usuario(string nombre, string apellido, DateTime fechaNacimiento, string email, string contrasena)
     {
-        if (string.IsNullOrEmpty(unNombre))
-        {
-            throw new ExcepcionDominio("El nombre no puede estar vacío");   
-        }
-        if (string.IsNullOrEmpty(unApellido))
-        {
-            throw new ExcepcionDominio("El apellido no puede estar vacío");
-        }
-        ValidarEdad(unaFechaNacimiento);
-        ValidarEmail(unEmail);
-        SetContrasenaEncriptada(unaContrasena);
-        Nombre = unNombre;
-        Apellido = unApellido;
-        FechaNacimiento = unaFechaNacimiento;
-        Email = unEmail;
+        ValidarAtributoNoVacio(nombre, "nombre");
+        ValidarAtributoNoVacio(apellido, "apellido");
+        ValidarEdad(fechaNacimiento);
+        ValidarEmail(email);
+        EstablecerContrasena(contrasena);
+        Nombre = nombre;
+        Apellido = apellido;
+        FechaNacimiento = fechaNacimiento;
+        Email = email;
     }
 
-    private void SetContrasenaEncriptada(string contrasena)
+    private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
+    {
+        if (string.IsNullOrEmpty(texto))
+        {
+            throw new ExcepcionDominio($"El atributo {nombreAtributo} no puede ser vacío");   
+        }
+    }
+    
+    public void EstablecerContrasena(string contrasena)
     {
         ValidarContrasena(contrasena);
         _contrasena = Usuario.EncriptarContrasena(contrasena);
@@ -47,7 +52,7 @@ public class Usuario
 
     public static string EncriptarContrasena(string contrasena)
     {
-        return BCrypt.Net.BCrypt.HashPassword(contrasena);
+        return BCrypt.Net.BCrypt.HashPassword(contrasena); //Encripta la contraseña utilizando el algoritmo BCrypt
     }
 
     public bool Autenticar(string contrasenaIngresada)
@@ -57,22 +62,22 @@ public class Usuario
 
     private void ValidarContrasena(string contrasena)
     {
-        ValidarLargoContrasena(contrasena, 8);
-        ValidarAlgunaMayusculaContrasena(contrasena);
-        ValidarAlgunaMinusculaContrasena(contrasena);
-        ValidarAlgunNumeroContrasena(contrasena);
-        ValidarAlgunCaracterEspecialContrasena(contrasena);
+        ValidarLargoContrasena(contrasena);
+        ValidarAlgunaMayuscula(contrasena);
+        ValidarAlgunaMinuscula(contrasena);
+        ValidarAlgunNumero(contrasena);
+        ValidarAlgunCaracterEspecial(contrasena);
     }
 
-    private void ValidarLargoContrasena(string contrasena, int largoMinimo)
+    private void ValidarLargoContrasena(string contrasena)
     {
-        if (contrasena.Length < largoMinimo)
+        if (contrasena.Length < _largoMinimoContrasena)
         {
-            throw new ExcepcionDominio($"La contraseña debe tener al menos {largoMinimo} caracteres.");
+            throw new ExcepcionDominio($"La contraseña debe tener al menos {_largoMinimoContrasena} caracteres.");
         }
     }
 
-    private void ValidarAlgunaMayusculaContrasena(string contrasena)
+    private void ValidarAlgunaMayuscula(string contrasena)
     {
         if (!contrasena.Any(char.IsUpper))
         {
@@ -80,7 +85,7 @@ public class Usuario
         }
     }
 
-    private void ValidarAlgunaMinusculaContrasena(string contrasena)
+    private void ValidarAlgunaMinuscula(string contrasena)
     {
         if (!contrasena.Any(char.IsLower))
         {
@@ -88,7 +93,7 @@ public class Usuario
         }
     }
 
-    private void ValidarAlgunNumeroContrasena(string contrasena)
+    private void ValidarAlgunNumero(string contrasena)
     {
         if (!contrasena.Any(char.IsDigit))
         {
@@ -96,9 +101,9 @@ public class Usuario
         }
     }
 
-    private void ValidarAlgunCaracterEspecialContrasena(string contrasena)
+    private void ValidarAlgunCaracterEspecial(string contrasena)
     {
-        if (!Regex.IsMatch(contrasena, "[^a-zA-Z0-9]"))
+        if (!Regex.IsMatch(contrasena, "[^a-zA-Z0-9]")) // RegEx para que haya algún caracter distinto a minúsuclas, mayúsuclas o números
         {
             throw new ExcepcionDominio(
                 "La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).");
@@ -107,28 +112,23 @@ public class Usuario
 
     private void ValidarEdad(DateTime fechaNacimiento)
     {
-        if (fechaNacimiento.AddYears(18) > DateTime.Today)
+        if (fechaNacimiento.AddYears(_edadMinima) > DateTime.Today)
         {
-            throw new ExcepcionDominio("El usuario debe ser mayor de edad (18 años o más)");
+            throw new ExcepcionDominio($"El usuario debe tener más de {_edadMinima} años");
         }
 
-        if (fechaNacimiento.AddYears(100) <= DateTime.Today)
+        if (fechaNacimiento.AddYears(_edadMaxima) <= DateTime.Today)
         {
-            throw new ExcepcionDominio("El usuario debe tener menos de 100 años");
+            throw new ExcepcionDominio($"El usuario debe tener menos de {_edadMaxima} años");
         }
     }
 
     private void ValidarEmail(string email)
     {
-        if (!Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+        if (!Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")) // RegEx que valida formato con arroba en medio y extensión de dominio (ej. .com)
         {
             throw new ExcepcionDominio("El email tiene un formato inválido");
         }
-    }
-
-    public void CambiarContrasena(string nuevaContrasena)
-    {
-        SetContrasenaEncriptada(nuevaContrasena);
     }
 
     public void CambiarEmail(string nuevoEmail)

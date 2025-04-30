@@ -15,7 +15,7 @@ public class GestorUsuariosTests
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(GestorUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         
-        _adminSistema = new Usuario("admin", "admin", new DateTime(0001,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
+        _adminSistema = new Usuario("admin", "admin", new DateTime(1999,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
         _gestorUsuarios = new GestorUsuarios(_adminSistema); // Primer admin sistema siempre tiene ID 0
     }
     
@@ -182,7 +182,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.AgregarUsuario(_adminSistema, nuevoAdminProyecto);
 
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
-        _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
+        _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
 
         Assert.IsFalse(nuevoAdminProyecto.EsAdministradorProyecto);
     }
@@ -199,7 +199,7 @@ public class GestorUsuariosTests
         Usuario usuarioSolicitante = CrearUsuario("José", "Pérez", "unemail@gmail.com", "Contrase#a9");
         _gestorUsuarios.AgregarUsuario(_adminSistema, usuarioSolicitante);
 
-        _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
+        _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
 
     [ExpectedException(typeof(ExcepcionDominio))]
@@ -210,7 +210,7 @@ public class GestorUsuariosTests
         Usuario nuevoAdminProyecto = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
         _gestorUsuarios.AgregarUsuario(_adminSistema, nuevoAdminProyecto);
 
-        _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
+        _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
     
     [ExpectedException(typeof(ExcepcionDominio))]
@@ -223,7 +223,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
         nuevoAdminProyecto.EstaAdministrandoUnProyecto = true; // esto lo gestiona el gestor de proyectos
 
-        _gestorUsuarios.EliminarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
+        _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
 
     [TestMethod]
@@ -434,7 +434,7 @@ public class GestorUsuariosTests
         
         Notificacion ultimaNotificacion = admin2.Notificaciones.Last();
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
-        Assert.AreEqual("Se creó un nuevo usuario. Nombre: Juan, Apellido: Pérez", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("Se creó un nuevo usuario: Juan Pérez", ultimaNotificacion.Mensaje);
     }
 
     [TestMethod]
