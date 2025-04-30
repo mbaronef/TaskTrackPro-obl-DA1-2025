@@ -101,6 +101,9 @@ public class GestorProyectos
         
         if (nuevoAdmin is null) 
             throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
+        
+        if (nuevoAdmin.EstaAdministrandoProyecto)
+            throw new ExcepcionDominio("El usuario ya administra otro proyecto.");
 
     }
 
