@@ -626,7 +626,7 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void AgregarMiembro_SolicitanteNoEsAdministradorDelProyecto_LanzaExcepcion()
+        public void AgregarMiembro_LanzaExcepcionSolicitanteNoEsAdministradorDelProyecto()
         { 
             Usuario adminProyecto = new Usuario { EsAdministradorProyecto = true };
             Usuario solicitante = new Usuario { EsAdministradorProyecto = true };
@@ -699,6 +699,23 @@ namespace Tests
 
             gestor.EliminarMiembroDelProyecto(proyecto.Id, noAdmin, miembro.Id);
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarMiembroDelProyecto_LanzaExcepcionSolicitanteNoEsAdministradorDelProyecto()
+        { 
+            Usuario adminProyecto = new Usuario { EsAdministradorProyecto = true };
+            Usuario solicitante = new Usuario { EsAdministradorProyecto = true };
+            Usuario miembro = new Usuario();
+
+            GestorProyectos gestor   = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("Proyecto","Descripcion", adminProyecto, new List<Usuario>{miembro});
+            gestor.CrearProyecto(proyecto, adminProyecto);
+
+            gestor.EliminarMiembroDelProyecto(proyecto.Id, solicitante, miembro.Id);
+        }
+        
+        
         
         // obtenerTodosLosProyectos
 
