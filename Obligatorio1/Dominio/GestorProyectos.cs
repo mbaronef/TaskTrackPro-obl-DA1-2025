@@ -120,7 +120,7 @@ public class GestorProyectos
         
         proyecto.Administrador.EstaAdministrandoProyecto = false;
         proyecto.Administrador = nuevoAdmin;
-        //nuevoAdmin.EstaAdministrandoProyecto = true;
+        nuevoAdmin.EstaAdministrandoProyecto = true;
         
 
     }
