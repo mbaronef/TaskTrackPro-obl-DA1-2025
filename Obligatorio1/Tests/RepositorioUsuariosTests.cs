@@ -42,4 +42,12 @@ public class RepositorioUsuariosTests
         _repositorioUsuarios.Eliminar(usuario.Id);
         Assert.IsNull(_repositorioUsuarios.ObtenerPorId(1));
     }
+
+    [TestMethod]
+    public void SePuedeObtenerUsuariosPorEmail()
+    {
+        Usuario admin = _repositorioUsuarios.ObtenerPorId(0);
+        Usuario obtenido = _repositorioUsuarios.ObtenerUsuarioPorEmail("admin@sistema.com");
+        Assert.AreEqual(admin, obtenido);
+    }
 }
