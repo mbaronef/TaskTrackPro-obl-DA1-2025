@@ -18,10 +18,18 @@ public class Dependencia
             throw new ExcepcionDominio(mensajeError);
         }
     }
+    
+    private void ValidarTareaNoNula(Tarea tarea, string mensajeError)
+    {
+        if (tarea == null)
+            throw new ExcepcionDominio(mensajeError);
+    }
+    
     public Dependencia(string unTipo, Tarea unaTarea)
     {
-        ValidarNoVacio(unTipo,"No se puede ingresar un tipo vacío");
-        ValidarTipoValido(unTipo, "El tipo de dependencia debe ser 'FF' o 'FS'");
+        ValidarNoVacio(unTipo,"No se puede ingresar un tipo vacío.");
+        ValidarTipoValido(unTipo, "El tipo de dependencia debe ser 'FF' o 'FS'.");
+        ValidarTareaNoNula(unaTarea, "Una tarea no puede ser nula.");
         this.Tipo = unTipo;
         this.Tarea = unaTarea;
     }
