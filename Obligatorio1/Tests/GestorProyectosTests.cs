@@ -463,11 +463,11 @@ namespace Tests
         {
             Usuario adminSis = new Usuario { EsAdministradorSistema = true };
             Usuario adminProj = new Usuario { EsAdministradorProyecto = true };
-            Usuario externo = new Usuario { EsAdministradorProyecto = true };
+            Usuario externo = new Usuario();
             
             List<Usuario> miembros = new List<Usuario>{adminSis};
 
-            Proyecto proyecto = new Proyecto("P", "Desc", adminProj, miembros);
+            Proyecto proyecto = new Proyecto("Proyecto", "Desc", adminProj, miembros);
 
             GestorProyectos gestor = new GestorProyectos();
             gestor.CrearProyecto(proyecto, adminProj);

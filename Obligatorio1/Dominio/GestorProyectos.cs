@@ -94,9 +94,13 @@ public class GestorProyectos
             throw new ExcepcionDominio("Solo un administrador de sistema puede cambiar el administrador del proyecto.");
 
         Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
-        
+        Usuario nuevoAdmin = proyecto.Miembros.FirstOrDefault(u => u.Id == idNuevoAdmin);
+
         if (proyecto is null)
             throw new ExcepcionDominio("El proyecto no existe.");
+        
+        if (nuevoAdmin is null) 
+            throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
 
     }
 
