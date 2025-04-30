@@ -574,12 +574,33 @@ namespace Tests
             
             gestor.CambiarAdministradorDeProyecto(adminSistema, proyecto.Id, candidato.Id);
         }
-        
-        
-        
+
+        [TestMethod]
+        public void CambiarAdministradorDeProyecto_NotificaALosMiembros()
+        {
+            Usuario adminSistema = new Usuario { EsAdministradorSistema = true };
+            Usuario adminProjecto = new Usuario { EsAdministradorProyecto = true };
+            Usuario candidato = new Usuario() {EsAdministradorProyecto = true};
+            Usuario miembro = new Usuario();
+            
+            List<Usuario> miembros = new List<Usuario>{candidato, miembro};
+            GestorProyectos gestor = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("Proyecto B", "descrp", adminProjecto, miembros);
+            
+            gestor.CrearProyecto(proyecto, adminProjecto);
+            gestor.CambiarAdministradorDeProyecto(adminSistema, proyecto.Id, candidato.Id);
+            
+            
+            Assert.AreEqual(2, candidato.Notificaciones.Count);
+            Assert.AreEqual(2, miembro.Notificaciones.Count);
+            Assert.AreEqual($"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{candidato}'.", candidato.Notificaciones[1].Mensaje);
+            Assert.AreEqual($"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{candidato}'.", miembro.Notificaciones[1].Mensaje);
+        }
+
+
+
         //TODO:
         
-        // verificar caso feliz y nuevoAdmin.estaAdministrandoProyecto cambiar a true  
         // manda notificacion a cada uno de los miembros del proyecto
         
         // agregarMiembroAProyecto (admin de proyecto)
