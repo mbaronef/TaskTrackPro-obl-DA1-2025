@@ -18,4 +18,12 @@ public class DependenciaTests
 
     }
     
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_LanzaExcepcionSiTipoEsVacio()
+    { 
+        Tarea tarea = new Tarea("titulo", "descripcion", 6);
+        Dependencia dependencia = new Dependencia("", tarea);
+    }
+    
 }
