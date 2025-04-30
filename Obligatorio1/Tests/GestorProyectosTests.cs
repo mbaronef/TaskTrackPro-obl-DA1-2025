@@ -673,6 +673,35 @@ namespace Tests
         
         //eliminar miembro del proyecto
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarMiembro_ProyectoNoExiste_LanzaExcepcion()
+        {
+            Usuario admin  = new Usuario { EsAdministradorProyecto = true };
+            Usuario miembro = new Usuario();
+
+            GestorProyectos gestor = new GestorProyectos();
+
+            gestor.EliminarMiembroDelProyecto(100, admin, miembro.Id);
+        }
+        
+        
+        /*
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void EliminarMiembroDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
+        {
+            Usuario admin   = new Usuario { EsAdministradorProyecto = true };
+            Usuario noAdmin = new Usuario();
+            var miembro = new Usuario();
+
+            GestorProyectos gestor   = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("P","D",admin,new(){ miembro });
+            gestor.CrearProyecto(proyecto, admin);
+
+            gestor.EliminarMiembroDelProyecto(proyecto.Id, noAdmin, miembro.Id);
+        }
+        */
         // obtenerTodosLosProyectos
 
         [TestMethod]
@@ -722,8 +751,9 @@ namespace Tests
             Assert.AreEqual(1, listaProyectosMiembro2.Count);
             Assert.AreEqual(proyecto1, listaProyectosMiembro2[0]);
         }
-
-
+        
+        
+        
         //TODO:
         
         // eliminarMiembroDelProyecto (lo puede hacer solo si es admin de proyecto)
