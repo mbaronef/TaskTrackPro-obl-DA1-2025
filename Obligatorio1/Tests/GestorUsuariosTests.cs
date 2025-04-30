@@ -405,7 +405,18 @@ public class GestorUsuariosTests
         
         Assert.AreEqual(0, usuario.Notificaciones.Count());
     }
-    
+
+    [TestMethod]
+    public void SeNotificaAAdministradoresSistemaCuandoSeCreaUnUsuario()
+    {
+        Usuario admin2 = CrearYAsignarAdminSistema();
+        Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
+        
+        Notificacion ultimaNotificacion = admin2.Notificaciones.Last();
+        Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
+    }
+
     [TestMethod]
     public void LoginCorrecto()
     {
