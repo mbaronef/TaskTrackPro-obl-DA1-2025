@@ -166,6 +166,8 @@ public class GestorProyectos
             throw new ExcepcionDominio("El usuario no es miembro del proyecto.");
         
         proyecto.EliminarMiembro(idMiembroAEliminar);
+        
+        proyecto.NotificarMiembros($"Se eliminó a el miembro (id {idMiembroAEliminar}) del proyecto '{proyecto.Nombre}'.");
 
 
     }
