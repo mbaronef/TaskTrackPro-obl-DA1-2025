@@ -450,7 +450,8 @@ public class GestorUsuariosTests
     {
         Usuario admin2 = CrearYAsignarAdminSistema();
         Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.EliminarUsuario(_adminSistema, usuario.Id);
+        _gestorUsuarios.AgregarUsuario(admin2, usuario);
+        _gestorUsuarios.EliminarUsuario(admin2, usuario.Id);
         
         Notificacion ultimaNotificacion = admin2.Notificaciones.Last();
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
