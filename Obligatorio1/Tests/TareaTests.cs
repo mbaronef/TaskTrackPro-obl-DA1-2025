@@ -617,9 +617,10 @@ public class TareaTests
     [TestMethod]
     public void AgregarDependencia_AgregarDependenciaALista()
     {
+        Tarea tareaD = new Tarea("Titulo", "Descripción", 3);
         Tarea tarea = new Tarea("Titulo", "Descripción", 3);
 
-        Dependencia dependencia = new Dependencia();
+        Dependencia dependencia = new Dependencia("tipo", tareaD);
             
         tarea.AgregarDependencia(dependencia); 
             
@@ -640,7 +641,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarDependencia_LanzarExcepcionSiDependenciaYaEstaEnDependencias()
     {
-        Dependencia dependencia = new Dependencia();
+        Tarea tareaD = new Tarea("Titulo", "Descripción", 3);
+        Dependencia dependencia = new Dependencia("tipo", tareaD);
         
         Tarea tarea = new Tarea("tarea", "descr", 87);
         tarea.AgregarDependencia(dependencia);
@@ -650,23 +652,24 @@ public class TareaTests
     [TestMethod]
     public void EliminarDependencia_EliminarDependenciaDeDependencias()
     {
-        Dependencia dependencia = new Dependencia();
-
+        Tarea tareaD = new Tarea(1, "Titulo", "Descripción", 3);
+        Dependencia dependencia = new Dependencia("tipo", tareaD);
         Tarea tarea = new Tarea("tarea", "descr", 87);
         tarea.AgregarDependencia(dependencia);
         tarea.EliminarDependencia(1);
-
         Assert.IsFalse(tarea.Dependencias.Any(d => d.Tarea.Id == 1));
     }
+
     
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarDependencia_LanzaExcepcionSiDepenciaNoExiste()
     {
-        Dependencia dep = new Dependencia();
+        Tarea tareaD = new Tarea("Titulo", "Descripción", 3);
+        Dependencia dependencia = new Dependencia("tipo", tareaD);
     
         Tarea tarea = new Tarea("tarea", "descr", 87);
-        tarea.AgregarDependencia(dep);
+        tarea.AgregarDependencia(dependencia);
         
         tarea.EliminarDependencia(3);
     }
