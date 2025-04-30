@@ -637,6 +637,29 @@ public class TareaTests
         tarea.EliminarDependencia(3);
     }
     
+    [TestMethod]
+    public void VerificarDependenciaNoEstaAgregada_NoExisteNoLanzaExcepcion()
+    {
+        Tarea tarea = new Tarea("titulo", "descripcion", 3);
+        Tarea tarea2 = new Tarea("titulo2", "descripcion2", 3);
+        Dependencia dependencia = new Dependencia("FF", tarea2); 
+        tarea.VerificarDependenciaNoEstaAgregada(dependencia);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void VerificarDependenciaNoEstaAgregada_YaExisteLanzaExcepcion()
+    {
+        Tarea tarea = new Tarea("titulo", "descripcion", 3);
+        Tarea tarea2 = new Tarea("titulo2", "descripcion2", 3);
+        Dependencia dependencia = new Dependencia("FF", tarea2); 
+        tarea.AgregarDependencia(dependencia);
+        
+        tarea.VerificarDependenciaNoEstaAgregada(dependencia);
+    }
+
+
+    
 }
     
 

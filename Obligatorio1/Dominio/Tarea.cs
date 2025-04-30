@@ -236,7 +236,7 @@ public class Tarea
         }
     }
     
-    private void VerificarDependenciaNoEstaAgregada(Dependencia dependencia)
+    public void VerificarDependenciaNoEstaAgregada(Dependencia dependencia)
     {
         if (Dependencias.Contains(dependencia))
             throw new ExcepcionDominio("La dependencia ya fue agregada.");
