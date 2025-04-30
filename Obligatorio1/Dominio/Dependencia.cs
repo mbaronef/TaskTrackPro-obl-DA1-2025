@@ -10,9 +10,18 @@ public class Dependencia
         if (string.IsNullOrWhiteSpace(valor))
             throw new ExcepcionDominio(mensajeError);
     }
+
+    private void ValidarTipoFFoFS(string valor, string mensajeError)
+    {
+        if (valor != "FF" || valor != "FS")
+        {
+            throw new ExcepcionDominio(mensajeError);
+        }
+    }
     public Dependencia(string unTipo, Tarea unaTarea)
     {
         ValidarStringNoVacio(unTipo,"No se puede ingresar un tipo vacío");
+        ValidarTipoFFoFS(unTipo, "El tipo de dependencia debe ser 'FF' o 'FS'");
         this.Tipo = unTipo;
         this.Tarea = unaTarea;
     }
