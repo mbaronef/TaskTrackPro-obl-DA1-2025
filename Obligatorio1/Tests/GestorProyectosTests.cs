@@ -742,6 +742,24 @@ namespace Tests
 
             Assert.IsFalse(proyecto.Miembros.Contains(miembro));
         }
+        
+        [TestMethod]
+        public void EliminarMiembroDelProyecto_NotificaALosMiembros()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario miembro = new Usuario();
+            Usuario miembro2 = new Usuario();
+            GestorProyectos gestor = new GestorProyectos();
+            Proyecto proyecto = new Proyecto("Proyecto", "Descripcion", admin, new List<Usuario> {miembro, miembro2});
+            gestor.CrearProyecto(proyecto, admin);
+            gestor.EliminarMiembroDelProyecto(proyecto.Id, admin, miembro.Id);
+            
+            string esperado = $"Se eliminó a el miembro (id {miembro.Id}) del proyecto 'Proyecto'.";
+            Assert.AreEqual(2, admin.Notificaciones.Count);  
+            Assert.AreEqual(2, miembro2.Notificaciones.Count);
+            Assert.AreEqual(esperado, admin.Notificaciones[1].Mensaje);
+            Assert.AreEqual(esperado, miembro2.Notificaciones[1].Mensaje);
+        }
 
         // obtenerTodosLosProyectos
 
