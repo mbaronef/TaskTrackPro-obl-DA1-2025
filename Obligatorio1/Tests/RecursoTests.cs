@@ -158,4 +158,11 @@ public class RecursoTests
         recurso.CantidadDeTareasUsandolo++;
         Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
     }
+
+    [TestMethod]
+    public void SeCalculaSiSeEstaUsando()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Assert.IsFalse(recurso.SeEstaUsando());
+    }
 }
