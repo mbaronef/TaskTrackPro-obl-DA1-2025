@@ -21,7 +21,7 @@ public class Recurso
         Descripcion = descripcion;
     }
     
-    public Recurso(string nombre, string tipo, string descripcion, Proyecto proyecto) : this(nombre, tipo, descripcion)
+    public Recurso(string nombre, string tipo, string descripcion, Proyecto proyecto) : this(nombre, tipo, descripcion) // ctor recursos exclusivos
     {
         ProyectoAsociado = proyecto;
     }
