@@ -51,4 +51,11 @@ public class RecursoTests
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "");
     }
+    
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void DaErrorCrearRecursoConDescripcionNull()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", null;
+    }
 }
