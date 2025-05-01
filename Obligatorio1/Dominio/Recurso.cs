@@ -56,4 +56,9 @@ public class Recurso
         return ProyectoAsociado != null;
     }
 
+    public bool SeEstaUsando()
+    {
+        return CantidadDeTareasUsandolo > 0;
+    }
+
 }
