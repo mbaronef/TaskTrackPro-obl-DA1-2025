@@ -13,14 +13,16 @@ public class Recurso
 
     public Recurso(string nombre, string tipo, string descripcion)
     {
-        if (String.IsNullOrEmpty(nombre))
-        {
-            throw new ExcepcionDominio("El nombre del recurso no puede ser vacío");
-        }
+        ValidarAtributoNoVacio(nombre, "nombre");
         Nombre = nombre;
         Tipo = tipo;
         Descripcion = descripcion;
     }
-
-
+    private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
+    {
+        if (string.IsNullOrEmpty(texto))
+        {
+            throw new ExcepcionDominio($"El atributo {nombreAtributo} no puede ser vacío");
+        }
+    }
 }
