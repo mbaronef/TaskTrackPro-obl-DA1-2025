@@ -1,5 +1,8 @@
+using Dominio;
+
 namespace Tests;
 
+[TestClass]
 public class RecursoTests
 {
     [TestMethod]
