@@ -15,6 +15,7 @@ public class Recurso
     {
         ValidarAtributoNoVacio(nombre, "nombre");
         ValidarAtributoNoVacio(tipo, "tipo");
+        ValidarAtributoNoVacio(descripcion, "descripcion");
         Nombre = nombre;
         Tipo = tipo;
         Descripcion = descripcion;
