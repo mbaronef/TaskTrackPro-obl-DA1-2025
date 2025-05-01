@@ -1,4 +1,5 @@
 using Dominio;
+using Dominio.Excepciones;
 
 namespace Tests;
 
@@ -15,5 +16,11 @@ public class RecursoTests
         Assert.IsNull(recurso.ProyectoAsociado);
         Assert.AreEqual(0,recurso.CantidadDeTareasUsandolo);
     }
-    
+
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void DaErrorCrearRecursoConNombreVacio()
+    {
+        Recurso recurso = new Recurso("", "Tipo", "Descripcion");
+    }
 }
