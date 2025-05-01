@@ -69,4 +69,14 @@ public class RepositorioProyectosTest
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
         Assert.AreEqual("Nuevo", proyecto.Descripcion);
     }
+    
+    [TestMethod]
+    public void SeModificaLaFechaInicioDeProyectosOk()
+    {
+        DateTime fechaInicio = DateTime.Today;
+        _repositorioProyectos.Agregar(_proyecto);
+        _repositorioProyectos.ModificarFechaInicio(_proyecto.Id, fechaInicio);
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+        Assert.AreEqual(fechaInicio, proyecto.FechaInicio);
+    }
 }
