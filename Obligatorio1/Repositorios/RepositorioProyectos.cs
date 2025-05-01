@@ -46,7 +46,8 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void ModificarFechaInicio(int idProyecto, DateTime fechaInicio)
     {
-        throw new NotImplementedException();
+        Proyecto proyecto = ObtenerPorId(idProyecto);
+        proyecto.FechaInicio = fechaInicio;
     }
 
     public void ModificarFechaFinMasTemprana(int idProyecto, DateTime fechaFinMasTemprana)
