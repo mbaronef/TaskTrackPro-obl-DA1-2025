@@ -5,11 +5,11 @@ namespace Dominio;
 
 public class Recurso
 {
-    public string Nombre { get; set; }
-    public string Tipo { get; set; }
-    public string Descripcion { get; set; }
-    public Proyecto? ProyectoAsociado { get; set; } = null;
-    public int CantidadDeTareasUsandolo { get; set; } = 0;
+    public string Nombre { get; private set; }
+    public string Tipo { get; private set; }
+    public string Descripcion { get; private set; }
+    public Proyecto? ProyectoAsociado { get; private set; } = null;
+    public int CantidadDeTareasUsandolo { get; private set; } = 0;
 
     public Recurso(string nombre, string tipo, string descripcion)
     {
@@ -26,5 +26,23 @@ public class Recurso
         {
             throw new ExcepcionDominio($"El atributo {nombreAtributo} no puede ser vacío");
         }
+    }
+
+    public void ModificarNombre(string nombre)
+    {
+        ValidarAtributoNoVacio(nombre, "nombre");
+        Nombre = nombre;
+    }
+
+    public void ModificarTipo(string tipo)
+    {
+        ValidarAtributoNoVacio(tipo, "tipo");
+        Tipo = tipo;
+    }
+
+    public void ModificarDescripcion(string descripcion)
+    {
+        ValidarAtributoNoVacio(descripcion, "descripcion");
+        Descripcion = descripcion;
     }
 }

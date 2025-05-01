@@ -56,6 +56,87 @@ public class RecursoTests
     [TestMethod]
     public void DaErrorCrearRecursoConDescripcionNull()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", null;
+        Recurso recurso = new Recurso("Nombre", "Tipo", null);
+    }
+
+    [TestMethod]
+    public void SeModificaNombreOk()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string nuevoNombre = "otro";
+        recurso.ModificarNombre(nuevoNombre);
+        Assert.AreEqual(nuevoNombre, recurso.Nombre);
+    }
+    
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void DaErrorModificarPorNombreVacio()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string nuevoNombre = "";
+        recurso.ModificarNombre(nuevoNombre);
+    }
+    
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void DaErrorModificarPorNombreNull()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string nuevoNombre = null;
+        recurso.ModificarNombre(nuevoNombre);
+    }
+    
+    [TestMethod]
+    public void SeModificaTipoOk()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string nuevoTipo = "otro";
+        recurso.ModificarTipo(nuevoTipo);
+        Assert.AreEqual(nuevoTipo, recurso.Tipo);
+    }
+    
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void DaErrorModificarPorTipoVacio()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string nuevoTipo = "";
+        recurso.ModificarTipo(nuevoTipo);
+    }
+    
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void DaErrorModificarPorTipoNull()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string nuevoTipo = null;
+        recurso.ModificarTipo(nuevoTipo);
+    }
+    
+    [TestMethod]
+    public void SeModificaDescripcionOk()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string nuevaDesc = "otro";
+        recurso.ModificarDescripcion(nuevaDesc);
+        Assert.AreEqual(nuevaDesc, recurso.Descripcion);
+    }
+    
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void DaErrorModificarPorDescripcionVacia()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string nuevaDesc = "";
+        recurso.ModificarDescripcion(nuevaDesc);
+    }
+    
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void DaErrorModificarPorDescripcionNull()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string nuevaDesc = null;
+        recurso.ModificarDescripcion(nuevaDesc);
     }
 }
