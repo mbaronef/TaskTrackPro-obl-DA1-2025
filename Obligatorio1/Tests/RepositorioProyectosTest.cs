@@ -111,4 +111,14 @@ public class RepositorioProyectosTest
         Assert.AreEqual(1,_proyecto.Tareas.Count);
         Assert.AreEqual(tarea, _proyecto.Tareas.Last());
     }
+    
+    [TestMethod]
+    public void SeEliminaTareaOk()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        Tarea tarea = new Tarea();
+        _repositorioProyectos.AgregarTarea(_proyecto.Id, tarea);
+        _repositorioProyectos.EliminarTarea(_proyecto.Id, tarea.Id);
+        Assert.AreEqual(0,_proyecto.Tareas.Count);
+    }
 }
