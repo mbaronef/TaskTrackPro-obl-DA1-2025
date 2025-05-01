@@ -56,8 +56,4 @@ public class Recurso
         return ProyectoAsociado != null;
     }
 
-    public void HacerExclusivo(Proyecto proyecto)
-    {
-        ProyectoAsociado = proyecto;
-    }
 }
