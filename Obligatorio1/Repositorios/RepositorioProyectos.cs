@@ -58,7 +58,8 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void ModificarAdministrador(int idProyecto, Usuario administrador)
     {
-        throw new NotImplementedException();
+        Proyecto proyecto = ObtenerPorId(idProyecto);
+        proyecto.Administrador = administrador;
     }
 
     public void AgregarTarea(int idProyecto, Tarea tarea)
