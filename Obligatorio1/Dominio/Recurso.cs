@@ -45,4 +45,14 @@ public class Recurso
         ValidarAtributoNoVacio(descripcion, "descripcion");
         Descripcion = descripcion;
     }
+
+    public bool EsExclusivo()
+    {
+        return ProyectoAsociado != null;
+    }
+
+    public void HacerExclusivo(Proyecto proyecto)
+    {
+        ProyectoAsociado = proyecto;
+    }
 }

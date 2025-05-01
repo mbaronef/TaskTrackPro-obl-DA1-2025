@@ -144,12 +144,12 @@ public class RecursoTests
     [TestMethod]
     public void SeHaceExclusivoOk()
     {
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(199, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
         List<Usuario> usuarios = new List<Usuario>();
         Proyecto proyecto = new Proyecto("Nombre", "Descripcion", usuario, usuarios);
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
         recurso.HacerExclusivo(proyecto);
-        Assert.IsTrue(recurso.EsExclusivo);
+        Assert.IsTrue(recurso.EsExclusivo());
         Assert.AreEqual(proyecto, recurso.ProyectoAsociado);
     }
 }
