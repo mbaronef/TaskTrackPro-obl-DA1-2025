@@ -90,4 +90,14 @@ public class RepositorioProyectosTest
         Assert.AreEqual(fechaFin, proyecto.FechaFinMasTemprana);
     }
     
+    [TestMethod]
+    public void SeModificaElAdministradorDeProyectoOk()
+    {
+        Usuario nuevo = new Usuario("Mateo", "Pérez", new DateTime(2003, 2, 2), "unemail@gmail.com", "UnAc0ntr4señ@");
+        _repositorioProyectos.Agregar(_proyecto);
+        _repositorioProyectos.ModificarAdministrador(_proyecto.Id, nuevo);
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+        Assert.AreEqual(nuevo, proyecto.Administrador);
+    }
+    
 }
