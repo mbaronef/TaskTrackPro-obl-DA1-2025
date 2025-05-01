@@ -83,9 +83,11 @@ public class RepositorioProyectosTest
     [TestMethod]
     public void SeModificaLaFechaFinMasTempranaDeProyectosOk()
     {
-        DateTime fechaFin = DateTime.Today;
+        DateTime fechaInicio = new DateTime(2028, 1, 1);
+        DateTime fechaFin = new DateTime(2030, 1, 1);
         _repositorioProyectos.Agregar(_proyecto);
-        _repositorioProyectos.ModificarFechaInicio(_proyecto.Id, fechaFin);
+        _repositorioProyectos.ModificarFechaInicio(_proyecto.Id, fechaInicio);
+        _repositorioProyectos.ModificarFechaFinMasTemprana(_proyecto.Id, fechaFin);
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
         Assert.AreEqual(fechaFin, proyecto.FechaFinMasTemprana);
     }
@@ -99,5 +101,14 @@ public class RepositorioProyectosTest
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
         Assert.AreEqual(nuevo, proyecto.Administrador);
     }
-    
+
+    [TestMethod]
+    public void SeAgregaTareaOk()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        Tarea tarea = new Tarea();
+        _repositorioProyectos.AgregarTarea(_proyecto.Id, tarea);
+        Assert.AreEqual(1,_proyecto.Tareas.Count);
+        Assert.AreEqual(tarea, _proyecto.Tareas.Last());
+    }
 }

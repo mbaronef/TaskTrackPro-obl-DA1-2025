@@ -64,7 +64,8 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void AgregarTarea(int idProyecto, Tarea tarea)
     {
-        throw new NotImplementedException();
+        Proyecto proyecto = ObtenerPorId(idProyecto);
+        proyecto.AgregarTarea(tarea);
     }
 
     public void EliminarTarea(int idProyecto, int idTarea)
