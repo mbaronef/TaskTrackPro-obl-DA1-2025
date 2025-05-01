@@ -8,13 +8,15 @@ public class RepositorioProyectosTest
 {
     private RepositorioProyectos _repositorioProyectos;
     private Usuario _usuario;
+    private Proyecto _proyecto;
     
     [TestInitialize]
-    public void setUp()
+    public void SetUp()
     {
         _repositorioProyectos = new RepositorioProyectos(); 
-        _usuario = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");;
-
+        _usuario = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
+        List<Usuario> lista = new List<Usuario>();
+        _proyecto = new Proyecto("Proyecto", "hacer algo", _usuario, lista);
     }
 
     [TestMethod]
@@ -28,19 +30,25 @@ public class RepositorioProyectosTest
     [TestMethod]
     public void SeAgregaProyectoOk()
     {
-        List<Usuario> lista = new List<Usuario>();
-        Proyecto proyecto = new Proyecto("Proyecto", "hacer algo", _usuario, lista);
-        _repositorioProyectos.Agregar(proyecto);
-        Assert.AreEqual(proyecto, _repositorioProyectos.ObtenerPorId(proyecto.Id));
+        _repositorioProyectos.Agregar(_proyecto);
+        Assert.AreEqual(_proyecto, _repositorioProyectos.ObtenerPorId(_proyecto.Id));
     }
 
     [TestMethod]
     public void SeEliminaProyectoOk()
     {
-        List<Usuario> lista = new List<Usuario>();
-        Proyecto proyecto = new Proyecto("Proyecto", "hacer algo", _usuario, lista);
-        _repositorioProyectos.Agregar(proyecto);
-        _repositorioProyectos.Eliminar(proyecto.Id);
-        Assert.IsNull(_repositorioProyectos.ObtenerPorId(proyecto.Id));
+        _repositorioProyectos.Agregar(_proyecto);
+        _repositorioProyectos.Eliminar(_proyecto.Id);
+        Assert.IsNull(_repositorioProyectos.ObtenerPorId(_proyecto.Id));
+    }
+
+    [TestMethod]
+    public void SeObtieneLaListaDeProyectosOk()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        List<Proyecto> proyectos = _repositorioProyectos.ObtenerTodos();
+        Assert.IsNotNull(proyectos);
+        Assert.AreEqual(1, proyectos.Count);
+        Assert.AreEqual(_proyecto, proyectos.Last());
     }
 }
