@@ -32,6 +32,11 @@ public class RepositorioUsuarios : IRepositorioUsuarios
         _usuarios.Remove(_usuarios.FirstOrDefault(u => u.Id == id));
     }
 
+    public List<Usuario> ObtenerTodos()
+    {
+        return _usuarios;
+    }
+
     public Usuario ObtenerUsuarioPorEmail(string email)
     {
         return _usuarios.FirstOrDefault(u => u.Email == email);
