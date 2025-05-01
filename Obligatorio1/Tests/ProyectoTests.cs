@@ -410,7 +410,7 @@ namespace Tests
             _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
             
             _proyecto.AsignarMiembro(nuevoAdmin);
-            _proyecto.AsignarNuevoAdministrador(2);
+            _proyecto.AsignarNuevoAdministrador(nuevoAdmin);
 
             Assert.AreEqual(nuevoAdmin, _proyecto.Administrador);
         }
@@ -422,11 +422,10 @@ namespace Tests
             _admin.Id = 1;
     
             Usuario miembro = new Usuario();
-            miembro.Id = 2; 
             
             _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
 
-            _proyecto.AsignarNuevoAdministrador(2); // ID 2 no está en miembros
+            _proyecto.AsignarNuevoAdministrador(miembro);
         }
         
         
