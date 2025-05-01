@@ -34,7 +34,8 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void ModificarNombre(int idProyecto, string nombre)
     {
-        throw new NotImplementedException();
+        Proyecto proyecto = ObtenerPorId(idProyecto);
+        proyecto.Nombre = nombre;
     }
 
     public void ModificarDescripcion(int idProyecto, string descripcion)
