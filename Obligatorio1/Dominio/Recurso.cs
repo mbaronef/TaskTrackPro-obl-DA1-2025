@@ -14,6 +14,7 @@ public class Recurso
     public Recurso(string nombre, string tipo, string descripcion)
     {
         ValidarAtributoNoVacio(nombre, "nombre");
+        ValidarAtributoNoVacio(tipo, "tipo");
         Nombre = nombre;
         Tipo = tipo;
         Descripcion = descripcion;
