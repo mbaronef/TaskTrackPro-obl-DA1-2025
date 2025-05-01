@@ -1,4 +1,5 @@
 using Dominio.Dummies;
+using Dominio.Excepciones;
 
 namespace Dominio;
 
@@ -12,6 +13,10 @@ public class Recurso
 
     public Recurso(string nombre, string tipo, string descripcion)
     {
+        if (String.IsNullOrEmpty(nombre))
+        {
+            throw new ExcepcionDominio("El nombre del recurso no puede ser vacío");
+        }
         Nombre = nombre;
         Tipo = tipo;
         Descripcion = descripcion;
