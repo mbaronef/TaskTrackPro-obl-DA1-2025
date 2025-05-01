@@ -1,0 +1,79 @@
+using Dominio.Dummies;
+using Repositorios.IRepositorios;
+
+namespace Repositorios;
+
+public class RepositorioProyectos : IRepositorioProyectos
+{
+    private List<Proyecto> _proyectos;
+
+    public RepositorioProyectos()
+    {
+        _proyectos = new List<Proyecto>();
+    }
+
+    public void Agregar(Proyecto objeto)
+    {
+        _proyectos.Add(objeto);
+    }
+
+    public Proyecto ObtenerPorId(int id)
+    {
+        return _proyectos.FirstOrDefault(p=>p.Id == id);
+    }
+
+    public void Eliminar(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<Proyecto> ObtenerTodos()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ModificarNombre(int idProyecto, string nombre)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ModificarDescripcion(int idProyecto, string descripcion)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ModificarFechaInicio(int idProyecto, DateTime fechaInicio)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ModificarFechaFinMasTemprana(int idProyecto, DateTime fechaFinMasTemprana)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ModificarAdministrador(int idProyecto, Usuario administrador)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AgregarTarea(int idProyecto, Tarea tarea)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EliminarTarea(int idProyecto, int idTarea)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AgregarMiembro(int idProyecto, Usuario miembro)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EliminarMiembro(int idProyecto, int idMiembro)
+    {
+        throw new NotImplementedException();
+    }
+}
