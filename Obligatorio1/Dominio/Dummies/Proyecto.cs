@@ -105,6 +105,13 @@ public class Proyecto
         FechaInicio = nuevaFecha;
     }
 
+    public void ModificarFechaFinMasTemprana(DateTime nuevaFecha)
+    {
+        if (nuevaFecha < FechaInicio)
+            throw new ExcepcionDominio("La fecha de fin no puede ser anterior a la de inicio.");
+        FechaFinMasTemprana = nuevaFecha;
+    }
+
     public void ModificarNombre(string nombreNuevo)
     {
         ValidarStringNoVacioNiNull(nombreNuevo,"El nombre no puede estar vacío");

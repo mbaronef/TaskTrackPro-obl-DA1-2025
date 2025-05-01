@@ -89,4 +89,5 @@ public class RepositorioProyectosTest
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
         Assert.AreEqual(fechaFin, proyecto.FechaFinMasTemprana);
     }
+    
 }

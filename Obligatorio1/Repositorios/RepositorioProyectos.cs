@@ -35,25 +35,25 @@ public class RepositorioProyectos : IRepositorioProyectos
     public void ModificarNombre(int idProyecto, string nombre)
     {
         Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.Nombre = nombre;
+        proyecto.ModificarNombre(nombre);
     }
 
     public void ModificarDescripcion(int idProyecto, string descripcion)
     {
         Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.Descripcion = descripcion;
+        proyecto.ModificarDescripcion(descripcion);
     }
 
     public void ModificarFechaInicio(int idProyecto, DateTime fechaInicio)
     {
         Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.FechaInicio = fechaInicio;
+        proyecto.ModificarFechaInicio(fechaInicio);
     }
 
     public void ModificarFechaFinMasTemprana(int idProyecto, DateTime fechaFinMasTemprana)
     {
         Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.FechaFinMasTemprana = fechaFinMasTemprana;
+        proyecto.ModificarFechaFinMasTemprana(fechaFinMasTemprana);
     }
 
     public void ModificarAdministrador(int idProyecto, Usuario administrador)
