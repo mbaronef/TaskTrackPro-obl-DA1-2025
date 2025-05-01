@@ -52,7 +52,8 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void ModificarFechaFinMasTemprana(int idProyecto, DateTime fechaFinMasTemprana)
     {
-        throw new NotImplementedException();
+        Proyecto proyecto = ObtenerPorId(idProyecto);
+        proyecto.FechaFinMasTemprana = fechaFinMasTemprana;
     }
 
     public void ModificarAdministrador(int idProyecto, Usuario administrador)
