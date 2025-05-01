@@ -11,7 +11,7 @@ public class Recurso
     public Proyecto? ProyectoAsociado { get; private set; } = null;
     public int CantidadDeTareasUsandolo { get; private set; } = 0;
 
-    public Recurso(string nombre, string tipo, string descripcion)
+    public Recurso(string nombre, string tipo, string descripcion) // ctor. recursos no exclusivos
     {
         ValidarAtributoNoVacio(nombre, "nombre");
         ValidarAtributoNoVacio(tipo, "tipo");
@@ -19,6 +19,11 @@ public class Recurso
         Nombre = nombre;
         Tipo = tipo;
         Descripcion = descripcion;
+    }
+    
+    public Recurso(string nombre, string tipo, string descripcion, Proyecto proyecto) : this(nombre, tipo, descripcion)
+    {
+        ProyectoAsociado = proyecto;
     }
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
