@@ -40,7 +40,8 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void ModificarDescripcion(int idProyecto, string descripcion)
     {
-        throw new NotImplementedException();
+        Proyecto proyecto = ObtenerPorId(idProyecto);
+        proyecto.Descripcion = descripcion;
     }
 
     public void ModificarFechaInicio(int idProyecto, DateTime fechaInicio)
