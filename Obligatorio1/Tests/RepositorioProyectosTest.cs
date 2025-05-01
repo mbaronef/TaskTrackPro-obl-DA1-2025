@@ -51,4 +51,13 @@ public class RepositorioProyectosTest
         Assert.AreEqual(1, proyectos.Count);
         Assert.AreEqual(_proyecto, proyectos.Last());
     }
+
+    [TestMethod]
+    public void SeModificaElNombreDeProyectosOk()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        _repositorioProyectos.ModificarNombre(_proyecto.Id, "Nuevo");
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+        Assert.AreEqual("Nuevo", proyecto.Nombre);
+    }
 }
