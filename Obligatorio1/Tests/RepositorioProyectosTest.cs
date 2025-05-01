@@ -60,4 +60,13 @@ public class RepositorioProyectosTest
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
         Assert.AreEqual("Nuevo", proyecto.Nombre);
     }
+    
+    [TestMethod]
+    public void SeModificaLaDescripcionDeProyectosOk()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        _repositorioProyectos.ModificarDescripcion(_proyecto.Id, "Nuevo");
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+        Assert.AreEqual("Nuevo", proyecto.Descripcion);
+    }
 }
