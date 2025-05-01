@@ -126,11 +126,11 @@ public class Proyecto
         Descripcion = nuevaDescripcion;
     }
 
-    public void AsignarNuevoAdministrador(int idNuevoAdministrador)
+    public void AsignarNuevoAdministrador(Usuario nuevoAdministrador)
     {
         foreach (Usuario usuario in Miembros)
         {
-            if (usuario.Id == idNuevoAdministrador)
+            if (usuario.Equals(nuevoAdministrador))
             {
                 Administrador = usuario;
                 return;

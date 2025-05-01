@@ -15,6 +15,7 @@ public class RepositorioProyectosTest
     {
         _repositorioProyectos = new RepositorioProyectos(); 
         _usuario = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
+        _usuario.EsAdministradorProyecto = true;
         List<Usuario> lista = new List<Usuario>();
         _proyecto = new Proyecto("Proyecto", "hacer algo", _usuario, lista);
     }
@@ -96,6 +97,7 @@ public class RepositorioProyectosTest
     public void SeModificaElAdministradorDeProyectoOk()
     {
         Usuario nuevo = new Usuario("Mateo", "Pérez", new DateTime(2003, 2, 2), "unemail@gmail.com", "UnAc0ntr4señ@");
+        nuevo.EsAdministradorProyecto = true;
         _repositorioProyectos.Agregar(_proyecto);
         _repositorioProyectos.ModificarAdministrador(_proyecto.Id, nuevo);
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
@@ -120,5 +122,27 @@ public class RepositorioProyectosTest
         _repositorioProyectos.AgregarTarea(_proyecto.Id, tarea);
         _repositorioProyectos.EliminarTarea(_proyecto.Id, tarea.Id);
         Assert.AreEqual(0,_proyecto.Tareas.Count);
+    }
+
+    [TestMethod]
+    public void SeAgregaMiembroOk()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        Usuario miembro = new Usuario("Mateo", "Pérez", new DateTime(2003, 2, 2), "unemail@gmail.com", "UnAc0ntr4señ@");
+        miembro.Id = 1; // lo maneja internamente el gestor
+        _repositorioProyectos.AgregarMiembro(_proyecto.Id, miembro);
+        Assert.AreEqual(2, _proyecto.Miembros.Count);
+        Assert.AreEqual(miembro, _proyecto.Miembros.Last());
+    }
+    
+    [TestMethod]
+    public void SeEliminaMiembroOk()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        Usuario miembro = new Usuario("Mateo", "Pérez", new DateTime(2003, 2, 2), "unemail@gmail.com", "UnAc0ntr4señ@");
+        miembro.Id = 1; // lo maneja internamente el gestor
+        _repositorioProyectos.AgregarMiembro(_proyecto.Id, miembro);
+        _repositorioProyectos.EliminarMiembro(_proyecto.Id, miembro.Id);
+        Assert.AreEqual(1,_proyecto.Miembros.Count);
     }
 }

@@ -59,7 +59,7 @@ public class RepositorioProyectos : IRepositorioProyectos
     public void ModificarAdministrador(int idProyecto, Usuario administrador)
     {
         Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.Administrador = administrador;
+        proyecto.AsignarNuevoAdministrador(administrador);
     }
 
     public void AgregarTarea(int idProyecto, Tarea tarea)
@@ -76,11 +76,13 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void AgregarMiembro(int idProyecto, Usuario miembro)
     {
-        throw new NotImplementedException();
+        Proyecto proyecto = ObtenerPorId(idProyecto);
+        proyecto.AsignarMiembro(miembro);
     }
 
     public void EliminarMiembro(int idProyecto, int idMiembro)
     {
-        throw new NotImplementedException();
+        Proyecto proyecto = ObtenerPorId(idProyecto);
+        proyecto.EliminarMiembro(idMiembro);
     }
 }
