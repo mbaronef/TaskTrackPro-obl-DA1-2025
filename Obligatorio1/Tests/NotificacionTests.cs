@@ -20,25 +20,25 @@ public class NotificacionTests
     }
     
     [TestMethod]
-    public void Constructor_asigna_mensaje_ok()
+    public void ConstructorAsignaMensajeOk()
     {
         Assert.AreEqual("Mensaje de notificación", _nuevaNotificacion.Mensaje);
     }
 
     [TestMethod]
-    public void Se_asigna_fecha_ok()
+    public void ConstructorAsignaFechaOk()
     {
         Assert.AreEqual(DateTime.Today, _nuevaNotificacion.Fecha);
     }
 
     [TestMethod]
-    public void Se_asigna_ID_ok()
+    public void SeAsignaIDOk()
     {
         Assert.AreEqual(1,_nuevaNotificacion.Id);
     }
     
     [TestMethod]
-    public void Se_asignan_varios_IDs_ok()
+    public void SeAsignanVariosIDsOk()
     {
         Notificacion segundaNotificacion = new Notificacion("Mensaje de una segunda notificación");
         Assert.AreEqual(2,segundaNotificacion.Id);
