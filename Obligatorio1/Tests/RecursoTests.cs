@@ -155,7 +155,8 @@ public class RecursoTests
     public void RecursoAsignaOkCantidadDeTareasUsandolo()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
-        recurso.CantidadDeTareasUsandolo++;
+        int cantidadActualDeTareasUsandolo = recurso.CantidadDeTareasUsandolo;
+        recurso.ModificarCantidadDeTareasUsandolo(cantidadActualDeTareasUsandolo+1);
         Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
     }
 
@@ -164,7 +165,7 @@ public class RecursoTests
     public void NoLoPuedeUsarUnaCantidadNegativaDeTareas()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
-        recurso.CantidadDeTareasUsandolo--;
+        recurso.ModificarCantidadDeTareasUsandolo(-1);
     }
 
     [TestMethod]

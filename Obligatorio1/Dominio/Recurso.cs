@@ -9,7 +9,7 @@ public class Recurso
     public string Tipo { get; private set; }
     public string Descripcion { get; private set; }
     public Proyecto? ProyectoAsociado { get; private set; } = null;
-    public int CantidadDeTareasUsandolo { get; set; } = 0;
+    public int CantidadDeTareasUsandolo { get; private set; } = 0;
 
     public Recurso(string nombre, string tipo, string descripcion) // ctor. recursos no exclusivos
     {
@@ -49,6 +49,15 @@ public class Recurso
     {
         ValidarAtributoNoVacio(descripcion, "descripcion");
         Descripcion = descripcion;
+    }
+
+    public void ModificarCantidadDeTareasUsandolo(int cantidadDeTareasUsandolo)
+    {
+        if (cantidadDeTareasUsandolo < 0)
+        {
+            throw new ExcepcionDominio("No puede haber una cantidad negativa de tareas utilizando el recurso");
+        }
+        CantidadDeTareasUsandolo = cantidadDeTareasUsandolo;
     }
 
     public bool EsExclusivo()
