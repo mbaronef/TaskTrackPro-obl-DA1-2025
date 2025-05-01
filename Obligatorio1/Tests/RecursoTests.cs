@@ -159,6 +159,14 @@ public class RecursoTests
         Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
     }
 
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void NoLoPuedeUsarUnaCantidadNegativaDeTareas()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        recurso.CantidadDeTareasUsandolo--;
+    }
+
     [TestMethod]
     public void SeCalculaSiSeEstaUsando()
     {
