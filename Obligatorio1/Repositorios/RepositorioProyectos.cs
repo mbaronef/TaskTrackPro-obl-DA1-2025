@@ -29,7 +29,7 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public List<Proyecto> ObtenerTodos()
     {
-        throw new NotImplementedException();
+        return _proyectos;
     }
 
     public void ModificarNombre(int idProyecto, string nombre)
