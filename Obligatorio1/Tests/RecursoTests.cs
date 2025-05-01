@@ -69,7 +69,7 @@ public class RecursoTests
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", null);
     }
-
+    
     [TestMethod]
     public void SeModificaNombreOk()
     {
@@ -149,5 +149,13 @@ public class RecursoTests
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
         string nuevaDesc = null;
         recurso.ModificarDescripcion(nuevaDesc);
+    }
+
+    [TestMethod]
+    public void RecursoAsignaOkCantidadDeTareasUsandolo()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        recurso.CantidadDeTareasUsandolo++;
+        Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
     }
 }
