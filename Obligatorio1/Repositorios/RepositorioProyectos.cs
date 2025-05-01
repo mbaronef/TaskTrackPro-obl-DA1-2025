@@ -24,7 +24,7 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void Eliminar(int id)
     {
-        throw new NotImplementedException();
+        _proyectos.Remove(_proyectos.FirstOrDefault(p => p.Id == id));
     }
 
     public List<Proyecto> ObtenerTodos()
