@@ -79,4 +79,14 @@ public class RepositorioProyectosTest
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
         Assert.AreEqual(fechaInicio, proyecto.FechaInicio);
     }
+    
+    [TestMethod]
+    public void SeModificaLaFechaFinMasTempranaDeProyectosOk()
+    {
+        DateTime fechaFin = DateTime.Today;
+        _repositorioProyectos.Agregar(_proyecto);
+        _repositorioProyectos.ModificarFechaInicio(_proyecto.Id, fechaFin);
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+        Assert.AreEqual(fechaFin, proyecto.FechaFinMasTemprana);
+    }
 }
