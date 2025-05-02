@@ -14,7 +14,7 @@ namespace Tests
         private Usuario CrearUsuarioValido()
         {
             string contrasena = "Contrase#a3";
-            string contrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(contrasena);
+            string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(contrasena);
             return new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", contrasenaEncriptada);
         }
 
@@ -124,7 +124,7 @@ namespace Tests
         {
             Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@adinet.com", "xxxxxxx");
             string nuevaContrasena = "CoNtRaSeN1@";
-            string nuevaContrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(nuevaContrasena);
+            string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
             usuario.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
             Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
         }

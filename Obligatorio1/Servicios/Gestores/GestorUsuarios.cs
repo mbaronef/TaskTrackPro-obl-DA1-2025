@@ -14,7 +14,7 @@ public class GestorUsuarios
 
     public GestorUsuarios()
     {
-        string contrasenaAdminEncriptada = UtilidadesContrasena.EncriptarContrasena("AdminTaskTrackPro@2025");
+        string contrasenaAdminEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("AdminTaskTrackPro@2025");
         AdministradorInicial = new Usuario("admin", "admin",  new DateTime(1999,1,1),"admin@admin.com",contrasenaAdminEncriptada);
         Usuarios.Add(AdministradorInicial);
         AdministradorInicial.EsAdministradorSistema = true;
@@ -23,8 +23,7 @@ public class GestorUsuarios
     
     public Usuario CrearUsuario(string nombre, string apellido, DateTime fechaNacimiento, string email, string contrasena)
     {
-        UtilidadesContrasena.ValidarFormatoContrasena(contrasena);
-        string contrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(contrasena);
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(contrasena);
         return new Usuario(nombre, apellido, fechaNacimiento, email, contrasenaEncriptada);
     }
 
@@ -102,7 +101,7 @@ public class GestorUsuarios
             throw new ExcepcionServicios("No tiene los permisos necesarios para reiniciar la contraseña del usuario");
         }
 
-        string contrasenaPorDefectoEncriptada = UtilidadesContrasena.EncriptarContrasena(_contrasenaPorDefecto);
+        string contrasenaPorDefectoEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
         usuarioObjetivo.EstablecerContrasenaEncriptada(contrasenaPorDefectoEncriptada);
         
         Notificar(usuarioObjetivo, $"Se reinició su contraseña. La nueva contraseña es {_contrasenaPorDefecto}");
@@ -116,7 +115,7 @@ public class GestorUsuarios
         }
         
         string nuevaContrasena = UtilidadesContrasena.AutogenerarContrasenaValida();
-        string nuevaContrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(nuevaContrasena);
+        string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         
         Usuario usuarioObjetivo = ObtenerUsuarioPorId(idUsuarioObjetivo);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
@@ -132,9 +131,8 @@ public class GestorUsuarios
         {
             throw new ExcepcionServicios("No tiene los permisos necesarios para modificar la contraseña del usuario");
         }
-        UtilidadesContrasena.ValidarFormatoContrasena(nuevaContrasena);
         
-        string nuevaContrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(nuevaContrasena);
+        string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
         
         if (!solicitante.Equals(usuarioObjetivo))

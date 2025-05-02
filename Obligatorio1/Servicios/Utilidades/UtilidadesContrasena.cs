@@ -10,18 +10,10 @@ public static class UtilidadesContrasena
     private static readonly int _largoMinimoContrasena = 8;
     private static readonly int _largoMaximoContrasena = 15; //Se define para no autogenerar una contraseña demasiado larga
     
-    public static string EncriptarContrasena(string contrasena)
+    public static string ValidarYEncriptarContrasena(string contrasena)
     {
+        ValidarFormatoContrasena(contrasena);
         return BCrypt.Net.BCrypt.HashPassword(contrasena); //Encripta la contraseña utilizando el algoritmo BCrypt
-    }
-
-    public static void ValidarFormatoContrasena(string contrasena)
-    {
-        ValidarLargoContrasena(contrasena);
-        ValidarAlgunaMayuscula(contrasena);
-        ValidarAlgunaMinuscula(contrasena);
-        ValidarAlgunNumero(contrasena);
-        ValidarAlgunCaracterEspecial(contrasena);
     }
     
     public static string AutogenerarContrasenaValida()
@@ -46,6 +38,15 @@ public static class UtilidadesContrasena
         while (contrasenaAutogenerada.Length < largo)
             contrasenaAutogenerada.Append(GenerarCaracterAleatorio(todosLosCaracteres, generadorDeNumerosAleatorio)); // agrega a la contraseña caracteres random hasta cumplir longitud
         return MezclarCaracteres(contrasenaAutogenerada.ToString(), generadorDeNumerosAleatorio);
+    }
+    
+    private static void ValidarFormatoContrasena(string contrasena)
+    {
+        ValidarLargoContrasena(contrasena);
+        ValidarAlgunaMayuscula(contrasena);
+        ValidarAlgunaMinuscula(contrasena);
+        ValidarAlgunNumero(contrasena);
+        ValidarAlgunCaracterEspecial(contrasena);
     }
     private static void ValidarLargoContrasena(string contrasena)
     {

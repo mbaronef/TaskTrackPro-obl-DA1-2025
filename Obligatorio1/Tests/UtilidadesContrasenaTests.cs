@@ -10,7 +10,7 @@ public class UtilidadesContrasenaTests
     public void ContrasenaEncriptadaEsDistintaALaOriginal()
     {
         string unaContrasena = "Contrase#a3";
-        string contrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(unaContrasena);
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(unaContrasena);
         Assert.AreNotEqual(unaContrasena, contrasenaEncriptada);
     }
 
@@ -18,7 +18,7 @@ public class UtilidadesContrasenaTests
     public void SePuedeVerificarContrasenaEncriptada()
     {
         string unaContrasena = "Contrase#a3";
-        string contrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(unaContrasena);
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(unaContrasena);
         Assert.IsTrue(BCrypt.Net.BCrypt.Verify(unaContrasena, contrasenaEncriptada));
     }
 
@@ -26,41 +26,41 @@ public class UtilidadesContrasenaTests
     [TestMethod]
     public void IngresoDeContrasenaMuyCorta()
     {
-        UtilidadesContrasena.ValidarFormatoContrasena("P3e.");
+        UtilidadesContrasena.ValidarYEncriptarContrasena("P3e.");
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void IngresoDeContrasenaSinMayusculas()
     {
-        UtilidadesContrasena.ValidarFormatoContrasena("minuscula1@");
+        UtilidadesContrasena.ValidarYEncriptarContrasena("minuscula1@");
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void IngresoDeContrasenaSinMinusculas()
     {
-        UtilidadesContrasena.ValidarFormatoContrasena("MAYUSCULA1@");
+        UtilidadesContrasena.ValidarYEncriptarContrasena("MAYUSCULA1@");
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void IngresoDeContrasenaSinNumeros()
     {
-        UtilidadesContrasena.ValidarFormatoContrasena("CoNtRaSeN@");
+        UtilidadesContrasena.ValidarYEncriptarContrasena("CoNtRaSeN@");
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void IngresoDeContrasenaSinCaracterEspecial()
     {
-        UtilidadesContrasena.ValidarFormatoContrasena("CoNtRaSeN14");
+        UtilidadesContrasena.ValidarYEncriptarContrasena("CoNtRaSeN14");
     }
 
     [TestMethod]
     public void SeAutogeneraUnaContrasenaValida()
     {
         string contrasenaAutogenerada = UtilidadesContrasena.AutogenerarContrasenaValida();
-        UtilidadesContrasena.ValidarFormatoContrasena(contrasenaAutogenerada);
+        UtilidadesContrasena.ValidarYEncriptarContrasena(contrasenaAutogenerada); // si la contraseña no es válida, se lanza una excepción antes de encriptar
     }
 }
