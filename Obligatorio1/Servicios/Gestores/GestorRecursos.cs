@@ -54,9 +54,16 @@ public class GestorRecursos
         {
             throw new ExcepcionServicios("No se puede eliminar un recurso que está en uso");
         }
-        if (solicitante.EsAdministradorProyecto && !recurso.EsExclusivo())
+        if (solicitante.EsAdministradorProyecto)
         {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar recursos compartidos");
+            if (!recurso.EsExclusivo())
+            {
+                throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar recursos compartidos");
+            }
+            else if (recurso.ProyectoAsociado.Equals(_gestorProyectos.ObtenerProyectoPorAdministrador(solicitante.Id)))
+            {
+                throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar recursos exclusivos de otros proyectos");
+            }
         }
 
         Recursos.Remove(recurso);

@@ -179,7 +179,8 @@ public class GestorRecursosTests
         _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
         
         Usuario otroAdminProyecto =  new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
-        Proyecto otroProyecto = new Proyecto("Nombre", "Descripción", otroAdminProyecto, new List<Usuario>());
+        otroAdminProyecto.EsAdministradorProyecto = true;
+        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
         
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
