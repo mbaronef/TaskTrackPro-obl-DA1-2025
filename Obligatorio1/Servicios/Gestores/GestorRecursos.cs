@@ -11,5 +11,9 @@ public class GestorRecursos
         Recursos =  new List<Recurso>();
     }
 
+    public void AgregarRecurso(Recurso recurso)
+    {
+        Recursos.Add(recurso);
+    }
 
 }
