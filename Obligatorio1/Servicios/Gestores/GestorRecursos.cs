@@ -33,4 +33,9 @@ public class GestorRecursos
         Recursos.Add(recurso);
     }
 
+    public Recurso ObtenerRecursoPorId(int idRecurso)
+    {
+        return Recursos.FirstOrDefault(recurso => recurso.Id == idRecurso);
+    }
+
 }

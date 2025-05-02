@@ -95,6 +95,6 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(admin, recurso1);
         _gestorRecursos.AgregarRecurso(admin, recurso2);
         Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursoPorId(1));
-        Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursoPorId(2));
+        Assert.AreEqual(recurso2, _gestorRecursos.ObtenerRecursoPorId(2));
     }
 }
