@@ -71,6 +71,10 @@ public class GestorRecursos
 
     public void ModificarNombreRecurso(Usuario solicitante, int idRecurso, string nuevoNombre)
     {
+        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
+        {
+            throw new ExcepcionServicios("No tiene los permisos necesarios para modificar el nombre de un recurso");
+        }
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
         recurso.ModificarNombre(nuevoNombre);
     }
