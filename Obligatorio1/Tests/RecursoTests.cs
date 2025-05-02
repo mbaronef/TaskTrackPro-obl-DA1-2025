@@ -74,7 +74,7 @@ public class RecursoTests
     [TestMethod]
     public void DaErrorCrearRecursoConDescripcionVacia()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "");
+        Recurso recurso = new Recurso("Nombre", "Tipo", " ");
     }
     
     [ExpectedException(typeof(ExcepcionDominio))]

@@ -22,14 +22,6 @@ public class Recurso
         Descripcion = descripcion;
     }
     
-    private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
-    {
-        if (string.IsNullOrEmpty(texto))
-        {
-            throw new ExcepcionDominio($"El atributo {nombreAtributo} no puede ser vacío");
-        }
-    }
-
     public void ModificarNombre(string nombre)
     {
         ValidarAtributoNoVacio(nombre, "nombre");
@@ -41,13 +33,22 @@ public class Recurso
         ValidarAtributoNoVacio(tipo, "tipo");
         Tipo = tipo;
     }
-
+    
     public void ModificarDescripcion(string descripcion)
     {
         ValidarAtributoNoVacio(descripcion, "descripcion");
         Descripcion = descripcion;
     }
-
+    
+    public void AsociarAProyecto(Proyecto proyecto)
+    {
+        if (ProyectoAsociado != null)
+        {
+            throw new ExcepcionDominio("El recurso ya es exclusivo de otro proyecto");
+        }
+        ProyectoAsociado = proyecto;
+    }
+    
     public void ModificarCantidadDeTareasUsandolo(int cantidadDeTareasUsandolo)
     {
         if (cantidadDeTareasUsandolo < 0)
@@ -56,7 +57,7 @@ public class Recurso
         }
         CantidadDeTareasUsandolo = cantidadDeTareasUsandolo;
     }
-
+    
     public bool EsExclusivo()
     {
         return ProyectoAsociado != null;
@@ -66,13 +67,12 @@ public class Recurso
     {
         return CantidadDeTareasUsandolo > 0;
     }
-
-    public void AsociarAProyecto(Proyecto proyecto)
+    
+    private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
-        if (ProyectoAsociado != null)
+        if (string.IsNullOrWhiteSpace(texto))
         {
-            throw new ExcepcionDominio("El recurso ya es exclusivo de otro proyecto");
+            throw new ExcepcionDominio($"El atributo {nombreAtributo} no puede ser vacío");
         }
-        ProyectoAsociado = proyecto;
     }
 }

@@ -1,6 +1,5 @@
 using Dominio;
 using Dominio.Dummies;
-using Dominio.Excepciones;
 
 namespace Servicios.Gestores;
 
@@ -12,23 +11,17 @@ public class GestorRecursos
 
     public GestorRecursos(GestorProyectos gestorProyectos)
     {
-        Recursos =  new List<Recurso>();
+        Recursos = new List<Recurso>();
         _gestorProyectos = gestorProyectos;
     }
 
     public void AgregarRecurso(Usuario solicitante, Recurso recurso)
     {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
+        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
+        if (solicitante.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para agregar recursos");
+            AsociarProyectoQueAdministraARecurso(solicitante, recurso);
         }
-
-        if (solicitante.EsAdministradorProyecto)
-        {
-            Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorAdministrador(solicitante.Id);
-            recurso.AsociarAProyecto(proyecto);
-        }
-        
         ++_cantidadRecursos;
         recurso.Id = _cantidadRecursos;
         Recursos.Add(recurso);
@@ -46,82 +39,79 @@ public class GestorRecursos
 
     public void EliminarRecurso(Usuario solicitante, int idRecurso)
     {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar un recurso");
-        }
+        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        if (recurso.SeEstaUsando())
+        VerificarRecursoEnUso(recurso, "eliminar");
+        if (solicitante.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionServicios("No se puede eliminar un recurso que está en uso");
+            VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         }
-        if (solicitante.EsAdministradorProyecto)
-        {
-            if (!recurso.EsExclusivo())
-            {
-                throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar recursos compartidos");
-            }
-            else if (!recurso.ProyectoAsociado.Equals(_gestorProyectos.ObtenerProyectoPorAdministrador(solicitante.Id)))
-            {
-                throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar recursos exclusivos de otros proyectos");
-            }
-        }
-
         Recursos.Remove(recurso);
     }
 
     public void ModificarNombreRecurso(Usuario solicitante, int idRecurso, string nuevoNombre)
     {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para modificar el nombre de un recurso");
-        }
+        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        if (solicitante.EsAdministradorProyecto)
+        if (solicitante.EstaAdministrandoUnProyecto)
         {
-            Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoPorAdministrador(solicitante.Id);
-            if(!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
-            {
-                throw new ExcepcionServicios("No tiene los permisos necesarios para modificar recursos que no son exclusivos de su proyecto");
-            }
+            VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de");
         }
         recurso.ModificarNombre(nuevoNombre);
     }
-    
+
     public void ModificarTipoRecurso(Usuario solicitante, int idRecurso, string nuevoTipo)
     {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para modificar el tipo de un recurso");
-        }
+        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el tipo de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        if (solicitante.EsAdministradorProyecto)
+        if (solicitante.EstaAdministrandoUnProyecto)
         {
-            Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoPorAdministrador(solicitante.Id);
-            if(!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
-            {
-                throw new ExcepcionServicios("No tiene los permisos necesarios para modificar recursos que no son exclusivos de su proyecto");
-            }
+            VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
         }
         recurso.ModificarTipo(nuevoTipo);
     }
-    
+
     public void ModificarDescripcionRecurso(Usuario solicitante, int idRecurso, string nuevaDescripcion)
     {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para modificar el tipo de un recurso");
-        }
+        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        if (solicitante.EsAdministradorProyecto)
+        if (solicitante.EstaAdministrandoUnProyecto)
         {
-            Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoPorAdministrador(solicitante.Id);
-            if(!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
-            {
-                throw new ExcepcionServicios("No tiene los permisos necesarios para modificar recursos que no son exclusivos de su proyecto");
-            }
+            VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
         }
         recurso.ModificarDescripcion(nuevaDescripcion);
     }
 
+    private void VerificarPermisoAdminSistemaOAdminProyecto(Usuario usuario, string accion)
+    {
+        if (!usuario.EsAdministradorSistema && !usuario.EstaAdministrandoUnProyecto)
+        {
+            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
+        }
+    }
+
+    private void AsociarProyectoQueAdministraARecurso(Usuario administradorProyecto, Recurso recurso)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorAdministrador(administradorProyecto.Id);
+        recurso.AsociarAProyecto(proyecto);
+    }
+
+    private void VerificarRecursoEnUso(Recurso recurso, string accion)
+    {
+        if (recurso.SeEstaUsando())
+        {
+            throw new ExcepcionServicios($"No se puede {accion} un recurso que está en uso");
+        }
+    }
+    
+    private void VerificarRecursoExclusivoDelAdministradorProyecto(Usuario administradorProyecto, Recurso recurso,
+        string accion)
+    {
+        Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoPorAdministrador(administradorProyecto.Id);
+        if (!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
+        {
+            throw new ExcepcionServicios(
+                $"No tiene los permisos necesarios para {accion} recursos que no son exclusivos de su proyecto");
+        }
+    }
 }
