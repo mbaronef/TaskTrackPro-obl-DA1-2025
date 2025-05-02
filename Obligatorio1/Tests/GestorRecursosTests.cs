@@ -203,6 +203,26 @@ public class GestorRecursosTests
     }
 
     [TestMethod]
+    public void EliminarRecursoExclusivoNotificaAlAdministradorDeProyecto()
+    {
+        Usuario adminSistema = CrearAdministradorSistema();
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        CrearYAgregarProyecto(adminProyecto);
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+        _gestorRecursos.EliminarRecurso(adminSistema, recurso.Id);
+
+        Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
+        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
+    }
+
+
+    //TODO: notificar la eliminación
+    // Si es exclusivo, se notifica al admin de ese proyecto.
+    // Sino, se notifica a todos los admin de los proyectos que lo tienen en uso.
+
+    [TestMethod]
     public void AdminSistemaModificaNombreDeRecursoOk()
     {
         Usuario admin = CrearAdministradorSistema();
@@ -361,7 +381,9 @@ public class GestorRecursosTests
         
         _gestorRecursos.ModificarDescripcionRecurso(otroAdminProyecto, recurso.Id, "Nueva descripción");
     }
+    
+    //TODO: notificar cada modificación
+    // Si es exclusivo, se notifica al admin de ese proyecto.
+    // Sino, se notifica a todos los admin de los proyectos que lo tienen en uso.
 
 }
-
-//TODO: 3.Notificar al eliminar recursos y al modificar
