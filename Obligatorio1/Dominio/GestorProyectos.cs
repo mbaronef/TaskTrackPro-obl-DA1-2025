@@ -220,14 +220,5 @@ public class GestorProyectos
         
         return miembro;
     }
-    
-    
-    // TODO:
-    // Posibles REFACTORS:
-    // -> que proyecto tenga metodo: NotificarCambioNombre , NotificarCreacion ... para que gestor no maneje los textos
-    // -> que proyecto tenga metodo AsegurarEsAdmin que se fije si un usuario es administrador del proyecto
-    // -> que proyecto tenga metodo AsegurarEsMiembro que se fije si un usuario es miembro del proyecto
-    // -> Los textos de error y notificación están “hardcodeados”. ej: throw new ExcepcionDominio(Errores.ProyectoNoExiste);
-
 
 }

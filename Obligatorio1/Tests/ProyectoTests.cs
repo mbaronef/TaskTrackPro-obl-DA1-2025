@@ -132,11 +132,13 @@ namespace Tests
         }
         
         [TestMethod]
-        public void FechaFinMasTemprana_InicializadaConMinValuePorDefecto()
-        { 
+        public void FechaFinMasTemprana_InicializadaConFechaActualPorDefecto()
+        {
+            DateTime antes = DateTime.Now;
             _proyecto = new Proyecto("Nombre", "Descripción", _admin, _miembros);
-            
-            Assert.AreEqual(DateTime.MinValue, _proyecto.FechaFinMasTemprana);
+            DateTime despues = DateTime.Now;
+
+            Assert.IsTrue(_proyecto.FechaFinMasTemprana >= antes && _proyecto.FechaFinMasTemprana <= despues); // porque DateTime.Now cambia
         }
         
         //AgregarTarea (En GESTOR: solo admin proyecto puede)
@@ -491,33 +493,21 @@ namespace Tests
             Assert.IsTrue(_admin.Notificaciones.Any(n => n.Mensaje == "Mensaje para admin"));
         }
         
-        //darRecursosFaltantes
+        //es miembro por id
         
         [TestMethod]
-        public void DarRecursosFaltantes_DevuelveRecursosNoEnUso()
+        public void EsMiembro_PorId_DevuelveTrue_SiUsuarioPertenece()
         {
-            Recurso recurso1 = new Recurso { Id = 1, EnUso = false };
-            Recurso recurso2 = new Recurso { Id = 2, EnUso = true };
-
-            Tarea tarea = new Tarea();
-            tarea.RecursosNecesarios = new List<Recurso> { recurso1, recurso2 };
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario miembro = new Usuario ();
+            List<Usuario> miembros = new List<Usuario>{miembro};
+            Proyecto proyecto = new Proyecto("Proyecto Test", "Descripción", admin, miembros);
             
-            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
+            Bool resultado = proyecto.EsMiembro(2);
             
-            _proyecto.AgregarTarea(tarea);
-            List<Recurso> faltantes = _proyecto.DarRecursosFaltantes();
-
-            Assert.AreEqual(1, faltantes.Count);
-            Assert.IsTrue(faltantes.Any(r => r.Id == 1));
+            Assert.IsTrue(resultado);
         }
         
-        // falta:
-        // REFACTOR (?)
-        // validaciones de recursos(?? Esperar a que definamos bien recurso)
-        //(GESTOR: se encarga de cuando haya una modificacion mandar una notificacion)
-        
-        // metodos faltantes:
-        // calcularRutaCritica()
         
     }
 }

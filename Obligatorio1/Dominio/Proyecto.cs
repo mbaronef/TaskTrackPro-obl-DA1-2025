@@ -15,16 +15,14 @@ public class Proyecto
     
     public DateTime FechaInicio { get; set; } = DateTime.Now;
     
-    public DateTime FechaFinMasTemprana { get; set; } = DateTime.MinValue;
+    public DateTime FechaFinMasTemprana { get; set; } = DateTime.Now;
     
-    // agregar fecha inicio
-    // verificar que sea mayor que la actual
     public Proyecto(string nombre, string descripcion, Usuario administrador, List<Usuario> miembros) 
     {
-        ValidarStringNoVacioNiNull(nombre, "El nombre del proyecto no puede estar vacío o null.");
-        ValidarStringNoVacioNiNull(descripcion, "La descripción del proyecto no puede estar vacía o null.");
-        ValidarObjetoNoNull(administrador, "El proyecto debe tener un administrador.");
-        ValidarObjetoNoNull(miembros,"La lista de miembros no puede ser null.");
+        ValidarTextoObligatorio(nombre, "El nombre del proyecto no puede estar vacío o null.");
+        ValidarTextoObligatorio(descripcion, "La descripción del proyecto no puede estar vacía o null.");
+        ValidarNoNulo(administrador, "El proyecto debe tener un administrador.");
+        ValidarNoNulo(miembros,"La lista de miembros no puede ser null.");
         ValidarLargoDescripción(descripcion);
         ValidarAdministradorEsteEnMiembros(administrador, miembros);
         
@@ -42,8 +40,8 @@ public class Proyecto
     
     public void AgregarTarea(Tarea tarea)
     {
-        ValidarObjetoNoNull(tarea,"No se puede agregar una tarea null.");
-        VerificarQueLaTareaNoExista(tarea);
+        ValidarNoNulo(tarea,"No se puede agregar una tarea null.");
+        ValidarTareaNoDuplicada(tarea);
         
         Tareas.Add(tarea);
     }
@@ -52,14 +50,14 @@ public class Proyecto
     {
         Tarea tareaAEliminar = BuscarTareaPorId(idTarea);
 
-        ValidarObjetoNoNull(tareaAEliminar,"La tarea no pertenece al proyecto.");
+        ValidarNoNulo(tareaAEliminar,"La tarea no pertenece al proyecto.");
 
         Tareas.Remove(tareaAEliminar);
     }
 
     public void AsignarMiembro(Usuario usuario)
     {
-        ValidarObjetoNoNull(usuario,"No se puede agregar un miembro null.");
+        ValidarNoNulo(usuario,"No se puede agregar un miembro null.");
         ValidarUsuarioNoSeaMiembro(usuario);
         
         Miembros.Add(usuario);
@@ -69,7 +67,7 @@ public class Proyecto
     {
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsuario);
         
-        ValidarObjetoNoNull(usuarioAEliminar,"El usuario no es miembro del proyecto.");
+        ValidarNoNulo(usuarioAEliminar,"El usuario no es miembro del proyecto.");
         ValidarQueUsuarioAEliminarNoSeaAdministrador(usuarioAEliminar);
         
         Miembros.Remove(usuarioAEliminar);
@@ -79,28 +77,24 @@ public class Proyecto
     {
         return Administrador.Equals(usuario);
     }
-    
-    
-    // que no sea posterior a la de tarea mas temprana
+
     public void ModificarFechaInicio(DateTime nuevaFecha)
     {
-        ValidarFechaInicioMenorAActual(nuevaFecha);
+        ValidarFechaInicioMayorAActual(nuevaFecha);
         
         FechaInicio = nuevaFecha;
     }
     
-   //  falta ModificarFechaFinMasTemprana, con sus respectivas validaciones (que sea posterior a fechaInicio y que no sea menor a la fecha fin de las tareas).
-
     public void ModificarNombre(string nombreNuevo)
     {
-        ValidarStringNoVacioNiNull(nombreNuevo,"El nombre no puede estar vacío");
+        ValidarTextoObligatorio(nombreNuevo,"El nombre no puede estar vacío");
         
         Nombre = nombreNuevo;
     }
 
     public void ModificarDescripcion(string nuevaDescripcion)
     {
-        ValidarStringNoVacioNiNull(nuevaDescripcion,"La descripción no puede estar vacía");
+        ValidarTextoObligatorio(nuevaDescripcion,"La descripción no puede estar vacía");
         ValidarLargoDescripción(nuevaDescripcion);
         
         Descripcion = nuevaDescripcion;
@@ -114,11 +108,11 @@ public class Proyecto
         {
             if (usuario.Id == idNuevoAdministrador)
             {
+                Administrador.EstaAdministrandoProyecto = false;
                 Administrador = usuario;
-                return;
+                Administrador.EstaAdministrandoProyecto = true;
             }
         }
-        throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
     }
     
     public void NotificarMiembros(string mensaje)
@@ -134,22 +128,6 @@ public class Proyecto
     {
         Notificacion notificacion = new Notificacion(mensaje);
         Administrador.RecibirNotificacion(notificacion);
-    }
-    
-    public List<Recurso> DarRecursosFaltantes() // a checkear, redefinimos como manejar recursos
-    {
-        List<Recurso> faltantes = new List<Recurso>();
-        foreach (Tarea tarea in Tareas)
-        {
-            foreach (Recurso recurso in tarea.RecursosNecesarios)
-            {
-                if (!recurso.EnUso && !faltantes.Any(r => r.Id == recurso.Id))
-                {
-                    faltantes.Add(recurso);
-                }
-            }
-        }
-        return faltantes;
     }
     
     private Tarea BuscarTareaPorId(int id)
@@ -168,19 +146,19 @@ public class Proyecto
             throw new ExcepcionDominio($"La descripción no puede superar los {MaximoCaracteresDescripcion} caracteres");
     }
     
-    private void ValidarStringNoVacioNiNull(string valor, string mensajeError)
+    private void ValidarTextoObligatorio(string valor, string mensajeError)
     {
         if (string.IsNullOrWhiteSpace(valor))
             throw new ExcepcionDominio(mensajeError);
     }
     
-    private void ValidarObjetoNoNull(object objeto, string mensajeError)
+    private void ValidarNoNulo(object objeto, string mensajeError)
     {
         if (objeto is null)
             throw new ExcepcionDominio(mensajeError);
     }
 
-    private void VerificarQueLaTareaNoExista(Tarea tarea)
+    private void ValidarTareaNoDuplicada(Tarea tarea)
     {
         if(Tareas.Contains(tarea))
             throw new ExcepcionDominio("La tarea ya fue agregada al proyecto.");
@@ -189,7 +167,7 @@ public class Proyecto
     private void ValidarUsuarioEnMiembros(int idUsuario)
     {
         Usuario usuario = BuscarUsuarioPorId(idUsuario);
-        ValidarObjetoNoNull(usuario, "El usuario no es miembro del proyecto.");
+        ValidarNoNulo(usuario, "El usuario no es miembro del proyecto.");
     }
 
     private void ValidarQueUsuarioAEliminarNoSeaAdministrador(Usuario usuario)
@@ -212,7 +190,7 @@ public class Proyecto
             throw new ExcepcionDominio("El miembro ya pertenece al proyecto.");
     }
 
-    private void ValidarFechaInicioMenorAActual(DateTime fecha)
+    private void ValidarFechaInicioMayorAActual(DateTime fecha)
     {
         if (fecha < DateTime.Now.Date)
             throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
@@ -220,9 +198,9 @@ public class Proyecto
 
     // TODO:
     // FALTA:
+    // agregar fecha inicio al constructor y verificar que sea mayor que la actual y menor a la fecha fin mas temprana
+    // validar que fecha inicio cuando se modifique no sea posterior a la fecha inicio de ninguna de las tareas
+    // ModificarFechaFinMasTemprana, con sus respectivas validaciones:(que sea posterior a fechaInicio y que no sea menor a la fecha fin de ninguna de las tareas).
+    
     // -> REFACTOR 
-    // -> ver metodos faltantes para notificaciones/ errores y como manejarlo
-    // -> metodos para quitarle validaciones innecesarias al gestor...
-    // -> reorganizar metodos 
-    // -> ver tema recursos segun lo hablado...
 }
