@@ -69,4 +69,10 @@ public class GestorRecursos
         Recursos.Remove(recurso);
     }
 
+    public void ModificarNombreRecurso(Usuario solicitante, int idRecurso, string nuevoNombre)
+    {
+        Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        recurso.ModificarNombre(nuevoNombre);
+    }
+
 }
