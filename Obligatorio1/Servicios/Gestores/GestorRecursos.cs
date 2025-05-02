@@ -62,7 +62,13 @@ public class GestorRecursos
         {
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de");
         }
+        string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
+        if (recurso.EsExclusivo())
+        {
+            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
+            adminProyecto.RecibirNotificacion($"Se modificó el recurso {nombreAnterior} de tipo {recurso.Tipo} - {recurso.Descripcion}. El nuevo nombre es: {nuevoNombre}");
+        }
     }
 
     public void ModificarTipoRecurso(Usuario solicitante, int idRecurso, string nuevoTipo)
