@@ -13,6 +13,8 @@ public class GestorRecursosTests
     [TestInitialize]
     public void SetUp()
     {
+        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
+        typeof(GestorRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         _gestorProyectos = new GestorProyectos();
         _gestorRecursos = new GestorRecursos(_gestorProyectos);
     }
@@ -181,6 +183,7 @@ public class GestorRecursosTests
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
+        adminProyecto.Id = 1; // lo gestiona el gestor de usuarios
         adminProyecto.EsAdministradorProyecto = true;
         Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
@@ -188,6 +191,7 @@ public class GestorRecursosTests
         Usuario otroAdminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
         otroAdminProyecto.EsAdministradorProyecto = true;
+        otroAdminProyecto.Id = 2; // lo gestiona el gestor de usuarios
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
 
@@ -238,7 +242,7 @@ public class GestorRecursosTests
 
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
-    public void AdminProyectoNoPuedeEliminarRecursosNoExclusivosDeSuProyecto()
+    public void AdminProyectoNoPuedeModificarNombreDeRecursosNoExclusivosDeSuProyecto()
     {
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
@@ -259,6 +263,71 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         
         _gestorRecursos.ModificarNombreRecurso(otroAdminProyecto, recurso.Id, "Nuevo nombre");
+    }
+    
+    [TestMethod]
+    public void AdminSistemaModificaTipoDeRecursoOk()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso);
+        _gestorRecursos.ModificarTipoRecurso(admin, recurso.Id, "Nuevo tipo");
+        Assert.AreEqual("Nuevo tipo", recurso.Tipo);
+    }
+
+    [TestMethod]
+    public void AdminProyectoModificaTipoDeRecursoExclusivoOk()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        adminProyecto.EsAdministradorProyecto = true;
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+
+        _gestorRecursos.ModificarTipoRecurso(adminProyecto, recurso.Id, "Nuevo tipo");
+        Assert.AreEqual("Nuevo tipo", recurso.Tipo);
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoAdminSistemaNiAdminProyectoPuedeModificarTipo()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso);
+        _gestorRecursos.ModificarTipoRecurso(usuario, recurso.Id, "Nuevo tipo");
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void AdminProyectoNoPuedeModificarTipoDeRecursosNoExclusivosDeSuProyecto()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        adminProyecto.Id = 1; // lo hace el gestor de usuarios
+        adminProyecto.EsAdministradorProyecto = true;
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        
+        Usuario otroAdminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
+        otroAdminProyecto.EsAdministradorProyecto = true;
+        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
+        
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+        
+        _gestorRecursos.ModificarTipoRecurso(otroAdminProyecto, recurso.Id, "Nuevo tipo");
     }
 
 }
