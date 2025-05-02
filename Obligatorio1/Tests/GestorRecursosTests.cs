@@ -236,6 +236,29 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarNombreRecurso(usuario, recurso.Id, "Nuevo nombre");
     }
 
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void AdminProyectoNoPuedeEliminarRecursosNoExclusivosDeSuProyecto()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        adminProyecto.EsAdministradorProyecto = true;
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        
+        Usuario otroAdminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        otroAdminProyecto.EsAdministradorProyecto = true;
+        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
+        
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+        
+        _gestorRecursos.ModificarNombreRecurso(otroAdminProyecto, recurso.Id, "Nuevo nombre");
+    }
+
 }
 
 //TODO: 1.Métodos modificación 2.Refactor 3.Notificar al eliminar recursos y al modificar
