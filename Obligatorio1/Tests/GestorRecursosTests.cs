@@ -187,4 +187,18 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.EliminarRecurso(otroAdminProyecto, recurso.Id);
     }
+
+    [TestMethod]
+    public void AdminSistemaModificaNombreDeRecursoOk()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso);
+        _gestorRecursos.ModificarNombreRecurso(admin, recurso, "Nuevo nombre");
+        Assert.AreEqual("Nuevo nombre", recurso.Nombre);
+    }
+
+
 }
+
+//TODO: 1.Métodos modificación 2.Refactor 3.Notificar al eliminar recursos y al modificar
