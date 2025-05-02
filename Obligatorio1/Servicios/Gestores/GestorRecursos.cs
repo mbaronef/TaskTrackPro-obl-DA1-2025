@@ -47,11 +47,7 @@ public class GestorRecursos
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         }
         Recursos.Remove(recurso);
-        if (recurso.EsExclusivo())
-        {
-            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
-            adminProyecto.RecibirNotificacion($"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}");
-        }
+        NotificarEliminacion(recurso);
     }
 
     public void ModificarNombreRecurso(Usuario solicitante, int idRecurso, string nuevoNombre)
@@ -64,11 +60,7 @@ public class GestorRecursos
         }
         string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
-        if (recurso.EsExclusivo())
-        {
-            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
-            adminProyecto.RecibirNotificacion($"Se modificó el recurso {nombreAnterior} de tipo {recurso.Tipo} - {recurso.Descripcion}. El nuevo nombre es: {nuevoNombre}");
-        }
+        NotificarModificacion(recurso, nombreAnterior);
     }
 
     public void ModificarTipoRecurso(Usuario solicitante, int idRecurso, string nuevoTipo)
@@ -123,6 +115,26 @@ public class GestorRecursos
         {
             throw new ExcepcionServicios(
                 $"No tiene los permisos necesarios para {accion} recursos que no son exclusivos de su proyecto");
+        }
+    }
+
+    private void NotificarEliminacion(Recurso recurso)
+    {
+        if (recurso.EsExclusivo())
+        {
+            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
+            adminProyecto.RecibirNotificacion($"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}");
+        }
+    }
+
+    private void NotificarModificacion(Recurso recurso, string nombreAnterior)
+    {
+        string mensaje =
+            $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: Nombre: '{recurso.Nombre}', Tipo: '{recurso.Tipo}', Descripción: '{recurso.Descripcion}'.";
+        if (recurso.EsExclusivo())
+        {
+            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
+            adminProyecto.RecibirNotificacion(mensaje);
         }
     }
 }

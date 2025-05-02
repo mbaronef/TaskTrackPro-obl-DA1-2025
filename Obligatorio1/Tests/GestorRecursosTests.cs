@@ -390,11 +390,19 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarNombreRecurso(adminSistema, recurso.Id, "Otro nombre");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("Se modificó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia. El nuevo nombre es: Otro nombre", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', Tipo: 'Humano', Descripción: 'Un analista Senior con experiencia'.", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-    //TODO: notificar cada modificación
-    // Si es exclusivo, se notifica al admin de ese proyecto.
-    // Sino, se notifica a todos los admin de los proyectos que lo tienen en uso.
-
+    
+    //TODO: Si no es exclusivo, se notifica a todos los admin de los proyectos que lo tienen en uso
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
