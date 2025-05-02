@@ -17,10 +17,14 @@ public class GestorRecursosTests
     [TestMethod]
     public void GestorAgregaUnRecursoCorrectamente()
     {
+        Recurso recurso1 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso2 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         GestorRecursos gestorRecursos = new GestorRecursos();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
-        gestorRecursos.AgregarRecurso(recurso);
-        Assert.AreEqual(recurso, gestorRecursos.Recursos.ElementAt(0));
+        gestorRecursos.AgregarRecurso(recurso1);
+        gestorRecursos.AgregarRecurso(recurso2);
+        Assert.AreEqual(2, gestorRecursos.Recursos.Count);
+        Assert.AreEqual(recurso1, gestorRecursos.Recursos.ElementAt(0));
+        Assert.AreEqual(recurso2, gestorRecursos.Recursos.ElementAt(1));
     }
 
 }
