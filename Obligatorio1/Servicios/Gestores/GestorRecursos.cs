@@ -5,6 +5,7 @@ namespace Servicios.Gestores;
 
 public class GestorRecursos
 {
+    private static int _cantidadRecursos;
     public List<Recurso> Recursos { get; private set; }
     private GestorProyectos _gestorProyectos;
 
@@ -26,6 +27,9 @@ public class GestorRecursos
             Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorAdministrador(solicitante.Id);
             recurso.AsociarAProyecto(proyecto);
         }
+        
+        ++_cantidadRecursos;
+        recurso.Id = _cantidadRecursos;
         Recursos.Add(recurso);
     }
 

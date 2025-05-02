@@ -5,6 +5,7 @@ namespace Dominio;
 
 public class Recurso
 {
+    public int Id { get; set; }
     public string Nombre { get; private set; }
     public string Tipo { get; private set; }
     public string Descripcion { get; private set; }
