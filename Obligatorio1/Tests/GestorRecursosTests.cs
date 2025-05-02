@@ -243,12 +243,14 @@ public class GestorRecursosTests
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
+        adminProyecto.Id = 1; // lo hace el gestor de usuarios
         adminProyecto.EsAdministradorProyecto = true;
         Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
         
         Usuario otroAdminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
+        otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
         otroAdminProyecto.EsAdministradorProyecto = true;
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
