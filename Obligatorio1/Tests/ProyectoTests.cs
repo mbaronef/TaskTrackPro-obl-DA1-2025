@@ -509,7 +509,7 @@ namespace Tests
         }
         
         [TestMethod]
-        public void EsMiembro_PorId_DevuelveFalse_SiUsuarioNoPertenece()
+        public void EsMiembro_PorId_DevuelveFalseSiUsuarioNoPertenece()
         {
             Usuario admin = new Usuario { EsAdministradorProyecto = true };
             Proyecto proyecto = new Proyecto("Proyecto Test", "Descripción", admin, new List<Usuario>());
@@ -518,7 +518,7 @@ namespace Tests
         }
         
         [TestMethod]
-        public void EsMiembro_PorObjeto_DevuelveTrue_SiUsuarioPertenece()
+        public void EsMiembro_PorObjeto_DevuelveTrueSiUsuarioPertenece()
         {
             Usuario admin = new Usuario { EsAdministradorProyecto = true };
             Usuario miembro = new Usuario();
@@ -526,6 +526,17 @@ namespace Tests
             Proyecto proyecto = new Proyecto("Proyecto Test", "Descripción", admin, miembros);
 
             Assert.IsTrue(proyecto.EsMiembro(miembro));
+        }
+        
+        [TestMethod]
+        public void EsMiembro_PorObjeto_DevuelveFalseSiUsuarioNoPertenece()
+        {
+            Usuario admin = new Usuario { EsAdministradorProyecto = true };
+            Usuario otro = new Usuario( );
+            List<Usuario> miembros = new List<Usuario>();
+            Proyecto proyecto = new Proyecto("Proyecto Test", "Descripción", admin, miembros);
+
+            Assert.IsFalse(proyecto.EsMiembro(otro));
         }
         
         

@@ -134,8 +134,11 @@ public class Proyecto
     {
         return Miembros.Any(u => u.Id == idUsuario);
     }
-    
-    
+
+    public bool EsMiembro(Usuario usuario)
+    {
+        return Miembros.Contains(usuario);
+    }
 
 
     private Tarea BuscarTareaPorId(int id)
