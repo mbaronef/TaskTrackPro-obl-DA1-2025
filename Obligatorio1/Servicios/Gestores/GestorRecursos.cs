@@ -46,6 +46,10 @@ public class GestorRecursos
     public void EliminarRecurso(Usuario solicitante, int idRecurso)
     {
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        if (recurso.SeEstaUsando())
+        {
+            throw new ExcepcionServicios("No se puede eliminar un recurso que está en uso");
+        }
         Recursos.Remove(recurso);
     }
 
