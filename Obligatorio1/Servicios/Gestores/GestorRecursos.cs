@@ -14,6 +14,10 @@ public class GestorRecursos
 
     public void AgregarRecurso(Usuario solicitante, Recurso recurso)
     {
+        if (!solicitante.EsAdministradorSistema)
+        {
+            throw new ExcepcionServicios("No tiene los permisos necesarios para agregar recursos");
+        }
         Recursos.Add(recurso);
     }
 
