@@ -97,4 +97,11 @@ public class GestorRecursosTests
         Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursoPorId(1));
         Assert.AreEqual(recurso2, _gestorRecursos.ObtenerRecursoPorId(2));
     }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void GestorNoObtieneRecursoConIdInexistente()
+    {
+        Recurso recurso = _gestorRecursos.ObtenerRecursoPorId(20);
+    }
 }
