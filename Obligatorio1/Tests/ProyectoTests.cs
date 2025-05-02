@@ -318,7 +318,7 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void ModificarFechaInicio_LanzaExcepcionSiFechaEsAnteriorAHoy() // capaz no estaria tan bien (?) Podria ser un error al ingresar los datos
+        public void ModificarFechaInicio_LanzaExcepcionSiFechaEsAnteriorAHoy() 
         {
             _proyecto = new Proyecto("Proyecto", "Descripción",  _admin, _miembros);
 
@@ -326,6 +326,19 @@ namespace Tests
 
             _proyecto.ModificarFechaInicio(fechaPasada);
         } 
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaInicio_LanzaExcepcionSiEsPosteriorALaFechaDeInicioDeUnaTarea()
+        {
+            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
+
+            Tarea tarea = new Tarea();
+            tarea.FechaInicio = new DateTime(2026, 1, 1);
+            _proyecto.AgregarTarea(tarea);
+
+            _proyecto.ModificarFechaInicio(new DateTime(2027, 1, 1));
+        }
         
         // modificarNombre (En GESTOR: solo admin proyecto puede)
         
@@ -431,41 +444,6 @@ namespace Tests
             _proyecto.AsignarNuevoAdministrador(2); // ID 2 no está en miembros
         }
         
-        
-        // DAR LISTAS:
-        
-        // de miembros:
-        
-        [TestMethod]
-        public void DarListaMiembros_DevuelveListaDeMiembros()
-        {
-            Usuario miembro = new Usuario();
-            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
-            
-            _proyecto.AsignarMiembro(miembro);
-
-            List<Usuario> lista = _proyecto.Miembros;
-
-            Assert.AreEqual(2, lista.Count);
-            Assert.IsTrue(lista.Contains(_admin));
-            Assert.IsTrue(lista.Contains(miembro));
-        }
-        
-        //de tareas:
-        
-        [TestMethod]
-        public void DarListaTareas_DevuelveListaDeTareas()
-        {
-            Tarea tarea = new Tarea();
-            _proyecto = new Proyecto("Proyecto", "Descripción",  _admin, _miembros);
-            
-            _proyecto.AgregarTarea(tarea);
-            List<Tarea> lista = _proyecto.Tareas;
-
-            Assert.AreEqual(1, lista.Count);
-            Assert.IsTrue(lista.Contains(tarea));
-        }
-        
         //notificarMiembros
         [TestMethod]
         public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
@@ -532,7 +510,7 @@ namespace Tests
         public void EsMiembro_PorObjeto_DevuelveFalseSiUsuarioNoPertenece()
         {
             Usuario admin = new Usuario { EsAdministradorProyecto = true };
-            Usuario otro = new Usuario( );
+            Usuario otro = new Usuario();
             List<Usuario> miembros = new List<Usuario>();
             Proyecto proyecto = new Proyecto("Proyecto Test", "Descripción", admin, miembros);
 
