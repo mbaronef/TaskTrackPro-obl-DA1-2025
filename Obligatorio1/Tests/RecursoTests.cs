@@ -19,13 +19,27 @@ public class RecursoTests
     }
 
     [TestMethod]
-    public void ConstructorCreaRecursoExclusivoOk()
+    public void RecursoSeHaceExclusivoOk()
     {
         Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
         List<Usuario> usuarios = new List<Usuario>();
         Proyecto proyecto = new Proyecto("Nombre", "Descripcion", usuario, usuarios);
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", proyecto);
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        recurso.AsociarAProyecto(proyecto);
         Assert.IsTrue(recurso.EsExclusivo());
+    }
+
+    [ExpectedException(typeof(ExcepcionDominio))]
+    [TestMethod]
+    public void NoSePuedeHacerExclusivoUnRecursoYaExclusivo()
+    {
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
+        List<Usuario> usuarios = new List<Usuario>();
+        Proyecto proyecto1 = new Proyecto("Nombre", "Descripción", usuario, usuarios);
+        Proyecto proyecto2 = new Proyecto("Otro nombre", "Otra descripción", usuario, usuarios);
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        recurso.AsociarAProyecto(proyecto1);
+        recurso.AsociarAProyecto(proyecto2);
     }
 
     [ExpectedException(typeof(ExcepcionDominio))]

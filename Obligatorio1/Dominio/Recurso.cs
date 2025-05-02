@@ -21,10 +21,6 @@ public class Recurso
         Descripcion = descripcion;
     }
     
-    public Recurso(string nombre, string tipo, string descripcion, Proyecto proyecto) : this(nombre, tipo, descripcion) // ctor recursos exclusivos
-    {
-        ProyectoAsociado = proyecto;
-    }
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
         if (string.IsNullOrEmpty(texto))
@@ -70,4 +66,12 @@ public class Recurso
         return CantidadDeTareasUsandolo > 0;
     }
 
+    public void AsociarAProyecto(Proyecto proyecto)
+    {
+        if (ProyectoAsociado != null)
+        {
+            throw new ExcepcionDominio("El recurso ya es exclusivo de otro proyecto");
+        }
+        ProyectoAsociado = proyecto;
+    }
 }
