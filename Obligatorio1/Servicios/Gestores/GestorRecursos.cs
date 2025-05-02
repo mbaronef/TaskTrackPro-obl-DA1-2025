@@ -12,7 +12,7 @@ public class GestorRecursos
         Recursos =  new List<Recurso>();
     }
 
-    public void AgregarRecurso(Usuario usuario, Recurso recurso)
+    public void AgregarRecurso(Usuario solicitante, Recurso recurso)
     {
         Recursos.Add(recurso);
     }
