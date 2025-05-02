@@ -413,13 +413,20 @@ public class GestorRecursosTests
     
     //TODO: Si no es exclusivo, se notifica a todos los admin de los proyectos que lo tienen en uso
     
+    [TestMethod]
+    public void ModificarDescripcionDeRecursoExclusivoNotificaAlAdministradorDeProyecto()
+    {
+        Usuario adminSistema = CrearAdministradorSistema();
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        CrearYAgregarProyecto(adminProyecto);
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+        _gestorRecursos.ModificarDescripcionRecurso(adminSistema, recurso.Id, "Otra descripción");
+
+        Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
+        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', Tipo: 'Humano', Descripción: 'Otra descripción'.", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
+    }
     
-    
-    
-    
-    
-    
-    
-    
-    
+    //TODO: Si no es exclusivo, se notifica a todos los admin de los proyectos que lo tienen en uso
 }
