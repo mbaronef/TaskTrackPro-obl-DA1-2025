@@ -85,4 +85,16 @@ public class GestorRecursosTests
         Assert.AreEqual(1, recurso1.Id);
         Assert.AreEqual(2, recurso2.Id);
     }
+
+    [TestMethod]
+    public void GestorObtieneRecursoPorIdOk()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        Recurso recurso1 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso2 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso1);
+        _gestorRecursos.AgregarRecurso(admin, recurso2);
+        Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursoPorId(1));
+        Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursoPorId(2));
+    }
 }
