@@ -49,7 +49,7 @@ public class GestorRecursosTests
 
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
-    public void NoAdminSistemaNoAgregaRecurso()
+    public void NoAdminSistemaNiProyectoNoAgregaRecurso()
     {
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
@@ -124,5 +124,17 @@ public class GestorRecursosTests
         recurso.ModificarCantidadDeTareasUsandolo(3);
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.EliminarRecurso(admin, recurso.Id);
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoAdminSistemaNiAdminProyectoEliminaRecursos()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso);
+        _gestorRecursos.EliminarRecurso(usuario, recurso.Id);
     }
 }
