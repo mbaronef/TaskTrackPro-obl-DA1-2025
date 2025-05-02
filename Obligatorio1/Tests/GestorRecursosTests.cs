@@ -167,4 +167,23 @@ public class GestorRecursosTests
         
         _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
     }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void AdminProyectoNoPuedeEliminarRecursosExclusivosDeOtrosProyectos()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
+        adminProyecto.EsAdministradorProyecto = true;
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        
+        Usuario otroAdminProyecto =  new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
+        Proyecto otroProyecto = new Proyecto("Nombre", "Descripción", otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
+        
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+        _gestorRecursos.EliminarRecurso(otroAdminProyecto, recurso.Id);
+    }
 }
