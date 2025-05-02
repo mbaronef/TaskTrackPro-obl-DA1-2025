@@ -45,6 +45,10 @@ public class GestorRecursos
 
     public void EliminarRecurso(Usuario solicitante, int idRecurso)
     {
+        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
+        {
+            throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar un recurso");
+        }
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
         if (recurso.SeEstaUsando())
         {
