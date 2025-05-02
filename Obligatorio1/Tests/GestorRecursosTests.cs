@@ -161,6 +161,7 @@ public class GestorRecursosTests
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(admin, recurso);
         
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
         adminProyecto.EsAdministradorProyecto = true;
         
