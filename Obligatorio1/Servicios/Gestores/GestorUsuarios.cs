@@ -8,13 +8,24 @@ public class GestorUsuarios
 {
     private static int _cantidadUsuarios;
     private string _contrasenaPorDefecto = "TaskTrackPro@2025";
+    
+    public Usuario AdministradorInicial { get; private set; }
     public List<Usuario> Usuarios { get; } = new List<Usuario>();
 
-    public GestorUsuarios(Usuario adminSistema)
+    public GestorUsuarios()
     {
-        Usuarios.Add(adminSistema);
-        adminSistema.EsAdministradorSistema = true;
+        string contrasenaAdminEncriptada = UtilidadesContrasena.EncriptarContrasena("AdminTaskTrackPro@2025");
+        AdministradorInicial = new Usuario("admin", "admin",  new DateTime(1999,1,1),"admin@admin.com",contrasenaAdminEncriptada);
+        Usuarios.Add(AdministradorInicial);
+        AdministradorInicial.EsAdministradorSistema = true;
         //No se manejan ids, el primer administrador tiene id 0
+    }
+    
+    public Usuario CrearUsuario(string nombre, string apellido, DateTime fechaNacimiento, string email, string contrasena)
+    {
+        UtilidadesContrasena.ValidarFormatoContrasena(contrasena);
+        string contrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(contrasena);
+        return new Usuario(nombre, apellido, fechaNacimiento, email, contrasenaEncriptada);
     }
 
     public void AgregarUsuario(Usuario solicitante, Usuario usuario)

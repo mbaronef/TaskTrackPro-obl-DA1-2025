@@ -17,14 +17,13 @@ public class GestorUsuariosTests
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(GestorUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         
-        _adminSistema = CrearUsuario("admin", "admin", "admin@admin.com", "AdminTaskTrackPro@2025");
-        _gestorUsuarios = new GestorUsuarios(_adminSistema); // Primer admin sistema siempre tiene ID 0
+        _gestorUsuarios = new GestorUsuarios(); // Primer admin sistema siempre tiene ID 0
+        _adminSistema = _gestorUsuarios.AdministradorInicial;
     }
     
     private Usuario CrearUsuario(string nombre, string apellido, string email, string contrasena)
     {
-        string contrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(contrasena);
-        return new Usuario(nombre, apellido, new DateTime(2007,4,28), email, contrasenaEncriptada);
+        return _gestorUsuarios.CrearUsuario(nombre, apellido, new DateTime(2007,4,28), email, contrasena);
     }
     
     private Usuario CrearYAsignarAdminSistema()
@@ -40,6 +39,20 @@ public class GestorUsuariosTests
     {
         Assert.IsNotNull(_gestorUsuarios);
         Assert.AreEqual(1, _gestorUsuarios.Usuarios.Count); // se crea solo con administrador
+    }
+
+    [TestMethod]
+    public void GestorCreaUsuarioCorrectamente()
+    {
+        DateTime fecha = new DateTime(2007, 4, 28);
+        
+        Usuario usuarioCreadoPorGestor = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        
+        Assert.AreEqual("Juan", usuarioCreadoPorGestor.Nombre);
+        Assert.AreEqual("Pérez", usuarioCreadoPorGestor.Apellido);
+        Assert.AreEqual(fecha, usuarioCreadoPorGestor.FechaNacimiento);
+        Assert.AreEqual("unemail@gmail.com", usuarioCreadoPorGestor.Email);
+        Assert.IsTrue(usuarioCreadoPorGestor.Autenticar("Contrase#a3"));
     }
 
     [TestMethod]

@@ -210,8 +210,8 @@ namespace Tests
         [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
-            Usuario adminSistema = new Usuario("admin", "admin", new DateTime(1999,01,01), "admin@admin.com", "xxxxxxxx");
-            GestorUsuarios gestor = new GestorUsuarios(adminSistema);
+            GestorUsuarios gestor = new GestorUsuarios();
+            Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(adminSistema,usuario1);
             Usuario usuario2 = gestor.ObtenerUsuarioPorId(usuario1.Id);
@@ -222,8 +222,8 @@ namespace Tests
         [TestMethod]
         public void EqualsRetornaFalseSiLosIdsNoSonIguales()
         {
-            Usuario adminSistema = new Usuario("admin", "admin", new DateTime(1999,01,01), "admin@admin.com", "xxxxxxx");
-            GestorUsuarios gestor = new GestorUsuarios(adminSistema);
+            GestorUsuarios gestor = new GestorUsuarios();
+            Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(adminSistema, usuario1);
             Usuario usuario2 = CrearUsuarioValido();
