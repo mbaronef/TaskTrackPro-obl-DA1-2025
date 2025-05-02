@@ -8,11 +8,13 @@ namespace Tests;
 public class GestorRecursosTests
 {
     private GestorRecursos _gestorRecursos;
+    private GestorProyectos _gestorProyectos;
     
     [TestInitialize]
     public void SetUp()
     {
-        _gestorRecursos = new GestorRecursos();
+        _gestorProyectos = new GestorProyectos();
+        _gestorRecursos = new GestorRecursos(_gestorProyectos);
     }
 
     [TestMethod]

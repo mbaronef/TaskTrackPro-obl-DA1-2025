@@ -20,6 +20,7 @@ public class Usuario
     public bool EsAdministradorProyecto { get; set; } = false;
     
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
+    public bool EstaAdministrandoProyecto { get; set; }
 
 
     public Usuario(string nombre, string apellido, DateTime fechaNacimiento, string email, string contrasenaEncriptada)
