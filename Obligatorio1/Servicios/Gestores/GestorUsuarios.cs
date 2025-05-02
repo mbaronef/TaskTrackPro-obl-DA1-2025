@@ -1,5 +1,5 @@
 using Dominio;
-using Dominio.Excepciones;
+using Servicios.Excepciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;

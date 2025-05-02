@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Dominio.Excepciones;
+using Servicios.Excepciones;
 
 namespace Servicios.Utilidades;
 

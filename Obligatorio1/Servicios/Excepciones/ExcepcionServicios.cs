@@ -1,4 +1,4 @@
-namespace Dominio.Excepciones
+namespace Servicios.Excepciones
 {
     public class ExcepcionServicios : Exception
     {

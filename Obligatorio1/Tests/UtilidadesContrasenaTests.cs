@@ -1,4 +1,4 @@
-using Dominio.Excepciones;
+using Servicios.Excepciones;
 using Servicios.Utilidades;
 
 namespace Tests;
