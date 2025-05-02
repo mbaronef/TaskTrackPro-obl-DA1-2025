@@ -114,4 +114,15 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(admin, recurso.Id);
         Assert.AreEqual(0,_gestorRecursos.Recursos.Count());
     }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoSeEliminaRecursoSiEstaEnUso()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        recurso.ModificarCantidadDeTareasUsandolo(3);
+        _gestorRecursos.AgregarRecurso(admin, recurso);
+        _gestorRecursos.EliminarRecurso(admin, recurso.Id);
+    }
 }
