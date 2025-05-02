@@ -104,4 +104,14 @@ public class GestorRecursosTests
     {
         Recurso recurso = _gestorRecursos.ObtenerRecursoPorId(20);
     }
+
+    [TestMethod]
+    public void SeEliminaUnRecursoOk()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso);
+        _gestorRecursos.EliminarRecurso(admin, recurso);
+        Assert.AreEqual(0,_gestorRecursos.Recursos.Count());
+    }
 }
