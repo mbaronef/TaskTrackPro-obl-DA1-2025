@@ -6,7 +6,7 @@ namespace Dominio;
 public class Proyecto
 {
     private const int MaximoCaracteresDescripcion = 400;
-    public int Id { get; private set; }
+    public int Id { get; set; }
     public string Nombre { get; set; }
     public string Descripcion { get; set; }
     public List<Tarea> Tareas { get; set; }
@@ -28,8 +28,12 @@ public class Proyecto
         if (objeto is null)
             throw new ExcepcionDominio(mensajeError);
     }
+    
+    // faltaria constructor sin parametros???
 
-    public Proyecto(string nombre, string descripcion, Usuario administrador, List<Usuario> miembros)
+    // agregar fecha inicio
+    // verificar que sea mayor que la actual
+    public Proyecto(string nombre, string descripcion, Usuario administrador, List<Usuario> miembros) 
     {
         ValidarStringNoVacioNiNull(nombre, "El nombre del proyecto no puede estar vacío o null.");
         ValidarStringNoVacioNiNull(descripcion, "La descripción del proyecto no puede estar vacía o null.");
@@ -40,7 +44,7 @@ public class Proyecto
             miembros.Add(administrador); // ASEGURA QUE EL ADMIN SIEMPRE ESTE EN MIEMBROS DEL PROYECTO
         }
         if (descripcion.Length > MaximoCaracteresDescripcion)
-            throw new ExcepcionDominio("La descripción del proyecto no puede superar los 400 caracteres.");
+            throw new ExcepcionDominio($"La descripción del proyecto no puede superar los {MaximoCaracteresDescripcion} caracteres.");
         Nombre = nombre;
         Descripcion = descripcion;
         Tareas = new List<Tarea>();
@@ -101,15 +105,19 @@ public class Proyecto
 
     public bool EsAdministrador(Usuario usuario)
     {
-        return Administrador.Id == usuario.Id;
+        return Administrador.Id == usuario.Id; // redefinir equals 
     }
     
+    
+    // que no sea posterior a la de tarea mas temprana
     public void ModificarFechaInicio(DateTime nuevaFecha)
     {
         if (nuevaFecha < DateTime.Now.Date)
             throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
         FechaInicio = nuevaFecha;
     }
+    
+   //  falta ModificarFechaFinMasTemprana, con sus respectivas validaciones (que sea posterior a fechaInicio y que no sea menor a la fecha fin de las tareas).
 
     public void ModificarNombre(string nombreNuevo)
     {
@@ -152,7 +160,7 @@ public class Proyecto
         Administrador.RecibirNotificacion(notificacion);
     }
     
-    public List<Recurso> DarRecursosFaltantes()
+    public List<Recurso> DarRecursosFaltantes() // a checkear, redefinimos como manejar recursos
     {
         List<Recurso> faltantes = new List<Recurso>();
         foreach (Tarea tarea in Tareas)
@@ -167,4 +175,12 @@ public class Proyecto
         }
         return faltantes;
     }
+    
+    // TODO:
+    // FALTA:
+    // -> REFACTOR 
+    // -> ver metodos faltantes para notificaciones/ errores y como manejarlo
+    // -> metodos para quitarle validaciones innecesarias al gestor...
+    // -> reorganizar metodos 
+    // -> ver tema recursos segun lo hablado...
 }
