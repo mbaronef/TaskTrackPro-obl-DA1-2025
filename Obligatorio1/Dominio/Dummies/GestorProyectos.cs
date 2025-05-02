@@ -19,7 +19,7 @@ public class GestorProyectos
         proyecto.AsignarId(_cantidadProyectos);
         Proyectos.Add(proyecto);
 
-        solicitante.EstaAdministrandoProyecto = true;
+        solicitante.EstaAdministrandoUnProyecto = true;
 
         proyecto.NotificarMiembros($"Se creó el proyecto '{proyecto.Nombre}'.");
     }
@@ -30,7 +30,7 @@ public class GestorProyectos
 
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
-        solicitante.EstaAdministrandoProyecto = false;
+        solicitante.EstaAdministrandoUnProyecto = false;
         Proyectos.Remove(proyecto);
 
         proyecto.NotificarMiembros($"Se eliminó el proyecto '{proyecto.Nombre}'.");
@@ -87,9 +87,9 @@ public class GestorProyectos
 
         VerificarSolicitanteTengaPermisosDeAdminProyecto(nuevoAdmin); // no deberia tirar un error con la palabra solicitante...
 
-        proyecto.Administrador.EstaAdministrandoProyecto = false;
+        proyecto.Administrador.EstaAdministrandoUnProyecto = false;
         proyecto.Administrador = nuevoAdmin;
-        nuevoAdmin.EstaAdministrandoProyecto = true;
+        nuevoAdmin.EstaAdministrandoUnProyecto = true;
         
         proyecto.NotificarMiembros($"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{nuevoAdmin}'.");
     }

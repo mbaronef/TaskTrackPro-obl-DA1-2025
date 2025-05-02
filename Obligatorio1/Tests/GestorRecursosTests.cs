@@ -27,6 +27,28 @@ public class GestorRecursosTests
         admin.EsAdministradorSistema = true;
         return admin;
     }
+    
+    private Usuario CrearAdministradorProyecto()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        adminProyecto.EsAdministradorProyecto = true;
+        return adminProyecto;
+    }
+
+    private Usuario CrearUsuarioNoAdmin()
+    { 
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
+        return usuario;
+    }
+
+    private void CrearYAgregarProyecto(Usuario adminProyecto)
+    {
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+    }
 
     [TestMethod]
     public void ConstructorCreaGestorValido()
@@ -54,10 +76,7 @@ public class GestorRecursosTests
     [TestMethod]
     public void NoAdminSistemaNiProyectoNoAgregaRecurso()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
-
+        Usuario usuario = CrearUsuarioNoAdmin();
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(usuario, recurso);
     }
@@ -65,13 +84,9 @@ public class GestorRecursosTests
     [TestMethod]
     public void AdminProyectoAgregaRecursoExclusivo()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
-        adminProyecto.EsAdministradorProyecto = true;
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
-
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        CrearYAgregarProyecto(adminProyecto); 
+        
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
 
@@ -99,6 +114,7 @@ public class GestorRecursosTests
         Recurso recurso2 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(admin, recurso1);
         _gestorRecursos.AgregarRecurso(admin, recurso2);
+        
         Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursoPorId(1));
         Assert.AreEqual(recurso2, _gestorRecursos.ObtenerRecursoPorId(2));
     }
@@ -136,9 +152,7 @@ public class GestorRecursosTests
     public void NoAdminSistemaNiAdminProyectoEliminaRecursos()
     {
         Usuario admin = CrearAdministradorSistema();
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario usuario = CrearUsuarioNoAdmin();
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.EliminarRecurso(usuario, recurso.Id);
@@ -147,13 +161,9 @@ public class GestorRecursosTests
     [TestMethod]
     public void AdminProyectoEliminaRecursoExclusivo()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
-        adminProyecto.EsAdministradorProyecto = true;
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
-
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        CrearYAgregarProyecto(adminProyecto);
+        
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
@@ -168,11 +178,8 @@ public class GestorRecursosTests
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(admin, recurso);
 
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
-        adminProyecto.EsAdministradorProyecto = true;
-
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        
         _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
     }
 
@@ -180,18 +187,13 @@ public class GestorRecursosTests
     [TestMethod]
     public void AdminProyectoNoPuedeEliminarRecursosExclusivosDeOtrosProyectos()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario adminProyecto = CrearAdministradorProyecto();
         adminProyecto.Id = 1; // lo gestiona el gestor de usuarios
-        adminProyecto.EsAdministradorProyecto = true;
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        CrearYAgregarProyecto(adminProyecto);
 
-        Usuario otroAdminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
-        otroAdminProyecto.EsAdministradorProyecto = true;
+        Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo gestiona el gestor de usuarios
+        
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
 
@@ -213,12 +215,8 @@ public class GestorRecursosTests
     [TestMethod]
     public void AdminProyectoModificaNombreDeRecursoExclusivoOk()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
-        adminProyecto.EsAdministradorProyecto = true;
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        CrearYAgregarProyecto(adminProyecto);
 
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -232,9 +230,7 @@ public class GestorRecursosTests
     public void NoAdminSistemaNiAdminProyectoPuedeModificarNombre()
     {
         Usuario admin = CrearAdministradorSistema();
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario usuario = CrearUsuarioNoAdmin();
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.ModificarNombreRecurso(usuario, recurso.Id, "Nuevo nombre");
@@ -244,18 +240,13 @@ public class GestorRecursosTests
     [TestMethod]
     public void AdminProyectoNoPuedeModificarNombreDeRecursosNoExclusivosDeSuProyecto()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario adminProyecto = CrearAdministradorProyecto();
         adminProyecto.Id = 1; // lo hace el gestor de usuarios
-        adminProyecto.EsAdministradorProyecto = true;
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
-        
-        Usuario otroAdminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        CrearYAgregarProyecto(adminProyecto);
+
+        Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
-        otroAdminProyecto.EsAdministradorProyecto = true;
+        
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
         
@@ -278,12 +269,8 @@ public class GestorRecursosTests
     [TestMethod]
     public void AdminProyectoModificaTipoDeRecursoExclusivoOk()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
-        adminProyecto.EsAdministradorProyecto = true;
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        CrearYAgregarProyecto(adminProyecto);
 
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -297,9 +284,7 @@ public class GestorRecursosTests
     public void NoAdminSistemaNiAdminProyectoPuedeModificarTipo()
     {
         Usuario admin = CrearAdministradorSistema();
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario usuario = CrearUsuarioNoAdmin();
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.ModificarTipoRecurso(usuario, recurso.Id, "Nuevo tipo");
@@ -309,18 +294,12 @@ public class GestorRecursosTests
     [TestMethod]
     public void AdminProyectoNoPuedeModificarTipoDeRecursosNoExclusivosDeSuProyecto()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario adminProyecto = CrearAdministradorProyecto();
         adminProyecto.Id = 1; // lo hace el gestor de usuarios
-        adminProyecto.EsAdministradorProyecto = true;
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
-        
-        Usuario otroAdminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        CrearYAgregarProyecto(adminProyecto);
+        Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
-        otroAdminProyecto.EsAdministradorProyecto = true;
+        
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
         
@@ -343,12 +322,8 @@ public class GestorRecursosTests
     [TestMethod]
     public void AdminProyectoModificaDescripcionDeRecursoExclusivoOk()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
-        adminProyecto.EsAdministradorProyecto = true;
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        CrearYAgregarProyecto(adminProyecto);
 
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -362,9 +337,7 @@ public class GestorRecursosTests
     public void NoAdminSistemaNiAdminProyectoPuedeModificarDescripcion()
     {
         Usuario admin = CrearAdministradorSistema();
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario usuario = CrearUsuarioNoAdmin();
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.ModificarDescripcionRecurso(usuario, recurso.Id, "Nueva descripción");
@@ -374,18 +347,12 @@ public class GestorRecursosTests
     [TestMethod]
     public void AdminProyectoNoPuedeModificarDescripciónDeRecursosNoExclusivosDeSuProyecto()
     {
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario adminProyecto = CrearAdministradorProyecto();
         adminProyecto.Id = 1; // lo hace el gestor de usuarios
-        adminProyecto.EsAdministradorProyecto = true;
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
-        
-        Usuario otroAdminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        CrearYAgregarProyecto(adminProyecto);
+        Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
-        otroAdminProyecto.EsAdministradorProyecto = true;
+       
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
         
@@ -397,4 +364,4 @@ public class GestorRecursosTests
 
 }
 
-//TODO: 1.Métodos modificación 2.Refactor 3.Notificar al eliminar recursos y al modificar
+//TODO: 3.Notificar al eliminar recursos y al modificar
