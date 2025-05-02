@@ -16,14 +16,7 @@ public class GestorRecursosTests
         _gestorProyectos = new GestorProyectos();
         _gestorRecursos = new GestorRecursos(_gestorProyectos);
     }
-
-    [TestMethod]
-    public void ConstructorCreaGestorValido()
-    {
-        Assert.IsNotNull(_gestorRecursos);
-        Assert.AreEqual(0, _gestorRecursos.Recursos.Count);
-    }
-
+    
     private Usuario CrearAdministradorSistema()
     {
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
@@ -32,6 +25,13 @@ public class GestorRecursosTests
         return admin;
     }
 
+    [TestMethod]
+    public void ConstructorCreaGestorValido()
+    {
+        Assert.IsNotNull(_gestorRecursos);
+        Assert.AreEqual(0, _gestorRecursos.Recursos.Count);
+    }
+    
     [TestMethod]
     public void AdminSistemaAgregaRecursosCorrectamente()
     {
@@ -73,4 +73,16 @@ public class GestorRecursosTests
         Assert.IsTrue(recurso.EsExclusivo());
     }
 
+    [TestMethod]
+    public void GestorLlevaCuentaDeUsuariosCorrectamenteYAsignaIdsIncrementales()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        Recurso recurso1 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso2 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso1);
+        _gestorRecursos.AgregarRecurso(admin, recurso2);
+
+        Assert.AreEqual(1, recurso1.Id);
+        Assert.AreEqual(2, recurso2.Id);
+    }
 }
