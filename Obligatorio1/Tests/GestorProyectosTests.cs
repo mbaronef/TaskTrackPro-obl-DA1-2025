@@ -992,14 +992,6 @@ namespace Tests
             Assert.AreEqual(mensaje, miembro.Notificaciones[2].Mensaje);
         }
 
-
-        //TODO:
-
-        // eliminarTareaDelProyecto (admin de proyecto y que sea el admin de ese proyecto) 
-        // proyecto existente
-        // se elimina ok
-        // manda notificacion a cada uno de los miembros del proyecto
-
     }
 
 }

@@ -11,16 +11,11 @@ public class GestorProyectos
 
     public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
     {
-        if (!solicitante.EsAdministradorProyecto)
-            throw new ExcepcionDominio("El usuario no tiene permiso para crear un proyecto.");
+        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
 
-        if (solicitante.EstaAdministrandoProyecto)
-            throw new ExcepcionDominio("El usuario ya está administrando un proyecto.");
+        VerificarUsuarioNoAdministraOtroProyecto(solicitante);
 
-        if (Proyectos.Any(p => p.Nombre == proyecto.Nombre))
-        {
-            throw new ExcepcionDominio("Ya existe un proyecto con ese nombre.");
-        }
+        VerificarNombreNoRepetido(proyecto);
 
         _cantidadProyectos++;
         proyecto.AsignarId(_cantidadProyectos);
@@ -33,14 +28,10 @@ public class GestorProyectos
 
     public void EliminarProyecto(int idProyecto, Usuario solicitante)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        Proyecto proyecto =  ObtenerProyecto(idProyecto);
 
-        if (proyecto is null)
-            throw new ExcepcionDominio("El proyecto no existe.");
-
-        if (!proyecto.EsAdministrador(solicitante))
-            throw new ExcepcionDominio("Solo el administrador del proyecto puede eliminarlo.");
-
+        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        
         solicitante.EstaAdministrandoProyecto = false;
         Proyectos.Remove(proyecto);
 
@@ -49,17 +40,12 @@ public class GestorProyectos
 
     public void ModificarNombreDelProyecto(int idProyecto, string nuevoNombre, Usuario solicitante)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        Proyecto proyecto = ObtenerProyecto(idProyecto);
 
-        if (proyecto is null)
-            throw new ExcepcionDominio("El proyecto no existe.");
-
-        if (!proyecto.EsAdministrador(solicitante))
-            throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar el nombre.");
-
-        if (Proyectos.Any(p => p.Nombre == nuevoNombre && p.Id != idProyecto))
-            throw new ExcepcionDominio("Ya existe un proyecto con ese nombre.");
-
+        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        
+        VerificarNombreNoRepetido(proyecto);
+        
         string nombreAnterior = proyecto.Nombre;
 
         proyecto.ModificarNombre(nuevoNombre);
@@ -69,77 +55,55 @@ public class GestorProyectos
 
     public void ModificarDescripcionDelProyecto(int idProyecto, string descripcion, Usuario solicitante)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        Proyecto proyecto =  ObtenerProyecto(idProyecto);
 
-        if (proyecto is null)
-            throw new ExcepcionDominio("El proyecto no existe.");
-
-        if (!proyecto.EsAdministrador(solicitante))
-            throw new ExcepcionDominio("Solo el admin del proyecto puede cambiar la descripción.");
-
+        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        
         proyecto.ModificarDescripcion(descripcion);
 
-        proyecto.NotificarMiembros(
-            $"Se cambió la descripción del proyecto '{proyecto.Nombre}' a '{proyecto.Descripcion}'.");
+        proyecto.NotificarMiembros($"Se cambió la descripción del proyecto '{proyecto.Nombre}' a '{proyecto.Descripcion}'.");
     }
 
     public void ModificarFechaDeInicioDelProyecto(int idProyecto, DateTime nuevaFecha, Usuario solicitante)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        Proyecto proyecto =  ObtenerProyecto(idProyecto);
 
-        if (proyecto is null)
-            throw new ExcepcionDominio("El proyecto no existe.");
-
-        if (!proyecto.EsAdministrador(solicitante))
-            throw new ExcepcionDominio("Solo el admin de proyecto puede cambiar la fecha de inicio del proyecto.");
-
+        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        
         proyecto.ModificarFechaInicio(nuevaFecha);
 
-        proyecto.NotificarMiembros(
-            $"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
+        proyecto.NotificarMiembros($"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
     }
 
     public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdmin)
     {
-        if (!solicitante.EsAdministradorSistema)
-            throw new ExcepcionDominio("Solo un administrador de sistema puede cambiar el administrador del proyecto.");
+        VerificarUsuarioEsAdminSistema(solicitante);
 
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        Proyecto proyecto =  ObtenerProyecto(idProyecto);
 
-        if (proyecto is null)
-            throw new ExcepcionDominio("El proyecto no existe.");
+        VerificarUsuarioMiembroDelProyecto(idNuevoAdmin, proyecto);
+        
+        Usuario nuevoAdmin = ObtenerMiembro(idNuevoAdmin, proyecto);
 
-        Usuario nuevoAdmin = proyecto.Miembros.FirstOrDefault(u => u.Id == idNuevoAdmin);
+        VerificarUsuarioNoAdministraOtroProyecto(nuevoAdmin);
 
-        if (nuevoAdmin is null)
-            throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
-
-        if (nuevoAdmin.EstaAdministrandoProyecto)
-            throw new ExcepcionDominio("El usuario ya administra otro proyecto.");
-
-        if (!nuevoAdmin.EsAdministradorProyecto)
-            throw new ExcepcionDominio("El usuario no tiene los permisos de administrador de proyecto.");
+        VerificarSolicitanteTengaPermisosDeAdminProyecto(nuevoAdmin); // no deberia tirar un error con la palabra solicitante...
 
         proyecto.Administrador.EstaAdministrandoProyecto = false;
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoProyecto = true;
-        proyecto.NotificarMiembros(
-            $"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{nuevoAdmin}'.");
+        
+        proyecto.NotificarMiembros($"Se cambió el administrador del proyecto 'Proyecto B'. El nuevo administrador es '{nuevoAdmin}'.");
     }
 
     public void AgregarMiembroAProyecto(int idProyecto, Usuario solicitante, Usuario nuevoMiembro)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        Proyecto proyecto =  ObtenerProyecto(idProyecto);
 
-        if (proyecto is null)
-            throw new ExcepcionDominio("El proyecto no existe.");
+        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
 
-        if (!solicitante.EsAdministradorProyecto)
-            throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
-
-        if (!proyecto.Administrador.Equals(solicitante))
-            throw new ExcepcionDominio("Solo el administrador del proyecto puede agregar miembros.");
-
+        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        
         proyecto.AsignarMiembro(nuevoMiembro);
 
         proyecto.NotificarMiembros(
@@ -149,21 +113,13 @@ public class GestorProyectos
     
     public void EliminarMiembroDelProyecto(int idProyecto, Usuario solicitante, int idMiembroAEliminar)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        Proyecto proyecto =  ObtenerProyecto(idProyecto);
         
-        if (proyecto is null)
-            throw new ExcepcionDominio("El proyecto no existe.");
-        
-        if(!solicitante.EsAdministradorProyecto)
-            throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
-        
-        if (!proyecto.Administrador.Equals(solicitante))
-            throw new ExcepcionDominio("Unicamente el administrador del proyecto puede eliminar un miembro.");
+        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
 
-        Usuario usuarioAEliminar = proyecto.Miembros.FirstOrDefault(u => u.Id == idMiembroAEliminar);
+        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
-        if (usuarioAEliminar is null)
-            throw new ExcepcionDominio("El usuario no es miembro del proyecto.");
+        VerificarUsuarioMiembroDelProyecto(idMiembroAEliminar, proyecto);
         
         proyecto.EliminarMiembro(idMiembroAEliminar);
         
@@ -174,35 +130,27 @@ public class GestorProyectos
 
     public void AgregarTareaAlProyecto(int idProyecto,  Usuario solicitante, Tarea nuevaTarea)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
+        Proyecto proyecto =  ObtenerProyecto(idProyecto);
         
-        if (proyecto is null)
-            throw new ExcepcionDominio("El proyecto no existe.");
+        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
         
-        if(!solicitante.EsAdministradorProyecto)
-            throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
-        
-        if(!proyecto.Administrador.Equals(solicitante))
-            throw new ExcepcionDominio("Unicamente el administrador del proyecto puede agregar una tarea al proyecto");
+        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         proyecto.AgregarTarea(nuevaTarea);
+        
         proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
     }
 
     public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idTareaAEliminar)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == idProyecto);
-        
-        if (proyecto is null)
-            throw new ExcepcionDominio("El proyecto no existe.");
+        Proyecto proyecto = ObtenerProyecto(idProyecto);
          
-        if(!solicitante.EsAdministradorProyecto)
-            throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
+        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
         
-        if(!proyecto.Administrador.Equals(solicitante))
-            throw new ExcepcionDominio("Unicamente el administrador del proyecto puede eliminar una tarea del proyecto");
+        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         proyecto.EliminarTarea(idTareaAEliminar);
+        
         proyecto.NotificarMiembros($"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
         
     }
@@ -217,6 +165,62 @@ public class GestorProyectos
         return Proyectos.Where(p => p.Miembros.Any(u => u.Id == idUsuario)).ToList();
     }
 
+    private Proyecto ObtenerProyecto(int id)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == id);
+        
+        if(proyecto is null)
+            throw new ExcepcionDominio("El proyecto no existe.");
+        
+        return proyecto;
+    }
+    
+    private void VerificarUsuarioEsAdminProyectoDeEseProyecto(Proyecto proyecto, Usuario usuario)
+    {
+        if (!proyecto.EsAdministrador(usuario))
+            throw new ExcepcionDominio("Solo el administrador del proyecto puede realizar esta acción.");
+    }
+
+    private void VerificarNombreNoRepetido(Proyecto proyecto)
+    {
+        if (Proyectos.Any(p => p.Nombre == proyecto.Nombre))
+        {
+            throw new ExcepcionDominio("Ya existe un proyecto con ese nombre.");
+        }
+    }
+
+    private void VerificarUsuarioNoAdministraOtroProyecto(Usuario usuario)
+    {
+        if (usuario.EstaAdministrandoProyecto)
+            throw new ExcepcionDominio("El usuario ya está administrando un proyecto.");
+    }
+
+    private void VerificarSolicitanteTengaPermisosDeAdminProyecto(Usuario solicitante)
+    {
+        if(!solicitante.EsAdministradorProyecto)
+            throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
+    }
+
+    private void VerificarUsuarioEsAdminSistema(Usuario usuario)
+    {
+        if (!usuario.EsAdministradorSistema)
+            throw new ExcepcionDominio("El solicitante no es administrador de sistema.");
+    }
+
+    private void VerificarUsuarioMiembroDelProyecto(int idUsuario, Proyecto proyecto)
+    {
+        Usuario usuario = ObtenerMiembro(idUsuario, proyecto);
+        
+        if (usuario is null)
+            throw new ExcepcionDominio("El usuario no es miembro del proyecto.");
+    }
+
+    private Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
+    {
+        Usuario miembro = proyecto.Miembros.FirstOrDefault(u => u.Id == idMiembro);
+        
+        return miembro;
+    }
 
 
 }
