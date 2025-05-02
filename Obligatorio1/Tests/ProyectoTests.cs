@@ -496,14 +496,14 @@ namespace Tests
         //es miembro por id
         
         [TestMethod]
-        public void EsMiembro_PorId_DevuelveTrue_SiUsuarioPertenece()
+        public void EsMiembro_PorId_DevuelveTrueSiUsuarioPertenece()
         {
             Usuario admin = new Usuario { EsAdministradorProyecto = true };
             Usuario miembro = new Usuario ();
             List<Usuario> miembros = new List<Usuario>{miembro};
             Proyecto proyecto = new Proyecto("Proyecto Test", "Descripción", admin, miembros);
             
-            Bool resultado = proyecto.EsMiembro(2);
+            bool resultado = proyecto.EsMiembro(2);
             
             Assert.IsTrue(resultado);
         }

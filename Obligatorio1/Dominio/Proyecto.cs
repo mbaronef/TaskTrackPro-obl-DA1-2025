@@ -129,7 +129,15 @@ public class Proyecto
         Notificacion notificacion = new Notificacion(mensaje);
         Administrador.RecibirNotificacion(notificacion);
     }
+
+    public bool EsMiembro(int idUsuario)
+    {
+        return Miembros.Any(u => u.Id == idUsuario);
+    }
     
+    
+
+
     private Tarea BuscarTareaPorId(int id)
     {
         return Tareas.FirstOrDefault(t => t.Id == id);
@@ -195,6 +203,7 @@ public class Proyecto
         if (fecha < DateTime.Now.Date)
             throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
     }
+
 
     // TODO:
     // FALTA:
