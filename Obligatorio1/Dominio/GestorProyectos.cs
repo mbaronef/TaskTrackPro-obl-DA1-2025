@@ -15,7 +15,7 @@ public class GestorProyectos
 
         VerificarUsuarioNoAdministraOtroProyecto(solicitante);
 
-        VerificarNombreNoRepetido(proyecto);
+        VerificarNombreNoRepetido(proyecto.Nombre);
 
         _cantidadProyectos++;
         proyecto.AsignarId(_cantidadProyectos);
@@ -44,7 +44,7 @@ public class GestorProyectos
 
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
-        VerificarNombreNoRepetido(proyecto);
+        VerificarNombreNoRepetido(nuevoNombre);
         
         string nombreAnterior = proyecto.Nombre;
 
@@ -106,8 +106,7 @@ public class GestorProyectos
         
         proyecto.AsignarMiembro(nuevoMiembro);
 
-        proyecto.NotificarMiembros(
-            $"Se agregó a un nuevo miembro (id {nuevoMiembro.Id}) al proyecto '{proyecto.Nombre}'.");
+        proyecto.NotificarMiembros($"Se agregó a un nuevo miembro (id {nuevoMiembro.Id}) al proyecto '{proyecto.Nombre}'.");
 
     }
     
@@ -181,12 +180,12 @@ public class GestorProyectos
             throw new ExcepcionDominio("Solo el administrador del proyecto puede realizar esta acción.");
     }
 
-    private void VerificarNombreNoRepetido(Proyecto proyecto)
+    private void VerificarNombreNoRepetido(string nuevoNombre)
     {
-        if (Proyectos.Any(p => p.Nombre == proyecto.Nombre))
-        {
-            throw new ExcepcionDominio("Ya existe un proyecto con ese nombre.");
-        }
+        bool existeOtro = Proyectos.Any(p => p.Nombre == nuevoNombre);
+
+        if (existeOtro)
+            throw new ExcepcionDominio($"Ya existe un proyecto con el nombre '{nuevoNombre}'.");
     }
 
     private void VerificarUsuarioNoAdministraOtroProyecto(Usuario usuario)

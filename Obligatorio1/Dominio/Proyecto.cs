@@ -17,20 +17,6 @@ public class Proyecto
     
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MinValue;
     
-    private void ValidarStringNoVacioNiNull(string valor, string mensajeError)
-    {
-        if (string.IsNullOrWhiteSpace(valor))
-            throw new ExcepcionDominio(mensajeError);
-    }
-    
-    private void ValidarObjetoNoNull(object objeto, string mensajeError)
-    {
-        if (objeto is null)
-            throw new ExcepcionDominio(mensajeError);
-    }
-    
-    // faltaria constructor sin parametros???
-
     // agregar fecha inicio
     // verificar que sea mayor que la actual
     public Proyecto(string nombre, string descripcion, Usuario administrador, List<Usuario> miembros) 
@@ -39,12 +25,9 @@ public class Proyecto
         ValidarStringNoVacioNiNull(descripcion, "La descripción del proyecto no puede estar vacía o null.");
         ValidarObjetoNoNull(administrador, "El proyecto debe tener un administrador.");
         ValidarObjetoNoNull(miembros,"La lista de miembros no puede ser null.");
-        if (!miembros.Contains(administrador))
-        {
-            miembros.Add(administrador); // ASEGURA QUE EL ADMIN SIEMPRE ESTE EN MIEMBROS DEL PROYECTO
-        }
-        if (descripcion.Length > MaximoCaracteresDescripcion)
-            throw new ExcepcionDominio($"La descripción del proyecto no puede superar los {MaximoCaracteresDescripcion} caracteres.");
+        ValidarLargoDescripción(descripcion);
+        ValidarAdministradorEsteEnMiembros(administrador, miembros);
+        
         Nombre = nombre;
         Descripcion = descripcion;
         Tareas = new List<Tarea>();
@@ -57,22 +40,10 @@ public class Proyecto
         Id = id;
     }
     
-    private Tarea BuscarTareaPorId(int id)
-    {
-        return Tareas.FirstOrDefault(t => t.Id == id);
-    }
-
-    private Usuario BuscarUsuarioPorId(int id)
-    {
-        return Miembros.FirstOrDefault(u => u.Id == id);
-    }
-    
     public void AgregarTarea(Tarea tarea)
     {
         ValidarObjetoNoNull(tarea,"No se puede agregar una tarea null.");
-        
-        if(Tareas.Contains(tarea))
-            throw new ExcepcionDominio("La tarea ya fue agregada al proyecto.");
+        VerificarQueLaTareaNoExista(tarea);
         
         Tareas.Add(tarea);
     }
@@ -89,31 +60,32 @@ public class Proyecto
     public void AsignarMiembro(Usuario usuario)
     {
         ValidarObjetoNoNull(usuario,"No se puede agregar un miembro null.");
-        if (Miembros.Contains(usuario))
-            throw new ExcepcionDominio("El miembro ya pertenece al proyecto.");
+        ValidarUsuarioNoSeaMiembro(usuario);
+        
         Miembros.Add(usuario);
     }
 
     public void EliminarMiembro(int idUsuario)
     {
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsuario);
+        
         ValidarObjetoNoNull(usuarioAEliminar,"El usuario no es miembro del proyecto.");
-        if (EsAdministrador(usuarioAEliminar))
-            throw new ExcepcionDominio("No se puede eliminar al administrador actual. Asigne un nuevo administrador antes.");
+        ValidarQueUsuarioAEliminarNoSeaAdministrador(usuarioAEliminar);
+        
         Miembros.Remove(usuarioAEliminar);
     }
 
     public bool EsAdministrador(Usuario usuario)
     {
-        return Administrador.Id == usuario.Id; // redefinir equals 
+        return Administrador.Equals(usuario);
     }
     
     
     // que no sea posterior a la de tarea mas temprana
     public void ModificarFechaInicio(DateTime nuevaFecha)
     {
-        if (nuevaFecha < DateTime.Now.Date)
-            throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
+        ValidarFechaInicioMenorAActual(nuevaFecha);
+        
         FechaInicio = nuevaFecha;
     }
     
@@ -122,19 +94,22 @@ public class Proyecto
     public void ModificarNombre(string nombreNuevo)
     {
         ValidarStringNoVacioNiNull(nombreNuevo,"El nombre no puede estar vacío");
+        
         Nombre = nombreNuevo;
     }
 
     public void ModificarDescripcion(string nuevaDescripcion)
     {
         ValidarStringNoVacioNiNull(nuevaDescripcion,"La descripción no puede estar vacía");
-        if (nuevaDescripcion.Length > MaximoCaracteresDescripcion)
-            throw new ExcepcionDominio($"La descripción no puede superar los {MaximoCaracteresDescripcion} caracteres");
+        ValidarLargoDescripción(nuevaDescripcion);
+        
         Descripcion = nuevaDescripcion;
     }
     
     public void AsignarNuevoAdministrador(int idNuevoAdministrador)
     {
+        ValidarUsuarioEnMiembros(idNuevoAdministrador);
+        
         foreach (Usuario usuario in Miembros)
         {
             if (usuario.Id == idNuevoAdministrador)
@@ -145,6 +120,7 @@ public class Proyecto
         }
         throw new ExcepcionDominio("El nuevo administrador debe ser miembro del proyecto.");
     }
+    
     public void NotificarMiembros(string mensaje)
     {
         foreach (Usuario usuario in Miembros)
@@ -176,6 +152,72 @@ public class Proyecto
         return faltantes;
     }
     
+    private Tarea BuscarTareaPorId(int id)
+    {
+        return Tareas.FirstOrDefault(t => t.Id == id);
+    }
+
+    private Usuario BuscarUsuarioPorId(int id)
+    {
+        return Miembros.FirstOrDefault(u => u.Id == id);
+    }
+
+    private void ValidarLargoDescripción(string descripcion)
+    {
+        if (descripcion.Length > MaximoCaracteresDescripcion)
+            throw new ExcepcionDominio($"La descripción no puede superar los {MaximoCaracteresDescripcion} caracteres");
+    }
+    
+    private void ValidarStringNoVacioNiNull(string valor, string mensajeError)
+    {
+        if (string.IsNullOrWhiteSpace(valor))
+            throw new ExcepcionDominio(mensajeError);
+    }
+    
+    private void ValidarObjetoNoNull(object objeto, string mensajeError)
+    {
+        if (objeto is null)
+            throw new ExcepcionDominio(mensajeError);
+    }
+
+    private void VerificarQueLaTareaNoExista(Tarea tarea)
+    {
+        if(Tareas.Contains(tarea))
+            throw new ExcepcionDominio("La tarea ya fue agregada al proyecto.");
+    }
+
+    private void ValidarUsuarioEnMiembros(int idUsuario)
+    {
+        Usuario usuario = BuscarUsuarioPorId(idUsuario);
+        ValidarObjetoNoNull(usuario, "El usuario no es miembro del proyecto.");
+    }
+
+    private void ValidarQueUsuarioAEliminarNoSeaAdministrador(Usuario usuario)
+    {
+        if (EsAdministrador(usuario))
+            throw new ExcepcionDominio("No se puede eliminar al administrador actual. Asigne un nuevo administrador antes.");
+    }
+
+    private void ValidarAdministradorEsteEnMiembros(Usuario administrador, List<Usuario> miembros)
+    {
+        if (!miembros.Contains(administrador))
+        {
+            miembros.Add(administrador);
+        }
+    }
+
+    private void ValidarUsuarioNoSeaMiembro(Usuario usuario)
+    {
+        if (Miembros.Contains(usuario))
+            throw new ExcepcionDominio("El miembro ya pertenece al proyecto.");
+    }
+
+    private void ValidarFechaInicioMenorAActual(DateTime fecha)
+    {
+        if (fecha < DateTime.Now.Date)
+            throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
+    }
+
     // TODO:
     // FALTA:
     // -> REFACTOR 

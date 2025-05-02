@@ -305,9 +305,9 @@ namespace Tests
         [TestMethod]
         public void ModificarFechaInicio_ActualizaLaFechaOK()
         { 
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
+            Proyecto _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
 
-            DateTime nuevaFecha = new DateTime(2025, 5, 1);
+            DateTime nuevaFecha = new DateTime(2026, 5, 1);
             _proyecto.ModificarFechaInicio(nuevaFecha);
 
             Assert.AreEqual(nuevaFecha, _proyecto.FechaInicio);
