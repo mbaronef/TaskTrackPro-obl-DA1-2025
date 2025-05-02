@@ -47,6 +47,11 @@ public class GestorRecursos
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         }
         Recursos.Remove(recurso);
+        if (recurso.EsExclusivo())
+        {
+            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
+            adminProyecto.RecibirNotificacion($"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}");
+        }
     }
 
     public void ModificarNombreRecurso(Usuario solicitante, int idRecurso, string nuevoNombre)
