@@ -72,6 +72,7 @@ public class GestorRecursos
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
         }
         recurso.ModificarTipo(nuevoTipo);
+        NotificarModificacion(recurso, recurso.Nombre);
     }
 
     public void ModificarDescripcionRecurso(Usuario solicitante, int idRecurso, string nuevaDescripcion)
