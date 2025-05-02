@@ -1,5 +1,7 @@
 using Dominio;
 using Dominio.Excepciones;
+using Servicios.Gestores;
+using Servicios.Utilidades;
 
 namespace Tests;
 
@@ -15,13 +17,14 @@ public class GestorUsuariosTests
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(GestorUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         
-        _adminSistema = new Usuario("admin", "admin", new DateTime(1999,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
+        _adminSistema = CrearUsuario("admin", "admin", "admin@admin.com", "AdminTaskTrackPro@2025");
         _gestorUsuarios = new GestorUsuarios(_adminSistema); // Primer admin sistema siempre tiene ID 0
     }
     
     private Usuario CrearUsuario(string nombre, string apellido, string email, string contrasena)
     {
-        return new Usuario(nombre, apellido, new DateTime(2007,4,28), email, contrasena);
+        string contrasenaEncriptada = UtilidadesContrasena.EncriptarContrasena(contrasena);
+        return new Usuario(nombre, apellido, new DateTime(2007,4,28), email, contrasenaEncriptada);
     }
     
     private Usuario CrearYAsignarAdminSistema()
@@ -52,7 +55,7 @@ public class GestorUsuariosTests
         Assert.AreSame(usuario2, _gestorUsuarios.Usuarios[2]);
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminDeSistemaNoPuedeAgregarUsuario()
     {   
@@ -87,14 +90,14 @@ public class GestorUsuariosTests
         Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[1]);
     }
     
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void GestorNoEliminaPrimerAdministradorSistema()
     {
         _gestorUsuarios.EliminarUsuario(_adminSistema,0);
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminDeSistemaNoPuedeEliminarUsuario()
     {
@@ -125,7 +128,7 @@ public class GestorUsuariosTests
         Assert.AreEqual(usuario1, busqueda);
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void ErrorSiSeBuscaUnUsuarioNoRegistrado()
     {
@@ -139,7 +142,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuario.EsAdministradorSistema);
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void SoloUnAdminDeSistemaPuedeAsignarOtro()
     {
@@ -162,7 +165,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(nuevoAdminProyecto.EsAdministradorProyecto);
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminSistemaNoPuedeAsignarAdministradorProyecto()
     {
@@ -187,7 +190,7 @@ public class GestorUsuariosTests
         Assert.IsFalse(nuevoAdminProyecto.EsAdministradorProyecto);
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminSistemaNoPuedeEliminarAdministradorProyecto()
     {
@@ -202,7 +205,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void ErrorEliminarAdministradorProyectoSiUsuarioNoEsAdministradorProyecto()
     {
@@ -213,7 +216,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
     
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void ErrorEliminarAdministradorProyectoSiUsuarioEstaAdministrandoUnProyecto()
     {
@@ -261,7 +264,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuario.Autenticar("TaskTrackPro@2025"));
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoNoPuedeReiniciarContrasena()
     {
@@ -306,7 +309,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminDeSistemaNiDeProyectoPuedeAutogenerarContrasena()
     {
@@ -356,7 +359,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoNoPuedeModificarContrasena()
     {
@@ -367,6 +370,34 @@ public class GestorUsuariosTests
         
         string nuevaContrasena = "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuarioSolicitante, usuarioObjetivo.Id, nuevaContrasena);
+    }
+    
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void DaErrorSiSeCambiaContrasenaInvalida()
+    {
+        Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
+        string nuevaContrasena = "c1.A";
+        _gestorUsuarios.ModificarContrasena(usuario, usuario.Id, nuevaContrasena);
+    }
+
+    [TestMethod]
+    public void NoSeCambiaContrasenaInvalida()
+    {
+        Usuario usuario = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario);
+        string nuevaContrasena = "c1.A";
+        try
+        {
+            _gestorUsuarios.ModificarContrasena(usuario, usuario.Id, nuevaContrasena);
+        }
+        catch
+        {
+        } // Ignorar la excepción
+
+        Assert.IsFalse(usuario.Autenticar(nuevaContrasena));
+        Assert.IsTrue(usuario.Autenticar("Contrase#a3"));
     }
 
     [TestMethod]
@@ -478,7 +509,7 @@ public class GestorUsuariosTests
         Assert.AreEqual(usuario, obtenido);
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void LoginIncorrectoConContraseñaIncorrecta()
     {
@@ -487,11 +518,12 @@ public class GestorUsuariosTests
         Usuario obtenido = _gestorUsuarios.LogIn(usuario.Email, "ContraseñaIncorrecta");
     }
 
-    [ExpectedException(typeof(ExcepcionDominio))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void LoginIncorrectoConEmailNoRegistrado()
     {
         Usuario obtenido = _gestorUsuarios.LogIn("unemail@noregistrado.com", "unaContraseña");
     }
+    
 }
 
