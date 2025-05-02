@@ -35,7 +35,12 @@ public class GestorRecursos
 
     public Recurso ObtenerRecursoPorId(int idRecurso)
     {
-        return Recursos.FirstOrDefault(recurso => recurso.Id == idRecurso);
+        Recurso recurso = Recursos.FirstOrDefault(recurso => recurso.Id == idRecurso);
+        if (recurso == null)
+        {
+            throw new ExcepcionServicios("Recurso no existente");
+        }
+        return recurso;
     }
 
 }
