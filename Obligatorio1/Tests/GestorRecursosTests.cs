@@ -56,4 +56,17 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(usuario, recurso);
     }
 
+    [TestMethod]
+    public void AdminProyectoAgregaRecursoExclusivo()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
+        adminProyecto.EsAdministradorProyecto = true;
+        
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+        
+        Assert.IsTrue(recurso.EsExclusivo());
+    }
+
 }
