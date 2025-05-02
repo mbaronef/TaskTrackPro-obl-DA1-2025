@@ -198,6 +198,22 @@ public class GestorRecursosTests
         Assert.AreEqual("Nuevo nombre", recurso.Nombre);
     }
 
+    [TestMethod]
+    public void AdminProyectoModificaNombreDeRecursoExclusivoOk()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
+        adminProyecto.EsAdministradorProyecto = true;
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+        
+        _gestorRecursos.ModificarNombreRecurso(adminProyecto, recurso.Id, "Nuevo nombre");
+        Assert.AreEqual("Nuevo nombre", recurso.Nombre);
+    }
+
 
 }
 
