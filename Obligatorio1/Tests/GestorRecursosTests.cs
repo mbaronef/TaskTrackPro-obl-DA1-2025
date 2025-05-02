@@ -152,4 +152,18 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
         Assert.AreEqual(0,_gestorRecursos.Recursos.Count());
     }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void AdminProyectoNoPuedeEliminarRecursoNoExclusivo()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso);
+        
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
+        adminProyecto.EsAdministradorProyecto = true;
+        
+        _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
+    }
 }
