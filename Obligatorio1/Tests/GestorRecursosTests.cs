@@ -137,4 +137,19 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.EliminarRecurso(usuario, recurso.Id);
     }
+
+    [TestMethod]
+    public void AdminProyectoEliminaRecursoExclusivo()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000,01,01), "unemail@gmail.com", contrasenaEncriptada);
+        adminProyecto.EsAdministradorProyecto = true;
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+        _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
+        Assert.AreEqual(0,_gestorRecursos.Recursos.Count());
+    }
 }
