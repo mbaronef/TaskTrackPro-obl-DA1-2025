@@ -329,6 +329,71 @@ public class GestorRecursosTests
         
         _gestorRecursos.ModificarTipoRecurso(otroAdminProyecto, recurso.Id, "Nuevo tipo");
     }
+    
+    [TestMethod]
+    public void AdminSistemaModificaDescripcionDeRecursoOk()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso);
+        _gestorRecursos.ModificarDescripcionRecurso(admin, recurso.Id, "Nueva descripción");
+        Assert.AreEqual("Nueva descripción", recurso.Descripcion);
+    }
+
+    [TestMethod]
+    public void AdminProyectoModificaDescripcionDeRecursoExclusivoOk()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        adminProyecto.EsAdministradorProyecto = true;
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+
+        _gestorRecursos.ModificarDescripcionRecurso(adminProyecto, recurso.Id, "Nueva descripción");
+        Assert.AreEqual("Nueva descripción", recurso.Descripcion);
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoAdminSistemaNiAdminProyectoPuedeModificarDescripcion()
+    {
+        Usuario admin = CrearAdministradorSistema();
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(admin, recurso);
+        _gestorRecursos.ModificarDescripcionRecurso(usuario, recurso.Id, "Nueva descripción");
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void AdminProyectoNoPuedeModificarDescripciónDeRecursosNoExclusivosDeSuProyecto()
+    {
+        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        adminProyecto.Id = 1; // lo hace el gestor de usuarios
+        adminProyecto.EsAdministradorProyecto = true;
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        
+        Usuario otroAdminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
+        otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
+        otroAdminProyecto.EsAdministradorProyecto = true;
+        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
+        
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
+        
+        _gestorRecursos.ModificarDescripcionRecurso(otroAdminProyecto, recurso.Id, "Nueva descripción");
+    }
 
 }
 

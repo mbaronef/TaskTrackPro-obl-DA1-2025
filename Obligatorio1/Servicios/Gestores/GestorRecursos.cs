@@ -105,5 +105,23 @@ public class GestorRecursos
         }
         recurso.ModificarTipo(nuevoTipo);
     }
+    
+    public void ModificarDescripcionRecurso(Usuario solicitante, int idRecurso, string nuevaDescripcion)
+    {
+        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
+        {
+            throw new ExcepcionServicios("No tiene los permisos necesarios para modificar el tipo de un recurso");
+        }
+        Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        if (solicitante.EsAdministradorProyecto)
+        {
+            Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoPorAdministrador(solicitante.Id);
+            if(!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
+            {
+                throw new ExcepcionServicios("No tiene los permisos necesarios para modificar recursos que no son exclusivos de su proyecto");
+            }
+        }
+        recurso.ModificarDescripcion(nuevaDescripcion);
+    }
 
 }
