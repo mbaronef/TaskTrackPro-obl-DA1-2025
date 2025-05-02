@@ -84,6 +84,7 @@ public class GestorRecursos
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
         }
         recurso.ModificarDescripcion(nuevaDescripcion);
+        NotificarModificacion(recurso, recurso.Nombre);
     }
 
     private void VerificarPermisoAdminSistemaOAdminProyecto(Usuario usuario, string accion)
