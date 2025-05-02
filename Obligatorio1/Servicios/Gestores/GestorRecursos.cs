@@ -43,4 +43,10 @@ public class GestorRecursos
         return recurso;
     }
 
+    public void EliminarRecurso(Usuario solicitante, int idRecurso)
+    {
+        Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        Recursos.Remove(recurso);
+    }
+
 }
