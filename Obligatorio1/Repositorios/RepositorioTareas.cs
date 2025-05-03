@@ -46,7 +46,8 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void ModificarDuracion(int idTarea, int duracion)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.ModificarDuracion(duracion);
     }
 
     public void ModificarFechaInicioMasTemprana(int idTarea, DateTime fechaInicioMasTemprana)
