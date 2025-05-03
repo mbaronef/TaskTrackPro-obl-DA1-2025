@@ -81,6 +81,7 @@ public class Proyecto
     public void ModificarFechaInicio(DateTime nuevaFecha)
     {
         ValidarFechaInicioMayorAActual(nuevaFecha);
+        ValidarFechaInicioNoPosteriorAFechaInicioDeTareas(nuevaFecha);
         
         FechaInicio = nuevaFecha;
     }
@@ -205,6 +206,12 @@ public class Proyecto
     {
         if (fecha < DateTime.Now.Date)
             throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
+    }
+    
+    private void ValidarFechaInicioNoPosteriorAFechaInicioDeTareas(DateTime nuevaFecha)
+    {
+        if (Tareas.Any(t => t.FechaInicio < DateTime.MaxValue && nuevaFecha > t.FechaInicio))
+            throw new ExcepcionDominio("La fecha de inicio no puede ser posterior a la de alguna tarea.");
     }
 
 
