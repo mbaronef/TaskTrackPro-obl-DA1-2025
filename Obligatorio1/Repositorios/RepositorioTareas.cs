@@ -34,7 +34,8 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void ModificarTitulo(int idTarea, string titulo)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.ModificarTitulo(titulo);
     }
 
     public void ModificarDescripcion(int idTarea, string descripcion)
