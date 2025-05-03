@@ -72,4 +72,13 @@ public class RepositorioTareasTests
         _repositorioTareas.ModificarDuracion(_tarea.Id, 10);
         Assert.AreEqual(10, _tarea.DuracionEnDias);
     }
+
+    [TestMethod]
+    public void SeModificaLaFechaDeInicioMasTempranaDeLaTareaOk()
+    {
+        DateTime fecha = new DateTime(2040, 2, 2);
+        _repositorioTareas.Agregar(_tarea);
+        _repositorioTareas.ModificarFechaInicioMasTemprana(_tarea.Id, fecha);
+        Assert.AreEqual(fecha, _tarea.FechaInicioMasTemprana);
+    }
 }
