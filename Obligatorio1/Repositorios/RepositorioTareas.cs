@@ -14,7 +14,7 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void Agregar(Tarea objeto)
     {
-        throw new NotImplementedException();
+        _tareas.Add(objeto);
     }
 
     public Tarea ObtenerPorId(int id)
