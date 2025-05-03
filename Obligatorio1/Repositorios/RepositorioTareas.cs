@@ -94,7 +94,8 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void AgregarRecursoNecesario(int idTarea, Recurso recursoNecesario)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.AgregarRecurso(recursoNecesario);
     }
 
     public void EliminarRecursoNecesario(int idTarea, Recurso recursoNecesario)
