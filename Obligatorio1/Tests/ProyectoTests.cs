@@ -364,6 +364,17 @@ namespace Tests
             _proyecto.ModificarFechaFinMasTemprana(new DateTime(2026, 5, 1));
         }
         
+        [TestMethod]
+        public void ModificarFechaFinMasTemprana_ActualizaCorrectamente()
+        {
+            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
+            DateTime fecha = _proyecto.FechaInicio.AddDays(10);
+
+            _proyecto.ModificarFechaFinMasTemprana(fecha);
+
+            Assert.AreEqual(fecha, _proyecto.FechaFinMasTemprana);
+        }
+        
         // modificationNombre (En GESTOR: solo admin proyecto puede)
         
         [TestMethod]
