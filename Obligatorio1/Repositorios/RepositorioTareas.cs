@@ -74,9 +74,10 @@ public class RepositorioTareas : IRepositorioTareas
         tarea.CambiarEstado(estado);
     }
 
-    public void ModificarHolgura(int idTarea, int holgura)
+    public void ModificarHolgura(int idTarea, float holgura)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.Holgura = holgura;
     }
 
     public void AgregarUsuario(int idTarea, Usuario usuarioAsignado)

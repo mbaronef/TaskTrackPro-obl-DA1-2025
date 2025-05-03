@@ -11,7 +11,7 @@ public interface IRepositorioTareas : IRepositorio<Tarea>
     void ModificarFechaFinMasTemprana(int idTarea, DateTime fechaFinMasTemprana);
     void ModificarFechaDeEjecucion(int idTarea, DateTime fechaDeEjecucion);
     void ModificarEstado(int idTarea, EstadoTarea estado);
-    void ModificarHolgura(int idTarea, int holgura);
+    void ModificarHolgura(int idTarea, float holgura);
     void AgregarUsuario(int idTarea, Usuario usuarioAsignado);
     void EliminarUsuario(int idTarea, int idUsuarioAsignado);
     void AgregarRecursoNecesario(int idTarea, Recurso recursoNecesario);
