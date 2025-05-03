@@ -29,7 +29,7 @@ public class RepositorioTareas : IRepositorioTareas
 
     public List<Tarea> ObtenerTodos()
     {
-        throw new NotImplementedException();
+        return _tareas;
     }
 
     public void ModificarTitulo(int idTarea, string titulo)
