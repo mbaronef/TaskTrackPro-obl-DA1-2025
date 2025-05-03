@@ -40,7 +40,8 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void ModificarDescripcion(int idTarea, string descripcion)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.ModificarDescripcion(descripcion);
     }
 
     public void ModificarDuracion(int idTarea, int duracion)
