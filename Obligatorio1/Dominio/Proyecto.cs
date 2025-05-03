@@ -91,7 +91,7 @@ public class Proyecto
         ValidarFechaFinMayorAInicio(nuevaFecha);
         ValidarFechaFinNoMenorALaDeLasTareas(nuevaFecha);
 
-        //FechaFinMasTemprana = nuevaFecha;
+        FechaFinMasTemprana = nuevaFecha;
     }
     
     public void ModificarNombre(string nombreNuevo)
