@@ -8,4 +8,5 @@ public class Tarea
     public DateTime FechaFinMasTemprana { get; set; }
     
     public List<Recurso> RecursosNecesarios { get; set; } = new List<Recurso>();
+
 }
