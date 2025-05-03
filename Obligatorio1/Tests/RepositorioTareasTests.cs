@@ -38,4 +38,14 @@ public class RepositorioTareasTests
         _repositorioTareas.Eliminar(_tarea.Id);
         Assert.IsNull(_repositorioTareas.ObtenerPorId(_tarea.Id));
     }
+    
+    [TestMethod]
+    public void SeObtieneLaListaDeTareasOk()
+    {
+        _repositorioTareas.Agregar(_tarea);
+        List<Tarea> tareas = _repositorioTareas.ObtenerTodos();
+        Assert.IsNotNull(tareas);
+        Assert.AreEqual(1, tareas.Count);
+        Assert.AreEqual(_tarea, tareas.Last());
+    }
 }
