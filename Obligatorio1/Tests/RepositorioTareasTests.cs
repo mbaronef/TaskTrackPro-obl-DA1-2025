@@ -128,4 +128,15 @@ public class RepositorioTareasTests
         Assert.AreEqual(1, _tarea.UsuariosAsignados.Count);
         Assert.AreEqual(miembro, _tarea.UsuariosAsignados.Last());
     }
+    
+    [TestMethod]
+    public void SeEliminaMiembroOk()
+    {
+        _repositorioTareas.Agregar(_tarea);
+        Usuario miembro = new Usuario("Mateo", "Pérez", new DateTime(2003, 2, 2), "unemail@gmail.com", "UnAc0ntr4señ@");
+        miembro.Id = 1; // lo maneja internamente el gestor
+        _repositorioTareas.AgregarUsuario(_tarea.Id, miembro);
+        _repositorioTareas.EliminarUsuario(_tarea.Id, miembro.Id);
+        Assert.AreEqual(0g,_tarea.UsuariosAsignados.Count);
+    }
 }
