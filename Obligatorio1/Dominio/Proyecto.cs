@@ -218,7 +218,6 @@ public class Proyecto
     // TODO:
     // FALTA:
     // agregar fecha inicio al constructor y verificar que sea mayor que la actual y menor a la fecha fin mas temprana
-    // validar que fecha inicio cuando se modifique no sea posterior a la fecha inicio de ninguna de las tareas
     // ModificarFechaFinMasTemprana, con sus respectivas validaciones:(que sea posterior a fechaInicio y que no sea menor a la fecha fin de ninguna de las tareas).
     
     // -> REFACTOR 

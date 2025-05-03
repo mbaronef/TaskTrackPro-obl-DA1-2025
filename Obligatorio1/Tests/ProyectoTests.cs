@@ -340,7 +340,18 @@ namespace Tests
             _proyecto.ModificarFechaInicio(new DateTime(2027, 1, 1));
         }
         
-        // modificarNombre (En GESTOR: solo admin proyecto puede)
+        //modificar fecha de fin mas temprana
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaFinMasTemprana_LanzaExcepcionSiEsAnteriorALaFechaInicio()
+        {
+            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
+            DateTime nuevaFechaFin = _proyecto.FechaInicio.AddDays(-1);
+            _proyecto.ModificarFechaFinMasTemprana(nuevaFechaFin);
+        }
+        
+        // modificationNombre (En GESTOR: solo admin proyecto puede)
         
         [TestMethod]
         public void ModificarNombre_DeberiaActualizarElNombre()
