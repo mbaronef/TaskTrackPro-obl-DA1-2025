@@ -114,7 +114,7 @@ public class Proyecto
     
     public void AsignarNuevoAdministrador(Usuario nuevoAdministrador)
     {
-        ValidarUsuarioEnMiembros(idNuevoAdministrador);
+        ValidarUsuarioEnMiembros(nuevoAdministrador.Id);
         
         foreach (Usuario usuario in Miembros)
         {
