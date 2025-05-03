@@ -809,6 +809,30 @@ namespace Tests
                 Assert.AreEqual(esperado, miembro.Notificaciones[1].Mensaje);
             }
         }
+        
+        //obtenerProyectoDelAdministrador
+        
+        [TestMethod]
+        public void ObtenerProyectoDelAdministrador_DevuelveProyectoCorrecto()
+        {
+            Usuario admin = CrearAdminProyecto(1);
+            Proyecto proyecto = CrearProyectoCon( admin);
+            _gestor.CrearProyecto(proyecto, admin);
+
+            Proyecto resultado = _gestor.ObtenerProyectoDelAdministrador(admin.Id);
+
+            Assert.AreEqual(proyecto, resultado);
+        }
+        
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ObtenerProyectoDelAdministrador_LanzaExcepcionSiNoExisteProyectoConEseAdmin()
+        {
+            Usuario admin = CrearAdminProyecto(1);
+
+            _gestor.ObtenerProyectoDelAdministrador(admin.Id);
+        }
 
         //eliminar tarea del proyecto
 

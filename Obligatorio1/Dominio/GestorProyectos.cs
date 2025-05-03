@@ -167,6 +167,17 @@ public class GestorProyectos
     {
         return Proyectos.Where(proyecto => proyecto.Miembros.Any(usuario => usuario.Id == idUsuario)).ToList();
     }
+    
+    public Proyecto ObtenerProyectoDelAdministrador(int idAdministrador)
+    {
+        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Administrador.Id == idAdministrador);
+        
+        if (proyecto == null)
+            throw new ExcepcionDominio("No se encontró un proyecto administrado por ese usuario.");
+
+        return proyecto;
+    }
+
 
     private Proyecto ObtenerProyecto(int id)
     {
