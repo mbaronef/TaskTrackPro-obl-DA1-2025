@@ -120,9 +120,9 @@ public class Proyecto
         {
             if (usuario.Equals(nuevoAdministrador))
             {
-                Administrador.EstaAdministrandoProyecto = false;
+                Administrador.EstaAdministrandoUnProyecto = false;
                 Administrador = usuario;
-                Administrador.EstaAdministrandoProyecto = true;
+                Administrador.EstaAdministrandoUnProyecto = true;
             }
         }
     }
@@ -131,15 +131,13 @@ public class Proyecto
     {
         foreach (Usuario usuario in Miembros)
         {
-            Notificacion nuevaNotificacion = new Notificacion(mensaje);
-            usuario.RecibirNotificacion(nuevaNotificacion);
+            usuario.RecibirNotificacion(mensaje);
         }
     }
 
     public void NotificarAdministrador(string mensaje)
     {
-        Notificacion notificacion = new Notificacion(mensaje);
-        Administrador.RecibirNotificacion(notificacion);
+        Administrador.RecibirNotificacion(mensaje);
     }
 
     public bool EsMiembro(int idUsuario)

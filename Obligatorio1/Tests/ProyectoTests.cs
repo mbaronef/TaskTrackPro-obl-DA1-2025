@@ -16,9 +16,10 @@ namespace Tests
         [TestInitialize]
         public void AntesDeCadaTest()
         {
-            _gestorUsuarios = new GestorUsuarios();
+            Usuario adminSistema = CrearAdminSistema();
+            _gestorUsuarios = new GestorUsuarios(adminSistema);
             _admin = CrearAdmin();
-            _gestorUsuarios.agregarUsuario(_admin);
+            _gestorUsuarios.AgregarUsuario(adminSistema, _admin);
             _miembros = new List<Usuario>();
         }
         
@@ -223,7 +224,7 @@ namespace Tests
         {
             _proyecto = CrearProyectoCon(_admin);
 
-            Usuario nuevoMiembro = new Usuario();
+            Usuario nuevoMiembro = CrearMiembro();
 
             _proyecto.AsignarMiembro(nuevoMiembro);
 
@@ -268,9 +269,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void EliminarMiembro_LanzaExcepcionSiElUsuarioNoExisteEnMiembros()
         {
-            _admin.Id = 1;
-            Usuario miembro = new Usuario();
-            miembro.Id = 2;
+            Usuario miembro = CrearMiembro();
             _proyecto = CrearProyectoCon(_admin);
             
             _proyecto.AsignarMiembro(miembro);
@@ -281,9 +280,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void EliminarMiembro_LanzaExcepcionSiUsuarioEsAdministrador()
         {
-            _admin.Id = 1;
-            Usuario miembro = new Usuario();
-            miembro.Id = 2;
+            Usuario miembro = CrearMiembro();
             
             _proyecto = CrearProyectoCon(_admin);
             
@@ -305,9 +302,10 @@ namespace Tests
         [TestMethod]
         public void EsAdministrador_RetornarFalseSiUsuarioNoEsAdministrador()
         {
-            Usuario otro = new Usuario();
+            Usuario adminSistema = CrearAdminSistema();
+            Usuario otro = CrearMiembro();
             _proyecto = CrearProyectoCon(_admin, _miembros);
-            _gestorUsuarios.agregarUsuario(otro);
+            _gestorUsuarios.AgregarUsuario(adminSistema, otro);
             _proyecto.AsignarMiembro(otro);
             bool resultado = _proyecto.EsAdministrador(otro);
             Assert.IsFalse(resultado);
@@ -504,7 +502,7 @@ namespace Tests
         {
             _admin.Id = 1;
     
-            Usuario miembro = new Usuario();
+            Usuario miembro = CrearMiembro();
             
             _proyecto = CrearProyectoCon(_admin);
 
@@ -515,7 +513,7 @@ namespace Tests
         [TestMethod]
         public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
         {
-            Usuario miembro = new Usuario();
+            Usuario miembro = CrearMiembro();
             _proyecto = CrearProyectoCon(_admin);
             _proyecto.AsignarMiembro(miembro);
             _proyecto.NotificarMiembros("Se modificó el proyecto.");
@@ -573,7 +571,7 @@ namespace Tests
         [TestMethod]
         public void EsMiembro_PorObjeto_DevuelveFalseSiUsuarioNoPertenece()
         {
-            Usuario otro = new Usuario();
+            Usuario otro = CrearMiembro();
             Usuario admin = CrearAdmin();
             Usuario miembro = CrearMiembro();
             Proyecto proyecto = CrearProyectoCon(admin, new List<Usuario> { miembro });
@@ -621,15 +619,25 @@ namespace Tests
         }
         
         //HELPERS
-        
+        private Usuario CrearAdminSistema()
+        {
+            Usuario adminSistema = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
+            adminSistema.EsAdministradorSistema = true;
+            return adminSistema;
+        }
+
         private Usuario CrearAdmin(int id = 1)
         {
-            return new Usuario { Id = id, EsAdministradorProyecto = true };
+            Usuario admin = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
+            admin.EsAdministradorProyecto = true;
+            return admin;
+            
         }
 
         private Usuario CrearMiembro(int id = 2)
         {
-            return new Usuario { Id = id };
+            Usuario miembro = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
+            return miembro;
         }
 
         private Proyecto CrearProyectoCon(Usuario admin, List<Usuario> miembros = null)

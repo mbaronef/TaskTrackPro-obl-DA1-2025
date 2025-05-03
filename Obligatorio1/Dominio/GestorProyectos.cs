@@ -21,7 +21,7 @@ public class GestorProyectos
         proyecto.AsignarId(_cantidadProyectos);
         Proyectos.Add(proyecto);
 
-        solicitante.EstaAdministrandoProyecto = true;
+        solicitante.EstaAdministrandoUnProyecto = true;
 
         proyecto.NotificarMiembros($"Se creó el proyecto '{proyecto.Nombre}'.");
     }
@@ -32,7 +32,7 @@ public class GestorProyectos
 
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
-        solicitante.EstaAdministrandoProyecto = false;
+        solicitante.EstaAdministrandoUnProyecto = false;
         Proyectos.Remove(proyecto);
 
         proyecto.NotificarMiembros($"Se eliminó el proyecto '{proyecto.Nombre}'.");
@@ -100,9 +100,9 @@ public class GestorProyectos
 
         VerificarUsuarioTengaPermisosDeAdminProyecto(nuevoAdmin, "el nuevo administrador");
         
-        proyecto.Administrador.EstaAdministrandoProyecto = false;
+        proyecto.Administrador.EstaAdministrandoUnProyecto = false;
         proyecto.Administrador = nuevoAdmin;
-        nuevoAdmin.EstaAdministrandoProyecto = true;
+        nuevoAdmin.EstaAdministrandoUnProyecto = true;
         
         proyecto.NotificarMiembros($"Se cambió el administrador del proyecto '{proyecto.Nombre}'. El nuevo administrador es '{nuevoAdmin}'.");
     }
@@ -205,7 +205,7 @@ public class GestorProyectos
 
     private void VerificarUsuarioNoAdministraOtroProyecto(Usuario usuario)
     {
-        if (usuario.EstaAdministrandoProyecto)
+        if (usuario.EstaAdministrandoUnProyecto)
             throw new ExcepcionDominio("El usuario ya está administrando un proyecto.");
     }
 
