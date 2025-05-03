@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using Dominio.Excepciones;
 
 namespace Dominio.Dummies;
@@ -258,5 +259,14 @@ public class Tarea
         Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
         ValidarObjetoNoNull(dependenciaAEliminar, "La dependencia no se encuentra dentro de la lista de dependencias.");
         Dependencias.Remove(dependenciaAEliminar);
+    }
+
+    public void ModificarFechaFinMasTemprana(DateTime fechaFinMasTemprana)
+    {
+        if (fechaFinMasTemprana < FechaInicioMasTemprana)
+        {
+            throw new ExcepcionDominio("La fecha de fin no puede ser anterior a la de inicio.");
+        }
+        FechaFinMasTemprana = fechaFinMasTemprana;
     }
 }
