@@ -131,18 +131,20 @@ public class Proyecto
     {
         foreach (Usuario usuario in Miembros)
         {
-            usuario.RecibirNotificacion(mensaje);
+            Notificacion nuevaNotificacion = new Notificacion(mensaje);
+            usuario.RecibirNotificacion(nuevaNotificacion);
         }
     }
 
     public void NotificarAdministrador(string mensaje)
     {
-        Administrador.RecibirNotificacion(mensaje);
+        Notificacion notificacion = new Notificacion(mensaje);
+        Administrador.RecibirNotificacion(notificacion);
     }
 
     public bool EsMiembro(int idUsuario)
     {
-        return Miembros.Any(usuario => usuario.Id == idUsuario);
+        return Miembros.Any(u => u.Id == idUsuario);
     }
 
     public bool EsMiembro(Usuario usuario)
@@ -153,12 +155,12 @@ public class Proyecto
 
     private Tarea BuscarTareaPorId(int id)
     {
-        return Tareas.FirstOrDefault(tarea => tarea.Id == id);
+        return Tareas.FirstOrDefault(t => t.Id == id);
     }
 
     private Usuario BuscarUsuarioPorId(int id)
     {
-        return Miembros.FirstOrDefault(usuario => usuario.Id == id);
+        return Miembros.FirstOrDefault(u => u.Id == id);
     }
 
     private void ValidarLargoDescripción(string descripcion)
@@ -219,7 +221,7 @@ public class Proyecto
     
     private void ValidarFechaInicioNoPosteriorAFechaInicioDeTareas(DateTime nuevaFecha)
     {
-        if (Tareas.Any(tarea => tarea.FechaInicio < DateTime.MaxValue && nuevaFecha > tarea.FechaInicio))
+        if (Tareas.Any(t => nuevaFecha > t.FechaInicio))
             throw new ExcepcionDominio("La fecha de inicio no puede ser posterior a la de alguna tarea.");
     }
     
@@ -244,5 +246,16 @@ public class Proyecto
             throw new ExcepcionDominio("La fecha de inicio no puede ser la misma que la fecha de fin más temprana.");
 
         }
+    }
+    
+    public override bool Equals(object? otro)
+    {
+        bool retorno = false;
+        Proyecto otroProyecto = otro as Proyecto;
+        if (otroProyecto != null)
+        {
+            retorno = otroProyecto.Id == Id;
+        }
+        return retorno;
     }
 }

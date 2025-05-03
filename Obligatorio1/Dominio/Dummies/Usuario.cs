@@ -11,9 +11,8 @@ public class Usuario
     public bool EstaAdministrandoProyecto { get; set; }
     public List<Notificacion>  Notificaciones { get; }  = new List<Notificacion>();
 
-    public void RecibirNotificacion(string mensaje)
+    public void RecibirNotificacion(Notificacion notificacion)
     {
-        Notificacion notificacion = new Notificacion(mensaje);
         Notificaciones.Add(notificacion);
     }
 

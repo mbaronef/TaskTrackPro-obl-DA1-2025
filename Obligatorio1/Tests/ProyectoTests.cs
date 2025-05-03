@@ -582,6 +582,45 @@ namespace Tests
             Assert.IsFalse(proyecto.EsMiembro(otro));
         }
         
+        //equals:
+        
+        
+        [TestMethod]
+        public void Equals_RetornaTrueSiLosIdsNoSonIguales()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            bool sonIguales = proyecto1.Equals(proyecto1);
+            Assert.IsTrue(sonIguales);
+        }
+
+        [TestMethod]
+        public void Equals_RetornaFalseSiLosIdsNoSonIguales()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            Usuario otroAdmin = CrearAdmin(2);
+            Proyecto proyecto2 = CrearProyectoCon(otroAdmin);
+            proyecto2.Id = 1;
+            bool sonIguales = proyecto1.Equals(proyecto2);
+            Assert.IsFalse(sonIguales);
+        }
+
+        [TestMethod]
+        public void Equals_RetornaFalseSiUnObjetoEsNull()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            bool sonIguales = proyecto1.Equals(null);
+            Assert.IsFalse(sonIguales);
+        }
+
+        [TestMethod]
+        public void Equals_RetornaFalseSiUnObjetoNoEsProyecto()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            int otro = 0;
+            bool sonIguales = proyecto1.Equals(otro);
+            Assert.IsFalse(sonIguales);
+        }
+        
         //HELPERS
         
         private Usuario CrearAdmin(int id = 1)
