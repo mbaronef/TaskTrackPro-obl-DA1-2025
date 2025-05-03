@@ -47,7 +47,8 @@ namespace Tests
         private Proyecto CrearProyectoCon(Usuario admin, List<Usuario> miembros = null)
         {
             miembros ??= new List<Usuario>();
-            return new Proyecto("Proyecto", "Descripcion", admin, miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            return new Proyecto("Proyecto", "Descripcion",fechaInicio, admin, miembros);
         }
 
         private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
@@ -711,28 +712,6 @@ namespace Tests
             {
                 Assert.IsTrue(usuario.Notificaciones.Any(n => n.Mensaje == esperado));
             }
-        }
-
-        // obtenerTodosLosProyectos
-
-        [TestMethod]
-        public void ObtenerTodosLosProyectos_DevuelveListaCompleta()
-        {
-            Usuario admin1 = new Usuario { EsAdministradorProyecto = true };
-            Usuario admin2 = new Usuario { EsAdministradorProyecto = true };
-
-            GestorProyectos gestor = new GestorProyectos();
-            Proyecto proyecto1 = new Proyecto("Proyecto 1", "Desc", admin1, new List<Usuario> { });
-            Proyecto proyecto2 = new Proyecto("Proyecto 2", "Desc", admin2, new List<Usuario> { });
-
-            gestor.CrearProyecto(proyecto1, admin1);
-            gestor.CrearProyecto(proyecto2, admin2);
-
-            List<Proyecto> lista = gestor.ObtenerTodosLosProyectos();
-
-            Assert.AreEqual(2, lista.Count);
-            CollectionAssert.Contains(lista, proyecto1);
-            CollectionAssert.Contains(lista, proyecto2);
         }
 
         // obtenerProyectosPorUsuario

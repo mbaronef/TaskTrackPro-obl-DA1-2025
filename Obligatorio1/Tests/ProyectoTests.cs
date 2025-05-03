@@ -28,13 +28,16 @@ namespace Tests
         {
             string nombre = "Proyecto 1";
             string descripcion = "Descripción";
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
             
-            _proyecto = new Proyecto (nombre, descripcion, _admin, _miembros);
+            _proyecto = new Proyecto (nombre, descripcion, fechaInicio, _admin, _miembros);
             
             Assert.AreEqual(nombre, _proyecto.Nombre);
             Assert.AreEqual(descripcion, _proyecto.Descripcion);
             Assert.AreEqual(_admin, _proyecto.Administrador);
             Assert.AreEqual(_miembros, _proyecto.Miembros);
+            Assert.AreEqual(fechaInicio, _proyecto.FechaInicio);
+            Assert.AreEqual(fechaInicio.AddDays(100000), _proyecto.FechaFinMasTemprana);
         }
         
         [TestMethod]
@@ -42,16 +45,18 @@ namespace Tests
         public void Constructor_LanzaExcepcionSiDescripcionSupera400Caracteres()
         {
             string descripcion = new string('a', 401); 
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
 
-            _proyecto = new Proyecto("Proyecto", descripcion, _admin, _miembros);
+            _proyecto = new Proyecto("Proyecto", descripcion,fechaInicio, _admin, _miembros);
         }
         
         [TestMethod]
         public void Constructor_PermiteDescripcionConMenosDe400Caracteres()
         {
             string descripcion = new string('a', 399);
-
-            _proyecto = new Proyecto("Proyecto", descripcion, _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            
+            _proyecto = new Proyecto("Proyecto", descripcion,fechaInicio, _admin, _miembros);
 
             Assert.AreEqual(descripcion, _proyecto.Descripcion);
         }
@@ -60,8 +65,9 @@ namespace Tests
         public void Constructor_PermiteDescripcionDeHasta400Caracteres()
         {
             string descripcion = new string('a', 400); // 400 caracteres exactos
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
             
-            _proyecto = new Proyecto("Proyecto", descripcion,  _admin, _miembros);
+            _proyecto = new Proyecto("Proyecto", descripcion, fechaInicio,  _admin, _miembros);
 
             Assert.AreEqual(descripcion, _proyecto.Descripcion);
         }
@@ -70,42 +76,74 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiNombreEsVacio()
         { 
-            _proyecto = new Proyecto("", "Descripción válida",  _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("", "Descripción válida",fechaInicio,  _admin, _miembros);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiNombreEsNull()
         {
-            _proyecto = new Proyecto(null, "Descripción válida",  _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto(null, "Descripción válida", fechaInicio, _admin, _miembros);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiDescripcionEsVacia()
         { 
-            _proyecto = new Proyecto("Nombre válido", "",  _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Nombre válido", "",  fechaInicio, _admin, _miembros);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiDescripcionEsNull()
         {
-            _proyecto = new Proyecto("Nombre válido", null,  _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Nombre válido", null, fechaInicio, _admin, _miembros);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void Constructor_LanzaExcepcionSiFechaInicioEsMenorQueHoy()
+        {
+            DateTime fechaInvalida = DateTime.Today.AddDays(-1);
+            _proyecto = new Proyecto("Proyecto", "Descripción", fechaInvalida, _admin, _miembros);
+        }
+        
+        [TestMethod]
+        public void Constructor_AsignaCorrectamenteFechaInicio()
+        {
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Proyecto", "Descripción", fechaInicio, _admin, _miembros);
+
+            Assert.AreEqual(fechaInicio, _proyecto.FechaInicio);
+        }
+        
+        [TestMethod]
+        public void Constructor_AsignaFechaFinMasTempranaSegunFechaInicio()
+        {
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Proyecto", "Descripción", fechaInicio, _admin, _miembros);
+
+            Assert.AreEqual(fechaInicio.AddDays(100000), _proyecto.FechaFinMasTemprana);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiAdministradorEsNull()
         {
-            _proyecto = new Proyecto("Nombre", "Descripción",  null, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Nombre", "Descripción", fechaInicio, null, _miembros);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiMiembrosEsNull()
         {
-            _proyecto = new Proyecto("Nombre", "Descripción",  _admin, null);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Nombre", "Descripción",fechaInicio,  _admin, null);
         }
         
         //Asignar ID
@@ -117,28 +155,6 @@ namespace Tests
             Proyecto proyecto = CrearProyectoCon(admin);
             proyecto.AsignarId(42);
             Assert.AreEqual(42, proyecto.Id);
-        }
-        
-        // validacion de parametros: FechaInicio y FechaFinMasTemprana
-        
-        [TestMethod]
-        public void FechaInicio_InicializadaConFechaActualPorDefecto()
-        {
-            DateTime antes = DateTime.Now;
-            _proyecto = CrearProyectoCon(_admin, _miembros);
-            DateTime despues = DateTime.Now;
-
-            Assert.IsTrue(_proyecto.FechaInicio >= antes && _proyecto.FechaInicio <= despues); // porque DateTime.Now cambia
-        }
-        
-        [TestMethod]
-        public void FechaFinMasTemprana_InicializadaConFechaActualPorDefecto()
-        {
-            DateTime antes = DateTime.Now;
-            _proyecto = CrearProyectoCon(_admin, _miembros);
-            DateTime despues = DateTime.Now;
-
-            Assert.IsTrue(_proyecto.FechaFinMasTemprana >= antes && _proyecto.FechaFinMasTemprana <= despues); // porque DateTime.Now cambia
         }
         
         //AgregarTarea (En GESTOR: solo admin proyecto puede)
@@ -333,6 +349,32 @@ namespace Tests
 
             _proyecto.ModificarFechaInicio(new DateTime(2027, 1, 1));
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaInicio_LanzaExcepcionSiEsIgualALaFechaFinMasTemprana()
+        {
+            _proyecto = CrearProyectoCon(_admin);
+            DateTime fecha = DateTime.Today.AddDays(3);
+
+            _proyecto.FechaFinMasTemprana = fecha;
+
+            _proyecto.ModificarFechaInicio(fecha); 
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaInicio_LanzaExcepcionSiEsMayorALaFechaFinMasTemprana()
+        {
+            _proyecto = CrearProyectoCon(_admin);
+            DateTime fechaFin = DateTime.Today.AddDays(5);
+            _proyecto.FechaFinMasTemprana = fechaFin;
+
+            DateTime fechaInicioInvalida = fechaFin.AddDays(1);
+            _proyecto.ModificarFechaInicio(fechaInicioInvalida); 
+        }
+        
+        
         
         //modificar fecha de fin mas temprana
         
@@ -554,8 +596,9 @@ namespace Tests
 
         private Proyecto CrearProyectoCon(Usuario admin, List<Usuario> miembros = null)
         {
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
             miembros ??= new List<Usuario>();
-            return new Proyecto("Proyecto", "Descripción", admin, miembros);
+            return new Proyecto("Proyecto", "Descripción",fechaInicio, admin, miembros);
         }
 
         private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
@@ -564,7 +607,7 @@ namespace Tests
             {
                 Id = id,
                 FechaInicio = inicio ?? DateTime.Today,
-                FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(1)
+                FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(2)
             };
         }
         

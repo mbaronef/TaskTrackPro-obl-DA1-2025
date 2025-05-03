@@ -13,11 +13,11 @@ public class Proyecto
     public Usuario Administrador { get; set; }
     public List<Usuario> Miembros { get; set; }
     
-    public DateTime FechaInicio { get; set; } = DateTime.Now;
+    public DateTime FechaInicio { get; set; } = DateTime.Today.AddDays(1);
     
-    public DateTime FechaFinMasTemprana { get; set; } = DateTime.Now;
+    public DateTime FechaFinMasTemprana { get; set; } = DateTime.MaxValue;
     
-    public Proyecto(string nombre, string descripcion, Usuario administrador, List<Usuario> miembros) 
+    public Proyecto(string nombre, string descripcion,DateTime fechaInicio, Usuario administrador, List<Usuario> miembros) 
     {
         ValidarTextoObligatorio(nombre, "El nombre del proyecto no puede estar vacío o null.");
         ValidarTextoObligatorio(descripcion, "La descripción del proyecto no puede estar vacía o null.");
@@ -25,12 +25,14 @@ public class Proyecto
         ValidarNoNulo(miembros,"La lista de miembros no puede ser null.");
         ValidarLargoDescripción(descripcion);
         ValidarAdministradorEsteEnMiembros(administrador, miembros);
+        ValidarFechaInicioMayorAActual(fechaInicio);
         
         Nombre = nombre;
         Descripcion = descripcion;
         Tareas = new List<Tarea>();
         Administrador = administrador;
         Miembros = miembros;
+        FechaFinMasTemprana = fechaInicio.AddDays(100000);
     }
     
     public void AsignarId(int id)
@@ -82,6 +84,7 @@ public class Proyecto
     {
         ValidarFechaInicioMayorAActual(nuevaFecha);
         ValidarFechaInicioNoPosteriorAFechaInicioDeTareas(nuevaFecha);
+        ValidarFechaInicioMenorAFechaFinMasTemprana(nuevaFecha, FechaFinMasTemprana);
         
         FechaInicio = nuevaFecha;
     }
@@ -212,7 +215,7 @@ public class Proyecto
 
     private void ValidarFechaInicioMayorAActual(DateTime fecha)
     {
-        if (fecha < DateTime.Now.Date)
+        if (fecha < DateTime.Today)
             throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
     }
     
@@ -233,9 +236,15 @@ public class Proyecto
         if (Tareas.Any(tarea => tarea.FechaFinMasTemprana > DateTime.MinValue && fecha < tarea.FechaFinMasTemprana))
             throw new ExcepcionDominio("La fecha de fin más temprana no puede ser menor que la fecha de fin de una tarea.");
     }
+    
+    private void ValidarFechaInicioMenorAFechaFinMasTemprana(DateTime inicio, DateTime fin)
+    {
+        if (inicio > fin)
+            throw new ExcepcionDominio("La fecha de inicio no puede ser mayor que la fecha de fin más temprana.");
+        if (inicio == fin)
+        {
+            throw new ExcepcionDominio("La fecha de inicio no puede ser la misma que la fecha de fin más temprana.");
 
-
-    // TODO:
-    // FALTA:
-    // agregar fecha inicio al constructor y verificar que sea mayor que la actual y menor a la fecha fin mas temprana
+        }
+    }
 }

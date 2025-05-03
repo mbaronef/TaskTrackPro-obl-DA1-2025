@@ -165,11 +165,6 @@ public class GestorProyectos
         
     }
 
-    public List<Proyecto> ObtenerTodosLosProyectos()
-    {
-        return Proyectos;
-    }
-
     public List<Proyecto> ObtenerProyectosPorUsuario(int idUsuario)
     {
         return Proyectos.Where(p => p.Miembros.Any(u => u.Id == idUsuario)).ToList();
