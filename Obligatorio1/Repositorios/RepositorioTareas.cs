@@ -52,7 +52,8 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void ModificarFechaInicioMasTemprana(int idTarea, DateTime fechaInicioMasTemprana)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.ModificarFechaInicioMasTemprana(fechaInicioMasTemprana);
     }
 
     public void ModificarFechaFinMasTemprana(int idTarea, DateTime fechaFinMasTemprana)
