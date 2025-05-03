@@ -75,7 +75,6 @@ public class GestorProyectos
         proyecto.NotificarMiembros($"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
     }
     
-//HACER TDD
     public void ModificarFechaFinMasTempranaDelProyecto(int idProyecto, DateTime nuevaFecha, Usuario solicitante)
     {
         Proyecto proyecto = ObtenerProyecto(idProyecto);
@@ -91,7 +90,7 @@ public class GestorProyectos
     {
         VerificarUsuarioEsAdminSistema(solicitante);
 
-        Proyecto proyecto =  ObtenerProyecto(idProyecto);
+        Proyecto proyecto = ObtenerProyecto(idProyecto);
 
         VerificarUsuarioMiembroDelProyecto(idNuevoAdmin, proyecto);
         
@@ -100,7 +99,7 @@ public class GestorProyectos
         VerificarUsuarioNoAdministraOtroProyecto(nuevoAdmin);
 
         VerificarSolicitanteTengaPermisosDeAdminProyecto(nuevoAdmin); // no deberia tirar un error con la palabra solicitante...
-
+        
         proyecto.Administrador.EstaAdministrandoProyecto = false;
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoProyecto = true;
