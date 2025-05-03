@@ -351,6 +351,19 @@ namespace Tests
             _proyecto.ModificarFechaFinMasTemprana(nuevaFechaFin);
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaFinMasTemprana_LanzaExcepcionSiEsMenorALaFechaFinDeUnaTarea()
+        {
+            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
+
+            Tarea tarea = new Tarea();
+            tarea.FechaFinMasTemprana = new DateTime(2026, 6, 1);
+            _proyecto.AgregarTarea(tarea);
+
+            _proyecto.ModificarFechaFinMasTemprana(new DateTime(2026, 5, 1));
+        }
+        
         // modificationNombre (En GESTOR: solo admin proyecto puede)
         
         [TestMethod]

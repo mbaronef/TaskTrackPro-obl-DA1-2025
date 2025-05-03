@@ -86,6 +86,14 @@ public class Proyecto
         FechaInicio = nuevaFecha;
     }
     
+    public void ModificarFechaFinMasTemprana(DateTime nuevaFecha)
+    {
+        ValidarFechaFinMayorAInicio(nuevaFecha);
+        //ValidarFechaFinNoMenorALaDeLasTareas(nuevaFecha);
+
+        //FechaFinMasTemprana = nuevaFecha;
+    }
+    
     public void ModificarNombre(string nombreNuevo)
     {
         ValidarTextoObligatorio(nombreNuevo,"El nombre no puede estar vacío");
@@ -212,6 +220,12 @@ public class Proyecto
     {
         if (Tareas.Any(t => t.FechaInicio < DateTime.MaxValue && nuevaFecha > t.FechaInicio))
             throw new ExcepcionDominio("La fecha de inicio no puede ser posterior a la de alguna tarea.");
+    }
+    
+    private void ValidarFechaFinMayorAInicio(DateTime fecha)
+    {
+        if (fecha < FechaInicio)
+            throw new ExcepcionDominio("La fecha de fin más temprana no puede ser anterior a la fecha de inicio del proyecto.");
     }
 
 
