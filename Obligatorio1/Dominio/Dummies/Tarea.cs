@@ -269,4 +269,9 @@ public class Tarea
         }
         FechaFinMasTemprana = fechaFinMasTemprana;
     }
+
+    public void EliminarRecursoNecesario(int idRecursoNecesario)
+    {
+        RecursosNecesarios.RemoveAll(recurso => recurso.Id == idRecursoNecesario);
+    }
 }

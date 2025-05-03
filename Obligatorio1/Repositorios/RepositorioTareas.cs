@@ -98,9 +98,10 @@ public class RepositorioTareas : IRepositorioTareas
         tarea.AgregarRecurso(recursoNecesario);
     }
 
-    public void EliminarRecursoNecesario(int idTarea, Recurso recursoNecesario)
+    public void EliminarRecursoNecesario(int idTarea, int idRecursoNecesario)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.EliminarRecursoNecesario(idRecursoNecesario);
     }
 
     public void AgregarDependencia(int idTarea, Dependencia dependencia)
