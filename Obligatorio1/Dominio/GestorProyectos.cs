@@ -74,6 +74,18 @@ public class GestorProyectos
 
         proyecto.NotificarMiembros($"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
     }
+    
+//HACER TDD
+    public void ModificarFechaFinMasTempranaDelProyecto(int idProyecto, DateTime nuevaFecha, Usuario solicitante)
+    {
+        Proyecto proyecto = ObtenerProyecto(idProyecto);
+        
+        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        
+        proyecto.ModificarFechaFinMasTemprana(nuevaFecha);
+        
+        proyecto.NotificarMiembros($"Se cambió la fecha de fin más temprana del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
+    }
 
     public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdmin)
     {
