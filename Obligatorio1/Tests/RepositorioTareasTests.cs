@@ -22,4 +22,14 @@ public class RepositorioTareasTests
         repositorioTareas.Agregar(tarea);
         Assert.AreEqual(tarea, repositorioTareas.ObtenerPorId(tarea.Id));
     }
+
+    [TestMethod]
+    public void SeEliminaTareaOk()
+    {
+        RepositorioTareas repositorioTareas = new RepositorioTareas();
+        Tarea tarea = new Tarea("Título", "Descripción", 2, new DateTime(2030, 2, 2));
+        repositorioTareas.Agregar(tarea);
+        repositorioTareas.Eliminar(tarea.Id);
+        Assert.IsNull(repositorioTareas.ObtenerPorId(tarea.Id));
+    }
 }
