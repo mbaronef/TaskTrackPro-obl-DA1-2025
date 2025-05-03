@@ -99,4 +99,13 @@ public class RepositorioTareasTests
         _repositorioTareas.ModificarFechaDeEjecucion(_tarea.Id, fecha);
         Assert.AreEqual(fecha, _tarea.FechaDeEjecucion);
     }
+    
+    [TestMethod]
+    public void SeModificaElEstadoDeLaTareaOk()
+    {
+        EstadoTarea estado = EstadoTarea.Bloqueada;
+        _repositorioTareas.Agregar(_tarea);
+        _repositorioTareas.ModificarEstado(_tarea.Id, estado);
+        Assert.AreEqual(estado, _tarea.Estado);
+    }
 }
