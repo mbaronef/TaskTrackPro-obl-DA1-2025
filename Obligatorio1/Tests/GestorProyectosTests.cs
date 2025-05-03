@@ -9,64 +9,103 @@ namespace Tests
     [TestClass]
     public class GestorProyectosTests
     {
+        
+        private GestorProyectos _gestor;
+        private Usuario _admin;
+        private Usuario _miembro;
+        private Usuario _adminSistema;
+        private Proyecto _proyecto;
+
+        [TestInitialize]
+        public void Inicializar()
+        {
+            _gestor = new GestorProyectos();
+            _admin = CrearAdminProyecto();
+            _adminSistema = CrearAdminSistema();
+            _miembro = CrearMiembro();
+            _proyecto = CrearProyectoCon(_admin);
+        }
+
+        private Usuario CrearAdminProyecto(int id = 1)
+        {
+            Usuario admin = new Usuario { Id = id, EsAdministradorProyecto = true };
+            return admin;
+        }
+
+        private Usuario CrearAdminSistema(int id = 99)
+        {
+            Usuario adminSistema = new Usuario { Id = id, EsAdministradorSistema = true };
+            return adminSistema;
+        }
+
+        private Usuario CrearMiembro(int id = 2)
+        {
+            Usuario miembro = new Usuario { Id = id };
+            return miembro;
+        }
+
+        private Proyecto CrearProyectoCon(Usuario admin, List<Usuario> miembros = null)
+        {
+            miembros ??= new List<Usuario>();
+            return new Proyecto("Proyecto", "Descripcion", admin, miembros);
+        }
+
+        private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
+        {
+            Tarea tarea = new Tarea
+            {
+                Id = id,
+                FechaInicio = inicio ?? DateTime.Today,
+                FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(1)
+            };
+            return tarea;
+        }
+        
         //crearProyecto
         [TestMethod]
         public void CrearProyecto_AsignarIdCorrectamente()
         {
-            Usuario adminSistema = new Usuario();
-            adminSistema.Id = 1;
-            adminSistema.EsAdministradorProyecto = true;
-            adminSistema.EstaAdministrandoProyecto = false;
-            GestorProyectos gestor = new GestorProyectos();
-            List<Usuario> miembros = new List<Usuario>();
-            Proyecto proyecto = new Proyecto("nombre", "descripcion", adminSistema, miembros);
-
-            gestor.CrearProyecto(proyecto, adminSistema);
+            
+            Usuario admin = CrearAdminProyecto();
+            Proyecto proyecto = CrearProyectoCon(admin);
+    
+            _gestor.CrearProyecto(proyecto, admin);
 
             Assert.AreEqual(1, proyecto.Id);
-            Assert.AreEqual(proyecto, gestor.Proyectos[0]);
+            Assert.AreEqual(proyecto, _gestor.Proyectos[0]);
+            
         }
 
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void CrearProyecto_LanzaExcepcionSiUsuarioNoEsAdminDeProyecto()
+        public void CrearProyecto_LanzaExcepcionSiUsuarioNoTienePermisosDeAdminProyecto()
         {
-            Usuario solicitante = new Usuario();
-            solicitante.EsAdministradorProyecto = false;
-            solicitante.EstaAdministrandoProyecto = false;
+            Usuario solicitante = CrearMiembro();
+            Proyecto proyecto = CrearProyectoCon(solicitante);
 
-            GestorProyectos gestor = new GestorProyectos();
-            Proyecto proyecto = new Proyecto("Proyecto A", "Descripción", solicitante, new List<Usuario>());
-
-            gestor.CrearProyecto(proyecto, solicitante);
+            _gestor.CrearProyecto(proyecto, solicitante);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void CrearProyecto_LanzaExcepcionSiSolicitanteYaAdministraOtroProyecto()
         {
-            Usuario solicitante = new Usuario();
-            solicitante.EsAdministradorProyecto = true;
+            Usuario solicitante = CrearAdminProyecto();
             solicitante.EstaAdministrandoProyecto = true;
+    
+            Proyecto proyecto = CrearProyectoCon(solicitante);
 
-            GestorProyectos gestor = new GestorProyectos();
-            Proyecto proyecto = new Proyecto("Proyecto A", "Descripción", solicitante, new List<Usuario>());
-
-            gestor.CrearProyecto(proyecto, solicitante);
+            _gestor.CrearProyecto(proyecto, solicitante);
         }
 
         [TestMethod]
         public void CrearProyecto_EstableceEstaAdministrandoProyectoEnTrue()
         {
-            Usuario solicitante = new Usuario();
-            solicitante.EsAdministradorProyecto = true;
-            solicitante.EstaAdministrandoProyecto = false;
+            Usuario solicitante = CrearAdminProyecto();
 
-            GestorProyectos gestor = new GestorProyectos();
-            List<Usuario> miembros = new List<Usuario>();
-            Proyecto proyecto = new Proyecto("Proyecto X", "Una descripción", solicitante, miembros);
+            Proyecto proyecto = CrearProyectoCon(solicitante);
 
-            gestor.CrearProyecto(proyecto, solicitante);
+            _gestor.CrearProyecto(proyecto, solicitante);
 
             Assert.IsTrue(solicitante.EstaAdministrandoProyecto);
         }
@@ -75,40 +114,29 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void CrearProyecto_LanzaExcepcionSiNombreYaExiste()
         {
-            Usuario adminSistema = new Usuario();
-            adminSistema.EsAdministradorProyecto = true;
-            adminSistema.EstaAdministrandoProyecto = false;
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            Proyecto proyecto2 = CrearProyectoCon(_admin);
 
-            GestorProyectos gestor = new GestorProyectos();
-            List<Usuario> miembros = new List<Usuario>();
-
-            Proyecto proyecto1 = new Proyecto("nombre", "descripcion1", adminSistema, miembros);
-            gestor.CrearProyecto(proyecto1, adminSistema);
-
-            Proyecto proyecto2 = new Proyecto("nombre", "descripcion2", adminSistema, miembros);
-            gestor.CrearProyecto(proyecto2, adminSistema);
+            _gestor.CrearProyecto(proyecto1, _admin);
+            _gestor.CrearProyecto(proyecto2, _admin);
         }
 
         [TestMethod]
         public void CrearProyecto_NotificaAMiembrosDelProyecto()
         {
-            Usuario solicitante = new Usuario();
-            solicitante.EsAdministradorProyecto = true;
-            solicitante.EstaAdministrandoProyecto = false;
+            Usuario miembro1 = CrearMiembro(2);
+            Usuario miembro2 = CrearMiembro(3);
+            List<Usuario> miembros = new() { miembro1, miembro2 };
 
-            Usuario miembro1 = new Usuario();
-            Usuario miembro2 = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { miembro1, miembro2 };
+            Proyecto proyecto = CrearProyectoCon(_admin, miembros);
 
-            GestorProyectos gestor = new GestorProyectos();
-            Proyecto proyecto = new Proyecto("Proyecto Notificado", "Descripción", solicitante, miembros);
+            _gestor.CrearProyecto(proyecto, _admin);
 
-            gestor.CrearProyecto(proyecto, solicitante);
-
-            Assert.AreEqual(1, miembro1.Notificaciones.Count);
-            Assert.AreEqual(1, miembro2.Notificaciones.Count);
-            Assert.AreEqual("Se creó el proyecto 'Proyecto Notificado'.", miembro1.Notificaciones[0].Mensaje);
-            Assert.AreEqual("Se creó el proyecto 'Proyecto Notificado'.", miembro2.Notificaciones[0].Mensaje);
+            foreach (Usuario miembro in miembros)
+            {
+                Assert.AreEqual(1, miembro.Notificaciones.Count);
+                Assert.AreEqual("Se creó el proyecto 'Proyecto'.", miembro.Notificaciones[0].Mensaje);
+            }
         }
 
         // eliminarProyecto
@@ -117,91 +145,62 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void EliminarProyecto_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto()
         {
-            Usuario admin = new Usuario();
-            admin.EsAdministradorProyecto = true;
-            Usuario noAdmin = new Usuario();
+            Usuario noAdmin = CrearMiembro();
+            Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { noAdmin });
 
-            List<Usuario> miembros = new List<Usuario> { noAdmin };
-            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
+            _gestor.CrearProyecto(proyecto, _admin);
 
-            GestorProyectos gestor = new GestorProyectos();
-            gestor.CrearProyecto(proyecto, admin);
-
-            Assert.IsFalse(proyecto.EsAdministrador(noAdmin));
-
-            gestor.EliminarProyecto(proyecto.Id, noAdmin);
+            _gestor.EliminarProyecto(proyecto.Id, noAdmin);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void EliminarProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
-            Usuario admin = new Usuario();
-            admin.EsAdministradorProyecto = true;
-            GestorProyectos gestor = new GestorProyectos();
-
-            gestor.EliminarProyecto(1000, admin);
+            _gestor.EliminarProyecto(1000, _admin);
         }
 
         [TestMethod]
         public void EliminarProyecto_EliminaDeListaAlProyecto()
         {
-            Usuario admin = new Usuario();
-            admin.EsAdministradorProyecto = true;
+            _gestor.CrearProyecto(_proyecto, _admin);
 
-            GestorProyectos gestor = new GestorProyectos();
-            List<Usuario> miembros = new List<Usuario>();
-            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
-            gestor.CrearProyecto(proyecto, admin);
+            Assert.AreEqual(1, _gestor.Proyectos.Count);
 
-            Assert.IsTrue(admin.EstaAdministrandoProyecto);
-            Assert.AreEqual(1, gestor.Proyectos.Count);
+            _gestor.EliminarProyecto(_proyecto.Id, _admin);
 
-            gestor.EliminarProyecto(proyecto.Id, admin);
-
-            Assert.AreEqual(0, gestor.Proyectos.Count);
+            Assert.AreEqual(0, _gestor.Proyectos.Count);
         }
 
         [TestMethod]
         public void EliminarProyecto_CambiaLaFLagEstaAdministrandoProyectoDelAdministrador()
         {
-            Usuario admin = new Usuario();
-            admin.EsAdministradorProyecto = true;
+            _gestor.CrearProyecto(_proyecto, _admin);
 
-            GestorProyectos gestor = new GestorProyectos();
-            List<Usuario> miembros = new List<Usuario>();
-            Proyecto proyecto = new Proyecto("Proyecto B", "desc", admin, miembros);
-            gestor.CrearProyecto(proyecto, admin);
+            Assert.IsTrue(_admin.EstaAdministrandoProyecto);
 
-            Assert.IsTrue(admin.EstaAdministrandoProyecto);
-            Assert.AreEqual(1, gestor.Proyectos.Count);
+            _gestor.EliminarProyecto(_proyecto.Id, _admin);
 
-            gestor.EliminarProyecto(proyecto.Id, admin);
-
-            Assert.IsFalse(admin.EstaAdministrandoProyecto);
+            Assert.IsFalse(_admin.EstaAdministrandoProyecto);
         }
 
         [TestMethod]
         public void EliminarProyecto_NotificaAMiembrosDelProyecto()
         {
-            Usuario solicitante = new Usuario();
-            solicitante.EsAdministradorProyecto = true;
-            solicitante.EstaAdministrandoProyecto = false;
+            Usuario miembro1 = CrearMiembro(2);
+            Usuario miembro2 = CrearMiembro(3);
+            List<Usuario> miembros = new() { miembro1, miembro2 };
 
-            Usuario miembro1 = new Usuario();
-            Usuario miembro2 = new Usuario();
-            List<Usuario> miembros = new List<Usuario> { miembro1, miembro2 };
+            Proyecto proyecto = CrearProyectoCon(_admin, miembros);
 
-            GestorProyectos gestor = new GestorProyectos();
-            Proyecto proyecto = new Proyecto("Proyecto A Eliminar", "Descripción", solicitante, miembros);
+            _gestor.CrearProyecto(proyecto, _admin);
+            _gestor.EliminarProyecto(proyecto.Id, _admin);
 
-            gestor.CrearProyecto(proyecto, solicitante);
-            gestor.EliminarProyecto(proyecto.Id, solicitante);
-
-            Assert.AreEqual(2, miembro1.Notificaciones.Count);
-            Assert.AreEqual(2, miembro2.Notificaciones.Count);
-            Assert.AreEqual("Se eliminó el proyecto 'Proyecto A Eliminar'.", miembro1.Notificaciones[1].Mensaje);
-            Assert.AreEqual("Se eliminó el proyecto 'Proyecto A Eliminar'.", miembro2.Notificaciones[1].Mensaje);
+            foreach (Usuario miembro in miembros)
+            {
+                Assert.AreEqual(2, miembro.Notificaciones.Count);
+                Assert.AreEqual("Se eliminó el proyecto 'Proyecto'.", miembro.Notificaciones[1].Mensaje);
+            }
         }
 
         //modificacion de nombre del proyecto
