@@ -48,4 +48,12 @@ public class RepositorioTareasTests
         Assert.AreEqual(1, tareas.Count);
         Assert.AreEqual(_tarea, tareas.Last());
     }
+
+    [TestMethod]
+    public void SeModificaElTituloDeLaTareaOk()
+    {
+        _repositorioTareas.Agregar(_tarea);
+        _repositorioTareas.ModificarTitulo(_tarea.Id, "Otro título");
+        Assert.AreEqual("Otro título", _tarea.Titulo);
+    }
 }
