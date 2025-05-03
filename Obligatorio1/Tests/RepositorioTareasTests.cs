@@ -150,4 +150,15 @@ public class RepositorioTareasTests
         Assert.AreEqual(1, _tarea.RecursosNecesarios.Count);
         Assert.AreEqual(recurso, _tarea.RecursosNecesarios.Last());
     }
+    
+    [TestMethod]
+    public void SeEliminaRecursoOk()
+    {
+        _repositorioTareas.Agregar(_tarea);
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        recurso.Id = 1; // lo maneja internamente el gestor
+        _repositorioTareas.AgregarRecursoNecesario(_tarea.Id, recurso);
+        _repositorioTareas.EliminarRecursoNecesario(_tarea.Id, recurso.Id);
+        Assert.AreEqual(0, _tarea.RecursosNecesarios.Count);
+    }
 }
