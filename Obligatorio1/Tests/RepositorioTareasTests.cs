@@ -56,4 +56,12 @@ public class RepositorioTareasTests
         _repositorioTareas.ModificarTitulo(_tarea.Id, "Otro título");
         Assert.AreEqual("Otro título", _tarea.Titulo);
     }
+    
+    [TestMethod]
+    public void SeModificaLaDescripcionDeLaTareaOk()
+    {
+        _repositorioTareas.Agregar(_tarea);
+        _repositorioTareas.ModificarDescripcion(_tarea.Id, "Otra descripción");
+        Assert.AreEqual("Otra descripción", _tarea.Descripcion);
+    }
 }
