@@ -1,4 +1,5 @@
 using Dominio.Dummies;
+using Repositorios;
 
 namespace Tests;
 
