@@ -134,8 +134,6 @@ public class GestorProyectos
         proyecto.EliminarMiembro(idMiembroAEliminar);
         
         proyecto.NotificarMiembros($"Se eliminó a el miembro (id {idMiembroAEliminar}) del proyecto '{proyecto.Nombre}'.");
-
-
     }
 
     public void AgregarTareaAlProyecto(int idProyecto,  Usuario solicitante, Tarea nuevaTarea)
@@ -167,12 +165,12 @@ public class GestorProyectos
 
     public List<Proyecto> ObtenerProyectosPorUsuario(int idUsuario)
     {
-        return Proyectos.Where(p => p.Miembros.Any(u => u.Id == idUsuario)).ToList();
+        return Proyectos.Where(proyecto => proyecto.Miembros.Any(usuario => usuario.Id == idUsuario)).ToList();
     }
 
     private Proyecto ObtenerProyecto(int id)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Id == id);
+        Proyecto proyecto = Proyectos.FirstOrDefault(proyecto => proyecto.Id == id);
         
         if(proyecto is null)
             throw new ExcepcionDominio("El proyecto no existe.");
@@ -188,7 +186,7 @@ public class GestorProyectos
 
     private void VerificarNombreNoRepetido(string nuevoNombre)
     {
-        bool existeOtro = Proyectos.Any(p => p.Nombre == nuevoNombre);
+        bool existeOtro = Proyectos.Any(proyecto => proyecto.Nombre == nuevoNombre);
 
         if (existeOtro)
             throw new ExcepcionDominio($"Ya existe un proyecto con el nombre '{nuevoNombre}'.");
@@ -222,7 +220,7 @@ public class GestorProyectos
 
     private Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
-        Usuario miembro = proyecto.Miembros.FirstOrDefault(u => u.Id == idMiembro);
+        Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
         
         return miembro;
     }

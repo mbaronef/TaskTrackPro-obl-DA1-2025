@@ -131,20 +131,18 @@ public class Proyecto
     {
         foreach (Usuario usuario in Miembros)
         {
-            Notificacion nuevaNotificacion = new Notificacion(mensaje);
-            usuario.RecibirNotificacion(nuevaNotificacion);
+            usuario.RecibirNotificacion(mensaje);
         }
     }
 
     public void NotificarAdministrador(string mensaje)
     {
-        Notificacion notificacion = new Notificacion(mensaje);
-        Administrador.RecibirNotificacion(notificacion);
+        Administrador.RecibirNotificacion(mensaje);
     }
 
     public bool EsMiembro(int idUsuario)
     {
-        return Miembros.Any(u => u.Id == idUsuario);
+        return Miembros.Any(usuario => usuario.Id == idUsuario);
     }
 
     public bool EsMiembro(Usuario usuario)
@@ -155,12 +153,12 @@ public class Proyecto
 
     private Tarea BuscarTareaPorId(int id)
     {
-        return Tareas.FirstOrDefault(t => t.Id == id);
+        return Tareas.FirstOrDefault(tarea => tarea.Id == id);
     }
 
     private Usuario BuscarUsuarioPorId(int id)
     {
-        return Miembros.FirstOrDefault(u => u.Id == id);
+        return Miembros.FirstOrDefault(usuario => usuario.Id == id);
     }
 
     private void ValidarLargoDescripción(string descripcion)
@@ -221,7 +219,7 @@ public class Proyecto
     
     private void ValidarFechaInicioNoPosteriorAFechaInicioDeTareas(DateTime nuevaFecha)
     {
-        if (Tareas.Any(t => t.FechaInicio < DateTime.MaxValue && nuevaFecha > t.FechaInicio))
+        if (Tareas.Any(tarea => tarea.FechaInicio < DateTime.MaxValue && nuevaFecha > tarea.FechaInicio))
             throw new ExcepcionDominio("La fecha de inicio no puede ser posterior a la de alguna tarea.");
     }
     
