@@ -108,4 +108,13 @@ public class RepositorioTareasTests
         _repositorioTareas.ModificarEstado(_tarea.Id, estado);
         Assert.AreEqual(estado, _tarea.Estado);
     }
+
+    [TestMethod]
+    public void SeModificaLaHolguraDeLaTareaOk()
+    {
+        float holgura = 2;
+        _repositorioTareas.Agregar(_tarea);
+        _repositorioTareas.ModificarHolgura(_tarea.Id, holgura);
+        Assert.AreEqual(holgura, _tarea.Holgura);
+    }
 }
