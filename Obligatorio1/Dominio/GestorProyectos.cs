@@ -11,7 +11,7 @@ public class GestorProyectos
 
     public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
     {
-        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
+        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
         VerificarUsuarioNoAdministraOtroProyecto(solicitante);
 
@@ -98,7 +98,7 @@ public class GestorProyectos
 
         VerificarUsuarioNoAdministraOtroProyecto(nuevoAdmin);
 
-        VerificarSolicitanteTengaPermisosDeAdminProyecto(nuevoAdmin); // no deberia tirar un error con la palabra solicitante...
+        VerificarUsuarioTengaPermisosDeAdminProyecto(nuevoAdmin, "el nuevo administrador");
         
         proyecto.Administrador.EstaAdministrandoProyecto = false;
         proyecto.Administrador = nuevoAdmin;
@@ -111,7 +111,7 @@ public class GestorProyectos
     {
         Proyecto proyecto =  ObtenerProyecto(idProyecto);
 
-        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
+        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
@@ -125,7 +125,7 @@ public class GestorProyectos
     {
         Proyecto proyecto =  ObtenerProyecto(idProyecto);
         
-        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
+        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
@@ -142,7 +142,7 @@ public class GestorProyectos
     {
         Proyecto proyecto =  ObtenerProyecto(idProyecto);
         
-        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
+        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
         
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
@@ -155,7 +155,7 @@ public class GestorProyectos
     {
         Proyecto proyecto = ObtenerProyecto(idProyecto);
          
-        VerificarSolicitanteTengaPermisosDeAdminProyecto(solicitante);
+        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
         
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
@@ -200,10 +200,10 @@ public class GestorProyectos
             throw new ExcepcionDominio("El usuario ya está administrando un proyecto.");
     }
 
-    private void VerificarSolicitanteTengaPermisosDeAdminProyecto(Usuario solicitante)
+    private void VerificarUsuarioTengaPermisosDeAdminProyecto(Usuario solicitante, String tipoUsuario)
     {
         if(!solicitante.EsAdministradorProyecto)
-            throw new ExcepcionDominio("El solicitante no tiene los permisos de administrador de proyecto.");
+            throw new ExcepcionDominio($"El {tipoUsuario} no tiene los permisos de administrador de proyecto.");
     }
 
     private void VerificarUsuarioEsAdminSistema(Usuario usuario)
