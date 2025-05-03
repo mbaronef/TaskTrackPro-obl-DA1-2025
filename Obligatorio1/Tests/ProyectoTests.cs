@@ -17,9 +17,9 @@ namespace Tests
         public void AntesDeCadaTest()
         {
             _gestorUsuarios = new GestorUsuarios();
-            _admin = new Usuario();
+            _admin = CrearAdmin();
             _gestorUsuarios.agregarUsuario(_admin);
-            _miembros = new List<Usuario>(); // SIN el "List<Usuario>" adelante
+            _miembros = new List<Usuario>();
         }
         
         //Constructor
@@ -28,13 +28,16 @@ namespace Tests
         {
             string nombre = "Proyecto 1";
             string descripcion = "Descripción";
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
             
-            _proyecto = new Proyecto (nombre, descripcion, _admin, _miembros);
+            _proyecto = new Proyecto (nombre, descripcion, fechaInicio, _admin, _miembros);
             
             Assert.AreEqual(nombre, _proyecto.Nombre);
             Assert.AreEqual(descripcion, _proyecto.Descripcion);
             Assert.AreEqual(_admin, _proyecto.Administrador);
             Assert.AreEqual(_miembros, _proyecto.Miembros);
+            Assert.AreEqual(fechaInicio, _proyecto.FechaInicio);
+            Assert.AreEqual(fechaInicio.AddDays(100000), _proyecto.FechaFinMasTemprana);
         }
         
         [TestMethod]
@@ -42,16 +45,18 @@ namespace Tests
         public void Constructor_LanzaExcepcionSiDescripcionSupera400Caracteres()
         {
             string descripcion = new string('a', 401); 
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
 
-            _proyecto = new Proyecto("Proyecto", descripcion, _admin, _miembros);
+            _proyecto = new Proyecto("Proyecto", descripcion,fechaInicio, _admin, _miembros);
         }
         
         [TestMethod]
         public void Constructor_PermiteDescripcionConMenosDe400Caracteres()
         {
             string descripcion = new string('a', 399);
-
-            _proyecto = new Proyecto("Proyecto", descripcion, _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            
+            _proyecto = new Proyecto("Proyecto", descripcion,fechaInicio, _admin, _miembros);
 
             Assert.AreEqual(descripcion, _proyecto.Descripcion);
         }
@@ -60,8 +65,9 @@ namespace Tests
         public void Constructor_PermiteDescripcionDeHasta400Caracteres()
         {
             string descripcion = new string('a', 400); // 400 caracteres exactos
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
             
-            _proyecto = new Proyecto("Proyecto", descripcion,  _admin, _miembros);
+            _proyecto = new Proyecto("Proyecto", descripcion, fechaInicio,  _admin, _miembros);
 
             Assert.AreEqual(descripcion, _proyecto.Descripcion);
         }
@@ -70,73 +76,85 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiNombreEsVacio()
         { 
-            _proyecto = new Proyecto("", "Descripción válida",  _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("", "Descripción válida",fechaInicio,  _admin, _miembros);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiNombreEsNull()
         {
-            _proyecto = new Proyecto(null, "Descripción válida",  _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto(null, "Descripción válida", fechaInicio, _admin, _miembros);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiDescripcionEsVacia()
         { 
-            _proyecto = new Proyecto("Nombre válido", "",  _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Nombre válido", "",  fechaInicio, _admin, _miembros);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiDescripcionEsNull()
         {
-            _proyecto = new Proyecto("Nombre válido", null,  _admin, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Nombre válido", null, fechaInicio, _admin, _miembros);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void Constructor_LanzaExcepcionSiFechaInicioEsMenorQueHoy()
+        {
+            DateTime fechaInvalida = DateTime.Today.AddDays(-1);
+            _proyecto = new Proyecto("Proyecto", "Descripción", fechaInvalida, _admin, _miembros);
+        }
+        
+        [TestMethod]
+        public void Constructor_AsignaCorrectamenteFechaInicio()
+        {
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Proyecto", "Descripción", fechaInicio, _admin, _miembros);
+
+            Assert.AreEqual(fechaInicio, _proyecto.FechaInicio);
+        }
+        
+        [TestMethod]
+        public void Constructor_AsignaFechaFinMasTempranaSegunFechaInicio()
+        {
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Proyecto", "Descripción", fechaInicio, _admin, _miembros);
+
+            Assert.AreEqual(fechaInicio.AddDays(100000), _proyecto.FechaFinMasTemprana);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiAdministradorEsNull()
         {
-            _proyecto = new Proyecto("Nombre", "Descripción",  null, _miembros);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Nombre", "Descripción", fechaInicio, null, _miembros);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void Constructor_LanzaExcepcionSiMiembrosEsNull()
         {
-            _proyecto = new Proyecto("Nombre", "Descripción",  _admin, null);
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            _proyecto = new Proyecto("Nombre", "Descripción",fechaInicio,  _admin, null);
         }
         
-        //Costructor con id
+        //Asignar ID
         
         [TestMethod]
-        public void ConstructorConId_DeberiaAsignarCorrectamenteElId()
+        public void AsignarID_DeberiaAsignarCorrectamenteElId()
         {
-            _admin.Id = 1;
-            _proyecto = new Proyecto(42, "Proyecto Test", "Descripción de prueba", _admin, _miembros);
-
-            Assert.AreEqual(42, _proyecto.Id);
-        }
-        
-        // validacion de parametros: FechaInicio y FechaFinMasTemprana
-        
-        [TestMethod]
-        public void FechaInicio_InicializadaConFechaActualPorDefecto()
-        {
-            DateTime antes = DateTime.Now;
-            _proyecto = new Proyecto("Nombre", "Descripción", _admin, _miembros);
-            DateTime despues = DateTime.Now;
-
-            Assert.IsTrue(_proyecto.FechaInicio >= antes && _proyecto.FechaInicio <= despues); // porque DateTime.Now cambia
-        }
-        
-        [TestMethod]
-        public void FechaFinMasTemprana_InicializadaConMinValuePorDefecto()
-        { 
-            _proyecto = new Proyecto("Nombre", "Descripción", _admin, _miembros);
-            
-            Assert.AreEqual(DateTime.MinValue, _proyecto.FechaFinMasTemprana);
+            Usuario admin = CrearAdmin(1);
+            Proyecto proyecto = CrearProyectoCon(admin);
+            proyecto.AsignarId(42);
+            Assert.AreEqual(42, proyecto.Id);
         }
         
         //AgregarTarea (En GESTOR: solo admin proyecto puede)
@@ -144,21 +162,21 @@ namespace Tests
         [TestMethod]
         public void AgregarTarea_AgregarUnaTareaALaLista()
         {
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
-
-            Tarea tarea1 = new Tarea();
+            Usuario admin = CrearAdmin();
+            Proyecto proyecto = CrearProyectoCon(admin);
+            Tarea tarea = CrearTarea();
             
-            _proyecto.AgregarTarea(tarea1); 
+            proyecto.AgregarTarea(tarea); 
             
-            Assert.IsTrue(_proyecto.Tareas.Contains(tarea1));
-            Assert.AreEqual(1, _proyecto.Tareas.Count);
+            Assert.IsTrue(proyecto.Tareas.Contains(tarea));
+            Assert.AreEqual(1, proyecto.Tareas.Count);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
         public void AgregarTarea_LanzarExcepcionSiTareaEsNull()
         {
-            _proyecto = new Proyecto("Proyecto 1", "Descripción",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
             Tarea tarea1 = null;
             _proyecto.AgregarTarea(tarea1); 
         }
@@ -167,8 +185,8 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void AgregarTarea_LanzarExcepcionSiTareaYaEstaEnTareas()
         {
-            Tarea tarea1 = new Tarea(); 
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
+            Tarea tarea1 = CrearTarea();
+            _proyecto = CrearProyectoCon(_admin);
             _proyecto.AgregarTarea(tarea1);
             _proyecto.AgregarTarea(tarea1);
         }
@@ -178,9 +196,8 @@ namespace Tests
         [TestMethod]
         public void EliminarTarea_EliminaTareaDeLaLista()
         {
-            Tarea tarea = new Tarea();
-            tarea.Id = 1;
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
+            Tarea tarea = CrearTarea(1);
+            _proyecto = CrearProyectoCon(_admin, _miembros);
             _proyecto.AgregarTarea(tarea);
             _proyecto.EliminarTarea(1);
 
@@ -191,10 +208,9 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void EliminarTarea_LanzaExcepcionSiTareaNoExiste()
         {
-            Tarea tarea = new Tarea();
-            tarea.Id = 1;
+            Tarea tarea = CrearTarea(1);
             
-            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
             _proyecto.AgregarTarea(tarea);
             _proyecto.EliminarTarea(2); // ID que no existe
         }
@@ -205,7 +221,7 @@ namespace Tests
         [TestMethod]
         public void AsignarMiembro_AgregarUsuarioALaListaDeMiembros()
         {
-            _proyecto = new Proyecto("Proyecto 1", "Descripción",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             Usuario nuevoMiembro = new Usuario();
 
@@ -218,7 +234,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void AsignarMiembro_LanzarExcepcionSiUsuarioEsNull()
         {
-            _proyecto = new Proyecto("Proyecto 1", "Descripción",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             _proyecto.AsignarMiembro(null); 
         }
@@ -227,7 +243,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void AsignarMiembro_LanzarExcepcionSiUsuarioYaEstaEnMiembros()
         {
-            _proyecto = new Proyecto("Proyecto 1", "Descripción",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             _proyecto.AsignarMiembro(_admin); 
         }
@@ -237,10 +253,9 @@ namespace Tests
         [TestMethod]
         public void EliminarMiembro_EliminaUsuarioCorrectamenteDeLaLista()
         {
-            _admin.Id = 1;
-            Usuario miembro = new Usuario();
-            miembro.Id = 2;
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
+            Usuario admin = CrearAdmin(1);
+            Usuario miembro = CrearMiembro(2);
+            _proyecto = CrearProyectoCon(admin); 
             _proyecto.AsignarMiembro(miembro);
             _proyecto.EliminarMiembro(2); // Elimino al miembro
 
@@ -256,7 +271,7 @@ namespace Tests
             _admin.Id = 1;
             Usuario miembro = new Usuario();
             miembro.Id = 2;
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
             
             _proyecto.AsignarMiembro(miembro);
             _proyecto.EliminarMiembro(3); // ID que no existe
@@ -270,7 +285,7 @@ namespace Tests
             Usuario miembro = new Usuario();
             miembro.Id = 2;
             
-            _proyecto = new Proyecto("Proyecto 1", "Descripción",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
             
             _proyecto.AsignarMiembro(miembro);
             _proyecto.EliminarMiembro(1); // Intenta eliminar al admin
@@ -280,7 +295,7 @@ namespace Tests
         [TestMethod]
         public void EsAdministrador_RetornaTrueSiUsuarioEsAdministrador()
         {
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin, _miembros);
 
             bool resultado = _proyecto.EsAdministrador(_admin);
 
@@ -291,7 +306,7 @@ namespace Tests
         public void EsAdministrador_RetornarFalseSiUsuarioNoEsAdministrador()
         {
             Usuario otro = new Usuario();
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin, _miembros);
             _gestorUsuarios.agregarUsuario(otro);
             _proyecto.AsignarMiembro(otro);
             bool resultado = _proyecto.EsAdministrador(otro);
@@ -305,9 +320,8 @@ namespace Tests
         [TestMethod]
         public void ModificarFechaInicio_ActualizaLaFechaOK()
         { 
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
-
-            DateTime nuevaFecha = new DateTime(2025, 5, 1);
+            Proyecto _proyecto = CrearProyectoCon(_admin, _miembros);
+            DateTime nuevaFecha = new DateTime(2026, 5, 1);
             _proyecto.ModificarFechaInicio(nuevaFecha);
 
             Assert.AreEqual(nuevaFecha, _proyecto.FechaInicio);
@@ -316,22 +330,93 @@ namespace Tests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionDominio))]
-        public void ModificarFechaInicio_LanzaExcepcionSiFechaEsAnteriorAHoy() // capaz no estaria tan bien (?) Podria ser un error al ingresar los datos
+        public void ModificarFechaInicio_LanzaExcepcionSiFechaEsAnteriorAHoy() 
         {
-            _proyecto = new Proyecto("Proyecto", "Descripción",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             DateTime fechaPasada = DateTime.Now.AddDays(-1);
 
             _proyecto.ModificarFechaInicio(fechaPasada);
         } 
         
-        // modificarNombre (En GESTOR: solo admin proyecto puede)
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaInicio_LanzaExcepcionSiEsPosteriorALaFechaDeInicioDeUnaTarea()
+        {
+            Proyecto _proyecto = CrearProyectoCon(_admin, _miembros);
+            Tarea tarea = CrearTarea(1, new DateTime(2026, 1, 1));
+            _proyecto.AgregarTarea(tarea);
+
+            _proyecto.ModificarFechaInicio(new DateTime(2027, 1, 1));
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaInicio_LanzaExcepcionSiEsIgualALaFechaFinMasTemprana()
+        {
+            _proyecto = CrearProyectoCon(_admin);
+            DateTime fecha = DateTime.Today.AddDays(3);
+
+            _proyecto.FechaFinMasTemprana = fecha;
+
+            _proyecto.ModificarFechaInicio(fecha); 
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaInicio_LanzaExcepcionSiEsMayorALaFechaFinMasTemprana()
+        {
+            _proyecto = CrearProyectoCon(_admin);
+            DateTime fechaFin = DateTime.Today.AddDays(5);
+            _proyecto.FechaFinMasTemprana = fechaFin;
+
+            DateTime fechaInicioInvalida = fechaFin.AddDays(1);
+            _proyecto.ModificarFechaInicio(fechaInicioInvalida); 
+        }
+        
+        
+        
+        //modificar fecha de fin mas temprana
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaFinMasTemprana_LanzaExcepcionSiEsAnteriorALaFechaInicio()
+        {
+            _proyecto = CrearProyectoCon(_admin);
+            DateTime nuevaFechaFin = _proyecto.FechaInicio.AddDays(-1);
+            _proyecto.ModificarFechaFinMasTemprana(nuevaFechaFin);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionDominio))]
+        public void ModificarFechaFinMasTemprana_LanzaExcepcionSiEsMenorALaFechaFinDeUnaTarea()
+        {
+            _proyecto = CrearProyectoCon(_admin);
+
+            Tarea tarea = CrearTarea(1, DateTime.Today, new DateTime(2026, 6, 1));
+            _proyecto.AgregarTarea(tarea);
+
+            _proyecto.ModificarFechaFinMasTemprana(new DateTime(2026, 5, 1));
+        }
+        
+        [TestMethod]
+        public void ModificarFechaFinMasTemprana_ActualizaCorrectamente()
+        {
+            _proyecto = CrearProyectoCon(_admin);
+            DateTime fecha = _proyecto.FechaInicio.AddDays(10);
+
+            _proyecto.ModificarFechaFinMasTemprana(fecha);
+
+            Assert.AreEqual(fecha, _proyecto.FechaFinMasTemprana);
+        }
+        
+        // modificationNombre (En GESTOR: solo admin proyecto puede)
         
         [TestMethod]
         public void ModificarNombre_DeberiaActualizarElNombre()
         {
-            _proyecto = new Proyecto("nombre viejo", "Desc",  _admin, _miembros);
-
+            _proyecto = CrearProyectoCon(_admin, _miembros);
+            
             _proyecto.ModificarNombre("nombre nuevo");
 
             Assert.AreEqual("nombre nuevo", _proyecto.Nombre);
@@ -341,7 +426,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void ModificarNombre_LanzaExcepcionSiNombreEsNull()
         {
-            _proyecto = new Proyecto("Proyecto Original", "Descripción",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             _proyecto.ModificarNombre(null);
         }
@@ -350,7 +435,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void ModificarNombre_LanzaExcepcionSiNombreEsVacio()
         {
-            _proyecto = new Proyecto("Proyecto Original", "Descripción",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             _proyecto.ModificarNombre("");
         }
@@ -360,7 +445,7 @@ namespace Tests
         [TestMethod]
         public void ModificarDescripcion_ActualizaLaDescripcion()
         {
-            _proyecto = new Proyecto("Proyecto", "Descripcion vieja",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             _proyecto.ModificarDescripcion("Descripcion nueva");
 
@@ -371,7 +456,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsNull()
         {
-            _proyecto = new Proyecto("Proyecto Original", "Descripción", _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             _proyecto.ModificarDescripcion(null);
         }
@@ -380,8 +465,8 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsVacia()
         {
-            _proyecto = new Proyecto("Proyecto Original", "Descripción",  _admin, _miembros);
-
+            _proyecto = CrearProyectoCon(_admin);
+            
             _proyecto.ModificarDescripcion("");
         }
         
@@ -389,7 +474,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void ModificarDescripcion_LanzaExcepcionSiDescripcionSupera400Caracteres()
         {
-            _proyecto = new Proyecto("Proyecto Original", "Descripción", _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             string descripcionLarga = new string('a', 401); // 401 caracteres
 
@@ -402,12 +487,10 @@ namespace Tests
         public void AsignarNuevoAdministrador_CambiaElAdministradorDelProyecto()
         {
             
-            _admin.Id = 1;
-    
-            Usuario nuevoAdmin = new Usuario();
-            nuevoAdmin.Id = 2;
+            Usuario admin = CrearAdmin(1);
+            Usuario nuevoAdmin = CrearMiembro(2);
             
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
+            _proyecto = CrearProyectoCon(admin);
             
             _proyecto.AsignarMiembro(nuevoAdmin);
             _proyecto.AsignarNuevoAdministrador(nuevoAdmin);
@@ -423,44 +506,9 @@ namespace Tests
     
             Usuario miembro = new Usuario();
             
-            _proyecto = new Proyecto("Proyecto 1", "Descripción", _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             _proyecto.AsignarNuevoAdministrador(miembro);
-        }
-        
-        
-        // DAR LISTAS:
-        
-        // de miembros:
-        
-        [TestMethod]
-        public void DarListaMiembros_DevuelveListaDeMiembros()
-        {
-            Usuario miembro = new Usuario();
-            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
-            
-            _proyecto.AsignarMiembro(miembro);
-
-            List<Usuario> lista = _proyecto.Miembros;
-
-            Assert.AreEqual(2, lista.Count);
-            Assert.IsTrue(lista.Contains(_admin));
-            Assert.IsTrue(lista.Contains(miembro));
-        }
-        
-        //de tareas:
-        
-        [TestMethod]
-        public void DarListaTareas_DevuelveListaDeTareas()
-        {
-            Tarea tarea = new Tarea();
-            _proyecto = new Proyecto("Proyecto", "Descripción",  _admin, _miembros);
-            
-            _proyecto.AgregarTarea(tarea);
-            List<Tarea> lista = _proyecto.Tareas;
-
-            Assert.AreEqual(1, lista.Count);
-            Assert.IsTrue(lista.Contains(tarea));
         }
         
         //notificarMiembros
@@ -468,7 +516,7 @@ namespace Tests
         public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
         {
             Usuario miembro = new Usuario();
-            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
             _proyecto.AsignarMiembro(miembro);
             _proyecto.NotificarMiembros("Se modificó el proyecto.");
 
@@ -483,40 +531,123 @@ namespace Tests
         public void NotificarAdministrador_AgregaNotificacionAlAdministrador()
         {
             _admin.Id = 1;
-            _proyecto = new Proyecto("Proyecto", "Descripción",  _admin, _miembros);
+            _proyecto = CrearProyectoCon(_admin);
 
             _proyecto.NotificarAdministrador("Mensaje para admin");
 
             Assert.IsTrue(_admin.Notificaciones.Any(n => n.Mensaje == "Mensaje para admin"));
         }
         
-        //darRecursosFaltantes
+        //es miembro por id
         
         [TestMethod]
-        public void DarRecursosFaltantes_DevuelveRecursosNoEnUso()
+        public void EsMiembro_PorId_DevuelveTrueSiUsuarioPertenece()
         {
-            Recurso recurso1 = new Recurso { Id = 1, EnUso = false };
-            Recurso recurso2 = new Recurso { Id = 2, EnUso = true };
-
-            Tarea tarea = new Tarea();
-            tarea.RecursosNecesarios = new List<Recurso> { recurso1, recurso2 };
+            Usuario admin = CrearAdmin();
+            Usuario miembro = CrearMiembro(2);
+            Proyecto proyecto = CrearProyectoCon(admin, new List<Usuario>{miembro});    
             
-            _proyecto = new Proyecto("Proyecto", "Descripción", _admin, _miembros);
-            
-            _proyecto.AgregarTarea(tarea);
-            List<Recurso> faltantes = _proyecto.DarRecursosFaltantes();
-
-            Assert.AreEqual(1, faltantes.Count);
-            Assert.IsTrue(faltantes.Any(r => r.Id == 1));
+            bool resultado = proyecto.EsMiembro(2);
+    
+            Assert.IsTrue(resultado);
         }
         
-        // falta:
-        // REFACTOR (?)
-        // validaciones de recursos(?? Esperar a que definamos bien recurso)
-        //(GESTOR: se encarga de cuando haya una modificacion mandar una notificacion)
+        [TestMethod]
+        public void EsMiembro_PorId_DevuelveFalseSiUsuarioNoPertenece()
+        {
+            Usuario admin = CrearAdmin();
+            Proyecto proyecto = CrearProyectoCon(admin);
+            Assert.IsFalse(proyecto.EsMiembro(100));
+        }
         
-        // metodos faltantes:
-        // calcularRutaCritica()
+        [TestMethod]
+        public void EsMiembro_PorObjeto_DevuelveTrueSiUsuarioPertenece()
+        {
+            Usuario admin = CrearAdmin();
+            Usuario miembro = CrearMiembro();
+            Proyecto proyecto = CrearProyectoCon(admin, new List<Usuario> { miembro });
+
+            Assert.IsTrue(proyecto.EsMiembro(miembro));
+        }
+        
+        [TestMethod]
+        public void EsMiembro_PorObjeto_DevuelveFalseSiUsuarioNoPertenece()
+        {
+            Usuario otro = new Usuario();
+            Usuario admin = CrearAdmin();
+            Usuario miembro = CrearMiembro();
+            Proyecto proyecto = CrearProyectoCon(admin, new List<Usuario> { miembro });
+
+            Assert.IsFalse(proyecto.EsMiembro(otro));
+        }
+        
+        //equals:
+        
+        
+        [TestMethod]
+        public void Equals_RetornaTrueSiLosIdsNoSonIguales()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            bool sonIguales = proyecto1.Equals(proyecto1);
+            Assert.IsTrue(sonIguales);
+        }
+
+        [TestMethod]
+        public void Equals_RetornaFalseSiLosIdsNoSonIguales()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            Usuario otroAdmin = CrearAdmin(2);
+            Proyecto proyecto2 = CrearProyectoCon(otroAdmin);
+            proyecto2.Id = 1;
+            bool sonIguales = proyecto1.Equals(proyecto2);
+            Assert.IsFalse(sonIguales);
+        }
+
+        [TestMethod]
+        public void Equals_RetornaFalseSiUnObjetoEsNull()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            bool sonIguales = proyecto1.Equals(null);
+            Assert.IsFalse(sonIguales);
+        }
+
+        [TestMethod]
+        public void Equals_RetornaFalseSiUnObjetoNoEsProyecto()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            int otro = 0;
+            bool sonIguales = proyecto1.Equals(otro);
+            Assert.IsFalse(sonIguales);
+        }
+        
+        //HELPERS
+        
+        private Usuario CrearAdmin(int id = 1)
+        {
+            return new Usuario { Id = id, EsAdministradorProyecto = true };
+        }
+
+        private Usuario CrearMiembro(int id = 2)
+        {
+            return new Usuario { Id = id };
+        }
+
+        private Proyecto CrearProyectoCon(Usuario admin, List<Usuario> miembros = null)
+        {
+            DateTime fechaInicio = DateTime.Today.AddDays(1);
+            miembros ??= new List<Usuario>();
+            return new Proyecto("Proyecto", "Descripción",fechaInicio, admin, miembros);
+        }
+
+        private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
+        {
+            return new Tarea
+            {
+                Id = id,
+                FechaInicio = inicio ?? DateTime.Today,
+                FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(2)
+            };
+        }
         
     }
 }
