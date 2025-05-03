@@ -82,7 +82,8 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void AgregarUsuario(int idTarea, Usuario usuarioAsignado)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.AsignarUsuario(usuarioAsignado);
     }
 
     public void EliminarUsuario(int idTarea, int idUsuarioAsignado)
