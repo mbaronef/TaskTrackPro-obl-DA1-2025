@@ -24,7 +24,7 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void Eliminar(int id)
     {
-        throw new NotImplementedException();
+        _tareas.Remove(_tareas.FirstOrDefault(tarea => tarea.Id == id));
     }
 
     public List<Tarea> ObtenerTodos()
