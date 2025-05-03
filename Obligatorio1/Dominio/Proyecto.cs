@@ -89,7 +89,7 @@ public class Proyecto
     public void ModificarFechaFinMasTemprana(DateTime nuevaFecha)
     {
         ValidarFechaFinMayorAInicio(nuevaFecha);
-        //ValidarFechaFinNoMenorALaDeLasTareas(nuevaFecha);
+        ValidarFechaFinNoMenorALaDeLasTareas(nuevaFecha);
 
         //FechaFinMasTemprana = nuevaFecha;
     }
@@ -226,6 +226,12 @@ public class Proyecto
     {
         if (fecha < FechaInicio)
             throw new ExcepcionDominio("La fecha de fin más temprana no puede ser anterior a la fecha de inicio del proyecto.");
+    }
+    
+    private void ValidarFechaFinNoMenorALaDeLasTareas(DateTime fecha)
+    {
+        if (Tareas.Any(tarea => tarea.FechaFinMasTemprana > DateTime.MinValue && fecha < tarea.FechaFinMasTemprana))
+            throw new ExcepcionDominio("La fecha de fin más temprana no puede ser menor que la fecha de fin de una tarea.");
     }
 
 
