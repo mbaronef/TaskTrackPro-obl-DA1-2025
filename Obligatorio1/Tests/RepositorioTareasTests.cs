@@ -13,4 +13,13 @@ public class RepositorioTareasTests
         Tarea tarea = repositorioTareas.ObtenerPorId(1);
         Assert.IsNull(tarea);
     }
+
+    [TestMethod]
+    public void SeAgregaTareaOk()
+    {
+        RepositorioTareas repositorioTareas = new RepositorioTareas();
+        Tarea tarea = new Tarea("Título", "Descripción", 2, new DateTime(2030, 2, 2));
+        repositorioTareas.Agregar(tarea);
+        Assert.AreEqual(tarea, repositorioTareas.ObtenerPorId(tarea.Id));
+    }
 }
