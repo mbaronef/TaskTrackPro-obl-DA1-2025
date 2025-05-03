@@ -64,4 +64,12 @@ public class RepositorioTareasTests
         _repositorioTareas.ModificarDescripcion(_tarea.Id, "Otra descripción");
         Assert.AreEqual("Otra descripción", _tarea.Descripcion);
     }
+    
+    [TestMethod]
+    public void SeModificaLaDuracionDeLaTareaOk()
+    {
+        _repositorioTareas.Agregar(_tarea);
+        _repositorioTareas.ModificarDuracion(_tarea.Id, 10);
+        Assert.AreEqual(10, _tarea.DuracionEnDias);
+    }
 }
