@@ -19,12 +19,12 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public Proyecto ObtenerPorId(int id)
     {
-        return _proyectos.FirstOrDefault(p=>p.Id == id);
+        return _proyectos.FirstOrDefault(proyecto=>proyecto.Id == id);
     }
 
     public void Eliminar(int id)
     {
-        _proyectos.Remove(_proyectos.FirstOrDefault(p => p.Id == id));
+        _proyectos.Remove(_proyectos.FirstOrDefault(proyecto => proyecto.Id == id));
     }
 
     public List<Proyecto> ObtenerTodos()

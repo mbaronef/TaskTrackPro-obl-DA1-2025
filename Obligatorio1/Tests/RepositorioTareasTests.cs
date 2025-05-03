@@ -6,6 +6,16 @@ namespace Tests;
 [TestClass]
 public class RepositorioTareasTests
 {
+    private RepositorioTareas _repositorioTareas;
+    private Tarea _tarea;
+
+    [TestInitialize]
+    public void SetUp()
+    {
+        _repositorioTareas = new RepositorioTareas();
+        _tarea = new Tarea("Título", "Descripción", 2, new DateTime(2030, 2, 2));   
+    }
+
     [TestMethod]
     public void ConstructorCreaRepositorioOk()
     {
@@ -17,19 +27,15 @@ public class RepositorioTareasTests
     [TestMethod]
     public void SeAgregaTareaOk()
     {
-        RepositorioTareas repositorioTareas = new RepositorioTareas();
-        Tarea tarea = new Tarea("Título", "Descripción", 2, new DateTime(2030, 2, 2));
-        repositorioTareas.Agregar(tarea);
-        Assert.AreEqual(tarea, repositorioTareas.ObtenerPorId(tarea.Id));
+        _repositorioTareas.Agregar(_tarea);
+        Assert.AreEqual(_tarea, _repositorioTareas.ObtenerPorId(_tarea.Id));
     }
 
     [TestMethod]
     public void SeEliminaTareaOk()
     {
-        RepositorioTareas repositorioTareas = new RepositorioTareas();
-        Tarea tarea = new Tarea("Título", "Descripción", 2, new DateTime(2030, 2, 2));
-        repositorioTareas.Agregar(tarea);
-        repositorioTareas.Eliminar(tarea.Id);
-        Assert.IsNull(repositorioTareas.ObtenerPorId(tarea.Id));
+        _repositorioTareas.Agregar(_tarea);
+        _repositorioTareas.Eliminar(_tarea.Id);
+        Assert.IsNull(_repositorioTareas.ObtenerPorId(_tarea.Id));
     }
 }

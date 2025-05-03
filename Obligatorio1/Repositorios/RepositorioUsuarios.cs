@@ -23,13 +23,13 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 
     public Usuario ObtenerPorId(int id)
     {
-        return _usuarios.FirstOrDefault(u => u.Id == id);
+        return _usuarios.FirstOrDefault(usuario => usuario.Id == id);
 
     }
 
     public void Eliminar(int id)
     {
-        _usuarios.Remove(_usuarios.FirstOrDefault(u => u.Id == id));
+        _usuarios.Remove(_usuarios.FirstOrDefault(usuario => usuario.Id == id));
     }
 
     public List<Usuario> ObtenerTodos()
@@ -39,7 +39,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 
     public Usuario ObtenerUsuarioPorEmail(string email)
     {
-        return _usuarios.FirstOrDefault(u => u.Email == email);
+        return _usuarios.FirstOrDefault(usuario => usuario.Email == email);
     }
 
     public void ActualizarContrasena(int idUsuario, string contrasena)
