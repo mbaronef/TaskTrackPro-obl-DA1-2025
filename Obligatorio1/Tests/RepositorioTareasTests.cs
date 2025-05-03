@@ -117,4 +117,15 @@ public class RepositorioTareasTests
         _repositorioTareas.ModificarHolgura(_tarea.Id, holgura);
         Assert.AreEqual(holgura, _tarea.Holgura);
     }
+    
+    [TestMethod]
+    public void SeAsignaUsuarioOk()
+    {
+        _repositorioTareas.Agregar(_tarea);
+        Usuario miembro = new Usuario("Mateo", "Pérez", new DateTime(2003, 2, 2), "unemail@gmail.com", "UnAc0ntr4señ@");
+        miembro.Id = 1; // lo maneja internamente el gestor
+        _repositorioTareas.AgregarUsuario(_tarea.Id, miembro);
+        Assert.AreEqual(1, _tarea.UsuariosAsignados.Count);
+        Assert.AreEqual(miembro, _tarea.UsuariosAsignados.Last());
+    }
 }
