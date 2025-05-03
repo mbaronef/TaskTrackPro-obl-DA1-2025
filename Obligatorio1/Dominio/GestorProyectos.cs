@@ -7,7 +7,7 @@ namespace Dominio;
 public class GestorProyectos
 {
     private static int _cantidadProyectos;
-    public List<Proyecto> Proyectos { get; private set; } = new List<Proyecto>();
+    public List<Proyecto> Proyectos { get;} = new List<Proyecto>();
 
     public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
     {
