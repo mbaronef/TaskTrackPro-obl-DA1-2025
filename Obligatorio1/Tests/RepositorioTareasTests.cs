@@ -137,6 +137,17 @@ public class RepositorioTareasTests
         miembro.Id = 1; // lo maneja internamente el gestor
         _repositorioTareas.AgregarUsuario(_tarea.Id, miembro);
         _repositorioTareas.EliminarUsuario(_tarea.Id, miembro.Id);
-        Assert.AreEqual(0g,_tarea.UsuariosAsignados.Count);
+        Assert.AreEqual(0,_tarea.UsuariosAsignados.Count);
+    }
+    
+    [TestMethod]
+    public void SeAsignaRecursoOk()
+    {
+        _repositorioTareas.Agregar(_tarea);
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        recurso.Id = 1; // lo maneja internamente el gestor
+        _repositorioTareas.AgregarRecursoNecesario(_tarea.Id, recurso);
+        Assert.AreEqual(1, _tarea.RecursosNecesarios.Count);
+        Assert.AreEqual(recurso, _tarea.RecursosNecesarios.Last());
     }
 }
