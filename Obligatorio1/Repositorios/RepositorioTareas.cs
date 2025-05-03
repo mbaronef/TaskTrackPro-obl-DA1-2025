@@ -64,7 +64,8 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void ModificarFechaDeEjecucion(int idTarea, DateTime fechaDeEjecucion)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.ModificarFechaDeEjecucion(fechaDeEjecucion);
     }
 
     public void ModificarEstado(int idTarea, EstadoTarea estado)
