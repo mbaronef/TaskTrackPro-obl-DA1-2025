@@ -70,7 +70,8 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void ModificarEstado(int idTarea, EstadoTarea estado)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.CambiarEstado(estado);
     }
 
     public void ModificarHolgura(int idTarea, int holgura)
