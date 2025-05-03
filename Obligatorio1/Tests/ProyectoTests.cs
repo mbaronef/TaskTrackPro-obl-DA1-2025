@@ -607,6 +607,20 @@ namespace Tests
             Assert.IsFalse(sonIguales);
         }
         
+        [TestMethod]
+        public void GetHashCode_EsDistintoEnProyectosDistintos()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            Usuario admin2 = CrearAdmin(2);
+            Proyecto proyecto2 = CrearProyectoCon(admin2);
+            //ambos tienen mismo id ya que no hay un gestor que maneje ids
+            Usuario admin3 = CrearAdmin(3);
+            Proyecto proyecto3 = CrearProyectoCon(admin3);
+            proyecto3.Id = 3; // usuario con id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
+            Assert.AreEqual(proyecto1.GetHashCode(), proyecto2.GetHashCode());
+            Assert.AreNotEqual(proyecto3.GetHashCode(), proyecto1.GetHashCode());
+        }
+        
         //HELPERS
         private Usuario CrearAdminSistema()
         {

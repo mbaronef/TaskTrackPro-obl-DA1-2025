@@ -248,12 +248,12 @@ public class Proyecto
     
     public override bool Equals(object? otro)
     {
-        bool retorno = false;
         Proyecto otroProyecto = otro as Proyecto;
-        if (otroProyecto != null)
-        {
-            retorno = otroProyecto.Id == Id;
-        }
-        return retorno;
+        return otroProyecto != null && Id == otroProyecto.Id;
+    }
+    
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
     }
 }
