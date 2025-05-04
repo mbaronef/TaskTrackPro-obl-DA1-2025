@@ -2,7 +2,7 @@
 namespace Tests;
 using Dominio;
 using Dominio.Excepciones;
-using Dominio.Dummies;
+using Servicios.Gestores;
 
 [TestClass]
 
@@ -530,7 +530,7 @@ public class TareaTests
     {
         Usuario admin = new Usuario("Admin", "Root", new DateTime(1980, 1, 1), "admin@test.com", "TaskTrackPro@2025");
         admin.EsAdministradorSistema = true;
-        GestorUsuarios gestor = new GestorUsuarios(admin);
+        GestorUsuarios gestor = new GestorUsuarios();
         Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(1995, 1, 1), "juan@test.com", "TaskTrackPro@2025");
         Usuario usuario2 = new Usuario("Juana", "Pereza", new DateTime(1996, 2, 2), "juana@test.com", "TaskTrackPro@2025");
         gestor.AgregarUsuario(admin, usuario1);
