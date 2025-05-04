@@ -188,6 +188,18 @@ public class TareaTests
         tarea.CambiarEstado(EstadoTarea.Bloqueada);
         tarea.CambiarEstado(EstadoTarea.Completada); 
     }
+
+    [TestMethod]
+    public void CambiarEstadoAEnProcesoIncrementaCantidadDeTareasUsando()
+    {
+        Recurso recurso = new Recurso();
+        Tarea tarea = new Tarea("Título", "Descripción", 3, DateTime.Today);
+        tarea.AgregarRecurso(recurso);
+
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
+
+        Assert.AreEqual(1, recurso.CantidadDeTareasUsando);
+    }
     
     [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
@@ -675,6 +687,8 @@ public class TareaTests
         
         tarea.VerificarDependenciaNoEstaAgregada(dependencia);
     }
+    
+    
 
 
     
