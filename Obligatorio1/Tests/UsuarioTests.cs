@@ -1,5 +1,7 @@
 using Dominio;
 using Dominio.Excepciones;
+using Servicios.Gestores;
+using Servicios.Utilidades;
 
 namespace Tests
 
@@ -11,7 +13,9 @@ namespace Tests
 
         private Usuario CrearUsuarioValido()
         {
-            return new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "Contrase#a3");
+            string contrasena = "Contrase#a3";
+            string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(contrasena);
+            return new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", contrasenaEncriptada);
         }
 
         [TestMethod]
@@ -44,7 +48,7 @@ namespace Tests
         [TestMethod]
         public void ConstructorValidaApellidoNoVacio()
         {
-            Usuario usuario = new Usuario("Juan", "", _fechaNacimientoValida, "unemail@gmail.com", "Contrase#a3");
+            Usuario usuario = new Usuario("Juan", " ", _fechaNacimientoValida, "unemail@gmail.com", "Contrase#a3");
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
@@ -85,14 +89,6 @@ namespace Tests
         }
 
         [TestMethod]
-        public void ContrasenaEncriptadaEsDistintaALaOriginal()
-        {
-            string unaContrasena = "Contrase#a3";
-            string contrasenaEncriptada = Usuario.EncriptarContrasena(unaContrasena);
-            Assert.AreNotEqual(unaContrasena, contrasenaEncriptada);
-        }
-
-        [TestMethod]
         public void CompararContrasenaDadaConContrasenaDeUsuarioOk()
         {
             string contrasenaIngresada = "Contrase#a3";
@@ -107,47 +103,12 @@ namespace Tests
             Usuario usuario = CrearUsuarioValido();
             Assert.IsFalse(usuario.Autenticar(contrasenaIngresada));
         }
-
-        [ExpectedException(typeof(ExcepcionDominio))]
-        [TestMethod]
-        public void IngresoDeContrasenaMuyCorta()
-        {
-            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "P3e.");
-        }
-
-        [ExpectedException(typeof(ExcepcionDominio))]
-        [TestMethod]
-        public void IngresoDeContrasenaSinMayusculas()
-        {
-            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "minuscula1@");
-        }
-
-        [ExpectedException(typeof(ExcepcionDominio))]
-        [TestMethod]
-        public void IngresoDeContrasenaSinMinusculas()
-        {
-            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "MAYUSCULA1@");
-        }
-
-        [ExpectedException(typeof(ExcepcionDominio))]
-        [TestMethod]
-        public void IngresoDeContrasenaSinNumeros()
-        {
-            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "CoNtRaSeN@");
-        }
-
-        [ExpectedException(typeof(ExcepcionDominio))]
-        [TestMethod]
-        public void IngresoDeContrasenaSinCaracterEspecial()
-        {
-            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@gmail.com", "CoNtRaSeN14");
-        }
-
+        
         [ExpectedException(typeof(ExcepcionDominio))]
         [TestMethod]
         public void IngresoDeEmailInvalido()
         {
-            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "emailinvalido", "Contrase#a3");
+            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "emailinvalido", "xxxxxx");
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
@@ -155,42 +116,17 @@ namespace Tests
         public void DaErrorSiElUsuarioEsMenorDeEdad()
         {
             DateTime fechaNacimiento = new DateTime(2020, 1, 6);
-            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "6onTrase}a3");
+            Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "xxxxx");
         }
 
         [TestMethod]
         public void SeCambiaContrasenaCorrectamente()
         {
-            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@adinet.com", "Contrase#a3");
+            Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@adinet.com", "xxxxxxx");
             string nuevaContrasena = "CoNtRaSeN1@";
-            usuario.EstablecerContrasena(nuevaContrasena);
+            string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
+            usuario.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
             Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
-        }
-
-        [ExpectedException(typeof(ExcepcionDominio))]
-        [TestMethod]
-        public void DaErrorSiSeCambiaContrasenaInvalida()
-        {
-            Usuario usuario = CrearUsuarioValido();
-            string nuevaContrasena = "c1.A";
-            usuario.EstablecerContrasena(nuevaContrasena);
-        }
-
-        [TestMethod]
-        public void NoSeCambiaContrasenaInvalida()
-        {
-            Usuario usuario = CrearUsuarioValido();
-            string nuevaContrasena = "c1.A";
-            try
-            {
-                usuario.EstablecerContrasena(nuevaContrasena);
-            }
-            catch
-            {
-            } // Ignorar la excepción
-
-            Assert.IsFalse(usuario.Autenticar(nuevaContrasena));
-            Assert.IsTrue(usuario.Autenticar("Contrase#a3"));
         }
 
         [TestMethod]
@@ -274,8 +210,8 @@ namespace Tests
         [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
-            Usuario adminSistema = new Usuario("admin", "admin", new DateTime(1999,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
-            GestorUsuarios gestor = new GestorUsuarios(adminSistema);
+            GestorUsuarios gestor = new GestorUsuarios();
+            Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(adminSistema,usuario1);
             Usuario usuario2 = gestor.ObtenerUsuarioPorId(usuario1.Id);
@@ -286,8 +222,8 @@ namespace Tests
         [TestMethod]
         public void EqualsRetornaFalseSiLosIdsNoSonIguales()
         {
-            Usuario adminSistema = new Usuario("admin", "admin", new DateTime(1999,01,01), "admin@admin.com", "AdminTaskTrackPro@2025");
-            GestorUsuarios gestor = new GestorUsuarios(adminSistema);
+            GestorUsuarios gestor = new GestorUsuarios();
+            Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(adminSistema, usuario1);
             Usuario usuario2 = CrearUsuarioValido();
