@@ -219,8 +219,28 @@ public class GestorRecursosTests
         Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-    
-    // TODO: Si no es exclusivo, se notifica a todos los admin de los proyectos que lo tienen en uso.
+
+    [TestMethod]
+    public void EliminarRecursoNoExclusivoNotificaAdminDeProyectosQueLoUsan()
+    {
+        Usuario adminSistema = CrearAdministradorSistema();
+        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        _gestorRecursos.AgregarRecurso(adminSistema, recurso);
+        
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción",DateTime.Today.AddDays(1), adminProyecto, new List<Usuario>());
+        Tarea tarea = new Tarea("Un título", "una descripcion", 3, DateTime.Today.AddDays(10));
+        tarea.AgregarRecurso(recurso);
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
+        proyecto.AgregarTarea(tarea);
+        _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
+        
+        _gestorRecursos.EliminarRecurso(adminSistema, recurso.Id);
+        
+        Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
+        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
+    }
     
     [TestMethod]
     public void AdminSistemaModificaNombreDeRecursoOk()
