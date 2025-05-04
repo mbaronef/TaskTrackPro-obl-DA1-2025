@@ -215,6 +215,16 @@ public class TareaTests
         Assert.AreEqual(DateTime.Today, tarea.FechaDeEjecucion);
     }
 
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void CambiarEstadoACompletada_SinUsoPrevio_LanzaExcepcion()
+    {
+        var recurso = new Recurso { Id = 1};
+        var tarea = new Tarea("Título", "Descripción", 3, DateTime.Today);
+        tarea.AgregarRecurso(recurso);
+    
+        tarea.CambiarEstado(EstadoTarea.Completada);
+    }
     
     [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()

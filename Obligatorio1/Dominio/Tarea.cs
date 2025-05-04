@@ -113,6 +113,23 @@ public class Tarea
             throw new ExcepcionDominio("No se puede cambiar una tarea bloqueada a completada.");
         }
     }
+
+    private void AsignaRecursos()
+    {
+        foreach (Recurso recurso in RecursosNecesarios)
+        {
+            recurso.IncrementarCantidadDeTareasUsando();
+        }
+    }
+
+    private void LiberaRecursos()
+    {
+        foreach (var recurso in RecursosNecesarios)
+        {
+            recurso.DecrementarCantidadDeTareasUsando();
+        }
+        FechaDeEjecucion = DateTime.Today;
+    }
     
     public void CambiarEstado(EstadoTarea nuevoEstado)
     {
@@ -125,18 +142,11 @@ public class Tarea
         Estado = nuevoEstado;
         if (nuevoEstado == EstadoTarea.EnProceso)
         {
-            foreach (Recurso recurso in RecursosNecesarios)
-            {
-                recurso.IncrementarCantidadDeTareasUsando();
-            }
+            AsignaRecursos();
         }
         else if (nuevoEstado == EstadoTarea.Completada)
         {
-            foreach (var recurso in RecursosNecesarios)
-            {
-                recurso.DecrementarCantidadDeTareasUsando();
-            }
-            FechaDeEjecucion = DateTime.Today;
+            LiberaRecursos();
         }
     }
     
