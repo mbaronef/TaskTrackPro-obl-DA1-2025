@@ -106,7 +106,8 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void AgregarDependencia(int idTarea, Dependencia dependencia)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.AgregarDependencia(dependencia);
     }
 
     public void EliminarDependencia(int idTarea, Dependencia dependencia)
