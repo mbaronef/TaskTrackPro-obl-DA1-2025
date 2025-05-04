@@ -75,4 +75,19 @@ public class Recurso
             throw new ExcepcionDominio($"El atributo {nombreAtributo} no puede ser vacío");
         }
     }
+    
+    public void IncrementarCantidadDeTareasUsandolo()
+    {
+        CantidadDeTareasUsandolo++;
+    }
+
+    public void DecrementarCantidadDeTareasUsandolo()
+    {
+        if (CantidadDeTareasUsandolo <= 0)
+            throw new ExcepcionDominio("La cantidad de tareas usando este recurso no puede ser menor a cero.");
+
+        CantidadDeTareasUsandolo--;
+    }
+
+    
 }
