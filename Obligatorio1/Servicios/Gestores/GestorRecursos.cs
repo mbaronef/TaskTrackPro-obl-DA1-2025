@@ -129,13 +129,7 @@ public class GestorRecursos
         }
         else
         {
-            foreach (Proyecto proyecto in _gestorProyectos.Proyectos)
-            {
-                if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
-                {
-                    proyecto.Administrador.RecibirNotificacion(mensaje);
-                }
-            }
+            NotificarAdministradoresDeProyectosQueUsanRecurso(recurso, mensaje);
         }
     }
 
@@ -149,12 +143,18 @@ public class GestorRecursos
         }
         else
         {
-            foreach (Proyecto proyecto in _gestorProyectos.Proyectos)
+            NotificarAdministradoresDeProyectosQueUsanRecurso(recurso, mensaje);
+        }
+    }
+    
+    
+    private void NotificarAdministradoresDeProyectosQueUsanRecurso(Recurso recurso, string mensaje)
+    {
+        foreach (Proyecto proyecto in _gestorProyectos.Proyectos)
+        {
+            if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
             {
-                if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
-                {
-                    proyecto.Administrador.RecibirNotificacion(mensaje);
-                }
+                proyecto.Administrador.RecibirNotificacion(mensaje);
             }
         }
     }
