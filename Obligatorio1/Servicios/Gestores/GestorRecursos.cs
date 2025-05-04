@@ -1,5 +1,5 @@
 using Dominio;
-using Dominio.Dummies;
+using Servicios.Excepciones;
 
 namespace Servicios.Gestores;
 

@@ -1,5 +1,5 @@
 ﻿namespace Dominio;
-using Dominio.Excepciones;
+using Excepciones;
 public class Dependencia
 {
     public string Tipo { get; private set; }

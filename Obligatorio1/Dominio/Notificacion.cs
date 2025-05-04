@@ -1,6 +1,6 @@
-using Dominio.Excepciones;
-
 namespace Dominio;
+
+using Excepciones;
 
 public class Notificacion
 {

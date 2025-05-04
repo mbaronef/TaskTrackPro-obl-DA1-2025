@@ -1,8 +1,7 @@
 using Dominio;
-using Dominio.Dummies;
 using Dominio.Excepciones;
 
-namespace Tests;
+namespace Tests.DominioTests;
 
 [TestClass]
 public class RecursoTests

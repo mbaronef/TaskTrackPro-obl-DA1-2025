@@ -1,11 +1,9 @@
-namespace Tests;
-
 using Dominio;
 using Dominio.Excepciones;
 
+namespace Tests.DominioTests;
 
 [TestClass]
-[DoNotParallelize]
 public class NotificacionTests
 {
     private Notificacion _nuevaNotificacion;
