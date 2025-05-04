@@ -25,7 +25,7 @@ public class RepositorioTareas : IRepositorioTareas
 
     public void Eliminar(int id)
     {
-        _tareas.Remove(_tareas.FirstOrDefault(tarea => tarea.Id == id));
+        _tareas.Remove(_tareas.Find(tarea => tarea.Id == id));
     }
 
     public List<Tarea> ObtenerTodos()
