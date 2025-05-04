@@ -56,10 +56,10 @@ namespace Tests
 
         private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
         {
-            Tarea tarea = new Tarea
+            Tarea tarea = new Tarea ("titulo", "descripcion", 1, DateTime.Today)
             {
                 Id = id,
-                FechaInicio = inicio ?? DateTime.Today,
+                FechaInicioMasTemprana = inicio ?? DateTime.Today,
                 FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(1)
             };
             return tarea;

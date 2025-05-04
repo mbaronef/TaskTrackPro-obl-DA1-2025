@@ -118,7 +118,7 @@ public class Tarea
     {
         foreach (Recurso recurso in RecursosNecesarios)
         {
-            recurso.IncrementarCantidadDeTareasUsando();
+            recurso.IncrementarCantidadDeTareasUsandolo();
         }
     }
 
@@ -126,7 +126,7 @@ public class Tarea
     {
         foreach (var recurso in RecursosNecesarios)
         {
-            recurso.DecrementarCantidadDeTareasUsando();
+            recurso.DecrementarCantidadDeTareasUsandolo();
         }
         FechaDeEjecucion = DateTime.Today;
     }
@@ -265,9 +265,8 @@ public class Tarea
     public void NotificarMiembros(string mensaje)
     {
         foreach (Usuario usuario in UsuariosAsignados)
-        { 
-            Notificacion nuevaNotificacion = new Notificacion(mensaje); 
-            usuario.RecibirNotificacion(nuevaNotificacion);
+        {
+            usuario.RecibirNotificacion(mensaje);
         }
     }
     

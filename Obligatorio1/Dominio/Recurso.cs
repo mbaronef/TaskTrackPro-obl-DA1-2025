@@ -48,14 +48,17 @@ public class Recurso
         }
         ProyectoAsociado = proyecto;
     }
-    
-    public void ModificarCantidadDeTareasUsandolo(int cantidadDeTareasUsandolo)
+    public void IncrementarCantidadDeTareasUsandolo()
     {
-        if (cantidadDeTareasUsandolo < 0)
-        {
-            throw new ExcepcionDominio("No puede haber una cantidad negativa de tareas utilizando el recurso");
-        }
-        CantidadDeTareasUsandolo = cantidadDeTareasUsandolo;
+        CantidadDeTareasUsandolo++;
+    }
+
+    public void DecrementarCantidadDeTareasUsandolo()
+    {
+        if (CantidadDeTareasUsandolo <= 0)
+            throw new ExcepcionDominio("La cantidad de tareas usando este recurso no puede ser menor a cero.");
+
+        CantidadDeTareasUsandolo--;
     }
     
     public bool EsExclusivo()
