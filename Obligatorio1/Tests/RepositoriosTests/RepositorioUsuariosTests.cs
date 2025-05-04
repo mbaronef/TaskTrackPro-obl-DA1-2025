@@ -2,7 +2,7 @@ using Dominio;
 using Repositorios;
 using Servicios.Utilidades;
 
-namespace Tests;
+namespace Tests.RepositoriosTests;
 
 [TestClass]
 public class RepositorioUsuariosTests

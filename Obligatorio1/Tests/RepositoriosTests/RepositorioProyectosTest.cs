@@ -1,7 +1,7 @@
 using Dominio;
 using Repositorios;
 
-namespace Tests;
+namespace Tests.RepositoriosTests;
 
 [TestClass]
 public class RepositorioProyectosTest
