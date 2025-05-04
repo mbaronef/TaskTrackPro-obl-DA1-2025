@@ -1,6 +1,5 @@
-using System.Text;
-using Dominio.Dummies;
 using Repositorios.IRepositorios;
+using Dominio;
 
 namespace Repositorios;
 
@@ -102,7 +101,7 @@ public class RepositorioTareas : IRepositorioTareas
     public void EliminarRecursoNecesario(int idTarea, int idRecursoNecesario)
     {
         Tarea tarea = ObtenerPorId(idTarea);
-        tarea.EliminarRecursoNecesario(idRecursoNecesario);
+        tarea.EliminarRecurso(idRecursoNecesario);
     }
 
     public void AgregarDependencia(int idTarea, Dependencia dependencia)

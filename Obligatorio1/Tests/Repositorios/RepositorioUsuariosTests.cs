@@ -1,5 +1,6 @@
-using Dominio.Dummies;
+using Dominio;
 using Repositorios;
+using Servicios.Utilidades;
 
 namespace Tests;
 
@@ -7,11 +8,13 @@ namespace Tests;
 public class RepositorioUsuariosTests
 {
     private RepositorioUsuarios _repositorioUsuarios;
+    private Usuario _usuario;
     
     [TestInitialize]
     public void Setup()
     { 
         _repositorioUsuarios = new RepositorioUsuarios();
+        _usuario = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
     }
 
     [TestMethod]
@@ -26,20 +29,18 @@ public class RepositorioUsuariosTests
     [TestMethod]
     public void SeAgregaUnUsuarioOk()
     {
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
-        usuario.Id = 1;
-        _repositorioUsuarios.Agregar(usuario);
+        _usuario.Id = 1;
+        _repositorioUsuarios.Agregar(_usuario);
         Usuario ultimoDelRepositorioUsuario = _repositorioUsuarios.ObtenerPorId(1);
-        Assert.AreEqual(usuario, ultimoDelRepositorioUsuario);
+        Assert.AreEqual(_usuario, ultimoDelRepositorioUsuario);
     }
 
     [TestMethod]
     public void SeEliminaUnUsuarioOk()
     {
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
-        usuario.Id = 1;
-        _repositorioUsuarios.Agregar(usuario);
-        _repositorioUsuarios.Eliminar(usuario.Id);
+        _usuario.Id = 1;
+        _repositorioUsuarios.Agregar(_usuario);
+        _repositorioUsuarios.Eliminar(_usuario.Id);
         Assert.IsNull(_repositorioUsuarios.ObtenerPorId(1));
     }
 
@@ -56,14 +57,15 @@ public class RepositorioUsuariosTests
     public void SePuedeObtenerUsuariosPorEmail()
     {
         Usuario admin = _repositorioUsuarios.ObtenerPorId(0);
-        Usuario obtenido = _repositorioUsuarios.ObtenerUsuarioPorEmail("admin@sistema.com");
-        Assert.AreEqual(admin, obtenido);
+        Usuario obtenidoPorEmail = _repositorioUsuarios.ObtenerUsuarioPorEmail("admin@sistema.com");
+        Assert.AreEqual(admin, obtenidoPorEmail);
     }
 
     [TestMethod]
     public void SePuedeModificarContrasenaDeUsuario()
     {
-        _repositorioUsuarios.ActualizarContrasena(0,"1Admin=Sistema1");
+        string nuevaContrasena = UtilidadesContrasena.ValidarYEncriptarContrasena("1Admin=Sistema1");
+        _repositorioUsuarios.ActualizarContrasena(0, nuevaContrasena);
         Usuario admin = _repositorioUsuarios.ObtenerPorId(0);
         Assert.IsTrue(admin.Autenticar("1Admin=Sistema1"));
     }

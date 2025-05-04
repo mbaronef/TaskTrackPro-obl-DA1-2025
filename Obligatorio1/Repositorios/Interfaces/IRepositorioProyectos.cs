@@ -1,4 +1,4 @@
-using Dominio.Dummies;
+using Dominio;
 
 namespace Repositorios.IRepositorios;
 

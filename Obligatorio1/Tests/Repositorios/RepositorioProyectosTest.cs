@@ -1,4 +1,4 @@
-using Dominio.Dummies;
+using Dominio;
 using Repositorios;
 
 namespace Tests;
@@ -16,15 +16,14 @@ public class RepositorioProyectosTest
         _repositorioProyectos = new RepositorioProyectos(); 
         _usuario = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
         _usuario.EsAdministradorProyecto = true;
-        List<Usuario> lista = new List<Usuario>();
-        _proyecto = new Proyecto("Proyecto", "hacer algo", _usuario, lista);
+        List<Usuario> miembros = new List<Usuario>();
+        _proyecto = new Proyecto("Proyecto", "hacer algo", DateTime.Today.AddDays(10), _usuario, miembros);
     }
 
     [TestMethod]
     public void ConstructorCreaRepositorioOk()
     {
-        RepositorioProyectos repositorioProyectos = new RepositorioProyectos();
-        Proyecto proyecto = repositorioProyectos.ObtenerPorId(1);
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(1);
         Assert.IsNull(proyecto);
     }
 
@@ -74,7 +73,7 @@ public class RepositorioProyectosTest
     [TestMethod]
     public void SeModificaLaFechaInicioDeProyectosOk()
     {
-        DateTime fechaInicio = DateTime.Today;
+        DateTime fechaInicio = DateTime.Today.AddDays(2);
         _repositorioProyectos.Agregar(_proyecto);
         _repositorioProyectos.ModificarFechaInicio(_proyecto.Id, fechaInicio);
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
@@ -84,10 +83,8 @@ public class RepositorioProyectosTest
     [TestMethod]
     public void SeModificaLaFechaFinMasTempranaDeProyectosOk()
     {
-        DateTime fechaInicio = new DateTime(2028, 1, 1);
         DateTime fechaFin = new DateTime(2030, 1, 1);
         _repositorioProyectos.Agregar(_proyecto);
-        _repositorioProyectos.ModificarFechaInicio(_proyecto.Id, fechaInicio);
         _repositorioProyectos.ModificarFechaFinMasTemprana(_proyecto.Id, fechaFin);
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
         Assert.AreEqual(fechaFin, proyecto.FechaFinMasTemprana);
@@ -108,7 +105,7 @@ public class RepositorioProyectosTest
     public void SeAgregaTareaOk()
     {
         _repositorioProyectos.Agregar(_proyecto);
-        Tarea tarea = new Tarea();
+        Tarea tarea = new Tarea("Título", "Descripción",5,DateTime.Today.AddDays(10));
         _repositorioProyectos.AgregarTarea(_proyecto.Id, tarea);
         Assert.AreEqual(1,_proyecto.Tareas.Count);
         Assert.AreEqual(tarea, _proyecto.Tareas.Last());
@@ -118,7 +115,7 @@ public class RepositorioProyectosTest
     public void SeEliminaTareaOk()
     {
         _repositorioProyectos.Agregar(_proyecto);
-        Tarea tarea = new Tarea();
+        Tarea tarea = new Tarea("Título", "Descripción",5,DateTime.Today.AddDays(10));
         _repositorioProyectos.AgregarTarea(_proyecto.Id, tarea);
         _repositorioProyectos.EliminarTarea(_proyecto.Id, tarea.Id);
         Assert.AreEqual(0,_proyecto.Tareas.Count);

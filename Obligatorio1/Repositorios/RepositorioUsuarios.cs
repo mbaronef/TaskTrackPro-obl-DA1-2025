@@ -1,5 +1,5 @@
-using Dominio.Dummies;
 using Repositorios.IRepositorios;
+using Dominio;
 
 namespace Repositorios;
 
@@ -42,10 +42,10 @@ public class RepositorioUsuarios : IRepositorioUsuarios
         return _usuarios.Find(usuario => usuario.Email == email);
     }
 
-    public void ActualizarContrasena(int idUsuario, string contrasena)
+    public void ActualizarContrasena(int idUsuario, string contrasenaEncriptada)
     {
         Usuario usuario = ObtenerPorId(idUsuario);
-        usuario.EstablecerContrasena(contrasena);
+        usuario.EstablecerContrasenaEncriptada(contrasenaEncriptada);
     }
 }
     

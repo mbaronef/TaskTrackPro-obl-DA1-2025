@@ -1,4 +1,4 @@
-using Dominio.Dummies;
+using Dominio;
 using Repositorios;
 
 namespace Tests;
@@ -19,8 +19,7 @@ public class RepositorioTareasTests
     [TestMethod]
     public void ConstructorCreaRepositorioOk()
     {
-        RepositorioTareas repositorioTareas = new RepositorioTareas();
-        Tarea tarea = repositorioTareas.ObtenerPorId(1);
+        Tarea tarea = _repositorioTareas.ObtenerPorId(1);
         Assert.IsNull(tarea);
     }
 
