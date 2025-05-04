@@ -102,7 +102,15 @@ public class Tarea
     {
         if (Estado == EstadoTarea.Pendiente && nuevoEstado == EstadoTarea.Completada)
         {
-            throw new ExcepcionDominio("No se puede cambiar una tarea en pendiente a completada.");
+            throw new ExcepcionDominio("No se puede cambiar una tarea pendiente a completada.");
+        }
+    }
+    
+    private void EstadoBloqueadaACompletada(EstadoTarea nuevoEstado)
+    {
+        if (Estado == EstadoTarea.Bloqueada && nuevoEstado == EstadoTarea.Completada)
+        {
+            throw new ExcepcionDominio("No se puede cambiar una tarea bloqueada a completada.");
         }
     }
     
@@ -113,6 +121,7 @@ public class Tarea
         EstadoCompletadaABloqueada(nuevoEstado);
         EstadoEnProcesoAPendiente(nuevoEstado);
         EstadoPendienteACompletada(nuevoEstado);
+        EstadoBloqueadaACompletada(nuevoEstado);
         Estado = nuevoEstado;
     }
     
