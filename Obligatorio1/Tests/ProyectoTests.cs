@@ -16,9 +16,10 @@ namespace Tests
         [TestInitialize]
         public void AntesDeCadaTest()
         {
-            _gestorUsuarios = new GestorUsuarios();
-            _admin = CrearAdmin();
-            _gestorUsuarios.agregarUsuario(_admin);
+            Usuario adminSistema = CrearAdminSistema();
+            _gestorUsuarios = new GestorUsuarios(adminSistema);
+            _admin = CrearAdmin(1);
+            _gestorUsuarios.AgregarUsuario(adminSistema, _admin);
             _miembros = new List<Usuario>();
         }
         
@@ -162,8 +163,7 @@ namespace Tests
         [TestMethod]
         public void AgregarTarea_AgregarUnaTareaALaLista()
         {
-            Usuario admin = CrearAdmin();
-            Proyecto proyecto = CrearProyectoCon(admin);
+            Proyecto proyecto = CrearProyectoCon(_admin);
             Tarea tarea = CrearTarea();
             
             proyecto.AgregarTarea(tarea); 
@@ -223,7 +223,7 @@ namespace Tests
         {
             _proyecto = CrearProyectoCon(_admin);
 
-            Usuario nuevoMiembro = new Usuario();
+            Usuario nuevoMiembro = CrearMiembro(2);
 
             _proyecto.AsignarMiembro(nuevoMiembro);
 
@@ -257,7 +257,7 @@ namespace Tests
             Usuario miembro = CrearMiembro(2);
             _proyecto = CrearProyectoCon(admin); 
             _proyecto.AsignarMiembro(miembro);
-            _proyecto.EliminarMiembro(2); // Elimino al miembro
+            _proyecto.EliminarMiembro(miembro.Id); // Elimino al miembro
 
             Assert.IsFalse(_proyecto.Miembros.Any(u => u.Id == 2));
             Assert.AreEqual(1, _proyecto.Miembros.Count);
@@ -268,9 +268,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void EliminarMiembro_LanzaExcepcionSiElUsuarioNoExisteEnMiembros()
         {
-            _admin.Id = 1;
-            Usuario miembro = new Usuario();
-            miembro.Id = 2;
+            Usuario miembro = CrearMiembro(2);
             _proyecto = CrearProyectoCon(_admin);
             
             _proyecto.AsignarMiembro(miembro);
@@ -281,14 +279,12 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void EliminarMiembro_LanzaExcepcionSiUsuarioEsAdministrador()
         {
-            _admin.Id = 1;
-            Usuario miembro = new Usuario();
-            miembro.Id = 2;
+            Usuario miembro = CrearMiembro(2);
             
             _proyecto = CrearProyectoCon(_admin);
             
             _proyecto.AsignarMiembro(miembro);
-            _proyecto.EliminarMiembro(1); // Intenta eliminar al admin
+            _proyecto.EliminarMiembro(_admin.Id); // Intenta eliminar al admin
         }
         
         //EsAdministrador
@@ -305,9 +301,10 @@ namespace Tests
         [TestMethod]
         public void EsAdministrador_RetornarFalseSiUsuarioNoEsAdministrador()
         {
-            Usuario otro = new Usuario();
+            Usuario adminSistema = CrearAdminSistema();
+            Usuario otro = CrearMiembro(2);
             _proyecto = CrearProyectoCon(_admin, _miembros);
-            _gestorUsuarios.agregarUsuario(otro);
+            _gestorUsuarios.AgregarUsuario(adminSistema, otro);
             _proyecto.AsignarMiembro(otro);
             bool resultado = _proyecto.EsAdministrador(otro);
             Assert.IsFalse(resultado);
@@ -486,11 +483,9 @@ namespace Tests
         [TestMethod]
         public void AsignarNuevoAdministrador_CambiaElAdministradorDelProyecto()
         {
-            
-            Usuario admin = CrearAdmin(1);
             Usuario nuevoAdmin = CrearMiembro(2);
             
-            _proyecto = CrearProyectoCon(admin);
+            _proyecto = CrearProyectoCon(_admin);
             
             _proyecto.AsignarMiembro(nuevoAdmin);
             _proyecto.AsignarNuevoAdministrador(nuevoAdmin);
@@ -502,9 +497,7 @@ namespace Tests
         [ExpectedException(typeof(ExcepcionDominio))]
         public void AsignarNuevoAdministrador_LanzaExcepcionSiIdNoCorrespondeAMiembro()
         {
-            _admin.Id = 1;
-    
-            Usuario miembro = new Usuario();
+            Usuario miembro = CrearMiembro(2);
             
             _proyecto = CrearProyectoCon(_admin);
 
@@ -515,7 +508,7 @@ namespace Tests
         [TestMethod]
         public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
         {
-            Usuario miembro = new Usuario();
+            Usuario miembro = CrearMiembro(2);
             _proyecto = CrearProyectoCon(_admin);
             _proyecto.AsignarMiembro(miembro);
             _proyecto.NotificarMiembros("Se modificó el proyecto.");
@@ -530,7 +523,6 @@ namespace Tests
         [TestMethod]
         public void NotificarAdministrador_AgregaNotificacionAlAdministrador()
         {
-            _admin.Id = 1;
             _proyecto = CrearProyectoCon(_admin);
 
             _proyecto.NotificarAdministrador("Mensaje para admin");
@@ -543,9 +535,8 @@ namespace Tests
         [TestMethod]
         public void EsMiembro_PorId_DevuelveTrueSiUsuarioPertenece()
         {
-            Usuario admin = CrearAdmin();
             Usuario miembro = CrearMiembro(2);
-            Proyecto proyecto = CrearProyectoCon(admin, new List<Usuario>{miembro});    
+            Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario>{miembro});    
             
             bool resultado = proyecto.EsMiembro(2);
     
@@ -555,17 +546,15 @@ namespace Tests
         [TestMethod]
         public void EsMiembro_PorId_DevuelveFalseSiUsuarioNoPertenece()
         {
-            Usuario admin = CrearAdmin();
-            Proyecto proyecto = CrearProyectoCon(admin);
+            Proyecto proyecto = CrearProyectoCon(_admin);
             Assert.IsFalse(proyecto.EsMiembro(100));
         }
         
         [TestMethod]
         public void EsMiembro_PorObjeto_DevuelveTrueSiUsuarioPertenece()
         {
-            Usuario admin = CrearAdmin();
-            Usuario miembro = CrearMiembro();
-            Proyecto proyecto = CrearProyectoCon(admin, new List<Usuario> { miembro });
+            Usuario miembro = CrearMiembro(2);
+            Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { miembro });
 
             Assert.IsTrue(proyecto.EsMiembro(miembro));
         }
@@ -573,16 +562,14 @@ namespace Tests
         [TestMethod]
         public void EsMiembro_PorObjeto_DevuelveFalseSiUsuarioNoPertenece()
         {
-            Usuario otro = new Usuario();
-            Usuario admin = CrearAdmin();
-            Usuario miembro = CrearMiembro();
-            Proyecto proyecto = CrearProyectoCon(admin, new List<Usuario> { miembro });
+            Usuario otro = CrearMiembro(2);
+            Usuario miembro = CrearMiembro(3);
+            Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { miembro });
 
             Assert.IsFalse(proyecto.EsMiembro(otro));
         }
         
         //equals:
-        
         
         [TestMethod]
         public void Equals_RetornaTrueSiLosIdsNoSonIguales()
@@ -620,16 +607,42 @@ namespace Tests
             Assert.IsFalse(sonIguales);
         }
         
-        //HELPERS
-        
-        private Usuario CrearAdmin(int id = 1)
+        [TestMethod]
+        public void GetHashCode_EsDistintoEnProyectosDistintos()
         {
-            return new Usuario { Id = id, EsAdministradorProyecto = true };
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            Usuario admin2 = CrearAdmin(2);
+            Proyecto proyecto2 = CrearProyectoCon(admin2);
+            //ambos tienen mismo id ya que no hay un gestor que maneje ids
+            Usuario admin3 = CrearAdmin(3);
+            Proyecto proyecto3 = CrearProyectoCon(admin3);
+            proyecto3.Id = 3; // usuario con id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
+            Assert.AreEqual(proyecto1.GetHashCode(), proyecto2.GetHashCode());
+            Assert.AreNotEqual(proyecto3.GetHashCode(), proyecto1.GetHashCode());
+        }
+        
+        //HELPERS
+        private Usuario CrearAdminSistema()
+        {
+            Usuario adminSistema = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
+            adminSistema.EsAdministradorSistema = true;
+            return adminSistema;
         }
 
-        private Usuario CrearMiembro(int id = 2)
+        private Usuario CrearAdmin(int id)
         {
-            return new Usuario { Id = id };
+            Usuario admin = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
+            admin.EsAdministradorProyecto = true;
+            admin.Id = id; // Se hardcodea pero en realidad lo gestiona el gestor de usuarios
+            return admin;
+            
+        }
+
+        private Usuario CrearMiembro(int id)
+        {
+            Usuario miembro = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
+            miembro.Id = id; // Se hardcodea pero en realidad lo gestiona el gestor de usuarios
+            return miembro;
         }
 
         private Proyecto CrearProyectoCon(Usuario admin, List<Usuario> miembros = null)

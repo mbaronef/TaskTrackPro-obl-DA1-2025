@@ -120,9 +120,9 @@ public class Proyecto
         {
             if (usuario.Equals(nuevoAdministrador))
             {
-                Administrador.EstaAdministrandoProyecto = false;
+                Administrador.EstaAdministrandoUnProyecto = false;
                 Administrador = usuario;
-                Administrador.EstaAdministrandoProyecto = true;
+                Administrador.EstaAdministrandoUnProyecto = true;
             }
         }
     }
@@ -131,15 +131,13 @@ public class Proyecto
     {
         foreach (Usuario usuario in Miembros)
         {
-            Notificacion nuevaNotificacion = new Notificacion(mensaje);
-            usuario.RecibirNotificacion(nuevaNotificacion);
+            usuario.RecibirNotificacion(mensaje);
         }
     }
 
     public void NotificarAdministrador(string mensaje)
     {
-        Notificacion notificacion = new Notificacion(mensaje);
-        Administrador.RecibirNotificacion(notificacion);
+        Administrador.RecibirNotificacion(mensaje);
     }
 
     public bool EsMiembro(int idUsuario)
@@ -250,12 +248,12 @@ public class Proyecto
     
     public override bool Equals(object? otro)
     {
-        bool retorno = false;
         Proyecto otroProyecto = otro as Proyecto;
-        if (otroProyecto != null)
-        {
-            retorno = otroProyecto.Id == Id;
-        }
-        return retorno;
+        return otroProyecto != null && Id == otroProyecto.Id;
+    }
+    
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
     }
 }

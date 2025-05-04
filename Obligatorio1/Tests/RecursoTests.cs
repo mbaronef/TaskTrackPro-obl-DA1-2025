@@ -23,7 +23,8 @@ public class RecursoTests
     {
         Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
         List<Usuario> usuarios = new List<Usuario>();
-        Proyecto proyecto = new Proyecto("Nombre", "Descripcion", usuario, usuarios);
+        DateTime fechaInicio =  DateTime.Today.AddDays(1);
+        Proyecto proyecto = new Proyecto("Nombre", "Descripcion",fechaInicio, usuario, usuarios);
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
         recurso.AsociarAProyecto(proyecto);
         Assert.IsTrue(recurso.EsExclusivo());
@@ -35,8 +36,9 @@ public class RecursoTests
     {
         Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
         List<Usuario> usuarios = new List<Usuario>();
-        Proyecto proyecto1 = new Proyecto("Nombre", "Descripción", usuario, usuarios);
-        Proyecto proyecto2 = new Proyecto("Otro nombre", "Otra descripción", usuario, usuarios);
+        DateTime fechaInicio =  DateTime.Today.AddDays(1);
+        Proyecto proyecto1 = new Proyecto("Nombre", "Descripción",fechaInicio, usuario, usuarios);
+        Proyecto proyecto2 = new Proyecto("Otro nombre", "Otra descripción",fechaInicio, usuario, usuarios);
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
         recurso.AsociarAProyecto(proyecto1);
         recurso.AsociarAProyecto(proyecto2);

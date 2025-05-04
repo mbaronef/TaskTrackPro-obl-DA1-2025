@@ -46,7 +46,8 @@ public class GestorRecursosTests
 
     private void CrearYAgregarProyecto(Usuario adminProyecto)
     {
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", adminProyecto, new List<Usuario>());
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto proyecto = new Proyecto("Nombre", "Descripción",fechaInicio, adminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
     }
 
@@ -194,7 +195,8 @@ public class GestorRecursosTests
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo gestiona el gestor de usuarios
         
-        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción",fechaInicio, otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
 
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
@@ -264,7 +266,8 @@ public class GestorRecursosTests
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
         
-        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", fechaInicio, otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
         
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
@@ -317,7 +320,8 @@ public class GestorRecursosTests
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
         
-        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción",fechaInicio, otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
         
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
@@ -370,7 +374,8 @@ public class GestorRecursosTests
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
        
-        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", otroAdminProyecto, new List<Usuario>());
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", fechaInicio, otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
         
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");

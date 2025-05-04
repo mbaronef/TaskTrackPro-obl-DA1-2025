@@ -97,7 +97,7 @@ public class GestorRecursos
 
     private void AsociarProyectoQueAdministraARecurso(Usuario administradorProyecto, Recurso recurso)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorAdministrador(administradorProyecto.Id);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
         recurso.AsociarAProyecto(proyecto);
     }
 
@@ -112,7 +112,7 @@ public class GestorRecursos
     private void VerificarRecursoExclusivoDelAdministradorProyecto(Usuario administradorProyecto, Recurso recurso,
         string accion)
     {
-        Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoPorAdministrador(administradorProyecto.Id);
+        Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
         if (!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
         {
             throw new ExcepcionServicios(
