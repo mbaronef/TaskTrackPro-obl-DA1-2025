@@ -1,7 +1,6 @@
 using Dominio;
 
-namespace Repositorios.IRepositorios;
-
+namespace Repositorios.Interfaces;
 public interface IRepositorioRecursos : IRepositorio<Recurso>
 {
     void ModificarNombre(int idRecurso, string nombre);

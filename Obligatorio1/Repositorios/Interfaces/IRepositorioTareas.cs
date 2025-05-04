@@ -1,6 +1,6 @@
 using Dominio;
 
-namespace Repositorios.IRepositorios;
+namespace Repositorios.Interfaces;
 
 public interface IRepositorioTareas : IRepositorio<Tarea>
 {
