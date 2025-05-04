@@ -123,6 +123,13 @@ public class Tarea
         EstadoPendienteACompletada(nuevoEstado);
         EstadoBloqueadaACompletada(nuevoEstado);
         Estado = nuevoEstado;
+        if (nuevoEstado == EstadoTarea.EnProceso)
+        {
+            foreach (Recurso recurso in RecursosNecesarios)
+            {
+                recurso.IncrementarCantidadDeTareasUsando();
+            }
+        }
     }
     
     public bool EsCritica()

@@ -192,7 +192,7 @@ public class TareaTests
     [TestMethod]
     public void CambiarEstadoAEnProcesoIncrementaCantidadDeTareasUsando()
     {
-        Recurso recurso = new Recurso();
+        Recurso recurso = new Recurso{Id = 1};
         Tarea tarea = new Tarea("Título", "Descripción", 3, DateTime.Today);
         tarea.AgregarRecurso(recurso);
 
