@@ -145,8 +145,7 @@ public class GestorRecursos
             $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: Nombre: '{recurso.Nombre}', Tipo: '{recurso.Tipo}', Descripción: '{recurso.Descripcion}'.";
         if (recurso.EsExclusivo())
         {
-            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
-            adminProyecto.RecibirNotificacion(mensaje);
+            recurso.ProyectoAsociado.Administrador.RecibirNotificacion(mensaje);
         }
         else
         {
