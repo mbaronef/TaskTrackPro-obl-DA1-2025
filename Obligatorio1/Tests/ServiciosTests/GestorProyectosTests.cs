@@ -1,6 +1,6 @@
 using Dominio;
-using Dominio.Excepciones;
-using Dominio.Dummies;
+using Servicios.Excepciones;
+using Servicios.Gestores;
 
 namespace Tests
 
@@ -80,7 +80,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void CrearProyecto_LanzaExcepcionSiUsuarioNoTienePermisosDeAdminProyecto()
         {
             Proyecto proyecto = CrearProyectoCon(_usuarioNoAdmin);
@@ -89,7 +89,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void CrearProyecto_LanzaExcepcionSiSolicitanteYaAdministraOtroProyecto()
         {
             _admin.EstaAdministrandoUnProyecto = true;
@@ -110,7 +110,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void CrearProyecto_LanzaExcepcionSiNombreYaExiste()
         {
             Proyecto proyecto1 = CrearProyectoCon(_admin);
@@ -141,7 +141,7 @@ namespace Tests
         // eliminarProyecto
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarProyecto_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto()
         {
             Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { _usuarioNoAdmin });
@@ -152,7 +152,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
             _gestor.EliminarProyecto(1000, _admin);
@@ -202,7 +202,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ModificarNombreDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
         {
             Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { _usuarioNoAdmin });
@@ -223,7 +223,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ModificarNombreDelProyecto_LanzaExcepcionSiNombreYaExiste()
         {
             Proyecto proyecto1 = CrearProyectoCon(_admin);
@@ -237,7 +237,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ModificarNombreDelProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
             _gestor.ModificarNombreDelProyecto(1000, "nuevo", _admin);
@@ -268,7 +268,7 @@ namespace Tests
         // modificacion de la descripcion del proyecto
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ModificarDescripcionDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
         {
             Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { _usuarioNoAdmin });
@@ -278,7 +278,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ModificarDescripcionDelProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
             _gestor.ModificarDescripcionDelProyecto(1000, "Nueva descripcion", _admin);
@@ -316,7 +316,7 @@ namespace Tests
         // modificacion de la fecha de inicio del proyecto
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ModificarFechaDeInicioDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
         {
             Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { _usuarioNoAdmin });
@@ -327,7 +327,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ModificarFechaDeInicioDelProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
             DateTime nuevaFecha = DateTime.Now;
@@ -365,7 +365,7 @@ namespace Tests
         }
         
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ModificarFechaFinMasTempranaDelProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
             DateTime nuevaFecha = DateTime.Today.AddDays(1000);
@@ -374,7 +374,7 @@ namespace Tests
         }
         
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ModificarFechaFinMasTempranaDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
         {
             Proyecto proyecto = CrearProyectoCon(_admin);
@@ -457,7 +457,7 @@ namespace Tests
 
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void CambiarAdministradorDeProyecto_LanzaExcepcionSiSolicitanteNoEsAdminSistema()
         {
             Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { _usuarioNoAdmin });
@@ -468,7 +468,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void CambiarAdministradorDeProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
             _gestor.CambiarAdministradorDeProyecto(_adminSistema, 1000, 1);
@@ -476,7 +476,7 @@ namespace Tests
 
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void CambiarAdministradorDeProyecto_LanzaExcepcionSiNuevoAdminNoEsMiembro()
         {
             Proyecto proyecto = CrearProyectoCon(_admin);
@@ -486,7 +486,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void CambiarAdministradorDeProyecto_LanzaExcepcionNuevoAdminYaAdministraOtroProyecto()
         {
             Usuario nuevoAdmin = CrearAdminProyecto(2);
@@ -499,7 +499,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void CambiarAdministradorDeProyecto_LanzaExcepcion_NuevoAdminNoTienePermisosDeAdminProyecto()
         {
             Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { _usuarioNoAdmin });
@@ -530,14 +530,14 @@ namespace Tests
         //agregar miembro al proyecto
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void AgregarMiembro_LanzaExcepcionSiProyectoNoExiste()
         {
             _gestor.AgregarMiembroAProyecto(1000, _admin, _usuarioNoAdmin);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void AgregarMiembro_LanzaExcepcionSiSolicitanteNoEsAdminProyecto()
         {
             Proyecto proyecto = CrearProyectoCon(_admin);
@@ -549,7 +549,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void AgregarMiembro_LanzaExcepcionSolicitanteNoEsAdministradorDelProyecto()
         {
             Usuario solicitante = CrearAdminProyecto(4);
@@ -592,14 +592,14 @@ namespace Tests
         //eliminar miembro del proyecto
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarMiembroDelProyecto_ProyectoNoExiste_LanzaExcepcion()
         {
             _gestor.EliminarMiembroDelProyecto(1000, _admin, _usuarioNoAdmin.Id);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarMiembroDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
         {
             Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario>() { _usuarioNoAdmin });
@@ -609,7 +609,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarMiembroDelProyecto_LanzaExcepcionSolicitanteNoEsAdministradorDelProyecto()
         {
             Usuario solicitante = CrearAdminProyecto(4);
@@ -621,7 +621,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarMiembroDelProyecto_LanzaExcepcionSiUsuarioNoEsMiembroDelProyecto()
         {
             Proyecto proyecto = CrearProyectoCon(_admin); 
@@ -691,7 +691,7 @@ namespace Tests
         }
         
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void AgregarTareaAlProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
             Tarea tarea = CrearTarea();
@@ -699,7 +699,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void AgregarTareaAlProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
         {
             Proyecto proyecto = CrearProyectoCon(_admin);
@@ -710,7 +710,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void AgregarTareaAlProyecto_LanzaExcepcionSiSolicitanteNoElAdministradorDelProyecto()
         {
             Usuario otroAdmin = CrearAdminProyecto(4);
@@ -765,7 +765,7 @@ namespace Tests
         
         
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void ObtenerProyectoDelAdministrador_LanzaExcepcionSiNoExisteProyectoConEseAdmin()
         {
             _gestor.ObtenerProyectoDelAdministrador(_admin.Id);
@@ -774,7 +774,7 @@ namespace Tests
         //eliminar tarea del proyecto
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarTareaDelProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
             Tarea tarea = CrearTarea(10);
@@ -782,7 +782,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarTareaDelProyectoo_LanzaExcepcionSiSolicitanteNoEsAdmin()
         {
             Proyecto proyecto = CrearProyectoCon(_admin);
@@ -795,7 +795,7 @@ namespace Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionDominio))]
+        [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarTareaDelProyecto_LanzaExcepcionSiSolicitanteNoElAdministradorDelProyecto()
         {
             Usuario otroAdmin = CrearAdminProyecto(4);

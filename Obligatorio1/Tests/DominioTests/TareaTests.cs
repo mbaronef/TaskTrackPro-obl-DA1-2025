@@ -1,11 +1,11 @@
-﻿
-namespace Tests;
-using Dominio;
+﻿using Dominio;
 using Dominio.Excepciones;
-using Dominio.Dummies;
+using Servicios.Gestores;
 
-[TestClass]
+namespace Tests;
 
+
+[TestClass] 
 public class TareaTests
 {
     
@@ -119,6 +119,7 @@ public class TareaTests
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
         tarea.CambiarEstado(EstadoTarea.Completada);
         tarea.CambiarEstado(EstadoTarea.Pendiente); 
     }
@@ -130,6 +131,7 @@ public class TareaTests
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
         tarea.CambiarEstado(EstadoTarea.Completada);
         tarea.CambiarEstado(EstadoTarea.EnProceso); 
     }
@@ -141,6 +143,7 @@ public class TareaTests
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
         tarea.CambiarEstado(EstadoTarea.Completada);
         tarea.CambiarEstado(EstadoTarea.Bloqueada); 
     }
@@ -528,9 +531,8 @@ public class TareaTests
     [TestMethod]
     public void DarListaAsignados_DevuelveListaDeUsuariosAsignados()
     {
-        Usuario admin = new Usuario("Admin", "Root", new DateTime(1980, 1, 1), "admin@test.com", "TaskTrackPro@2025");
-        admin.EsAdministradorSistema = true;
-        GestorUsuarios gestor = new GestorUsuarios(admin);
+        GestorUsuarios gestor = new GestorUsuarios();
+        Usuario admin = gestor.AdministradorInicial;
         Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(1995, 1, 1), "juan@test.com", "TaskTrackPro@2025");
         Usuario usuario2 = new Usuario("Juana", "Pereza", new DateTime(1996, 2, 2), "juana@test.com", "TaskTrackPro@2025");
         gestor.AgregarUsuario(admin, usuario1);

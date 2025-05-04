@@ -1,6 +1,6 @@
 ﻿namespace Dominio;
-using Dominio.Dummies;
-using Dominio.Excepciones;
+
+using Excepciones;
 
 public class Tarea
 {

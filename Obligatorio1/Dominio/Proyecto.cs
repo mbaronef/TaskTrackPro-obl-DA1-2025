@@ -1,7 +1,6 @@
-using Dominio.Dummies;
-using Dominio.Excepciones;
-
 namespace Dominio;
+
+using Excepciones;
 
 public class Proyecto
 {

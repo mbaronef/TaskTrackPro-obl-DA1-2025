@@ -1,9 +1,9 @@
-﻿namespace Tests;
-using Dominio;
+﻿using Dominio;
 using Dominio.Excepciones;
 
-[TestClass]
+namespace Tests;
 
+[TestClass]
 public class DependenciaTests
 {
     private Tarea _tarea;
