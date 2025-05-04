@@ -52,6 +52,11 @@ public class GestorRecursosTests
         _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
     }
 
+    private Recurso CrearRecurso()
+    {
+        return new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+    }
+
     [TestMethod]
     public void ConstructorCreaGestorValido()
     {
@@ -64,8 +69,8 @@ public class GestorRecursosTests
     {
         Usuario adminSistema = CrearAdministradorSistema();
 
-        Recurso recurso1 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
-        Recurso recurso2 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso1 = CrearRecurso();
+        Recurso recurso2 = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminSistema, recurso1);
         _gestorRecursos.AgregarRecurso(adminSistema, recurso2);
 
@@ -79,7 +84,7 @@ public class GestorRecursosTests
     public void NoAdminSistemaNiProyectoNoAgregaRecurso()
     {
         Usuario usuario = CrearUsuarioNoAdmin();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(usuario, recurso);
     }
 
@@ -89,7 +94,7 @@ public class GestorRecursosTests
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto); 
         
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
 
         Assert.IsTrue(recurso.EsExclusivo());
@@ -99,8 +104,8 @@ public class GestorRecursosTests
     public void GestorLlevaCuentaDeUsuariosCorrectamenteYAsignaIdsIncrementales()
     {
         Usuario admin = CrearAdministradorSistema();
-        Recurso recurso1 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
-        Recurso recurso2 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso1 = CrearRecurso();
+        Recurso recurso2 = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso1);
         _gestorRecursos.AgregarRecurso(admin, recurso2);
 
@@ -112,8 +117,8 @@ public class GestorRecursosTests
     public void GestorObtieneRecursoPorIdOk()
     {
         Usuario admin = CrearAdministradorSistema();
-        Recurso recurso1 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
-        Recurso recurso2 = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso1 = CrearRecurso();
+        Recurso recurso2 = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso1);
         _gestorRecursos.AgregarRecurso(admin, recurso2);
         
@@ -132,8 +137,9 @@ public class GestorRecursosTests
     public void SeEliminaUnRecursoOk()
     {
         Usuario admin = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
-        _gestorRecursos.AgregarRecurso(admin, recurso);
+        Recurso recurso = CrearRecurso();
+
+    _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.EliminarRecurso(admin, recurso.Id);
         Assert.AreEqual(0, _gestorRecursos.Recursos.Count());
     }
@@ -143,7 +149,7 @@ public class GestorRecursosTests
     public void NoSeEliminaRecursoSiEstaEnUso()
     {
         Usuario admin = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         recurso.IncrementarCantidadDeTareasUsandolo();
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.EliminarRecurso(admin, recurso.Id);
@@ -155,7 +161,7 @@ public class GestorRecursosTests
     {
         Usuario admin = CrearAdministradorSistema();
         Usuario usuario = CrearUsuarioNoAdmin();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.EliminarRecurso(usuario, recurso.Id);
     }
@@ -165,8 +171,8 @@ public class GestorRecursosTests
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto);
-        
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
         Assert.AreEqual(0, _gestorRecursos.Recursos.Count());
@@ -177,7 +183,7 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeEliminarRecursoNoExclusivo()
     {
         Usuario admin = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso);
 
         Usuario adminProyecto = CrearAdministradorProyecto();
@@ -200,7 +206,7 @@ public class GestorRecursosTests
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción",fechaInicio, otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
 
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.EliminarRecurso(otroAdminProyecto, recurso.Id);
     }
@@ -211,7 +217,7 @@ public class GestorRecursosTests
         Usuario adminSistema = CrearAdministradorSistema();
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto);
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.EliminarRecurso(adminSistema, recurso.Id);
 
@@ -224,7 +230,7 @@ public class GestorRecursosTests
     public void EliminarRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
         Usuario adminSistema = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminSistema, recurso);
         
         Usuario adminProyecto = CrearAdministradorProyecto();
@@ -245,7 +251,7 @@ public class GestorRecursosTests
     public void AdminSistemaModificaNombreDeRecursoOk()
     {
         Usuario admin = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.ModificarNombreRecurso(admin, recurso.Id, "Nuevo nombre");
         Assert.AreEqual("Nuevo nombre", recurso.Nombre);
@@ -257,7 +263,7 @@ public class GestorRecursosTests
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto);
 
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
 
         _gestorRecursos.ModificarNombreRecurso(adminProyecto, recurso.Id, "Nuevo nombre");
@@ -270,7 +276,7 @@ public class GestorRecursosTests
     {
         Usuario admin = CrearAdministradorSistema();
         Usuario usuario = CrearUsuarioNoAdmin();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.ModificarNombreRecurso(usuario, recurso.Id, "Nuevo nombre");
     }
@@ -289,8 +295,8 @@ public class GestorRecursosTests
         DateTime fechaInicio = DateTime.Today.AddDays(1);
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", fechaInicio, otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
-        
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         
         _gestorRecursos.ModificarNombreRecurso(otroAdminProyecto, recurso.Id, "Nuevo nombre");
@@ -300,7 +306,7 @@ public class GestorRecursosTests
     public void AdminSistemaModificaTipoDeRecursoOk()
     {
         Usuario admin = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.ModificarTipoRecurso(admin, recurso.Id, "Nuevo tipo");
         Assert.AreEqual("Nuevo tipo", recurso.Tipo);
@@ -312,7 +318,7 @@ public class GestorRecursosTests
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto);
 
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
 
         _gestorRecursos.ModificarTipoRecurso(adminProyecto, recurso.Id, "Nuevo tipo");
@@ -325,7 +331,7 @@ public class GestorRecursosTests
     {
         Usuario admin = CrearAdministradorSistema();
         Usuario usuario = CrearUsuarioNoAdmin();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.ModificarTipoRecurso(usuario, recurso.Id, "Nuevo tipo");
     }
@@ -344,7 +350,7 @@ public class GestorRecursosTests
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción",fechaInicio, otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
         
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         
         _gestorRecursos.ModificarTipoRecurso(otroAdminProyecto, recurso.Id, "Nuevo tipo");
@@ -354,7 +360,7 @@ public class GestorRecursosTests
     public void AdminSistemaModificaDescripcionDeRecursoOk()
     {
         Usuario admin = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.ModificarDescripcionRecurso(admin, recurso.Id, "Nueva descripción");
         Assert.AreEqual("Nueva descripción", recurso.Descripcion);
@@ -366,7 +372,7 @@ public class GestorRecursosTests
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto);
 
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
 
         _gestorRecursos.ModificarDescripcionRecurso(adminProyecto, recurso.Id, "Nueva descripción");
@@ -379,7 +385,7 @@ public class GestorRecursosTests
     {
         Usuario admin = CrearAdministradorSistema();
         Usuario usuario = CrearUsuarioNoAdmin();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.ModificarDescripcionRecurso(usuario, recurso.Id, "Nueva descripción");
     }
@@ -397,8 +403,8 @@ public class GestorRecursosTests
         DateTime fechaInicio = DateTime.Today.AddDays(1);
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", fechaInicio, otroAdminProyecto, new List<Usuario>());
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
-        
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         
         _gestorRecursos.ModificarDescripcionRecurso(otroAdminProyecto, recurso.Id, "Nueva descripción");
@@ -410,7 +416,7 @@ public class GestorRecursosTests
         Usuario adminSistema = CrearAdministradorSistema();
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto);
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.ModificarNombreRecurso(adminSistema, recurso.Id, "Otro nombre");
 
@@ -423,7 +429,7 @@ public class GestorRecursosTests
     public void ModificarNombreDeRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
         Usuario adminSistema = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminSistema, recurso);
         
         Usuario adminProyecto = CrearAdministradorProyecto();
@@ -446,7 +452,7 @@ public class GestorRecursosTests
         Usuario adminSistema = CrearAdministradorSistema();
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto);
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.ModificarTipoRecurso(adminSistema, recurso.Id, "Otro tipo");
 
@@ -459,7 +465,7 @@ public class GestorRecursosTests
     public void ModificarTipoDeRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
         Usuario adminSistema = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminSistema, recurso);
         
         Usuario adminProyecto = CrearAdministradorProyecto();
@@ -482,7 +488,7 @@ public class GestorRecursosTests
         Usuario adminSistema = CrearAdministradorSistema();
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto);
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.ModificarDescripcionRecurso(adminSistema, recurso.Id, "Otra descripción");
 
@@ -495,7 +501,7 @@ public class GestorRecursosTests
     public void ModificarDescripcionDeRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
         Usuario adminSistema = CrearAdministradorSistema();
-        Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
+        Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminSistema, recurso);
         
         Usuario adminProyecto = CrearAdministradorProyecto();
