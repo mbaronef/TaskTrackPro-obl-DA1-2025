@@ -167,7 +167,16 @@ public class TareaTests
         tarea.CambiarEstado(EstadoTarea.Pendiente); 
     }
     
-    //Ver si hay algun otro camino que no se pueda hacer (pendiente directo a completada se puede??)
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void CambiarEstadoNoPermitePasarDePendienteACompletada()
+    {
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
+        
+        tarea.CambiarEstado(EstadoTarea.Pendiente);
+        tarea.CambiarEstado(EstadoTarea.Completada); 
+    }
     
     [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
