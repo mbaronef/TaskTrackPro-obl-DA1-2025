@@ -179,6 +179,17 @@ public class TareaTests
     }
     
     [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void CambiarEstadoNoPermitePasarDeBloqueadaACompletada()
+    {
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
+        
+        tarea.CambiarEstado(EstadoTarea.Bloqueada);
+        tarea.CambiarEstado(EstadoTarea.Completada); 
+    }
+    
+    [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
     {
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
