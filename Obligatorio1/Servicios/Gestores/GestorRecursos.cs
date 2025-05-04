@@ -122,22 +122,20 @@ public class GestorRecursos
 
     private void NotificarEliminacion(Recurso recurso)
     {
+        string mensaje = $"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}";
         if (recurso.EsExclusivo())
         {
-            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
-            adminProyecto.RecibirNotificacion($"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}");
+            recurso.ProyectoAsociado.Administrador.RecibirNotificacion(mensaje);
         }
         else
         {
-            List<Proyecto> proyectosQueNecesitanElRecurso = _gestorProyectos.Proyectos
-                .Where(proyecto => proyecto.Tareas.Any(tarea =>
-                    tarea.RecursosNecesarios.Contains(recurso)))
-                .ToList();
-            foreach (Proyecto proyecto in proyectosQueNecesitanElRecurso){
-                Usuario adminProyecto = proyecto.Administrador;
-                adminProyecto.RecibirNotificacion($"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}");
+            foreach (Proyecto proyecto in _gestorProyectos.Proyectos)
+            {
+                if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
+                {
+                    proyecto.Administrador.RecibirNotificacion(mensaje);
+                }
             }
-
         }
     }
 
@@ -150,5 +148,10 @@ public class GestorRecursos
             Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
             adminProyecto.RecibirNotificacion(mensaje);
         }
+    }
+
+    private List<Recurso> RecursosNecesariosPorProyecto(Proyecto proyecto)
+    {
+        return proyecto.Tareas.SelectMany(t => t.RecursosNecesarios).Distinct().ToList();
     }
 }
