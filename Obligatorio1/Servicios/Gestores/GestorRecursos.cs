@@ -148,6 +148,16 @@ public class GestorRecursos
             Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
             adminProyecto.RecibirNotificacion(mensaje);
         }
+        else
+        {
+            foreach (Proyecto proyecto in _gestorProyectos.Proyectos)
+            {
+                if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
+                {
+                    proyecto.Administrador.RecibirNotificacion(mensaje);
+                }
+            }
+        }
     }
 
     private List<Recurso> RecursosNecesariosPorProyecto(Proyecto proyecto)
