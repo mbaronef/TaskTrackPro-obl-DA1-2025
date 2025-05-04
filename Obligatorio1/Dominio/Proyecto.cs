@@ -219,7 +219,7 @@ public class Proyecto
     
     private void ValidarFechaInicioNoPosteriorAFechaInicioDeTareas(DateTime nuevaFecha)
     {
-        if (Tareas.Any(t => nuevaFecha > t.FechaInicio))
+        if (Tareas.Any(t => nuevaFecha > t.FechaInicioMasTemprana))
             throw new ExcepcionDominio("La fecha de inicio no puede ser posterior a la de alguna tarea.");
     }
     
