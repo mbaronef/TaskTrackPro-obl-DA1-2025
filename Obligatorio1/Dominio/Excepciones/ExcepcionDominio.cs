@@ -1,9 +1,8 @@
-namespace Dominio.Excepciones
+﻿namespace Dominio.Excepciones;
+
+public class ExcepcionDominio : Exception
 {
-    public class ExcepcionDominio : Exception
+    public ExcepcionDominio(string mensaje) : base(mensaje)
     {
-        public ExcepcionDominio(string mensaje) : base(mensaje)
-        {
-        }
     }
 }
