@@ -184,7 +184,7 @@ public class Tarea
     
     private Recurso BuscarRecursoPorId(int id)
     {
-        return RecursosNecesarios.FirstOrDefault(u => u.Id == id);
+        return RecursosNecesarios.FirstOrDefault(r => r.Id == id);
     }
     public void EliminarRecurso(int idRec)
     {
