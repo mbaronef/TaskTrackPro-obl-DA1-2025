@@ -1,7 +1,7 @@
 using Dominio;
 using Dominio.Excepciones;
 
-namespace Tests;
+namespace Tests.DominioTests;
 
 [TestClass]
 public class NotificacionTests

@@ -2,7 +2,7 @@
 using Dominio.Excepciones;
 using Servicios.Gestores;
 
-namespace Tests;
+namespace Tests.DominioTests;
 
 
 [TestClass] 
