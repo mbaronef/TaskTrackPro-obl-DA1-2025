@@ -10,4 +10,9 @@ public class Recurso
         CantidadDeTareasUsando++;
     }
     
+    public void DecrementarCantidadDeTareasUsando()
+    {
+        CantidadDeTareasUsando--;
+    }
+    
 }

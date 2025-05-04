@@ -130,6 +130,14 @@ public class Tarea
                 recurso.IncrementarCantidadDeTareasUsando();
             }
         }
+        else if (nuevoEstado == EstadoTarea.Completada)
+        {
+            foreach (var recurso in RecursosNecesarios)
+            {
+                recurso.DecrementarCantidadDeTareasUsando();
+            }
+            FechaDeEjecucion = DateTime.Today;
+        }
     }
     
     public bool EsCritica()
