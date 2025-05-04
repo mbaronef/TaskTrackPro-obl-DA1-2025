@@ -1,6 +1,6 @@
-﻿namespace Dominio;
+﻿using Dominio.Excepciones;
 
-using Excepciones;
+namespace Dominio;
 
 public class Tarea
 {
