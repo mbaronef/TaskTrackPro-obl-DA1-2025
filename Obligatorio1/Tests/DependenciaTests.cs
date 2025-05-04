@@ -6,16 +6,23 @@ using Dominio.Excepciones;
 
 public class DependenciaTests
 {
+    private Tarea _tarea;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        _tarea = new Tarea("titulo", "descripcion", 6, fechaInicioEstimada);
+    }
     [TestMethod]
     public void ConstructorConParametrosAsignadosCorrectamente()
     {
         string tipo = "FF";
-        Tarea tarea = new Tarea("titulo", "descripcion", 6);
         
-        Dependencia dependencia = new Dependencia(tipo, tarea);
+        Dependencia dependencia = new Dependencia(tipo, _tarea);
         
         Assert.AreEqual(tipo, dependencia.Tipo);
-        Assert.AreEqual(tarea, dependencia.Tarea);
+        Assert.AreEqual(_tarea, dependencia.Tarea);
 
     }
     
@@ -23,24 +30,21 @@ public class DependenciaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTipoEsVacio()
     { 
-        Tarea tarea = new Tarea("titulo", "descripcion", 6);
-        Dependencia dependencia = new Dependencia("", tarea);
+        Dependencia dependencia = new Dependencia("", _tarea);
     }
     
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTipoEsNull()
     {
-        Tarea tarea = new Tarea("titulo", "descripcion", 6);
-        Dependencia dependencia = new Dependencia(null, tarea);
+        Dependencia dependencia = new Dependencia(null, _tarea);
     }
     
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTipoEsEspacio()
     {
-        Tarea tarea = new Tarea("titulo", "descripcion", 6);
-        Dependencia dependencia = new Dependencia("   ", tarea);
+        Dependencia dependencia = new Dependencia("   ", _tarea);
     }
     
     [TestMethod]
@@ -53,16 +57,14 @@ public class DependenciaTests
     [TestMethod]
     public void Constructor_AceptaTipoFF()
     {
-        Tarea tarea = new Tarea("titulo", "descripcion", 6);
-        Dependencia dependencia = new Dependencia("FF", tarea);
+        Dependencia dependencia = new Dependencia("FF", _tarea);
         Assert.AreEqual("FF", dependencia.Tipo);
     }
 
     [TestMethod]
     public void Constructor_AceptaTipoFS()
     {
-        Tarea tarea = new Tarea("titulo", "descripcion", 6);
-        Dependencia dependencia = new Dependencia("FS", tarea);
+        Dependencia dependencia = new Dependencia("FS", _tarea);
         Assert.AreEqual("FS", dependencia.Tipo);
     }
 
@@ -70,8 +72,7 @@ public class DependenciaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTipoNoEsFFNiFS()
     {
-        Tarea tarea = new Tarea("titulo", "descripcion", 6);
-        Dependencia dependencia = new Dependencia("SS", tarea);
+        Dependencia dependencia = new Dependencia("SS", _tarea);
     }
     
 

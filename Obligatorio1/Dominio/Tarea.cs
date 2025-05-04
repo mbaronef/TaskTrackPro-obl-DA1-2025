@@ -8,7 +8,7 @@ public class Tarea
     public string Titulo { get; set; }
     public string Descripcion { get; set; }
     public int DuracionEnDias { get; set; }
-    public DateTime? FechaInicioMasTemprana { get; set; } //nullable
+    public DateTime FechaInicioMasTemprana { get; set; }
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MinValue; //FechaInicioMasTemprana + duración
     public DateTime FechaDeEjecucion { get; set; } = DateTime.MinValue;
     public EstadoTarea Estado { get; set; } = EstadoTarea.Pendiente;
@@ -45,13 +45,11 @@ public class Tarea
     
     private void CalcularFechaFinMasTemprana()
     {
-        this.FechaFinMasTemprana = FechaInicioMasTemprana.HasValue
-            ? FechaInicioMasTemprana.Value.AddDays(DuracionEnDias)
-            : DateTime.MinValue;
+        FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias);
     }
 
 
-    public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
+    public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime unaFechaInicioMasTemprana)
     {
         ValidarStringNoVacioNiNull(unTitulo, "El título de la tarea no puede estar vacío o ser nulo.");
         ValidarIntNoNegativoNiCero(unaDuracionEnDias, "La duración no puede ser un número negativo.");
@@ -68,7 +66,7 @@ public class Tarea
         CalcularFechaFinMasTemprana();
     }
     
-    public Tarea(int unId, string unTitulo, string unaDescripcion, int unaDuracionEnDias,  DateTime? unaFechaInicioMasTemprana = null)
+    public Tarea(int unId, string unTitulo, string unaDescripcion, int unaDuracionEnDias,  DateTime unaFechaInicioMasTemprana)
         : this(unTitulo, unaDescripcion, unaDuracionEnDias, unaFechaInicioMasTemprana)
     {
         this.Id = unId;

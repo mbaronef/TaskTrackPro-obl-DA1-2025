@@ -8,6 +8,7 @@ using Dominio.Dummies;
 
 public class TareaTests
 {
+    
     [TestMethod]
 
     public void ConstructorConParametrosAsignadosCorrectamente()
@@ -27,26 +28,6 @@ public class TareaTests
         Assert.IsNotNull(tarea.UsuariosAsignados);
         Assert.IsNotNull(tarea.Dependencias);
         Assert.IsNotNull(tarea.RecursosNecesarios);
-
-    }
-
-    [TestMethod]
-    public void Constructor_SinFechaInicioEsNull()
-    {
-        string titulo = "Tarea";
-        string descripcion = "Prueba de tarea";
-        int duracionEnDias = 8;
-        
-        Tarea tarea = new Tarea(titulo, descripcion, duracionEnDias);
-        
-        Assert.AreEqual(titulo, tarea.Titulo);
-        Assert.AreEqual(descripcion, tarea.Descripcion);
-        Assert.AreEqual(duracionEnDias, tarea.DuracionEnDias);
-        Assert.IsNull(tarea.FechaInicioMasTemprana); 
-        Assert.AreEqual(EstadoTarea.Pendiente, tarea.Estado);
-        Assert.IsNotNull(tarea.UsuariosAsignados);
-        Assert.IsNotNull(tarea.RecursosNecesarios);
-        Assert.IsNotNull(tarea.Dependencias);
 
     }
     
@@ -134,7 +115,8 @@ public class TareaTests
     [TestMethod]
     public void CambiarEstadoDePendienteAFinalizada()
     {
-        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
         tarea.CambiarEstado(EstadoTarea.Completada);
         
@@ -145,7 +127,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstadoNoPermiteVolverAPendienteDesdeCompletada()
     {
-        var tarea = new Tarea("Título", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
         tarea.CambiarEstado(EstadoTarea.Completada);
         tarea.CambiarEstado(EstadoTarea.Pendiente); 
@@ -155,7 +138,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstadoNoPermiteVolverAEnProcesoDesdeCompletada()
     {
-        var tarea = new Tarea("Título", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
         tarea.CambiarEstado(EstadoTarea.Completada);
         tarea.CambiarEstado(EstadoTarea.EnProceso); 
@@ -165,7 +149,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstadoNoPermiteVolverABloqueadaDesdeCompletada()
     {
-        var tarea = new Tarea("Título", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
         tarea.CambiarEstado(EstadoTarea.Completada);
         tarea.CambiarEstado(EstadoTarea.Bloqueada); 
@@ -175,7 +160,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstadoNoPermiteVolverAPendienteDesdeEnProceso()
     {
-        var tarea = new Tarea("Título", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
         tarea.CambiarEstado(EstadoTarea.EnProceso);
         tarea.CambiarEstado(EstadoTarea.Pendiente); 
@@ -186,7 +172,8 @@ public class TareaTests
     [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
     {
-        Tarea tarea = new Tarea("Tarea Crítica", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
         tarea.Holgura = 0;
         bool esCritica = tarea.EsCritica();
@@ -197,7 +184,8 @@ public class TareaTests
     [TestMethod]
     public void EsMiembroDevuelveTrueSiElUsuarioEstaAsignado()
     {
-        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         Usuario usuario = new Usuario("nombre", "apellido", "mail@ejemplo.com", "password");
         tarea.UsuariosAsignados.Add(usuario);
         
@@ -209,7 +197,8 @@ public class TareaTests
     [TestMethod]
     public void EsMiembroDevuelveFalseSiElUsuarioNoEstaAsignado()
     {
-        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         Usuario usuarioNoAsignado = new Usuario("nombre", "apellido", "mail@ejemplo.com", "password");
         
         bool resultado = tarea.EsMiembro(usuarioNoAsignado);
@@ -218,17 +207,10 @@ public class TareaTests
     }
     
     [TestMethod]
-    public void FechaFinMasTempranaInicializadaConMinValuePorDefecto()
-    { 
-        Tarea tarea = new Tarea("Titulo", "Descripción", 5);
-            
-        Assert.AreEqual(DateTime.MinValue, tarea.FechaFinMasTemprana);
-    }
-    
-    [TestMethod]
     public void FechaDeEjecucionInicializadaConMinValuePorDefecto()
     { 
-        Tarea tarea = new Tarea("Titulo", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
             
         Assert.AreEqual(DateTime.MinValue, tarea.FechaDeEjecucion);
     }
@@ -254,7 +236,8 @@ public class TareaTests
     [TestMethod]
     public void AsignarUsuario_AsignarUsuarioALista()
     {
-        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         Usuario usu = new Usuario();
             
@@ -268,7 +251,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AsignarUsuario_LanzarExcepcionSiUsuarioEsNull()
     {
-        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         Usuario usu = null;
         tarea.AsignarUsuario(usu); 
     }
@@ -278,7 +262,8 @@ public class TareaTests
     public void AsignarUsuario_LanzarExcepcionSiUsuarioYaEstaEnUsuariosAsignados()
     {
         Usuario usu = new Usuario(); 
-        Tarea tarea = new Tarea("tarea", "descr", 87);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AsignarUsuario(usu);
         tarea.AsignarUsuario(usu);
     }
@@ -287,7 +272,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarUsuario_LanzaExcepcionSiUsuariosAsignadosEsNull()
     {
-        Tarea tarea = new Tarea("Título", "Descripción", 5);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         
         tarea.UsuariosAsignados = null;
         
@@ -299,7 +285,8 @@ public class TareaTests
     {
         Usuario usu = new Usuario();
         usu.Id = 1;
-        Tarea tarea = new Tarea("tarea", "descr", 87);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AsignarUsuario(usu);
         tarea.EliminarUsuario(1);
 
@@ -313,7 +300,8 @@ public class TareaTests
         Usuario usu = new Usuario();
         usu.Id = 1;
             
-        Tarea tarea = new Tarea("tarea", "descr", 87);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AsignarUsuario(usu);
         tarea.EliminarUsuario(3);
     }
@@ -321,7 +309,8 @@ public class TareaTests
     [TestMethod]
     public void AgregarRecurso_AgregarRecursoALista()
     {
-        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         Recurso recurso = new Recurso();
             
@@ -335,7 +324,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarRecurso_LanzarExcepcionSiRecursoEsNull()
     {
-        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         Recurso recurso = null;
         tarea.AgregarRecurso(recurso); 
     }
@@ -345,7 +335,8 @@ public class TareaTests
     public void AgregarRecurso_LanzarExcepcionSiRecursoYaEstaEnRecursosNecesarios()
     {
         Recurso recurso = new Recurso(); 
-        Tarea tarea = new Tarea("tarea", "descr", 87);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AgregarRecurso(recurso);
         tarea.AgregarRecurso(recurso);
     }
@@ -355,7 +346,8 @@ public class TareaTests
     {
         Recurso recurso = new Recurso();
         recurso.Id = 1;
-        Tarea tarea = new Tarea("tarea", "descr", 87);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AgregarRecurso(recurso);
         tarea.EliminarRecurso(1);
 
@@ -369,7 +361,8 @@ public class TareaTests
         Recurso rec = new Recurso();
         rec.Id = 1;
             
-        Tarea tarea = new Tarea("tarea", "descr", 87);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AgregarRecurso(rec);
         tarea.EliminarRecurso(3);
     }
@@ -377,7 +370,8 @@ public class TareaTests
     [TestMethod]
     public void ModificarTitulo_DeberiaActualizarElTitulo()
     {
-        Tarea tarea = new Tarea("titulo viejo", "Desc",  2);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         tarea.ModificarTitulo("titulo nuevo");
 
@@ -388,7 +382,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarTitulo_LanzaExcepcionSiTituloEsNull()
     {
-        Tarea tarea = new Tarea("titulo viejo", "Desc",  2);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         tarea.ModificarTitulo(null);
     }
@@ -397,7 +392,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarTitulo_LanzaExcepcionSiTituloEsVacio()
     {
-        Tarea tarea = new Tarea("titulo viejo", "Desc",  2);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         tarea.ModificarTitulo("");
     }
@@ -405,7 +401,8 @@ public class TareaTests
     [TestMethod]
     public void ModificarDescripcion_DeberiaActualizarLaDescripcion()
     {
-        Tarea tarea = new Tarea("titulo", "Desc vieja",  2);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         tarea.ModificarDescripcion("Desc nueva");
 
@@ -416,7 +413,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsNull()
     {
-        Tarea tarea = new Tarea("t", "Desc",  2);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         tarea.ModificarDescripcion(null);
     }
@@ -425,7 +423,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsVacia()
     {
-        Tarea tarea = new Tarea("t", "Desc",  2);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         tarea.ModificarTitulo("");
     }
@@ -433,9 +432,10 @@ public class TareaTests
     [TestMethod]
     public void ModificarFechaInicioMasTemprana_ActualizaLaFechaOK()
     { 
-        Tarea tarea = new Tarea("t", "Desc",  2);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
-        DateTime nuevaFecha = new DateTime(2025, 5, 1);
+        DateTime nuevaFecha = DateTime.Today.AddDays(10);
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
         Assert.AreEqual(nuevaFecha, tarea.FechaInicioMasTemprana);
@@ -445,7 +445,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarFechaInicioMasTemprana_LanzaExcepcionSiFechaEsAnteriorAHoy()
     {
-        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         DateTime fechaPasada = DateTime.Now.AddDays(-1);
 
@@ -455,9 +456,10 @@ public class TareaTests
     [TestMethod]
     public void ModificarFechaDeEjecucion_ActualizaLaFechaOK()
     { 
-        Tarea tarea = new Tarea("t", "Desc",  2);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
-        DateTime nuevaFecha = new DateTime(2025, 5, 1);
+        DateTime nuevaFecha = DateTime.Today.AddDays(10);
         tarea.ModificarFechaDeEjecucion(nuevaFecha);
 
         Assert.AreEqual(nuevaFecha, tarea.FechaDeEjecucion);
@@ -467,7 +469,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarFechaDeEjecucion_LanzaExcepcionSiFechaEsAnteriorAHoy()
     {
-        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         DateTime fechaPasada = DateTime.Now.AddDays(-1);
 
@@ -477,7 +480,8 @@ public class TareaTests
     [TestMethod]
     public void ModificarDuracion_ActualizaLaDuracionOK()
     {
-        Tarea tarea = new Tarea("t", "Desc",  2);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.ModificarDuracion(4);
         Assert.AreEqual(4, tarea.DuracionEnDias);
     }
@@ -486,7 +490,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarDuracion_LanzaExcepcionSiEsCeroONegativa()
     {
-        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
         tarea.ModificarDuracion(-2);
         tarea.ModificarDuracion(0);
@@ -497,7 +502,8 @@ public class TareaTests
     {
         Usuario asignado = new Usuario();
         Usuario asignado2 = new Usuario();
-        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
             
         tarea.AsignarUsuario(asignado);
         tarea.AsignarUsuario(asignado2);
@@ -513,7 +519,8 @@ public class TareaTests
     {
         Recurso necesario = new Recurso();
         Recurso necesario2 = new Recurso();
-        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
             
         tarea.AgregarRecurso(necesario);
         tarea.AgregarRecurso(necesario2);
@@ -530,7 +537,8 @@ public class TareaTests
     public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
     {
         Usuario miembro = new Usuario();
-        Tarea tarea = new Tarea("Tarea", "Descripción",  9);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AsignarUsuario(miembro);
         tarea.NotificarMiembros("Se modificó el proyecto.");
 
@@ -546,7 +554,7 @@ public class TareaTests
         string titulo = "Título de prueba";
         string descripcion = "Descripción de prueba";
         int duracion = 5;
-        DateTime fechaInicio = new DateTime(2025, 5, 1);
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
         DateTime fechaEsperada = fechaInicio.AddDays(duracion);
         
         Tarea tarea = new Tarea(titulo, descripcion, duracion, fechaInicio);
@@ -580,8 +588,9 @@ public class TareaTests
     [TestMethod]
     public void AgregarDependencia_AgregarDependenciaALista()
     {
-        Tarea tareaD = new Tarea("Titulo", "Descripción", 3);
-        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tareaD = new Tarea("Titulo", "Descripción", 3, fechaInicioEstimada);
+        Tarea tarea = new Tarea("Titulo", "Descripción", 3, fechaInicioEstimada);
 
         Dependencia dependencia = new Dependencia("FF", tareaD);
             
@@ -595,7 +604,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarDependencia_LanzarExcepcionSiDependenciaEsNull()
     {
-        Tarea tarea = new Tarea("Titulo", "Descripción", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("Titulo", "Descripción", 3, fechaInicioEstimada);
         Dependencia dependencia = null;
         tarea.AgregarDependencia(dependencia); 
     }
@@ -604,10 +614,11 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarDependencia_LanzarExcepcionSiDependenciaYaEstaEnDependencias()
     {
-        Tarea tareaD = new Tarea("Titulo", "Descripción", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tareaD = new Tarea("Titulo","Descripción",3, fechaInicioEstimada);
         Dependencia dependencia = new Dependencia("tipo", tareaD);
         
-        Tarea tarea = new Tarea("tarea", "descr", 87);
+        Tarea tarea = new Tarea("tarea", "descr", 87, fechaInicioEstimada);
         tarea.AgregarDependencia(dependencia);
         tarea.AgregarDependencia(dependencia);
     }
@@ -615,9 +626,10 @@ public class TareaTests
     [TestMethod]
     public void EliminarDependencia_EliminarDependenciaDeDependencias()
     {
-        Tarea tareaD = new Tarea(1, "Titulo", "Descripción", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tareaD = new Tarea(1, "Titulo", "Descripción", 3, fechaInicioEstimada);
         Dependencia dependencia = new Dependencia("FF", tareaD);
-        Tarea tarea = new Tarea("tarea", "descr", 87);
+        Tarea tarea = new Tarea("tarea", "descr", 87, fechaInicioEstimada);
         tarea.AgregarDependencia(dependencia);
         tarea.EliminarDependencia(1);
         Assert.IsFalse(tarea.Dependencias.Any(d => d.Tarea.Id == 1));
@@ -628,10 +640,11 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarDependencia_LanzaExcepcionSiDepenciaNoExiste()
     {
-        Tarea tareaD = new Tarea("Titulo", "Descripción", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tareaD = new Tarea("Titulo", "Descripción", 3, fechaInicioEstimada);
         Dependencia dependencia = new Dependencia("tipo", tareaD);
     
-        Tarea tarea = new Tarea("tarea", "descr", 87);
+        Tarea tarea = new Tarea("tarea", "descr", 87, fechaInicioEstimada);
         tarea.AgregarDependencia(dependencia);
         
         tarea.EliminarDependencia(3);
@@ -640,8 +653,9 @@ public class TareaTests
     [TestMethod]
     public void VerificarDependenciaNoEstaAgregada_NoExisteNoLanzaExcepcion()
     {
-        Tarea tarea = new Tarea("titulo", "descripcion", 3);
-        Tarea tarea2 = new Tarea("titulo2", "descripcion2", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("titulo", "descripcion", 3, fechaInicioEstimada);
+        Tarea tarea2 = new Tarea("titulo2", "descripcion2", 3, fechaInicioEstimada);
         Dependencia dependencia = new Dependencia("FF", tarea2); 
         tarea.VerificarDependenciaNoEstaAgregada(dependencia);
     }
@@ -650,8 +664,9 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void VerificarDependenciaNoEstaAgregada_YaExisteLanzaExcepcion()
     {
-        Tarea tarea = new Tarea("titulo", "descripcion", 3);
-        Tarea tarea2 = new Tarea("titulo2", "descripcion2", 3);
+        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
+        Tarea tarea = new Tarea("titulo", "descripcion", 3, fechaInicioEstimada);
+        Tarea tarea2 = new Tarea("titulo2", "descripcion2", 3, fechaInicioEstimada);
         Dependencia dependencia = new Dependencia("FF", tarea2); 
         tarea.AgregarDependencia(dependencia);
         
