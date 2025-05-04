@@ -98,12 +98,21 @@ public class Tarea
         }
     }
     
+    private void EstadoPendienteACompletada(EstadoTarea nuevoEstado)
+    {
+        if (Estado == EstadoTarea.Pendiente && nuevoEstado == EstadoTarea.Completada)
+        {
+            throw new ExcepcionDominio("No se puede cambiar una tarea en pendiente a completada.");
+        }
+    }
+    
     public void CambiarEstado(EstadoTarea nuevoEstado)
     {
         EstadoCompletadaAPendiente(nuevoEstado);
         EstadoCompletadaAEnProceso(nuevoEstado);
         EstadoCompletadaABloqueada(nuevoEstado);
         EstadoEnProcesoAPendiente(nuevoEstado);
+        EstadoPendienteACompletada(nuevoEstado);
         Estado = nuevoEstado;
     }
     
