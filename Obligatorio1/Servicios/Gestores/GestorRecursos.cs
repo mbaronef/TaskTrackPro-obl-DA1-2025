@@ -127,6 +127,18 @@ public class GestorRecursos
             Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
             adminProyecto.RecibirNotificacion($"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}");
         }
+        else
+        {
+            List<Proyecto> proyectosQueNecesitanElRecurso = _gestorProyectos.Proyectos
+                .Where(proyecto => proyecto.Tareas.Any(tarea =>
+                    tarea.RecursosNecesarios.Contains(recurso)))
+                .ToList();
+            foreach (Proyecto proyecto in proyectosQueNecesitanElRecurso){
+                Usuario adminProyecto = proyecto.Administrador;
+                adminProyecto.RecibirNotificacion($"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}");
+            }
+
+        }
     }
 
     private void NotificarModificacion(Recurso recurso, string nombreAnterior)

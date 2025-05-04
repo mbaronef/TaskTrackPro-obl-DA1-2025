@@ -221,7 +221,7 @@ public class GestorRecursosTests
     }
 
     [TestMethod]
-    public void EliminarRecursoNoExclusivoNotificaAdminDeProyectosQueLoUsan()
+    public void EliminarRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
         Usuario adminSistema = CrearAdministradorSistema();
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
@@ -231,7 +231,6 @@ public class GestorRecursosTests
         Proyecto proyecto = new Proyecto("Nombre", "Descripción",DateTime.Today.AddDays(1), adminProyecto, new List<Usuario>());
         Tarea tarea = new Tarea("Un título", "una descripcion", 3, DateTime.Today.AddDays(10));
         tarea.AgregarRecurso(recurso);
-        tarea.CambiarEstado(EstadoTarea.EnProceso);
         proyecto.AgregarTarea(tarea);
         _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
         
