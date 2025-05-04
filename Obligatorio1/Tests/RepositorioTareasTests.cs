@@ -161,4 +161,15 @@ public class RepositorioTareasTests
         _repositorioTareas.EliminarRecursoNecesario(_tarea.Id, recurso.Id);
         Assert.AreEqual(0, _tarea.RecursosNecesarios.Count);
     }
+    
+    [TestMethod]
+    public void SeAgregaDependenciaOk()
+    {
+        _repositorioTareas.Agregar(_tarea);
+        Tarea otraTarea = new Tarea("Otro título", "Otra descripción", 2, new DateTime(2030, 2, 2));
+        Dependencia dependencia = new Dependencia("FF", otraTarea);
+        _repositorioTareas.AgregarDependencia(_tarea.Id, dependencia);
+        Assert.AreEqual(1, _tarea.Dependencias.Count);
+        Assert.AreEqual(dependencia, _tarea.Dependencias.Last());
+    }
 }
