@@ -202,6 +202,21 @@ public class TareaTests
     }
     
     [TestMethod]
+    public void CambiarEstadoACompletadaDecrementaCantidadDeTareasUsandoYSeteaFecha()
+    {
+        var recurso = new Recurso();
+        var tarea = new Tarea("Título", "Descripción", 3, DateTime.Today);
+        tarea.AgregarRecurso(recurso);
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
+        
+        tarea.CambiarEstado(EstadoTarea.Completada);
+        
+        Assert.AreEqual(0, recurso.CantidadDeTareasUsando);
+        Assert.AreEqual(DateTime.Today, tarea.FechaDeEjecucion);
+    }
+
+    
+    [TestMethod]
     public void EsCriticaDevuelveTrueCuandoHolguraEsCero()
     {
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
