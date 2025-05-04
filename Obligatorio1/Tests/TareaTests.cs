@@ -216,24 +216,6 @@ public class TareaTests
     }
     
     [TestMethod]
-    public void ConstructorConIdCreaTareaCorrectamente()
-    {
-        int id = 1;
-        string titulo = "Tarea";
-        string descripcion = "Descripción de la tarea";
-        int duracion = 5;
-        DateTime fechaInicio = DateTime.Today;
-        
-        Tarea tarea = new Tarea(id, titulo, descripcion, duracion, fechaInicio);
-        
-        Assert.AreEqual(id, tarea.Id);
-        Assert.AreEqual(titulo, tarea.Titulo);
-        Assert.AreEqual(descripcion, tarea.Descripcion);
-        Assert.AreEqual(duracion, tarea.DuracionEnDias);
-        Assert.AreEqual(fechaInicio, tarea.FechaInicioMasTemprana);
-    }
-    
-    [TestMethod]
     public void AsignarUsuario_AsignarUsuarioALista()
     {
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
@@ -627,7 +609,8 @@ public class TareaTests
     public void EliminarDependencia_EliminarDependenciaDeDependencias()
     {
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
-        Tarea tareaD = new Tarea(1, "Titulo", "Descripción", 3, fechaInicioEstimada);
+        Tarea tareaD = new Tarea("Titulo", "Descripción", 3, fechaInicioEstimada);
+        tareaD.Id = 1;
         Dependencia dependencia = new Dependencia("FF", tareaD);
         Tarea tarea = new Tarea("tarea", "descr", 87, fechaInicioEstimada);
         tarea.AgregarDependencia(dependencia);

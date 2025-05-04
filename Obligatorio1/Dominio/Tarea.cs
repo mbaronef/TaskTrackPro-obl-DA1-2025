@@ -65,12 +65,6 @@ public class Tarea
         this.Dependencias = new List<Dependencia>();
         CalcularFechaFinMasTemprana();
     }
-    
-    public Tarea(int unId, string unTitulo, string unaDescripcion, int unaDuracionEnDias,  DateTime unaFechaInicioMasTemprana)
-        : this(unTitulo, unaDescripcion, unaDuracionEnDias, unaFechaInicioMasTemprana)
-    {
-        this.Id = unId;
-    }
 
     private void EstadoCompletadaAPendiente(EstadoTarea nuevoEstado)
     {
