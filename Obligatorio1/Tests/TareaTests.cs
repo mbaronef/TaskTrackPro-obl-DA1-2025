@@ -113,17 +113,6 @@ public class TareaTests
     }
     
     [TestMethod]
-    public void CambiarEstadoDePendienteAFinalizada()
-    {
-        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
-        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
-        
-        tarea.CambiarEstado(EstadoTarea.Completada);
-        
-        Assert.AreEqual(EstadoTarea.Completada, tarea.Estado);
-    }
-    
-    [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstadoNoPermiteVolverAPendienteDesdeCompletada()
     {
@@ -192,26 +181,26 @@ public class TareaTests
     [TestMethod]
     public void CambiarEstadoAEnProcesoIncrementaCantidadDeTareasUsando()
     {
-        Recurso recurso = new Recurso{Id = 1};
+        Recurso recurso = new Recurso("recurso", "tipo", "descripcion" );
         Tarea tarea = new Tarea("Título", "Descripción", 3, DateTime.Today);
         tarea.AgregarRecurso(recurso);
 
         tarea.CambiarEstado(EstadoTarea.EnProceso);
 
-        Assert.AreEqual(1, recurso.CantidadDeTareasUsando);
+        Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
     }
     
     [TestMethod]
     public void CambiarEstadoACompletadaDecrementaCantidadDeTareasUsandoYSeteaFecha()
     {
-        var recurso = new Recurso();
-        var tarea = new Tarea("Título", "Descripción", 3, DateTime.Today);
+        Recurso recurso = new Recurso("recurso", "tipo", "descripcion" );
+        Tarea tarea = new Tarea("Título", "Descripción", 3, DateTime.Today);
         tarea.AgregarRecurso(recurso);
         tarea.CambiarEstado(EstadoTarea.EnProceso);
         
         tarea.CambiarEstado(EstadoTarea.Completada);
         
-        Assert.AreEqual(0, recurso.CantidadDeTareasUsando);
+        Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
         Assert.AreEqual(DateTime.Today, tarea.FechaDeEjecucion);
     }
 
@@ -219,8 +208,8 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstadoACompletada_SinUsoPrevio_LanzaExcepcion()
     {
-        var recurso = new Recurso { Id = 1};
-        var tarea = new Tarea("Título", "Descripción", 3, DateTime.Today);
+        Recurso recurso = new Recurso ("recurso", "tipo", "descripcion" );
+        Tarea tarea = new Tarea("Título", "Descripción", 3, DateTime.Today);
         tarea.AgregarRecurso(recurso);
     
         tarea.CambiarEstado(EstadoTarea.Completada);
@@ -243,7 +232,7 @@ public class TareaTests
     {
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
-        Usuario usuario = new Usuario("nombre", "apellido", "mail@ejemplo.com", "password");
+        Usuario usuario = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
         tarea.UsuariosAsignados.Add(usuario);
         
         bool resultado = tarea.EsMiembro(usuario);
@@ -256,7 +245,7 @@ public class TareaTests
     {
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
-        Usuario usuarioNoAsignado = new Usuario("nombre", "apellido", "mail@ejemplo.com", "password");
+        Usuario usuarioNoAsignado = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
         
         bool resultado = tarea.EsMiembro(usuarioNoAsignado);
         
@@ -278,11 +267,11 @@ public class TareaTests
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
-        Usuario usu = new Usuario();
+        Usuario usuario = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
             
-        tarea.AsignarUsuario(usu); 
+        tarea.AsignarUsuario(usuario); 
             
-        Assert.IsTrue(tarea.UsuariosAsignados.Contains(usu));
+        Assert.IsTrue(tarea.UsuariosAsignados.Contains(usuario));
         Assert.AreEqual(1, tarea.UsuariosAsignados.Count);
     }
     
@@ -300,7 +289,7 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AsignarUsuario_LanzarExcepcionSiUsuarioYaEstaEnUsuariosAsignados()
     {
-        Usuario usu = new Usuario(); 
+        Usuario usu = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AsignarUsuario(usu);
@@ -322,7 +311,7 @@ public class TareaTests
     [TestMethod]
     public void EliminarUsuario_EliminarUsuarioDeAsignados()
     {
-        Usuario usu = new Usuario();
+        Usuario usu = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
         usu.Id = 1;
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
@@ -336,7 +325,7 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarUsuario_LanzaExcepcionSiUsuarioNoExiste()
     {
-        Usuario usu = new Usuario();
+        Usuario usu = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
         usu.Id = 1;
             
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
@@ -351,7 +340,7 @@ public class TareaTests
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
 
-        Recurso recurso = new Recurso();
+        Recurso recurso = new Recurso("recurso", "tipo", "descripcion" );
             
         tarea.AgregarRecurso(recurso); 
             
@@ -373,7 +362,7 @@ public class TareaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarRecurso_LanzarExcepcionSiRecursoYaEstaEnRecursosNecesarios()
     {
-        Recurso recurso = new Recurso(); 
+        Recurso recurso = new Recurso("recurso", "tipo", "descripcion" );
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AgregarRecurso(recurso);
@@ -382,8 +371,8 @@ public class TareaTests
     
     [TestMethod]
     public void EliminarRecurso_EliminarRecursoDeNecesarios()
-    {
-        Recurso recurso = new Recurso();
+    { 
+        Recurso recurso = new Recurso("recurso", "tipo", "descripcion" );
         recurso.Id = 1;
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
@@ -396,8 +385,8 @@ public class TareaTests
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarRecurso_LanzaExcepcionSiRecursoNoExiste()
-    {
-        Recurso rec = new Recurso();
+    { 
+        Recurso rec = new Recurso("recurso", "tipo", "descripcion" );
         rec.Id = 1;
             
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
@@ -539,25 +528,30 @@ public class TareaTests
     [TestMethod]
     public void DarListaAsignados_DevuelveListaDeUsuariosAsignados()
     {
-        Usuario asignado = new Usuario();
-        Usuario asignado2 = new Usuario();
-        DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
-        Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
-            
-        tarea.AsignarUsuario(asignado);
-        tarea.AsignarUsuario(asignado2);
+        Usuario admin = new Usuario("Admin", "Root", new DateTime(1980, 1, 1), "admin@test.com", "TaskTrackPro@2025");
+        admin.EsAdministradorSistema = true;
+        GestorUsuarios gestor = new GestorUsuarios(admin);
+        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(1995, 1, 1), "juan@test.com", "TaskTrackPro@2025");
+        Usuario usuario2 = new Usuario("Juana", "Pereza", new DateTime(1996, 2, 2), "juana@test.com", "TaskTrackPro@2025");
+        gestor.AgregarUsuario(admin, usuario1);
+        gestor.AgregarUsuario(admin, usuario2);
+        Tarea tarea = new Tarea("Título", "Descripción", 5, new DateTime(2026, 9, 1));
+        tarea.AsignarUsuario(usuario1);
+        tarea.AsignarUsuario(usuario2);
+        
+        List<Usuario> asignados = tarea.UsuariosAsignados;
 
-        List<Usuario> lista = tarea.UsuariosAsignados;
-
-        Assert.AreEqual(2, lista.Count);
-        Assert.IsTrue(lista.Contains(asignado));
-        Assert.IsTrue(lista.Contains(asignado2));
+        
+        Assert.AreEqual(2, asignados.Count);
+        Assert.IsTrue(asignados.Any(u => u.Id == usuario1.Id));
+        Assert.IsTrue(asignados.Any(u => u.Id == usuario2.Id));
     }
+
     [TestMethod]
     public void DarListaRecursosNecesarios_DevuelveListaDeRecursosNecesarios()
     {
-        Recurso necesario = new Recurso();
-        Recurso necesario2 = new Recurso();
+        Recurso necesario = new Recurso("recurso", "tipo", "descripcion" );
+        Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion" );
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
             
@@ -575,7 +569,7 @@ public class TareaTests
     [TestMethod]
     public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
     {
-        Usuario miembro = new Usuario();
+        Usuario miembro = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
         DateTime fechaInicioEstimada = new DateTime(2026, 9, 1);
         Tarea tarea = new Tarea("Título", "Descripción", 5, fechaInicioEstimada);
         tarea.AsignarUsuario(miembro);

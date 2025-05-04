@@ -654,10 +654,10 @@ namespace Tests
 
         private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
         {
-            return new Tarea
+            return new Tarea ("titulo", "descripcion", 2, DateTime.Today)
             {
                 Id = id,
-                FechaInicio = inicio ?? DateTime.Today,
+                FechaInicioMasTemprana = inicio ?? DateTime.Today,
                 FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(2)
             };
         }
