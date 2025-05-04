@@ -1,7 +1,6 @@
 using Dominio;
 using Dominio.Excepciones;
-using Dominio.Dummies;
-
+using Servicios.Gestores;
 namespace Tests
 
 {
@@ -17,7 +16,7 @@ namespace Tests
         public void AntesDeCadaTest()
         {
             Usuario adminSistema = CrearAdminSistema();
-            _gestorUsuarios = new GestorUsuarios(adminSistema);
+            _gestorUsuarios = new GestorUsuarios();
             _admin = CrearAdmin(1);
             _gestorUsuarios.AgregarUsuario(adminSistema, _admin);
             _miembros = new List<Usuario>();
