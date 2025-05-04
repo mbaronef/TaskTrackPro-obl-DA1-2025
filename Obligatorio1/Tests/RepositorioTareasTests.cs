@@ -180,7 +180,7 @@ public class RepositorioTareasTests
         Tarea otraTarea = new Tarea("Otro título", "Otra descripción", 2, new DateTime(2030, 2, 2));
         Dependencia dependencia = new Dependencia("FF", otraTarea);
         _repositorioTareas.AgregarDependencia(_tarea.Id, dependencia);
-        _repositorioTareas.EliminarDependencia(_tarea.Id,dependencia);
-        Assert.AreEqual(0, _tarea.Dependencias.Count);g
+        _repositorioTareas.EliminarDependencia(_tarea.Id,otraTarea.Id);
+        Assert.AreEqual(0, _tarea.Dependencias.Count);
     }
 }

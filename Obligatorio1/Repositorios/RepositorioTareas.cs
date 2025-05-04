@@ -1,3 +1,4 @@
+using System.Text;
 using Dominio.Dummies;
 using Repositorios.IRepositorios;
 
@@ -110,8 +111,9 @@ public class RepositorioTareas : IRepositorioTareas
         tarea.AgregarDependencia(dependencia);
     }
 
-    public void EliminarDependencia(int idTarea, Dependencia dependencia)
+    public void EliminarDependencia(int idTarea, int idTareaDependencia)
     {
-        throw new NotImplementedException();
+        Tarea tarea = ObtenerPorId(idTarea);
+        tarea.EliminarDependencia(idTareaDependencia);
     }
 }

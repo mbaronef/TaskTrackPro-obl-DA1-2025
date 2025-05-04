@@ -17,5 +17,5 @@ public interface IRepositorioTareas : IRepositorio<Tarea>
     void AgregarRecursoNecesario(int idTarea, Recurso recursoNecesario);
     void EliminarRecursoNecesario(int idTarea, int idRecursoNecesario);
     void AgregarDependencia(int idTarea, Dependencia dependencia);
-    void EliminarDependencia(int idTarea, Dependencia dependencia);
+    void EliminarDependencia(int idTarea, int idTareaDependencia);
 }
