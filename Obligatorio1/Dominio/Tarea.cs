@@ -45,7 +45,7 @@ public class Tarea
     
     private void CalcularFechaFinMasTemprana()
     {
-        FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias);
+        FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias - 1);
     }
 
 
