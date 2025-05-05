@@ -7,7 +7,6 @@ namespace Servicios.Gestores;
 
 public class GestorUsuarios
 {
-    private static int _cantidadUsuarios;
     private string _contrasenaPorDefecto = "TaskTrackPro@2025";
     
     public Usuario AdministradorInicial { get; private set; }
@@ -15,8 +14,7 @@ public class GestorUsuarios
 
     public GestorUsuarios()
     {
-        AdministradorInicial = Usuarios.ObtenerTodos().Last();
-        //No se manejan ids, el primer administrador tiene id 0
+        AdministradorInicial = Usuarios.ObtenerTodos().Last(); //primer administrador (con id 0)
     }
     
     public Usuario CrearUsuario(string nombre, string apellido, DateTime fechaNacimiento, string email, string contrasena)
@@ -28,7 +26,6 @@ public class GestorUsuarios
     public void AgregarUsuario(Usuario solicitante, Usuario usuario)
     {
         VerificarPermisoAdministradorSistema(solicitante, "crear usuarios");
-        usuario.Id = ++_cantidadUsuarios;
         Usuarios.Agregar(usuario);
         string mensajeNotificacion =
             $"Se creó un nuevo usuario: {usuario.Nombre} {usuario.Apellido}";

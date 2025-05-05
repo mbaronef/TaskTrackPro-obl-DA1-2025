@@ -28,7 +28,7 @@ namespace Tests.ServiciosTests
         {
             Usuario admin = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
             admin.EsAdministradorProyecto = true;
-            admin.Id = id; // se hardcodea en tests pero en realidad el que gestiona ids es el gestor de usuarios
+            admin.Id = id; // se hardcodea en tests pero en realidad el que gestiona ids es el repo
             return admin;
         }
 
@@ -36,14 +36,14 @@ namespace Tests.ServiciosTests
         {
             Usuario adminSistema = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
             adminSistema.EsAdministradorSistema = true;
-            adminSistema.Id = id; // se hardcodea en tests pero en realidad el que gestiona ids es el gestor de usuarios
+            adminSistema.Id = id; // se hardcodea en tests pero en realidad el que gestiona ids es el repo
             return adminSistema;
         }
 
         private Usuario CrearMiembro(int id)
         {
             Usuario miembro = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
-            miembro.Id = id; // se hardcodea en tests pero en realidad el que gestiona ids es el gestor de usuarios
+            miembro.Id = id; // se hardcodea en tests pero en realidad el que gestiona ids es el repo
             return miembro;
         }
 

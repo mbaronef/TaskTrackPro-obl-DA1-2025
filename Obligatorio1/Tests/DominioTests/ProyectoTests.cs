@@ -633,14 +633,14 @@ public class ProyectoTests
     {
         Usuario admin = new Usuario("Juan", "Perez", new DateTime(1999, 2, 2), "unemail@gmail.com", "Contrase#a3");
         admin.EsAdministradorProyecto = true;
-        admin.Id = id; // Se hardcodea pero en realidad lo gestiona el gestor de usuarios
+        admin.Id = id; // Se hardcodea pero en realidad lo gestiona el repo de usuarios
         return admin;
     }
 
     private Usuario CrearMiembro(int id)
     {
         Usuario miembro = new Usuario("Juan", "Perez", new DateTime(1999, 2, 2), "unemail@gmail.com", "Contrase#a3");
-        miembro.Id = id; // Se hardcodea pero en realidad lo gestiona el gestor de usuarios
+        miembro.Id = id; // Se hardcodea pero en realidad lo gestiona el repo de usuarios
         return miembro;
     }
 

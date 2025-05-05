@@ -6,8 +6,6 @@ namespace Servicios.Gestores;
 
 public class GestorProyectos
 {
-    private static int _cantidadProyectos;
-    
     public RepositorioProyectos Proyectos { get; } = new RepositorioProyectos();
     
     public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
@@ -17,9 +15,7 @@ public class GestorProyectos
         VerificarUsuarioNoAdministraOtroProyecto(solicitante);
 
         VerificarNombreNoRepetido(proyecto.Nombre);
-
-        _cantidadProyectos++;
-        proyecto.AsignarId(_cantidadProyectos);
+        
         Proyectos.Agregar(proyecto);
 
         solicitante.EstaAdministrandoUnProyecto = true;

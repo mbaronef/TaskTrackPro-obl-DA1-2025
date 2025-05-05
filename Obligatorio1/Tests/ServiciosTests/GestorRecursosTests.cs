@@ -1,4 +1,5 @@
 using Dominio;
+using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Gestores;
 using Servicios.Utilidades;
@@ -15,7 +16,7 @@ public class GestorRecursosTests
     public void SetUp()
     {
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(GestorRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        typeof(RepositorioRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         _gestorProyectos = new GestorProyectos();
         _gestorRecursos = new GestorRecursos(_gestorProyectos);
     }
@@ -190,11 +191,11 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeEliminarRecursosExclusivosDeOtrosProyectos()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo gestiona el gestor de usuarios
+        adminProyecto.Id = 1; // lo gestiona el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
 
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo gestiona el gestor de usuarios
+        otroAdminProyecto.Id = 2; // lo gestiona el repo de usuarios
         
         DateTime fechaInicio = DateTime.Today.AddDays(1);
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción",fechaInicio, otroAdminProyecto, new List<Usuario>());
@@ -261,11 +262,11 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarNombreDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el gestor de usuarios
+        adminProyecto.Id = 1; // lo hace el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
 
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
+        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
         
         DateTime fechaInicio = DateTime.Today.AddDays(1);
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", fechaInicio, otroAdminProyecto, new List<Usuario>());
@@ -316,10 +317,10 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarTipoDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el gestor de usuarios
+        adminProyecto.Id = 1; // lo hace el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
+        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
         
         DateTime fechaInicio = DateTime.Today.AddDays(1);
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción",fechaInicio, otroAdminProyecto, new List<Usuario>());
@@ -370,10 +371,10 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarDescripciónDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el gestor de usuarios
+        adminProyecto.Id = 1; // lo hace el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
+        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
        
         DateTime fechaInicio = DateTime.Today.AddDays(1);
         Proyecto otroProyecto = new Proyecto("Otro nombre", "Otra descripción", fechaInicio, otroAdminProyecto, new List<Usuario>());

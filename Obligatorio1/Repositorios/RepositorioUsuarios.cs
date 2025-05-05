@@ -7,6 +7,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 {
     private Usuario _admin;
     private List<Usuario> _usuarios;
+    private static int _cantidadUsuarios;
 
     public RepositorioUsuarios()
     {
@@ -18,6 +19,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 
     public void Agregar(Usuario objeto)
     {
+        objeto.Id = ++_cantidadUsuarios;
         _usuarios.Add(objeto);
     }
 

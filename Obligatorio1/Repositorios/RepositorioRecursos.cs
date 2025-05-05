@@ -6,6 +6,7 @@ namespace Repositorios;
 public class RepositorioRecursos : IRepositorioRecursos
 {
     public List<Recurso> _recursos;
+    private static int _cantidadRecursos;
 
     public RepositorioRecursos()
     {
@@ -14,6 +15,7 @@ public class RepositorioRecursos : IRepositorioRecursos
 
     public void Agregar(Recurso objeto)
     {
+        objeto.Id = ++_cantidadRecursos;
         _recursos.Add(objeto);
     }
 
