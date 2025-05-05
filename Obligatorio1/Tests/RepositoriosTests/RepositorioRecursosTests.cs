@@ -92,11 +92,12 @@ public class RepositorioRecursosTests
     }
 
     [TestMethod]
-    public void SeModificaTareasUsandoloOk()
+    public void SeModificaTareasUsandoloOk_CuandoNuevaCantidadEsMayorALaActual()
     {
         _repositorioRecursos.Agregar(_recurso);
-        _repositorioRecursos.ModificarCantidadDeTareasUsandolo(_recurso.Id, 1000);
+        int _cantidadMayor = 1000;
+        _repositorioRecursos.ModificarCantidadDeTareasUsandolo(_recurso.Id, _cantidadMayor);
         Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
-        Assert.AreEqual(1000, recurso.CantidadDeTareasUsandolo);
+        Assert.AreEqual(_cantidadMayor, recurso.CantidadDeTareasUsandolo);
     }
 }

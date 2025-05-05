@@ -56,8 +56,22 @@ public class RepositorioRecursos : IRepositorioRecursos
         recurso.AsociarAProyecto(proyecto);
     }
 
-    public void ModificarCantidadDeTareasUsandolo(int idRecurso, int cantidadDeTareasUsandolo)
+    public void ModificarCantidadDeTareasUsandolo(int idRecurso, int nuevaCantidadDeTareasUsandolo)
     {
-        throw new NotImplementedException();
+        Recurso recurso = ObtenerPorId(idRecurso);
+        if (recurso.CantidadDeTareasUsandolo < nuevaCantidadDeTareasUsandolo)
+        {
+            while (recurso.CantidadDeTareasUsandolo < nuevaCantidadDeTareasUsandolo)
+            {
+                recurso.IncrementarCantidadDeTareasUsandolo();
+            }
+        }
+        else
+        {
+            while (recurso.CantidadDeTareasUsandolo > nuevaCantidadDeTareasUsandolo)
+            {
+                recurso.IncrementarCantidadDeTareasUsandolo();
+            }
+        }
     }
 }
