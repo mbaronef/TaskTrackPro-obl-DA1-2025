@@ -46,7 +46,8 @@ public class RepositorioRecursos : IRepositorioRecursos
 
     public void ModificarDescripcion(int idRecurso, string descripcion)
     {
-        throw new NotImplementedException();
+        Recurso recurso = ObtenerPorId(idRecurso);
+        recurso.ModificarDescripcion(descripcion);
     }
 
     public void ModificarProyectoAsociado(int idRecurso, Proyecto proyecto)
