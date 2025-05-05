@@ -30,4 +30,12 @@ public class RepositorioRecursosTests
         _repositorioRecursos.Agregar(_recurso);
         Assert.AreEqual(_recurso, _repositorioRecursos.ObtenerPorId(_recurso.Id));
     }
+    
+    [TestMethod]
+    public void SeEliminaRecursoOk()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+        _repositorioRecursos.Eliminar(_recurso.Id);
+        Assert.IsNull(_repositorioRecursos.ObtenerPorId(_recurso.Id));
+    }
 }
