@@ -8,12 +8,18 @@ public class RepositorioRecursosTests
 {
     private RepositorioRecursos _repositorioRecursos;
     private Recurso _recurso;
+    private Proyecto _proyecto;
+    private Usuario _adminProyecto;
     
     [TestInitialize]
     public void SetUp()
     {
         _repositorioRecursos = new RepositorioRecursos();
         _recurso = new Recurso("nombre", "tipo", "descripcion");
+        _adminProyecto = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
+        _adminProyecto.EsAdministradorProyecto = true;
+        List<Usuario> miembros = new List<Usuario>();
+        _proyecto = new Proyecto("Proyecto", "hacer algo", DateTime.Today.AddDays(10), _adminProyecto, miembros);
     }
     
     [TestMethod]
@@ -74,5 +80,14 @@ public class RepositorioRecursosTests
         _repositorioRecursos.ModificarDescripcion(_recurso.Id, "Nuevo");
         Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
         Assert.AreEqual("Nuevo", recurso.Descripcion);
+    }
+
+    [TestMethod]
+    public void SeModificaProyectoAsociadoOk()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+        _repositorioRecursos.ModificarProyectoAsociado(_recurso.Id, _proyecto);
+        Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual(_proyecto, recurso.ProyectoAsociado);
     }
 }
