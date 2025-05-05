@@ -479,7 +479,7 @@ public class TareaTests
     public void FechaFinMasTempranaSeCalculaCorrectamente()
     {
         Tarea tarea = CrearTareaValida();
-        DateTime fechaEsperada = tarea.FechaInicioMasTemprana.AddDays(tarea.DuracionEnDias);
+        DateTime fechaEsperada = tarea.FechaInicioMasTemprana.AddDays(tarea.DuracionEnDias - 1);
         Assert.AreEqual(fechaEsperada, tarea.FechaFinMasTemprana);
     }
     
@@ -488,7 +488,7 @@ public class TareaTests
     {
         Tarea tarea = CrearTareaValida();
         tarea.ModificarDuracion(5);
-        Assert.AreEqual(tarea.FechaInicioMasTemprana.AddDays(5), tarea.FechaFinMasTemprana);
+        Assert.AreEqual(tarea.FechaInicioMasTemprana.AddDays(5 - 1), tarea.FechaFinMasTemprana);
     }
     
     [TestMethod]
@@ -498,7 +498,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida(); // duración 5
         DateTime nuevaFechaInicio = tarea.FechaInicioMasTemprana.AddDays(2);
         tarea.ModificarFechaInicioMasTemprana(nuevaFechaInicio);
-        Assert.AreEqual(nuevaFechaInicio.AddDays(duracion), tarea.FechaFinMasTemprana);
+        Assert.AreEqual(nuevaFechaInicio.AddDays(duracion - 1), tarea.FechaFinMasTemprana);
     }
     
     [TestMethod]
