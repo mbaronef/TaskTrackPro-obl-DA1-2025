@@ -58,7 +58,7 @@ public class DependenciaTests
     public void Constructor_AceptaTipoSS()
     {
         Dependencia dependencia = new Dependencia("SS", _tarea);
-        Assert.AreEqual("FF", dependencia.Tipo);
+        Assert.AreEqual("SS", dependencia.Tipo);
     }
 
     [TestMethod]

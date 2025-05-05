@@ -196,6 +196,7 @@ public class ProyectoTests
     public void EliminarTarea_EliminaTareaDeLaLista()
     {
         Tarea tarea = CrearTarea(1);
+        tarea.Id = 1;
         _proyecto = CrearProyectoCon(_admin, _miembros);
         _proyecto.AgregarTarea(tarea);
         _proyecto.EliminarTarea(1);
@@ -340,10 +341,10 @@ public class ProyectoTests
     public void ModificarFechaInicio_LanzaExcepcionSiEsPosteriorALaFechaDeInicioDeUnaTarea()
     {
         Proyecto _proyecto = CrearProyectoCon(_admin, _miembros);
-        Tarea tarea = CrearTarea(1, new DateTime(2026, 1, 1));
+        Tarea tarea = CrearTarea(1);
         _proyecto.AgregarTarea(tarea);
 
-        _proyecto.ModificarFechaInicio(new DateTime(2027, 1, 1));
+        _proyecto.ModificarFechaInicio(new DateTime(2600, 1, 1));
     }
 
     [TestMethod]
@@ -388,7 +389,7 @@ public class ProyectoTests
     {
         _proyecto = CrearProyectoCon(_admin);
 
-        Tarea tarea = CrearTarea(1, DateTime.Today, new DateTime(2026, 6, 1));
+        Tarea tarea = CrearTarea(1);
         _proyecto.AgregarTarea(tarea);
 
         _proyecto.ModificarFechaFinMasTemprana(new DateTime(2026, 5, 1));
@@ -651,13 +652,14 @@ public class ProyectoTests
         return new Proyecto("Proyecto", "Descripción", fechaInicio, admin, miembros);
     }
 
-    private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
+    private Tarea CrearTarea(int id = 1,  DateTime? fin = null)
     {
-        return new Tarea("titulo", "descripcion", 2, DateTime.Today)
-        {
-            Id = id,
-            FechaInicioMasTemprana = inicio ?? DateTime.Today,
-            FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(2)
-        };
+        string titulo = "Tarea";
+        string descripcion = "Prueba de tarea";
+        int duracionEnDias = 8;
+        DateTime fechaInicio = new DateTime(2500, 9, 1);
+        
+        Tarea tarea = new Tarea(titulo, descripcion, duracionEnDias, fechaInicio);
+        return tarea;
     }
 }

@@ -157,7 +157,7 @@ public class RepositorioTareasTests
     {
         _repositorioTareas.Agregar(_tarea);
         Tarea otraTarea = new Tarea("Otro título", "Otra descripción", 2, new DateTime(2030, 2, 2));
-        Dependencia dependencia = new Dependencia("FF", otraTarea);
+        Dependencia dependencia = new Dependencia("SS", otraTarea);
         _repositorioTareas.AgregarDependencia(_tarea.Id, dependencia);
         Assert.AreEqual(1, _tarea.Dependencias.Count);
         Assert.AreEqual(dependencia, _tarea.Dependencias.Last());
@@ -168,7 +168,7 @@ public class RepositorioTareasTests
     {
         _repositorioTareas.Agregar(_tarea);
         Tarea otraTarea = new Tarea("Otro título", "Otra descripción", 2, new DateTime(2030, 2, 2));
-        Dependencia dependencia = new Dependencia("FF", otraTarea);
+        Dependencia dependencia = new Dependencia("SS", otraTarea);
         _repositorioTareas.AgregarDependencia(_tarea.Id, dependencia);
         _repositorioTareas.EliminarDependencia(_tarea.Id,otraTarea.Id);
         Assert.AreEqual(0, _tarea.Dependencias.Count);
