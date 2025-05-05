@@ -125,7 +125,7 @@ public class GestorRecursos
         string mensaje = $"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}";
         if (recurso.EsExclusivo())
         {
-            recurso.ProyectoAsociado.Administrador.RecibirNotificacion(mensaje);
+            recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
         }
         else
         {
@@ -139,7 +139,7 @@ public class GestorRecursos
             $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: Nombre: '{recurso.Nombre}', Tipo: '{recurso.Tipo}', Descripción: '{recurso.Descripcion}'.";
         if (recurso.EsExclusivo())
         {
-            recurso.ProyectoAsociado.Administrador.RecibirNotificacion(mensaje);
+            recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
         }
         else
         {
@@ -154,13 +154,13 @@ public class GestorRecursos
         {
             if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
             {
-                proyecto.Administrador.RecibirNotificacion(mensaje);
+                proyecto.NotificarAdministrador(mensaje);
             }
         }
     }
 
     private List<Recurso> RecursosNecesariosPorProyecto(Proyecto proyecto)
     {
-        return proyecto.Tareas.SelectMany(t => t.RecursosNecesarios).Distinct().ToList();
+        return proyecto.Tareas.SelectMany(tarea => tarea.RecursosNecesarios).Distinct().ToList();
     }
 }
