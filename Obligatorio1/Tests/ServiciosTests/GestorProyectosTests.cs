@@ -60,7 +60,6 @@ namespace Tests.ServiciosTests
             {
                 Id = id,
                 FechaInicioMasTemprana = inicio ?? DateTime.Today,
-                FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(1)
             };
             return tarea;
         }

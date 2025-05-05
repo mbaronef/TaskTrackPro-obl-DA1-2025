@@ -658,7 +658,6 @@ namespace Tests
             {
                 Id = id,
                 FechaInicioMasTemprana = inicio ?? DateTime.Today,
-                FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(2)
             };
         }
         

@@ -656,8 +656,7 @@ public class ProyectoTests
         return new Tarea("titulo", "descripcion", 2, DateTime.Today)
         {
             Id = id,
-            FechaInicioMasTemprana = inicio ?? DateTime.Today,
-            FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(2)
+            FechaInicioMasTemprana = inicio ?? DateTime.Today
         };
     }
 }
