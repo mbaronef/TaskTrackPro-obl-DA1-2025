@@ -9,6 +9,13 @@ public class RepositorioRecursosTests
     private RepositorioRecursos _repositorioRecursos;
     private Recurso _recurso;
     
+    [TestInitialize]
+    public void SetUp()
+    {
+        _repositorioRecursos = new RepositorioRecursos();
+        _recurso = new Recurso("nombre", "tipo", "descripcion");
+    }
+    
     [TestMethod]
     public void ConstructorCreaRepositorioOk()
     {

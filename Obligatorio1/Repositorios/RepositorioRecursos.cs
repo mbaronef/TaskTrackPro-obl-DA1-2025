@@ -14,7 +14,7 @@ public class RepositorioRecursos : IRepositorioRecursos
 
     public void Agregar(Recurso objeto)
     {
-        throw new NotImplementedException();
+        _recursos.Add(objeto);
     }
 
     public Recurso ObtenerPorId(int id)
