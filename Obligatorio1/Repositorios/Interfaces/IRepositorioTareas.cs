@@ -8,7 +8,6 @@ public interface IRepositorioTareas : IRepositorio<Tarea>
     void ModificarDescripcion(int idTarea, string descripcion);
     void ModificarDuracion(int idTarea, int duracion);
     void ModificarFechaInicioMasTemprana(int idTarea, DateTime fechaInicioMasTemprana);
-    void ModificarFechaFinMasTemprana(int idTarea, DateTime fechaFinMasTemprana);
     void ModificarFechaDeEjecucion(int idTarea, DateTime fechaDeEjecucion);
     void ModificarEstado(int idTarea, EstadoTarea estado);
     void ModificarHolgura(int idTarea, float holgura);
@@ -18,4 +17,6 @@ public interface IRepositorioTareas : IRepositorio<Tarea>
     void EliminarRecursoNecesario(int idTarea, int idRecursoNecesario);
     void AgregarDependencia(int idTarea, Dependencia dependencia);
     void EliminarDependencia(int idTarea, int idTareaDependencia);
+    
+    // La fecha de fin no se puede modificar directamente; solo se ajusta mediante el método ModificarFechaInicioMasTemprana.
 }

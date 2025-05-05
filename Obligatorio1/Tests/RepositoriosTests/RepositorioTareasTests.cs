@@ -82,15 +82,6 @@ public class RepositorioTareasTests
     }
     
     [TestMethod]
-    public void SeModificaLaFechaDeFinMasTempranaDeLaTareaOk()
-    {
-        DateTime fecha = new DateTime(2200, 2, 2);
-        _repositorioTareas.Agregar(_tarea);
-        _repositorioTareas.ModificarFechaFinMasTemprana(_tarea.Id, fecha);
-        Assert.AreEqual(fecha, _tarea.FechaFinMasTemprana);
-    }
-    
-    [TestMethod]
     public void SeModificaLaFechaDeEjecucionDeLaTareaOk()
     {
         DateTime fecha = new DateTime(2200, 2, 2);

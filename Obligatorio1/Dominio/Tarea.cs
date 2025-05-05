@@ -10,7 +10,7 @@ public class Tarea
     public string Descripcion { get; set; }
     public int DuracionEnDias { get; set; }
     public DateTime FechaInicioMasTemprana { get; set; }
-    public DateTime FechaFinMasTemprana { get; set; } = DateTime.MinValue; //FechaInicioMasTemprana + duración
+    public DateTime FechaFinMasTemprana { get; private set; }
     public DateTime FechaDeEjecucion { get; set; } = DateTime.MinValue;
     public EstadoTarea Estado { get; set; } = EstadoTarea.Pendiente;
     public float Holgura {get; set;}
@@ -46,7 +46,7 @@ public class Tarea
     
     private void CalcularFechaFinMasTemprana()
     {
-        FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias);
+        FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias-1);
     }
 
 
@@ -293,14 +293,5 @@ public class Tarea
         Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
         ValidarObjetoNoNull(dependenciaAEliminar,"La dependencia no se encuentra dentro de la lista de dependencias.");
         Dependencias.Remove(dependenciaAEliminar);
-    }
-
-    public void ModificarFechaFinMasTemprana(DateTime fechaFin)
-    {
-        if (fechaFin < FechaInicioMasTemprana)
-        {
-            throw new ExcepcionDominio("La fecha de fin de la tarea no puede ser anterior a la de inicio");
-        }
-        FechaFinMasTemprana = fechaFin;
     }
 }
