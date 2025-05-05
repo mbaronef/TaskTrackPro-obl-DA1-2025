@@ -1,5 +1,7 @@
+using Dominio.Excepciones;
+
 namespace Dominio;
-using Excepciones;
+
 public class Dependencia
 {
     public string Tipo { get; private set; }
@@ -13,7 +15,7 @@ public class Dependencia
 
     private void ValidarTipoValido(string valor, string mensajeError)
     {
-        if (valor != "FF" && valor != "FS")
+        if (valor != "SS" && valor != "FS")
         {
             throw new ExcepcionDominio(mensajeError);
         }

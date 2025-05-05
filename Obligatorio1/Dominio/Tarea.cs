@@ -1,7 +1,6 @@
+using Dominio.Excepciones;
 
-﻿namespace Dominio;
-
-using Excepciones;
+namespace Dominio;
 
 public class Tarea
 {
@@ -46,7 +45,7 @@ public class Tarea
     
     private void CalcularFechaFinMasTemprana()
     {
-        FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias-1);
+        FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias - 1);
     }
 
 
