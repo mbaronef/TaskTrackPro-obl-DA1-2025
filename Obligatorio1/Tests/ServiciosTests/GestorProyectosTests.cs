@@ -54,13 +54,14 @@ namespace Tests.ServiciosTests
             return new Proyecto("Proyecto", "Descripcion",fechaInicio, admin, miembros);
         }
 
-        private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
+        private Tarea CrearTarea()
         {
-            Tarea tarea = new Tarea ("titulo", "descripcion", 1, DateTime.Today)
-            {
-                Id = id,
-                FechaInicioMasTemprana = inicio ?? DateTime.Today,
-            };
+            string titulo = "Tarea";
+            string descripcion = "Prueba de tarea";
+            int duracionEnDias = 8;
+            DateTime fechaInicio = new DateTime(2500, 9, 1);
+        
+            Tarea tarea = new Tarea(titulo, descripcion, duracionEnDias, fechaInicio); 
             return tarea;
         }
         
@@ -726,7 +727,7 @@ namespace Tests.ServiciosTests
             Proyecto proyecto = CrearProyectoCon(_admin);
             _gestor.CrearProyecto(proyecto, _admin);
 
-            Tarea tarea = CrearTarea(10);
+            Tarea tarea = CrearTarea();
             _gestor.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
             Assert.AreEqual(1, proyecto.Tareas.Count);
@@ -739,7 +740,7 @@ namespace Tests.ServiciosTests
             Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { _usuarioNoAdmin });
             _gestor.CrearProyecto(proyecto, _admin);
 
-            Tarea tarea = CrearTarea(10);
+            Tarea tarea = CrearTarea();
             _gestor.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
             string esperado = $"Se agregó la tarea (id {tarea.Id}) al proyecto '{proyecto.Nombre}'.";
@@ -776,7 +777,7 @@ namespace Tests.ServiciosTests
         [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarTareaDelProyecto_LanzaExcepcionSiProyectoNoExiste()
         {
-            Tarea tarea = CrearTarea(10);
+            Tarea tarea = CrearTarea();
             _gestor.EliminarTareaDelProyecto(1000, _admin, tarea.Id);
         }
 
@@ -813,7 +814,7 @@ namespace Tests.ServiciosTests
             Proyecto proyecto = CrearProyectoCon(_admin);
             _gestor.CrearProyecto(proyecto, _admin);
 
-            Tarea tarea = CrearTarea(10);
+            Tarea tarea = CrearTarea();
             _gestor.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
             _gestor.EliminarTareaDelProyecto(proyecto.Id, _admin, tarea.Id);
 
@@ -827,7 +828,7 @@ namespace Tests.ServiciosTests
             Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { _usuarioNoAdmin });
             _gestor.CrearProyecto(proyecto, _admin);
 
-            Tarea tarea = CrearTarea(10);
+            Tarea tarea = CrearTarea();
             _gestor.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
             _gestor.EliminarTareaDelProyecto(proyecto.Id, _admin, tarea.Id);
 

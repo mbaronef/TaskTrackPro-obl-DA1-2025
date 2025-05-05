@@ -196,6 +196,7 @@ public class ProyectoTests
     public void EliminarTarea_EliminaTareaDeLaLista()
     {
         Tarea tarea = CrearTarea(1);
+        tarea.Id = 1;
         _proyecto = CrearProyectoCon(_admin, _miembros);
         _proyecto.AgregarTarea(tarea);
         _proyecto.EliminarTarea(1);
@@ -340,10 +341,10 @@ public class ProyectoTests
     public void ModificarFechaInicio_LanzaExcepcionSiEsPosteriorALaFechaDeInicioDeUnaTarea()
     {
         Proyecto _proyecto = CrearProyectoCon(_admin, _miembros);
-        Tarea tarea = CrearTarea(1, new DateTime(2026, 1, 1));
+        Tarea tarea = CrearTarea(1);
         _proyecto.AgregarTarea(tarea);
 
-        _proyecto.ModificarFechaInicio(new DateTime(2027, 1, 1));
+        _proyecto.ModificarFechaInicio(new DateTime(2600, 1, 1));
     }
 
     [TestMethod]
@@ -388,7 +389,8 @@ public class ProyectoTests
     {
         _proyecto = CrearProyectoCon(_admin);
 
-        Tarea tarea = CrearTarea(1, DateTime.Today);
+        Tarea tarea = CrearTarea(1);
+
         _proyecto.AgregarTarea(tarea);
 
         _proyecto.ModificarFechaFinMasTemprana(DateTime.Today.AddDays(1));
