@@ -1,6 +1,6 @@
-﻿namespace Dominio;
+using Dominio.Excepciones;
 
-using Excepciones;
+namespace Dominio;
 
 public class Tarea
 {
@@ -9,7 +9,7 @@ public class Tarea
     public string Descripcion { get; set; }
     public int DuracionEnDias { get; set; }
     public DateTime FechaInicioMasTemprana { get; set; }
-    public DateTime FechaFinMasTemprana { get; set; } = DateTime.MinValue; //FechaInicioMasTemprana + duración
+    public DateTime FechaFinMasTemprana { get; private set; }
     public DateTime FechaDeEjecucion { get; set; } = DateTime.MinValue;
     public EstadoTarea Estado { get; set; } = EstadoTarea.Pendiente;
     public float Holgura {get; set;}
@@ -293,5 +293,4 @@ public class Tarea
         ValidarObjetoNoNull(dependenciaAEliminar,"La dependencia no se encuentra dentro de la lista de dependencias.");
         Dependencias.Remove(dependenciaAEliminar);
     }
-     
 }
