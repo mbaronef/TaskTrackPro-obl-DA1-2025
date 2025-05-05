@@ -90,4 +90,13 @@ public class RepositorioRecursosTests
         Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
         Assert.AreEqual(_proyecto, recurso.ProyectoAsociado);
     }
+
+    [TestMethod]
+    public void SeModificaTareasUsandoloOk()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+        _repositorioRecursos.ModificarCantidadDeTareasUsandolo(_recurso.Id, 1000);
+        Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual(1000, recurso.CantidadDeTareasUsandolo);
+    }
 }
