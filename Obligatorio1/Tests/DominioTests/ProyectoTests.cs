@@ -388,10 +388,10 @@ public class ProyectoTests
     {
         _proyecto = CrearProyectoCon(_admin);
 
-        Tarea tarea = CrearTarea(1, DateTime.Today, new DateTime(2026, 6, 1));
+        Tarea tarea = CrearTarea(1, DateTime.Today);
         _proyecto.AgregarTarea(tarea);
 
-        _proyecto.ModificarFechaFinMasTemprana(new DateTime(2026, 5, 1));
+        _proyecto.ModificarFechaFinMasTemprana(DateTime.Today.AddDays(1));
     }
 
     [TestMethod]
@@ -615,7 +615,7 @@ public class ProyectoTests
         Usuario admin3 = CrearAdmin(3);
         Proyecto proyecto3 = CrearProyectoCon(admin3);
         proyecto3.Id =
-            3; // usuario con id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
+            3; // proyecto con id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
         Assert.AreEqual(proyecto1.GetHashCode(), proyecto2.GetHashCode());
         Assert.AreNotEqual(proyecto3.GetHashCode(), proyecto1.GetHashCode());
     }
@@ -651,9 +651,9 @@ public class ProyectoTests
         return new Proyecto("Proyecto", "Descripción", fechaInicio, admin, miembros);
     }
 
-    private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
+    private Tarea CrearTarea(int id = 1, DateTime? inicio = null)
     {
-        return new Tarea("titulo", "descripcion", 2, DateTime.Today)
+        return new Tarea("titulo", "descripcion", 5, DateTime.Today)
         {
             Id = id,
             FechaInicioMasTemprana = inicio ?? DateTime.Today

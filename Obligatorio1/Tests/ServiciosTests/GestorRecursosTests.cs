@@ -56,7 +56,7 @@ public class GestorRecursosTests
     public void ConstructorCreaGestorValido()
     {
         Assert.IsNotNull(_gestorRecursos);
-        Assert.AreEqual(0, _gestorRecursos.Recursos.Count);
+        Assert.AreEqual(0, _gestorRecursos.Recursos.ObtenerTodos().Count);
     }
 
     [TestMethod]
@@ -69,9 +69,9 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(adminSistema, recurso1);
         _gestorRecursos.AgregarRecurso(adminSistema, recurso2);
 
-        Assert.AreEqual(2, _gestorRecursos.Recursos.Count);
-        Assert.AreEqual(recurso1, _gestorRecursos.Recursos.ElementAt(0));
-        Assert.AreEqual(recurso2, _gestorRecursos.Recursos.ElementAt(1));
+        Assert.AreEqual(2, _gestorRecursos.Recursos.ObtenerTodos().Count);
+        Assert.AreEqual(recurso1, _gestorRecursos.Recursos.ObtenerTodos().ElementAt(0));
+        Assert.AreEqual(recurso2, _gestorRecursos.Recursos.ObtenerTodos().ElementAt(1));
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -135,7 +135,7 @@ public class GestorRecursosTests
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(admin, recurso);
         _gestorRecursos.EliminarRecurso(admin, recurso.Id);
-        Assert.AreEqual(0, _gestorRecursos.Recursos.Count());
+        Assert.AreEqual(0, _gestorRecursos.Recursos.ObtenerTodos().Count());
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -169,7 +169,7 @@ public class GestorRecursosTests
         Recurso recurso = new Recurso("Analista Senior", "Humano", "Un analista Senior con experiencia");
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
-        Assert.AreEqual(0, _gestorRecursos.Recursos.Count());
+        Assert.AreEqual(0, _gestorRecursos.Recursos.ObtenerTodos().Count());
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]

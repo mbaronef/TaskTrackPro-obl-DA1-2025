@@ -16,7 +16,7 @@ public class GestorUsuariosTests
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(GestorUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         
-        _gestorUsuarios = new GestorUsuarios(); // Primer admin sistema siempre tiene ID 0
+        _gestorUsuarios = new GestorUsuarios();
         _adminSistema = _gestorUsuarios.AdministradorInicial;
     }
     
@@ -37,7 +37,7 @@ public class GestorUsuariosTests
     public void ConstructorCreaGestorValido()
     {
         Assert.IsNotNull(_gestorUsuarios);
-        Assert.AreEqual(1, _gestorUsuarios.Usuarios.Count); // se crea solo con administrador
+        Assert.AreEqual(1, _gestorUsuarios.Usuarios.ObtenerTodos().Count); // se crea solo con administrador
     }
 
     [TestMethod]
@@ -62,9 +62,9 @@ public class GestorUsuariosTests
         _gestorUsuarios.AgregarUsuario(_adminSistema,usuario1);
         _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
 
-        Assert.AreEqual(3, _gestorUsuarios.Usuarios.Count);
-        Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[1]);
-        Assert.AreSame(usuario2, _gestorUsuarios.Usuarios[2]);
+        Assert.AreEqual(3, _gestorUsuarios.Usuarios.ObtenerTodos().Count);
+        Assert.AreSame(usuario1, _gestorUsuarios.Usuarios.ObtenerTodos().ElementAt(1));
+        Assert.AreSame(usuario2, _gestorUsuarios.Usuarios.ObtenerTodos().ElementAt(2));
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -98,8 +98,8 @@ public class GestorUsuariosTests
         _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
 
         _gestorUsuarios.EliminarUsuario(_adminSistema, usuario2.Id);
-        Assert.AreEqual(2, _gestorUsuarios.Usuarios.Count);
-        Assert.AreSame(usuario1, _gestorUsuarios.Usuarios[1]);
+        Assert.AreEqual(2, _gestorUsuarios.Usuarios.ObtenerTodos().Count);
+        Assert.AreSame(usuario1, _gestorUsuarios.Usuarios.ObtenerTodos().ElementAt(1));
     }
     
     [ExpectedException(typeof(ExcepcionServicios))]

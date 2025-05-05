@@ -1,4 +1,5 @@
 using Dominio;
+using Repositorios;
 using Servicios.Excepciones;
 
 namespace Servicios.Gestores;
@@ -6,8 +7,9 @@ namespace Servicios.Gestores;
 public class GestorProyectos
 {
     private static int _cantidadProyectos;
-    public List<Proyecto> Proyectos { get;} = new List<Proyecto>();
-
+    
+    public RepositorioProyectos Proyectos { get; } = new RepositorioProyectos();
+    
     public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
     {
         VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
@@ -18,7 +20,7 @@ public class GestorProyectos
 
         _cantidadProyectos++;
         proyecto.AsignarId(_cantidadProyectos);
-        Proyectos.Add(proyecto);
+        Proyectos.Agregar(proyecto);
 
         solicitante.EstaAdministrandoUnProyecto = true;
 
@@ -32,7 +34,7 @@ public class GestorProyectos
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         solicitante.EstaAdministrandoUnProyecto = false;
-        Proyectos.Remove(proyecto);
+        Proyectos.Eliminar(proyecto.Id);
 
         proyecto.NotificarMiembros($"Se eliminó el proyecto '{proyecto.Nombre}'.");
     }
@@ -164,12 +166,12 @@ public class GestorProyectos
 
     public List<Proyecto> ObtenerProyectosPorUsuario(int idUsuario)
     {
-        return Proyectos.Where(proyecto => proyecto.Miembros.Any(usuario => usuario.Id == idUsuario)).ToList();
+        return Proyectos.ObtenerTodos().Where(proyecto => proyecto.Miembros.Any(usuario => usuario.Id == idUsuario)).ToList();
     }
     
     public Proyecto ObtenerProyectoDelAdministrador(int idAdministrador)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(p => p.Administrador.Id == idAdministrador);
+        Proyecto proyecto = Proyectos.ObtenerTodos().FirstOrDefault(p => p.Administrador.Id == idAdministrador);
         
         if (proyecto == null)
             throw new ExcepcionServicios("No se encontró un proyecto administrado por ese usuario.");
@@ -180,7 +182,7 @@ public class GestorProyectos
 
     private Proyecto ObtenerProyecto(int id)
     {
-        Proyecto proyecto = Proyectos.FirstOrDefault(proyecto => proyecto.Id == id);
+        Proyecto proyecto = Proyectos.ObtenerPorId(id);
         
         if(proyecto is null)
             throw new ExcepcionServicios("El proyecto no existe.");
@@ -196,7 +198,7 @@ public class GestorProyectos
 
     private void VerificarNombreNoRepetido(string nuevoNombre)
     {
-        bool existeOtro = Proyectos.Any(proyecto => proyecto.Nombre == nuevoNombre);
+        bool existeOtro = Proyectos.ObtenerTodos().Any(proyecto => proyecto.Nombre == nuevoNombre);
 
         if (existeOtro)
             throw new ExcepcionServicios($"Ya existe un proyecto con el nombre '{nuevoNombre}'.");

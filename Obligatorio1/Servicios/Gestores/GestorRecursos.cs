@@ -1,4 +1,5 @@
 using Dominio;
+using Repositorios;
 using Servicios.Excepciones;
 
 namespace Servicios.Gestores;
@@ -6,12 +7,11 @@ namespace Servicios.Gestores;
 public class GestorRecursos
 {
     private static int _cantidadRecursos;
-    public List<Recurso> Recursos { get; private set; }
+    public RepositorioRecursos Recursos { get; } = new RepositorioRecursos();
     private GestorProyectos _gestorProyectos;
 
     public GestorRecursos(GestorProyectos gestorProyectos)
     {
-        Recursos = new List<Recurso>();
         _gestorProyectos = gestorProyectos;
     }
 
@@ -24,12 +24,12 @@ public class GestorRecursos
         }
         ++_cantidadRecursos;
         recurso.Id = _cantidadRecursos;
-        Recursos.Add(recurso);
+        Recursos.Agregar(recurso);
     }
 
     public Recurso ObtenerRecursoPorId(int idRecurso)
     {
-        Recurso recurso = Recursos.FirstOrDefault(recurso => recurso.Id == idRecurso);
+        Recurso recurso = Recursos.ObtenerPorId(idRecurso);
         if (recurso == null)
         {
             throw new ExcepcionServicios("Recurso no existente");
@@ -46,7 +46,7 @@ public class GestorRecursos
         {
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         }
-        Recursos.Remove(recurso);
+        Recursos.Eliminar(recurso.Id);
         NotificarEliminacion(recurso);
     }
 
