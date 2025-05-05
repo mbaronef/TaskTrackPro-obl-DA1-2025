@@ -34,7 +34,8 @@ public class RepositorioRecursos : IRepositorioRecursos
 
     public void ModificarNombre(int idRecurso, string nombre)
     {
-        throw new NotImplementedException();
+        Recurso recurso = ObtenerPorId(idRecurso);
+        recurso.ModificarNombre(nombre);
     }
 
     public void ModificarTipo(int idRecurso, string tipo)
