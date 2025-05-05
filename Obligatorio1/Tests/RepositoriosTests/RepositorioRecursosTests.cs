@@ -57,4 +57,13 @@ public class RepositorioRecursosTests
         Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
         Assert.AreEqual("Nuevo", recurso.Nombre);
     }
+    
+    [TestMethod]
+    public void SeModificaElTipoDeRecursoOk()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+        _repositorioRecursos.ModificarTipo(_recurso.Id, "Nuevo");
+        Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual("Nuevo", recurso.Tipo);
+    }
 }
