@@ -48,4 +48,13 @@ public class RepositorioRecursosTests
         Assert.AreEqual(1, recursos.Count);
         Assert.AreEqual(_recurso, recursos.Last());
     }
+    
+    [TestMethod]
+    public void SeModificaElNombreDeRecursoOk()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+        _repositorioRecursos.ModificarNombre(_recurso.Id, "Nuevo");
+        Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual("Nuevo", recurso.Nombre);
+    }
 }
