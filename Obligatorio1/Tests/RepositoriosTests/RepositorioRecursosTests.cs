@@ -16,6 +16,9 @@ public class RepositorioRecursosTests
     {
         _repositorioRecursos = new RepositorioRecursos();
         _recurso = new Recurso("nombre", "tipo", "descripcion");
+        _recurso.IncrementarCantidadDeTareasUsandolo();
+        _recurso.IncrementarCantidadDeTareasUsandolo();
+        _recurso.IncrementarCantidadDeTareasUsandolo(); // cantidad de tarea usandolo = 3
         _adminProyecto = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
         _adminProyecto.EsAdministradorProyecto = true;
         List<Usuario> miembros = new List<Usuario>();
@@ -99,5 +102,15 @@ public class RepositorioRecursosTests
         _repositorioRecursos.ModificarCantidadDeTareasUsandolo(_recurso.Id, _cantidadMayor);
         Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
         Assert.AreEqual(_cantidadMayor, recurso.CantidadDeTareasUsandolo);
+    }
+    
+    [TestMethod]
+    public void SeModificaTareasUsandoloOk_CuandoNuevaCantidadEsMenorALaActual()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+        int _cantidadMenor = 1;
+        _repositorioRecursos.ModificarCantidadDeTareasUsandolo(_recurso.Id, _cantidadMenor);
+        Recurso recurso = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual(_cantidadMenor, recurso.CantidadDeTareasUsandolo);
     }
 }

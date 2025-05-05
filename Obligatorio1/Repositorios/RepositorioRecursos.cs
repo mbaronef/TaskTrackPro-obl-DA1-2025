@@ -59,19 +59,27 @@ public class RepositorioRecursos : IRepositorioRecursos
     public void ModificarCantidadDeTareasUsandolo(int idRecurso, int nuevaCantidadDeTareasUsandolo)
     {
         Recurso recurso = ObtenerPorId(idRecurso);
-        if (recurso.CantidadDeTareasUsandolo < nuevaCantidadDeTareasUsandolo)
+        int diferencia = nuevaCantidadDeTareasUsandolo - recurso.CantidadDeTareasUsandolo;
+
+        if (diferencia > 0)
         {
-            while (recurso.CantidadDeTareasUsandolo < nuevaCantidadDeTareasUsandolo)
-            {
-                recurso.IncrementarCantidadDeTareasUsandolo();
-            }
+            IncrementarTareas(recurso, diferencia);
         }
-        else
+        else if (diferencia < 0)
         {
-            while (recurso.CantidadDeTareasUsandolo > nuevaCantidadDeTareasUsandolo)
-            {
-                recurso.IncrementarCantidadDeTareasUsandolo();
-            }
+            DecrementarTareas(recurso, -diferencia);
         }
+    }
+
+    private void IncrementarTareas(Recurso recurso, int veces)
+    {
+        for (int i = 0; i < veces; i++)
+            recurso.IncrementarCantidadDeTareasUsandolo();
+    }
+
+    private void DecrementarTareas(Recurso recurso, int veces)
+    {
+        for (int i = 0; i < veces; i++)
+            recurso.DecrementarCantidadDeTareasUsandolo();
     }
 }
