@@ -29,7 +29,7 @@ public class RepositorioRecursos : IRepositorioRecursos
 
     public List<Recurso> ObtenerTodos()
     {
-        throw new NotImplementedException();
+        return _recursos;
     }
 
     public void ModificarNombre(int idRecurso, string nombre)
