@@ -40,7 +40,8 @@ public class RepositorioRecursos : IRepositorioRecursos
 
     public void ModificarTipo(int idRecurso, string tipo)
     {
-        throw new NotImplementedException();
+        Recurso recurso = ObtenerPorId(idRecurso);
+        recurso.ModificarTipo(tipo);
     }
 
     public void ModificarDescripcion(int idRecurso, string descripcion)
