@@ -24,7 +24,7 @@ public class RepositorioRecursos : IRepositorioRecursos
 
     public void Eliminar(int id)
     {
-        throw new NotImplementedException();
+        _recursos.Remove(_recursos.Find(recurso => recurso.Id == id));
     }
 
     public List<Recurso> ObtenerTodos()
