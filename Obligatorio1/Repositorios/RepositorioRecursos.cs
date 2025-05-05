@@ -52,7 +52,8 @@ public class RepositorioRecursos : IRepositorioRecursos
 
     public void ModificarProyectoAsociado(int idRecurso, Proyecto proyecto)
     {
-        throw new NotImplementedException();
+        Recurso recurso = ObtenerPorId(idRecurso);
+        recurso.AsociarAProyecto(proyecto);
     }
 
     public void ModificarCantidadDeTareasUsandolo(int idRecurso, int cantidadDeTareasUsandolo)
