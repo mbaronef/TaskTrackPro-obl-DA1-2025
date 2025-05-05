@@ -38,4 +38,14 @@ public class RepositorioRecursosTests
         _repositorioRecursos.Eliminar(_recurso.Id);
         Assert.IsNull(_repositorioRecursos.ObtenerPorId(_recurso.Id));
     }
+    
+    [TestMethod]
+    public void SeObtieneLaListaDeRecursosOk()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+        List<Recurso> recursos = _repositorioRecursos.ObtenerTodos();
+        Assert.IsNotNull(recursos);
+        Assert.AreEqual(1, recursos.Count);
+        Assert.AreEqual(_recurso, recursos.Last());
+    }
 }
