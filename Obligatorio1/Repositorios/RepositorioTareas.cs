@@ -55,12 +55,6 @@ public class RepositorioTareas : IRepositorioTareas
         Tarea tarea = ObtenerPorId(idTarea);
         tarea.ModificarFechaInicioMasTemprana(fechaInicioMasTemprana);
     }
-    
-    public void ModificarFechaDeEjecucion(int idTarea, DateTime fechaDeEjecucion)
-    {
-        Tarea tarea = ObtenerPorId(idTarea);
-        tarea.ModificarFechaDeEjecucion(fechaDeEjecucion);
-    }
 
     public void ModificarEstado(int idTarea, EstadoTarea estado)
     {

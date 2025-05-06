@@ -82,15 +82,6 @@ public class RepositorioTareasTests
     }
     
     [TestMethod]
-    public void SeModificaLaFechaDeEjecucionDeLaTareaOk()
-    {
-        DateTime fecha = new DateTime(2200, 2, 2);
-        _repositorioTareas.Agregar(_tarea);
-        _repositorioTareas.ModificarFechaDeEjecucion(_tarea.Id, fecha);
-        Assert.AreEqual(fecha, _tarea.FechaDeEjecucion);
-    }
-    
-    [TestMethod]
     public void SeModificaElEstadoDeLaTareaOk()
     {
         EstadoTarea estado = EstadoTarea.Bloqueada;
