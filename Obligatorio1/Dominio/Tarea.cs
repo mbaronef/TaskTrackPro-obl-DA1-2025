@@ -140,7 +140,7 @@ public class Tarea
         EstadoPendienteACompletada(nuevoEstado);
         EstadoBloqueadaACompletada(nuevoEstado);
         Estado = nuevoEstado;
-        if (nuevoEstado == EstadoTarea.EnProceso)
+        if (nuevoEstado == EstadoTarea.EnProceso) // sacar
         {
             AsignaRecursos();
         }
@@ -205,6 +205,7 @@ public class Tarea
         ValidarObjetoNoNull(recurso,"No se puede agregar un recurso null.");
         VerificarRecursoNoEstaAgregado(recurso);
         RecursosNecesarios.Add(recurso);
+        //AsignarRecurso();
     }
     
     private Recurso BuscarRecursoPorId(int id)
@@ -216,6 +217,7 @@ public class Tarea
         Recurso recursoAEliminar = BuscarRecursoPorId(idRec);
         ValidarObjetoNoNull(recursoAEliminar,"El recurso no se encuentra dentro de los recursos necesarios.");
         RecursosNecesarios.Remove(recursoAEliminar);
+        //LiberarRecurso();
     }
     
     public void ModificarTitulo(string tituloNuevo)

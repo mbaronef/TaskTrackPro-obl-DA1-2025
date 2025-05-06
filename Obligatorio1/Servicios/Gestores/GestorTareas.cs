@@ -1,4 +1,6 @@
 ﻿using Dominio;
+//using servicios.utilidades;
+
 namespace Servicios.Gestores;
 
 public class GestorTareas
@@ -24,6 +26,7 @@ public class GestorTareas
         
         proyecto.ValidarTareaNoDuplicada(nuevaTarea);
         proyecto.AgregarTarea(nuevaTarea);
+        // caminoCritico.CalcularCaminoCritico(proyecto);
         
         proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
     }
@@ -37,6 +40,7 @@ public class GestorTareas
         _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         proyecto.EliminarTarea(idTareaAEliminar);
+        // caminoCritico.CalcularCaminoCritico(proyecto);
         
         proyecto.NotificarMiembros($"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
     }
@@ -48,5 +52,20 @@ public class GestorTareas
         
         return tarea;
     }
+    
+    //EN AGREGAR DEPENDENCIA:
+    //try{
+    //    Dependencias.add(dependencia);
+    //    calcularCaminoCritico();
+    //}
+    //catch {
+    //    throw new exception ... no se pudo agregar la tarea xq forma un ciclo.
+    //}
+    
+    // EN ELIMINAR DEPENDENCIA:
+    // caminoCritico.CalcularCaminoCritico(proyecto);
+    
+    // EN MODIFICAR ESTADO, FECHA INICIO Y DURACIÓN:
+    // caminoCritico.CalcularCaminoCritico(proyecto);
     
 }

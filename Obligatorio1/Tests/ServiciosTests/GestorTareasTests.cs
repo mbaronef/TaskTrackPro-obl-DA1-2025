@@ -222,6 +222,15 @@ public class GestorTareasTests
             Assert.AreEqual(tarea1, tareaObtenida1);
             Assert.AreEqual(tarea2, tareaObtenida2);
         }
+        
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ObtenerTareaPorId_LanzaExcepcionSiNoHayTareaConEseId()
+        {
+            Usuario admin = CrearAdministradorProyecto();
+            Proyecto proyecto = CrearYAgregarProyecto(admin);
+            Tarea tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, 20);
+        }
 
     
 }
