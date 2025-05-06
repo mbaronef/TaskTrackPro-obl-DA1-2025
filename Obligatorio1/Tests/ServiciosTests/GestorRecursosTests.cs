@@ -512,4 +512,21 @@ public class GestorRecursosTests
         Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursosGenerales().ElementAt(0));
         Assert.AreEqual(recurso2, _gestorRecursos.ObtenerRecursosGenerales().ElementAt(1));
     }
+    
+    [TestMethod]
+    public void SeMuestranRecursosExclusivosDeUnProyectoOk()
+    {
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+        
+        Recurso recursoExclusivo1 = CrearRecurso();
+        Recurso recursoExclusivo2 = CrearRecurso();
+        _gestorRecursos.AgregarRecurso(adminProyecto, recursoExclusivo1);
+        _gestorRecursos.AgregarRecurso(adminProyecto, recursoExclusivo2);
+        
+        List<Recurso> recursosExclusivosDelProyecto = _gestorRecursos.ObtenerRecursosExclusivos(proyecto.Id);
+        Assert.AreEqual(2, recursosExclusivosDelProyecto.Count());
+        Assert.AreEqual(recursoExclusivo1, recursosExclusivosDelProyecto.ElementAt(0));
+        Assert.AreEqual(recursoExclusivo2, recursosExclusivosDelProyecto.ElementAt(1));
+    }
 }
