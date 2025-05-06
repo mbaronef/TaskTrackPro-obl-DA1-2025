@@ -119,10 +119,14 @@ public class GestorRecursos
 
     private void NotificarEliminacion(Recurso recurso)
     {
+        string mensaje = $"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}";
         if (recurso.EsExclusivo())
         {
-            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
-            adminProyecto.RecibirNotificacion($"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}");
+            recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
+        }
+        else
+        {
+            NotificarAdministradoresDeProyectosQueUsanRecurso(recurso, mensaje);
         }
     }
 
@@ -132,8 +136,28 @@ public class GestorRecursos
             $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: Nombre: '{recurso.Nombre}', Tipo: '{recurso.Tipo}', Descripción: '{recurso.Descripcion}'.";
         if (recurso.EsExclusivo())
         {
-            Usuario adminProyecto = recurso.ProyectoAsociado.Administrador;
-            adminProyecto.RecibirNotificacion(mensaje);
+            recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
         }
+        else
+        {
+            NotificarAdministradoresDeProyectosQueUsanRecurso(recurso, mensaje);
+        }
+    }
+    
+    
+    private void NotificarAdministradoresDeProyectosQueUsanRecurso(Recurso recurso, string mensaje)
+    {
+        foreach (Proyecto proyecto in _gestorProyectos.Proyectos)
+        {
+            if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
+            {
+                proyecto.NotificarAdministrador(mensaje);
+            }
+        }
+    }
+
+    private List<Recurso> RecursosNecesariosPorProyecto(Proyecto proyecto)
+    {
+        return proyecto.Tareas.SelectMany(tarea => tarea.RecursosNecesarios).Distinct().ToList();
     }
 }
