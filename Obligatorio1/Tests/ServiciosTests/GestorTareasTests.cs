@@ -231,6 +231,27 @@ public class GestorTareasTests
             Proyecto proyecto = CrearYAgregarProyecto(admin);
             Tarea tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, 20);
         }
+        
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ObtenerTareaPorId_LanzaExcepcionSiNoHayProyecto()
+        {
+            Tarea tareaParaId = CrearTarea();
+            Tarea tarea = _gestorTareas.ObtenerTareaPorId(4, tareaParaId.Id);
+        }
+        
+        [TestMethod]
+        public void ModificarTitulo_AdminProyectoModificaTituloTareaOk()
+        {
+            Usuario adminProyecto = CrearAdministradorProyecto();
+            Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, adminProyecto, tarea);
+
+            _gestorTareas.ModificarTituloTarea(adminProyecto, tarea.Id, "Nuevo nombre");
+            Assert.AreEqual("Nuevo nombre", tarea.Titulo);
+        }
 
     
 }
