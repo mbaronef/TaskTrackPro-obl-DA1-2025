@@ -13,8 +13,8 @@ public class GestorTareasTests
     [TestInitialize]
     public void Inicializar()
     {
-        _gestorTareas = new GestorTareas();
         _gestorProyectos = new GestorProyectos();
+        _gestorTareas = new GestorTareas(_gestorProyectos);
     }
 
     [TestMethod]
