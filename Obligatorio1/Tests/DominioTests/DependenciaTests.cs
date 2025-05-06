@@ -17,7 +17,7 @@ public class DependenciaTests
     [TestMethod]
     public void ConstructorConParametrosAsignadosCorrectamente()
     {
-        string tipo = "FF";
+        string tipo = "SS";
         
         Dependencia dependencia = new Dependencia(tipo, _tarea);
         
@@ -51,14 +51,14 @@ public class DependenciaTests
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTareaEsNull()
     { 
-        Dependencia dependencia = new Dependencia("FF", null);
+        Dependencia dependencia = new Dependencia("SS", null);
     }
     
     [TestMethod]
-    public void Constructor_AceptaTipoFF()
+    public void Constructor_AceptaTipoSS()
     {
-        Dependencia dependencia = new Dependencia("FF", _tarea);
-        Assert.AreEqual("FF", dependencia.Tipo);
+        Dependencia dependencia = new Dependencia("SS", _tarea);
+        Assert.AreEqual("SS", dependencia.Tipo);
     }
 
     [TestMethod]
@@ -70,9 +70,9 @@ public class DependenciaTests
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
-    public void Constructor_LanzaExcepcionSiTipoNoEsFFNiFS()
+    public void Constructor_LanzaExcepcionSiTipoNoEsSSNiFS()
     {
-        Dependencia dependencia = new Dependencia("SS", _tarea);
+        Dependencia dependencia = new Dependencia("FF", _tarea);
     }
     
 

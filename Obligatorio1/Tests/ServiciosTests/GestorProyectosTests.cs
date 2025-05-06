@@ -56,12 +56,12 @@ namespace Tests.ServiciosTests
 
         private Tarea CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
         {
-            Tarea tarea = new Tarea ("titulo", "descripcion", 1, DateTime.Today)
-            {
-                Id = id,
-                FechaInicioMasTemprana = inicio ?? DateTime.Today,
-                FechaFinMasTemprana = fin ?? DateTime.Today.AddDays(1)
-            };
+            string titulo = "Tarea";
+            string descripcion = "Prueba de tarea";
+            int duracionEnDias = 8;
+            DateTime fechaInicio = new DateTime(2500, 9, 1);
+        
+            Tarea tarea = new Tarea(titulo, descripcion, duracionEnDias, fechaInicio);
             return tarea;
         }
         
