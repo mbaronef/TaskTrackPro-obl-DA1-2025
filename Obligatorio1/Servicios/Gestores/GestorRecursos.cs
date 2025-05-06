@@ -147,7 +147,7 @@ public class GestorRecursos
     
     private void NotificarAdministradoresDeProyectosQueUsanRecurso(Recurso recurso, string mensaje)
     {
-        foreach (Proyecto proyecto in _gestorProyectos.Proyectos)
+        foreach (Proyecto proyecto in _gestorProyectos.Proyectos.ObtenerTodos())
         {
             if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
             {

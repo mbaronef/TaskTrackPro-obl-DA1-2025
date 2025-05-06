@@ -144,7 +144,7 @@ public class GestorRecursosTests
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(_adminSistema, recurso);
         _gestorRecursos.EliminarRecurso(_adminSistema, recurso.Id);
-        Assert.AreEqual(0, _gestorRecursos.Recursos.Count());
+        Assert.AreEqual(0, _gestorRecursos.Recursos.ObtenerTodos().Count());
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -201,8 +201,8 @@ public class GestorRecursosTests
        
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo gestiona el repo de usuarios
-        
-        Proyecto proyecto2 = CrearYAgregarProyecto(otroAdminProyecto);
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
 
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -279,14 +279,14 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarNombreDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        refactor/integracionRepositorios
         adminProyecto.Id = 1; // lo hace el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
 
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
         
-        Proyecto otroProyecto = CrearYAgregarProyecto(otroAdminProyecto);
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto( otroProyecto, otroAdminProyecto);
 
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -335,8 +335,9 @@ public class GestorRecursosTests
         CrearYAgregarProyecto(adminProyecto);
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto( otroProyecto, otroAdminProyecto);
         
-        Proyecto otroProyecto = CrearYAgregarProyecto(otroAdminProyecto);
         
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -386,8 +387,8 @@ public class GestorRecursosTests
 
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
-       
-        Proyecto otroProyecto = CrearYAgregarProyecto(otroAdminProyecto);
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto( otroProyecto, otroAdminProyecto);
 
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
