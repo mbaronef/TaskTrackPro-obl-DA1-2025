@@ -510,6 +510,6 @@ public class GestorRecursosTests
 
         Assert.AreEqual(2, _gestorRecursos.ObtenerRecursosGenerales().Count);
         Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursosGenerales().ElementAt(0));
-        Assert.AreEqual(recurso2, _gestorRecursos.ObterRecursosGenerales().ElementAt(1));
+        Assert.AreEqual(recurso2, _gestorRecursos.ObtenerRecursosGenerales().ElementAt(1));
     }
 }

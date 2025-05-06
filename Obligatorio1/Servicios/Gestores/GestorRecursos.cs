@@ -84,6 +84,11 @@ public class GestorRecursos
         NotificarModificacion(recurso, recurso.Nombre);
     }
 
+    public List<Recurso> ObtenerRecursosGenerales()
+    {
+        return Recursos.ObtenerTodos().Where(recurso => !recurso.EsExclusivo()).ToList();
+    }
+
     private void VerificarPermisoAdminSistemaOAdminProyecto(Usuario usuario, string accion)
     {
         if (!usuario.EsAdministradorSistema && !usuario.EstaAdministrandoUnProyecto)
