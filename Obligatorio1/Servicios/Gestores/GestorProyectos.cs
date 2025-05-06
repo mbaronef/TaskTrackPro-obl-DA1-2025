@@ -25,7 +25,7 @@ public class GestorProyectos
 
     public void EliminarProyecto(int idProyecto, Usuario solicitante)
     {
-        Proyecto proyecto =  ObtenerProyecto(idProyecto);
+        Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
 
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
@@ -37,7 +37,7 @@ public class GestorProyectos
 
     public void ModificarNombreDelProyecto(int idProyecto, string nuevoNombre, Usuario solicitante)
     {
-        Proyecto proyecto = ObtenerProyecto(idProyecto);
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
 
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
@@ -52,7 +52,7 @@ public class GestorProyectos
 
     public void ModificarDescripcionDelProyecto(int idProyecto, string descripcion, Usuario solicitante)
     {
-        Proyecto proyecto =  ObtenerProyecto(idProyecto);
+        Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
 
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
@@ -63,7 +63,7 @@ public class GestorProyectos
 
     public void ModificarFechaDeInicioDelProyecto(int idProyecto, DateTime nuevaFecha, Usuario solicitante)
     {
-        Proyecto proyecto =  ObtenerProyecto(idProyecto);
+        Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
 
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
@@ -74,7 +74,7 @@ public class GestorProyectos
     
     public void ModificarFechaFinMasTempranaDelProyecto(int idProyecto, DateTime nuevaFecha, Usuario solicitante)
     {
-        Proyecto proyecto = ObtenerProyecto(idProyecto);
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
@@ -87,7 +87,7 @@ public class GestorProyectos
     {
         VerificarUsuarioEsAdminSistema(solicitante);
 
-        Proyecto proyecto = ObtenerProyecto(idProyecto);
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
 
         VerificarUsuarioMiembroDelProyecto(idNuevoAdmin, proyecto);
         
@@ -106,7 +106,7 @@ public class GestorProyectos
 
     public void AgregarMiembroAProyecto(int idProyecto, Usuario solicitante, Usuario nuevoMiembro)
     {
-        Proyecto proyecto =  ObtenerProyecto(idProyecto);
+        Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
 
         VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
@@ -120,7 +120,7 @@ public class GestorProyectos
     
     public void EliminarMiembroDelProyecto(int idProyecto, Usuario solicitante, int idMiembroAEliminar)
     {
-        Proyecto proyecto =  ObtenerProyecto(idProyecto);
+        Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
         
         VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
@@ -135,7 +135,7 @@ public class GestorProyectos
 
     public void AgregarTareaAlProyecto(int idProyecto,  Usuario solicitante, Tarea nuevaTarea)
     {
-        Proyecto proyecto =  ObtenerProyecto(idProyecto);
+        Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
         
         VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
         
@@ -148,7 +148,7 @@ public class GestorProyectos
 
     public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idTareaAEliminar)
     {
-        Proyecto proyecto = ObtenerProyecto(idProyecto);
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
          
         VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
         
@@ -174,9 +174,8 @@ public class GestorProyectos
 
         return proyecto;
     }
-
-
-    private Proyecto ObtenerProyecto(int id)
+    
+    public Proyecto ObtenerProyectoPorId(int id)
     {
         Proyecto proyecto = Proyectos.ObtenerPorId(id);
         

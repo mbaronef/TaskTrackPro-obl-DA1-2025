@@ -88,6 +88,12 @@ public class GestorRecursos
     {
         return Recursos.ObtenerTodos().Where(recurso => !recurso.EsExclusivo()).ToList();
     }
+    
+    public List<Recurso> ObtenerRecursosExclusivos(int idProyecto)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+        return Recursos.ObtenerTodos().Where(recurso => recurso.ProyectoAsociado.Equals(proyecto)).ToList();
+    }
 
     private void VerificarPermisoAdminSistemaOAdminProyecto(Usuario usuario, string accion)
     {
