@@ -44,7 +44,7 @@ public class GestorTareasTests
     private Usuario CrearUsuarioNoAdmin()
     { 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
+        Usuario usuario = new Usuario("Tomas", "Pérez", new DateTime(2003, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
         return usuario;
     }
 
@@ -251,6 +251,29 @@ public class GestorTareasTests
 
             _gestorTareas.ModificarTituloTarea(adminProyecto, tarea.Id, "Nuevo nombre");
             Assert.AreEqual("Nuevo nombre", tarea.Titulo);
+        }
+        
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ModificarTitulo_UsuarioNoAdminNoPuedeModificarlo()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            _admin.Id = 50;
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            _gestorTareas.ModificarTituloTarea(_noAdmin, tarea.Id, "Nuevo nombre");
+        }
+        
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ModificarTitulo_UsuarioAdminSistemaNoPuedeModificarlo()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            _admin.Id = 50;
+            Usuario adminSistema = CrearAdministradorSistema();
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            _gestorTareas.ModificarTituloTarea(adminSistema, tarea.Id, "Nuevo nombre");
         }
 
     

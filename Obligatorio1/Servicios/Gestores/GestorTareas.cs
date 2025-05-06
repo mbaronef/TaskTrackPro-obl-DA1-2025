@@ -57,13 +57,13 @@ public class GestorTareas
         return tarea;
     }
 
-    public void ModificarTituloTarea(Usuario usuario, int idTarea, string nuevoTitulo)
+    public void ModificarTituloTarea(Usuario solicitante, int idTarea, string nuevoTitulo)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idTarea);
-        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, usuario);
+        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
         tarea.ModificarTitulo(nuevoTitulo);
-        
+        proyecto.NotificarMiembros($"Se cambió el título la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
     
     //EN AGREGAR DEPENDENCIA:
