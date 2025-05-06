@@ -42,7 +42,7 @@ public class Proyecto
     public void AgregarTarea(Tarea tarea)
     {
         ValidarNoNulo(tarea,"No se puede agregar una tarea null.");
-        ValidarTareaNoDuplicada(tarea);
+        //ValidarTareaNoDuplicada(tarea);
         
         Tareas.Add(tarea);
     }
@@ -178,7 +178,7 @@ public class Proyecto
             throw new ExcepcionDominio(mensajeError);
     }
 
-    private void ValidarTareaNoDuplicada(Tarea tarea)
+    public void ValidarTareaNoDuplicada(Tarea tarea)
     {
         if(Tareas.Contains(tarea))
             throw new ExcepcionDominio("La tarea ya fue agregada al proyecto.");

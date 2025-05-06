@@ -22,6 +22,7 @@ public class GestorTareas
         _cantidadTareas++;
         nuevaTarea.Id = _cantidadTareas;
         
+        proyecto.ValidarTareaNoDuplicada(nuevaTarea);
         proyecto.AgregarTarea(nuevaTarea);
         
         proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
@@ -38,6 +39,14 @@ public class GestorTareas
         proyecto.EliminarTarea(idTareaAEliminar);
         
         proyecto.NotificarMiembros($"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
+    }
+    
+    public Tarea ObtenerTareaPorId(int idProyecto, int idTarea)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
+        Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
+        
+        return tarea;
     }
     
 }

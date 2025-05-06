@@ -219,8 +219,8 @@ public class GestorTareasTests
             Tarea tareaObtenida1 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea1.Id);
             Tarea tareaObtenida2 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea2.Id);
         
-            Assert.AreEqual(tareaObtenida1, tarea1);
-            Assert.AreEqual(tareaObtenida2, tarea2);
+            Assert.AreEqual(tarea1, tareaObtenida1);
+            Assert.AreEqual(tarea2, tareaObtenida2);
         }
 
     

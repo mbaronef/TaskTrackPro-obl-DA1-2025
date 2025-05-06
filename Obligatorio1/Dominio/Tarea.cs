@@ -293,4 +293,15 @@ public class Tarea
         ValidarObjetoNoNull(dependenciaAEliminar,"La dependencia no se encuentra dentro de la lista de dependencias.");
         Dependencias.Remove(dependenciaAEliminar);
     }
+    
+    public override bool Equals(object obj)
+    {
+        if (obj is not Tarea otra) return false;
+        return Id == otra.Id;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id, Titulo, Descripcion, DuracionEnDias);
+    }
 }
