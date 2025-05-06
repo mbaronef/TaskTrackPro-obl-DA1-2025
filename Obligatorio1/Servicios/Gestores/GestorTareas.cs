@@ -57,7 +57,14 @@ public class GestorTareas
         return tarea;
     }
 
-    
+    public void ModificarTituloTarea(Usuario usuario, int idTarea, string nuevoTitulo)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idTarea);
+        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, usuario);
+        Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
+        tarea.ModificarTitulo(nuevoTitulo);
+        
+    }
     
     //EN AGREGAR DEPENDENCIA:
     //try{
