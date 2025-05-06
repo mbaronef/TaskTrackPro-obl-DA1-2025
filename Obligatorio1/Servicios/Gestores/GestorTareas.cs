@@ -1,4 +1,5 @@
 ﻿using Dominio;
+using Servicios.Excepciones;
 //using servicios.utilidades;
 
 namespace Servicios.Gestores;
@@ -49,6 +50,10 @@ public class GestorTareas
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
         Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
+        if (tarea == null)
+        {
+            throw new ExcepcionServicios("Recurso no existente");
+        }
         
         return tarea;
     }
