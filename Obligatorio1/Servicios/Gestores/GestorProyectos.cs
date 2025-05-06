@@ -135,33 +135,6 @@ public class GestorProyectos
         proyecto.NotificarMiembros($"Se eliminó a el miembro (id {idMiembroAEliminar}) del proyecto '{proyecto.Nombre}'.");
     }
 
-    public void AgregarTareaAlProyecto(int idProyecto,  Usuario solicitante, Tarea nuevaTarea)
-    {
-        Proyecto proyecto =  ObtenerProyecto(idProyecto);
-        
-        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
-        
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
-        proyecto.AgregarTarea(nuevaTarea);
-        
-        proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
-    }
-
-    public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idTareaAEliminar)
-    {
-        Proyecto proyecto = ObtenerProyecto(idProyecto);
-         
-        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
-        
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
-        proyecto.EliminarTarea(idTareaAEliminar);
-        
-        proyecto.NotificarMiembros($"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
-        
-    }
-
     public List<Proyecto> ObtenerProyectosPorUsuario(int idUsuario)
     {
         return Proyectos.Where(proyecto => proyecto.Miembros.Any(usuario => usuario.Id == idUsuario)).ToList();
@@ -178,7 +151,7 @@ public class GestorProyectos
     }
 
 
-    private Proyecto ObtenerProyecto(int id)
+    public Proyecto ObtenerProyecto(int id)
     {
         Proyecto proyecto = Proyectos.FirstOrDefault(proyecto => proyecto.Id == id);
         
@@ -188,7 +161,7 @@ public class GestorProyectos
         return proyecto;
     }
     
-    private void VerificarUsuarioEsAdminProyectoDeEseProyecto(Proyecto proyecto, Usuario usuario)
+    public void VerificarUsuarioEsAdminProyectoDeEseProyecto(Proyecto proyecto, Usuario usuario)
     {
         if (!proyecto.EsAdministrador(usuario))
             throw new ExcepcionServicios("Solo el administrador del proyecto puede realizar esta acción.");
@@ -202,13 +175,13 @@ public class GestorProyectos
             throw new ExcepcionServicios($"Ya existe un proyecto con el nombre '{nuevoNombre}'.");
     }
 
-    private void VerificarUsuarioNoAdministraOtroProyecto(Usuario usuario)
+    public void VerificarUsuarioNoAdministraOtroProyecto(Usuario usuario)
     {
         if (usuario.EstaAdministrandoUnProyecto)
             throw new ExcepcionServicios("El usuario ya está administrando un proyecto.");
     }
 
-    private void VerificarUsuarioTengaPermisosDeAdminProyecto(Usuario solicitante, String tipoUsuario)
+    public void VerificarUsuarioTengaPermisosDeAdminProyecto(Usuario solicitante, String tipoUsuario)
     {
         if(!solicitante.EsAdministradorProyecto)
             throw new ExcepcionServicios($"El {tipoUsuario} no tiene los permisos de administrador de proyecto.");
