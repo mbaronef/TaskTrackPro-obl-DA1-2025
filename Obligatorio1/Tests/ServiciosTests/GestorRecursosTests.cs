@@ -494,4 +494,22 @@ public class GestorRecursosTests
         Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', Tipo: 'Humano', Descripción: 'Otra descripción'.", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
+
+    [TestMethod]
+    public void SeMuestranRecursosGeneralesOk()
+    {
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        CrearYAgregarProyecto(adminProyecto); 
+        Recurso recursoExclusivo = CrearRecurso();
+        _gestorRecursos.AgregarRecurso(adminProyecto, recursoExclusivo);
+        
+        Recurso recurso1 = CrearRecurso();
+        Recurso recurso2 = CrearRecurso();
+        _gestorRecursos.AgregarRecurso(_adminSistema, recurso1);
+        _gestorRecursos.AgregarRecurso(_adminSistema, recurso2);
+
+        Assert.AreEqual(2, _gestorRecursos.ObtenerRecursosGenerales().Count);
+        Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursosGenerales().ElementAt(0));
+        Assert.AreEqual(recurso2, _gestorRecursos.ObterRecursosGenerales().ElementAt(1));
+    }
 }
