@@ -93,6 +93,15 @@ public class GestorTareas
         proyecto.NotificarMiembros($"Se cambió la fecha de inicio de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
     
+    public void CambiarEstadoTarea(Usuario solicitante, int idTarea, int idProyecto, EstadoTarea nuevoEstado)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
+        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
+        tarea.CambiarEstado(nuevoEstado);
+        proyecto.NotificarMiembros($"Se cambió el estado de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}' a {nuevoEstado}.");
+    }
+    
     //EN AGREGAR DEPENDENCIA:
     //try{
     //    Dependencias.add(dependencia);
