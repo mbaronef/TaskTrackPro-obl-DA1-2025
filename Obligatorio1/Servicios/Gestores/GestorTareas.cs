@@ -84,6 +84,15 @@ public class GestorTareas
         proyecto.NotificarMiembros($"Se cambió la duración de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
     
+    public void ModificarFechaInicioTarea(Usuario solicitante, int idTarea, int idProyecto, DateTime nuevaFecha)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
+        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
+        tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
+        proyecto.NotificarMiembros($"Se cambió la fecha de inicio de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
+    }
+    
     //EN AGREGAR DEPENDENCIA:
     //try{
     //    Dependencias.add(dependencia);
