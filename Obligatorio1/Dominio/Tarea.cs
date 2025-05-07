@@ -153,7 +153,7 @@ public class Tarea
     private void DuracionNoMenorACero(int duracion)
     {
         if (duracion <= 0)
-            throw new ExcepcionDominio("La fecha de duración no puede ser cero o negativa.");
+            throw new ExcepcionDominio("La duración no puede ser cero o negativa.");
     }
     
     private void ListaEsNullLanzaExcepcion()
