@@ -67,14 +67,13 @@ namespace Tests.ServiciosTests
         
         //crearProyecto
         [TestMethod]
-        public void CrearProyecto_AsignarIdCorrectamente()
+        public void CrearProyecto_Correctamente()
         {
             
             Proyecto proyecto = CrearProyectoCon(_admin);
     
             _gestor.CrearProyecto(proyecto, _admin);
-
-            Assert.AreEqual(1, proyecto.Id);
+            
             Assert.AreEqual(proyecto, _gestor.Proyectos.ObtenerTodos().ElementAt(0));
             
         }

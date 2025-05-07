@@ -136,8 +136,8 @@ public class GestorRecursos
             recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
         }
         else
-        {
-            NotificarAdministradoresDeProyectosQueUsanRecurso(recurso, mensaje);
+        { // decidimos que si el recurso no es exclusivo, se notifica a todos los admins de todos los proyectos.
+            NotificarAdministradoresDeTodosLosProyectos(mensaje);
         }
     }
 
@@ -150,21 +150,20 @@ public class GestorRecursos
             recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
         }
         else
-        {
+        { 
             NotificarAdministradoresDeProyectosQueUsanRecurso(recurso, mensaje);
         }
     }
     
-    
+    private void NotificarAdministradoresDeTodosLosProyectos(string mensaje)
+    {
+        _gestorProyectos.Proyectos.ObtenerTodos().ForEach(proyecto => proyecto.NotificarAdministrador(mensaje));
+    }
     private void NotificarAdministradoresDeProyectosQueUsanRecurso(Recurso recurso, string mensaje)
     {
-        foreach (Proyecto proyecto in _gestorProyectos.Proyectos.ObtenerTodos())
-        {
-            if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
-            {
-                proyecto.NotificarAdministrador(mensaje);
-            }
-        }
+        List<Proyecto> proyectosQueUsanElRecurso = _gestorProyectos.Proyectos.ObtenerTodos()
+            .Where(proyecto => RecursosNecesariosPorProyecto(proyecto).Contains(recurso)).ToList();
+        proyectosQueUsanElRecurso.ForEach(proyecto => proyecto.NotificarAdministrador(mensaje));
     }
 
     private List<Recurso> RecursosNecesariosPorProyecto(Proyecto proyecto)

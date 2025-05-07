@@ -43,11 +43,7 @@ public class Tarea
         EstadoPendienteACompletada(nuevoEstado);
         EstadoBloqueadaACompletada(nuevoEstado);
         Estado = nuevoEstado;
-        if (nuevoEstado == EstadoTarea.EnProceso)
-        {
-            AsignaRecursos();
-        }
-        else if (nuevoEstado == EstadoTarea.Completada)
+        if (nuevoEstado == EstadoTarea.Completada)
         {
             LiberaRecursos();
             FechaDeEjecucion = DateTime.Today;
@@ -73,6 +69,7 @@ public class Tarea
         ValidarObjetoNoNull(recurso,"No se puede agregar un recurso null.");
         VerificarRecursoNoEstaAgregado(recurso);
         RecursosNecesarios.Add(recurso);
+        recurso.IncrementarCantidadDeTareasUsandolo();
     }
     public void EliminarRecurso(int idRec)
     {
@@ -270,14 +267,6 @@ public class Tarea
     {
         return Dependencias.FirstOrDefault(d =>d.Tarea.Id  == id);
     }
-    
-    private void AsignaRecursos()
-    {
-        foreach (Recurso recurso in RecursosNecesarios)
-        {
-            recurso.IncrementarCantidadDeTareasUsandolo();
-        }
-    }
 
     private void LiberaRecursos()
     {
@@ -285,6 +274,5 @@ public class Tarea
         {
             recurso.DecrementarCantidadDeTareasUsandolo();
         }
-        FechaDeEjecucion = DateTime.Today;
     }
 }

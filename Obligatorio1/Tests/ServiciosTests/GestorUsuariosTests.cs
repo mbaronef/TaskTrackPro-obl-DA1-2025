@@ -14,9 +14,6 @@ public class GestorUsuariosTests
     [TestInitialize]
     public void SetUp()
     {
-        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(RepositorioUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-        
         _gestorUsuarios = new GestorUsuarios();
         _adminSistema = _gestorUsuarios.AdministradorInicial;
     }
@@ -76,18 +73,6 @@ public class GestorUsuariosTests
         _gestorUsuarios.AgregarUsuario(_adminSistema,solicitante);
         Usuario nuevoUsuario = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
         _gestorUsuarios.AgregarUsuario(solicitante,nuevoUsuario);
-    }
-
-    [TestMethod]
-    public void GestorLlevaCuentaDeUsuariosCorrectamenteYAsignaIdsIncrementales()
-    {
-        Usuario usuario1 = CrearUsuario("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        Usuario usuario2 = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario1);
-        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
-
-        Assert.AreEqual(1, usuario1.Id);
-        Assert.AreEqual(2, usuario2.Id);
     }
 
     [TestMethod]

@@ -166,10 +166,7 @@ public class GestorUsuarios
     private void NotificarAdministradoresSistema(Usuario solicitante, string mensajeNotificacion)
     {
         List<Usuario> administradores = Usuarios.ObtenerTodos().Where(usuario => usuario.EsAdministradorSistema && !usuario.Equals(solicitante)).ToList();
-        foreach (Usuario admin in administradores)
-        {
-            Notificar(admin, mensajeNotificacion);
-        }
+        administradores.ForEach(admin => Notificar(admin, mensajeNotificacion));
     }
     
     private void Notificar(Usuario usuario, string mensajeNotificacion)

@@ -28,7 +28,7 @@ public static class UtilidadesContrasena
         
         RandomNumberGenerator generadorDeNumerosAleatorio = RandomNumberGenerator.Create(); // generador de números aleatorios criptográficamente seguros
         
-        int largo = GenerarNumeroAleatorio(_largoMinimoContrasena, _largoMaximoContrasena, generadorDeNumerosAleatorio); // el largo es un número random entre 8 y 15
+        int largo = GenerarNumeroAleatorio(_largoMinimoContrasena, _largoMaximoContrasena, generadorDeNumerosAleatorio);
         // agregar manualmente una mayúscula, una minúscula, un número y un caracter especial (para asegurar restricciones de contraseña)
         contrasenaAutogenerada.Append(GenerarCaracterAleatorio(minusculas, generadorDeNumerosAleatorio));
         contrasenaAutogenerada.Append(GenerarCaracterAleatorio(mayusculas, generadorDeNumerosAleatorio));

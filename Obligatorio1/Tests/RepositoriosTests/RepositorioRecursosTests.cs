@@ -14,6 +14,9 @@ public class RepositorioRecursosTests
     [TestInitialize]
     public void SetUp()
     {
+        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
+        typeof(RepositorioRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+
         _repositorioRecursos = new RepositorioRecursos();
         _recurso = new Recurso("nombre", "tipo", "descripcion");
         _recurso.IncrementarCantidadDeTareasUsandolo();
@@ -38,6 +41,17 @@ public class RepositorioRecursosTests
     {
         _repositorioRecursos.Agregar(_recurso);
         Assert.AreEqual(_recurso, _repositorioRecursos.ObtenerPorId(_recurso.Id));
+    }
+    
+    [TestMethod]
+    public void SeAsignanIdsOk()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+        Recurso recurso2 = new Recurso("Nombre", "tipo", "desc");
+        _repositorioRecursos.Agregar(recurso2);
+        
+        Assert.AreEqual(1,_recurso.Id);
+        Assert.AreEqual(2,recurso2.Id);
     }
     
     [TestMethod]

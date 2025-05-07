@@ -18,7 +18,8 @@ public class GestorRecursosTests
     {
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(RepositorioRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-        _gestorProyectos = new GestorProyectos();
+
+       _gestorProyectos = new GestorProyectos();
         _gestorRecursos = new GestorRecursos(_gestorProyectos);
         _adminSistema = CrearAdministradorSistema();
     }
@@ -105,18 +106,6 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
 
         Assert.IsTrue(recurso.EsExclusivo());
-    }
-
-    [TestMethod]
-    public void GestorLlevaCuentaDeUsuariosCorrectamenteYAsignaIdsIncrementales()
-    {
-        Recurso recurso1 = CrearRecurso();
-        Recurso recurso2 = CrearRecurso();
-        _gestorRecursos.AgregarRecurso(_adminSistema, recurso1);
-        _gestorRecursos.AgregarRecurso(_adminSistema, recurso2);
-
-        Assert.AreEqual(1, recurso1.Id);
-        Assert.AreEqual(2, recurso2.Id);
     }
 
     [TestMethod]
@@ -224,16 +213,13 @@ public class GestorRecursosTests
     }
 
     [TestMethod]
-    public void EliminarRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
+    public void EliminarRecursoNoExclusivoNotificaAdminDeProyectos()
     {
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(_adminSistema, recurso);
         
         Usuario adminProyecto = CrearAdministradorProyecto();
-        Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        Tarea tarea = CrearTarea();
-        tarea.AgregarRecurso(recurso);
-        proyecto.AgregarTarea(tarea);
+        CrearYAgregarProyecto(adminProyecto);
         
         _gestorRecursos.EliminarRecurso(_adminSistema, recurso.Id);
         
