@@ -1,4 +1,5 @@
 ﻿using Dominio;
+using Dominio.Excepciones;
 using Servicios.Excepciones;
 using Servicios.Gestores;
 using Servicios.Utilidades;
@@ -356,6 +357,30 @@ public class GestorTareasTests
 
             _gestorTareas.ModificarFechaInicioTarea(_admin, tarea.Id, proyecto.Id, fechaNueva);
             Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
+        }
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ModificarFechaInicio_UsuarioNoAdminNoPuedeModificarla()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            _admin.Id = 50;
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            DateTime fechaNueva = new DateTime(2030, 01, 01);
+            _gestorTareas.ModificarFechaInicioTarea(_noAdmin, tarea.Id, proyecto.Id, fechaNueva);
+        }
+        
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ModificarFechaInicio_UsuarioAdminNoDelProyectoNoPuedeModificarla()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            _admin.Id = 50;
+            Tarea tarea = CrearTarea();
+            Usuario adminSistema = CrearAdministradorSistema();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            DateTime fechaNueva = new DateTime(2030, 01, 01);
+            _gestorTareas.ModificarFechaInicioTarea(adminSistema, tarea.Id, proyecto.Id, fechaNueva);
         }
     
 }
