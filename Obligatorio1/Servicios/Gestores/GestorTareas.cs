@@ -57,27 +57,27 @@ public class GestorTareas
         return tarea;
     }
 
-    public void ModificarTituloTarea(Usuario solicitante, int idTarea, string nuevoTitulo)
+    public void ModificarTituloTarea(Usuario solicitante, int idTarea, int idProyecto, string nuevoTitulo)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idTarea);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
         _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
         tarea.ModificarTitulo(nuevoTitulo);
         proyecto.NotificarMiembros($"Se cambió el título de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
     
-    public void ModificarDescripcionTarea(Usuario solicitante, int idTarea, string nuevaDescripcion)
+    public void ModificarDescripcionTarea(Usuario solicitante, int idTarea, int idProyecto, string nuevaDescripcion)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idTarea);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
         _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
         tarea.ModificarDescripcion(nuevaDescripcion);
         proyecto.NotificarMiembros($"Se cambió la descripción de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
     
-    public void ModificarDuracionTarea(Usuario solicitante, int idTarea, int nuevaDuracion)
+    public void ModificarDuracionTarea(Usuario solicitante, int idTarea, int idProyecto, int nuevaDuracion)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idTarea);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
         _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
         tarea.ModificarDuracion(nuevaDuracion);

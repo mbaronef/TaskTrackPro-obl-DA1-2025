@@ -248,7 +248,7 @@ public class GestorTareasTests
             Tarea tarea = CrearTarea();
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
-            _gestorTareas.ModificarTituloTarea(_admin, tarea.Id, "Nuevo nombre");
+            _gestorTareas.ModificarTituloTarea(_admin, tarea.Id, proyecto.Id,"Nuevo nombre");
             Assert.AreEqual("Nuevo nombre", tarea.Titulo);
         }
         
@@ -260,19 +260,19 @@ public class GestorTareasTests
             _admin.Id = 50;
             Tarea tarea = CrearTarea();
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-            _gestorTareas.ModificarTituloTarea(_noAdmin, tarea.Id, "Nuevo nombre");
+            _gestorTareas.ModificarTituloTarea(_noAdmin, tarea.Id, proyecto.Id,"Nuevo nombre");
         }
         
         [ExpectedException(typeof(ExcepcionServicios))]
         [TestMethod]
-        public void ModificarTitulo_UsuarioAdminSistemaNoPuedeModificarlo()
+        public void ModificarTitulo_UsuarioAdminNoDelProyectoNoPuedeModificarlo()
         {
             Proyecto proyecto = CrearYAgregarProyecto(_admin);
             _admin.Id = 50;
             Usuario adminSistema = CrearAdministradorSistema();
             Tarea tarea = CrearTarea();
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-            _gestorTareas.ModificarTituloTarea(adminSistema, tarea.Id, "Nuevo nombre");
+            _gestorTareas.ModificarTituloTarea(adminSistema, tarea.Id, proyecto.Id, "Nuevo nombre");
         }
         
         [TestMethod]
@@ -283,7 +283,7 @@ public class GestorTareasTests
             Tarea tarea = CrearTarea();
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
-            _gestorTareas.ModificarDescripcionTarea(_admin, tarea.Id, "Nueva descripcion");
+            _gestorTareas.ModificarDescripcionTarea(_admin, tarea.Id, proyecto.Id,"Nueva descripcion");
             Assert.AreEqual("Nueva descripcion", tarea.Descripcion);
         }
         
@@ -295,19 +295,19 @@ public class GestorTareasTests
             _admin.Id = 50;
             Tarea tarea = CrearTarea();
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-            _gestorTareas.ModificarDescripcionTarea(_noAdmin, tarea.Id, "Nueva descripcion");
+            _gestorTareas.ModificarDescripcionTarea(_noAdmin, tarea.Id, proyecto.Id,"Nueva descripcion");
         }
         
         [ExpectedException(typeof(ExcepcionServicios))]
         [TestMethod]
-        public void ModificarDescripcion_UsuarioAdminSistemaNoPuedeModificarla()
+        public void ModificarDescripcion_UsuarioAdminNoDelProyectoNoPuedeModificarla()
         {
             Proyecto proyecto = CrearYAgregarProyecto(_admin);
             _admin.Id = 50;
             Usuario adminSistema = CrearAdministradorSistema();
             Tarea tarea = CrearTarea();
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-            _gestorTareas.ModificarDescripcionTarea(adminSistema, tarea.Id, "Nueva descripcion");
+            _gestorTareas.ModificarDescripcionTarea(adminSistema, tarea.Id, proyecto.Id, "Nueva descripcion");
         }
         
         [TestMethod]
@@ -318,9 +318,31 @@ public class GestorTareasTests
             Tarea tarea = CrearTarea();
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
-            _gestorTareas.ModificarDuracionTarea(_admin, tarea.Id, 4);
+            _gestorTareas.ModificarDuracionTarea(_admin, tarea.Id, proyecto.Id, 4);
             Assert.AreEqual(4, tarea.DuracionEnDias);
         }
-
+        
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ModificarDuracion_UsuarioNoAdminNoPuedeModificarla()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            _admin.Id = 50;
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            _gestorTareas.ModificarDuracionTarea(_noAdmin, tarea.Id, proyecto.Id, 4);
+        }
+        
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ModificarDuracion_UsuarioAdminNoDelProyectoNoPuedeModificarla()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            _admin.Id = 50;
+            Usuario adminSistema = CrearAdministradorSistema();
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            _gestorTareas.ModificarDuracionTarea(adminSistema, tarea.Id, proyecto.Id, 4);
+        }
     
 }
