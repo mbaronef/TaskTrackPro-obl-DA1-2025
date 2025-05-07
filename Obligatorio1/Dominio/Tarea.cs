@@ -296,6 +296,7 @@ public class Tarea
         Dependencias.Remove(dependenciaAEliminar);
     }
     
+    
     public override bool Equals(object obj)
     {
         if (obj is not Tarea otra) return false;

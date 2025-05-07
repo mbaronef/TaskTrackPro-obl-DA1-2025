@@ -106,12 +106,23 @@ public class GestorTareas
         string tipoDependencia)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
-        _gestorProyectos.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto );
+        _gestorProyectos.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto); // cambiar con TDD
         Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
         Tarea tareaDependencia = ObtenerTareaPorId(proyecto.Id, idTareaDependencia);
         Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
         tarea.AgregarDependencia(dependencia);
         proyecto.NotificarMiembros($"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{proyecto.Nombre}' del tipo {tipoDependencia} con la tarea id {tareaDependencia.Id}.");
+    }
+    
+    
+    
+    public void EliminarDependenciaDeTarea(Usuario solicitante, int idTarea, int idTareaDependencia, int idProyecto)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
+        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
+        tarea.EliminarDependencia(idTareaDependencia);
+        proyecto.NotificarMiembros($"Se elimino una la dependencia de la tarea id {idTareaDependencia} con la tarea id {idTarea} del proyecto '{proyecto.Nombre}'.");
     }
     
     //EN AGREGAR DEPENDENCIA:
