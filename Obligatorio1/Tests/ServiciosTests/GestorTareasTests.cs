@@ -382,5 +382,17 @@ public class GestorTareasTests
             DateTime fechaNueva = new DateTime(2030, 01, 01);
             _gestorTareas.ModificarFechaInicioTarea(adminSistema, tarea.Id, proyecto.Id, fechaNueva);
         }
+
+        [TestMethod]
+        public void CambiarEstadoTarea_CambiaEstadoOk()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+            _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTarea.EnProceso);
+            Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
+        }
     
 }
