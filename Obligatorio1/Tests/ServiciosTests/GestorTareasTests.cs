@@ -243,13 +243,12 @@ public class GestorTareasTests
         [TestMethod]
         public void ModificarTitulo_AdminProyectoModificaTituloTareaOk()
         {
-            Usuario adminProyecto = CrearAdministradorProyecto();
-            Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
 
             Tarea tarea = CrearTarea();
-            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, adminProyecto, tarea);
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
-            _gestorTareas.ModificarTituloTarea(adminProyecto, tarea.Id, "Nuevo nombre");
+            _gestorTareas.ModificarTituloTarea(_admin, tarea.Id, "Nuevo nombre");
             Assert.AreEqual("Nuevo nombre", tarea.Titulo);
         }
         
@@ -279,14 +278,13 @@ public class GestorTareasTests
         [TestMethod]
         public void ModificarDescripcion_AdminProyectoModificaDescripcionTareaOk()
         {
-            Usuario adminProyecto = CrearAdministradorProyecto();
-            Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
 
             Tarea tarea = CrearTarea();
-            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, adminProyecto, tarea);
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
-            _gestorTareas.ModificarDescripcionTarea(adminProyecto, tarea.Id, "Nueva descripcion");
-            Assert.AreEqual("Nueva descripcion", tarea.Titulo);
+            _gestorTareas.ModificarDescripcionTarea(_admin, tarea.Id, "Nueva descripcion");
+            Assert.AreEqual("Nueva descripcion", tarea.Descripcion);
         }
         
         [ExpectedException(typeof(ExcepcionServicios))]
@@ -311,6 +309,8 @@ public class GestorTareasTests
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
             _gestorTareas.ModificarDescripcionTarea(adminSistema, tarea.Id, "Nueva descripcion");
         }
+        
+    
 
     
 }
