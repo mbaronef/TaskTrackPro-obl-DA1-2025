@@ -288,6 +288,29 @@ public class GestorTareasTests
             _gestorTareas.ModificarDescripcionTarea(adminProyecto, tarea.Id, "Nueva descripcion");
             Assert.AreEqual("Nueva descripcion", tarea.Titulo);
         }
+        
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ModificarDescripcion_UsuarioNoAdminNoPuedeModificarla()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            _admin.Id = 50;
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            _gestorTareas.ModificarDescripcionTarea(_noAdmin, tarea.Id, "Nueva descripcion");
+        }
+        
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void ModificarDescripcion_UsuarioAdminSistemaNoPuedeModificarla()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            _admin.Id = 50;
+            Usuario adminSistema = CrearAdministradorSistema();
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            _gestorTareas.ModificarDescripcionTarea(adminSistema, tarea.Id, "Nueva descripcion");
+        }
 
     
 }
