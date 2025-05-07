@@ -432,7 +432,23 @@ public class GestorTareasTests
             Dependencia dependencia = new Dependencia("FS", tareaDependencia);
             Assert.IsTrue(tareaPrincipal.Dependencias.Contains(dependencia));
         }
+        
+        // Tests faltantes de AgregarDependencia: si es null, si un miembro quiere agregar, si un usuario no miembro quiere agregar ...
+        
+        [TestMethod]
+        public void EliminarDependencia_AdminAgregaDependenciaCorrectamente()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            Tarea tareaPrincipal = CrearTarea();
+            Tarea tareaDependencia = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaPrincipal);
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaDependencia);
 
+            _gestorTareas.EliminarDependenciaDeTarea(_admin, tareaPrincipal.Id, tareaDependencia.Id, proyecto.Id);
+            Dependencia dependencia = new Dependencia("FS", tareaDependencia);
+            Assert.IsFalse(tareaPrincipal.Dependencias.Contains(dependencia));
+        }
+        
         
     
 }
