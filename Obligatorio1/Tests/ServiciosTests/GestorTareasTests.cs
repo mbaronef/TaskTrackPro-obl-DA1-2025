@@ -407,5 +407,17 @@ public class GestorTareasTests
             Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
         }
         
+        [ExpectedException(typeof(ExcepcionServicios))]
+        [TestMethod]
+        public void CambiarEstado_UsuarioNoMiembroNoPuedeModificarla()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            _noAdmin.Id = 40;
+            _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.EnProceso);
+            Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
+        }
+        
     
 }
