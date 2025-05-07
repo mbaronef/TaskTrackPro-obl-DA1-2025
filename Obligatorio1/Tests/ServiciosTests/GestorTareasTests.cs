@@ -275,6 +275,19 @@ public class GestorTareasTests
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
             _gestorTareas.ModificarTituloTarea(adminSistema, tarea.Id, "Nuevo nombre");
         }
+        
+        [TestMethod]
+        public void ModificarDescripcion_AdminProyectoModificaDescripcionTareaOk()
+        {
+            Usuario adminProyecto = CrearAdministradorProyecto();
+            Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, adminProyecto, tarea);
+
+            _gestorTareas.ModificarDescripcionTarea(adminProyecto, tarea.Id, "Nueva descripcion");
+            Assert.AreEqual("Nueva descripcion", tarea.Titulo);
+        }
 
     
 }
