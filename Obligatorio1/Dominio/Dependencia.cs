@@ -35,4 +35,16 @@ public class Dependencia
         this.Tipo = unTipo;
         this.Tarea = unaTarea;
     }
+    
+    public override bool Equals(object obj)
+    {
+        if (obj is Dependencia otra)
+            return Tipo == otra.Tipo && Tarea.Id == otra.Tarea.Id;
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Tipo, Tarea.Id);
+    }
 }

@@ -419,5 +419,20 @@ public class GestorTareasTests
             Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
         }
         
+        [TestMethod]
+        public void AgregarDependencia_AdminAgregaDependenciaCorrectamente()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            Tarea tareaPrincipal = CrearTarea();
+            Tarea tareaDependencia = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaPrincipal);
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaDependencia);
+
+            _gestorTareas.AgregarDependenciaATarea(_admin, proyecto.Id, tareaPrincipal.Id, tareaDependencia.Id, "FS");
+            Dependencia dependencia = new Dependencia("FS", tareaDependencia);
+            Assert.IsTrue(tareaPrincipal.Dependencias.Contains(dependencia));
+        }
+
+        
     
 }

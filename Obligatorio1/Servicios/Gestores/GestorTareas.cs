@@ -92,11 +92,6 @@ public class GestorTareas
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
         proyecto.NotificarMiembros($"Se cambió la fecha de inicio de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
-
-    public void VerificarUsuarioEsAdminDeEseProyectoOEsMiembro()
-    {
-        
-    }
     
     public void CambiarEstadoTarea(Usuario solicitante, int idTarea, int idProyecto, EstadoTarea nuevoEstado)
     {
