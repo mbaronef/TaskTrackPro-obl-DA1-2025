@@ -149,7 +149,12 @@ public class GestorUsuarios
         }
         return usuario;
     }
-    
+
+    public List<Usuario> ObtenerUsuariosDiferentes(List<Usuario> usuarios)
+    {
+        return Usuarios.ObtenerTodos().Except(usuarios).ToList();
+    }
+
     private void VerificarPermisoAdministradorSistema(Usuario usuario, string accion)
     {
         if (!usuario.EsAdministradorSistema)
