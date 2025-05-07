@@ -310,7 +310,17 @@ public class GestorTareasTests
             _gestorTareas.ModificarDescripcionTarea(adminSistema, tarea.Id, "Nueva descripcion");
         }
         
-    
+        [TestMethod]
+        public void ModificarDuracion_AdminProyectoModificaDuracionTareaOk()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+            _gestorTareas.ModificarDuracionTarea(_admin, tarea.Id, 4);
+            Assert.AreEqual(4, tarea.DuracionEnDias);
+        }
 
     
 }
