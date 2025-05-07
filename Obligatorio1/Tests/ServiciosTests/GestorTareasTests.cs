@@ -428,7 +428,7 @@ public class GestorTareasTests
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaPrincipal);
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaDependencia);
 
-            _gestorTareas.AgregarDependenciaATarea(_admin, proyecto.Id, tareaPrincipal.Id, tareaDependencia.Id, "FS");
+            _gestorTareas.AgregarDependenciaATarea(_admin, tareaPrincipal.Id, tareaDependencia.Id, proyecto.Id, "FS");
             Dependencia dependencia = new Dependencia("FS", tareaDependencia);
             Assert.IsTrue(tareaPrincipal.Dependencias.Contains(dependencia));
         }
