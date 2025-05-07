@@ -384,7 +384,7 @@ public class GestorTareasTests
         }
 
         [TestMethod]
-        public void CambiarEstadoTarea_CambiaEstadoOk()
+        public void CambiarEstadoTarea_AdminProyectoCambiaEstadoOk()
         {
             Proyecto proyecto = CrearYAgregarProyecto(_admin);
 
@@ -394,5 +394,18 @@ public class GestorTareasTests
             _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTarea.EnProceso);
             Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
         }
+        
+        [TestMethod]
+        public void CambiarEstadoTarea_MiembroTareaCambiaEstadoOk()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            _noAdmin.Id = 40;
+            proyecto.AsignarMiembro(_noAdmin);
+            _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.EnProceso);
+            Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
+        }
+        
     
 }
