@@ -75,7 +75,14 @@ public class GestorTareas
         proyecto.NotificarMiembros($"Se cambió la descripción de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
     
-    
+    public void ModificarDuracionTarea(Usuario solicitante, int idTarea, int nuevaDuracion)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idTarea);
+        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
+        tarea.ModificarDuracion(nuevaDuracion);
+        proyecto.NotificarMiembros($"Se cambió la duración de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
+    }
     
     //EN AGREGAR DEPENDENCIA:
     //try{
