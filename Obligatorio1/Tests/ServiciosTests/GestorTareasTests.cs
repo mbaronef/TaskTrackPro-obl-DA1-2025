@@ -344,5 +344,18 @@ public class GestorTareasTests
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
             _gestorTareas.ModificarDuracionTarea(adminSistema, tarea.Id, proyecto.Id, 4);
         }
+        
+        [TestMethod]
+        public void ModificarFechaInicio_AdminProyectoModificaFechaInicioTareaOk()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+
+            Tarea tarea = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+            DateTime fechaNueva = new DateTime(2030, 01, 01);
+
+            _gestorTareas.ModificarFechaInicioTarea(_admin, tarea.Id, proyecto.Id, fechaNueva);
+            Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
+        }
     
 }
