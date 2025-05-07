@@ -66,6 +66,14 @@ public class GestorTareas
         proyecto.NotificarMiembros($"Se cambió el título la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
     
+    public void ModificarDescripcionTarea(Usuario solicitante, int idTarea, string nuevaDescripcion)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idTarea);
+        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
+        tarea.ModificarTitulo(nuevaDescripcion);
+    }
+    
     //EN AGREGAR DEPENDENCIA:
     //try{
     //    Dependencias.add(dependencia);
