@@ -522,6 +522,23 @@ public class GestorUsuariosTests
         Assert.AreEqual(usuario, obtenido);
     }
 
+    [TestMethod]
+    public void SeObtienenLosUsuariosQueNoEstanEnUnaLista()
+    {
+        Usuario usuario1 = CrearUsuario("Juan", "Pérez", "jp@gmail.com", "xxxxx");
+        Usuario usuario2 = CrearUsuario("Mateo", "Pérez", "mp@gmail.com", "xxxxx");
+        Usuario usuario3 = CrearUsuario("José", "Pérez", "jp@adinet.com.uy", "xxxxxx");
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario1);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario2);
+        _gestorUsuarios.AgregarUsuario(_adminSistema, usuario3);
+        
+        List<Usuario> usuarios = new List<Usuario> { usuario1, usuario2 };
+        List<Usuario> usuariosNoEnLista  = _gestorUsuarios.ObtenerUsuariosDiferentes(usuarios);
+        
+        Assert.AreEqual(0, usuariosNoEnLista.Count);
+        Assert.AreEqual(usuario3, usuariosNoEnLista.ElementAt(0));
+    }
+
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void LoginIncorrectoConContraseñaIncorrecta()
