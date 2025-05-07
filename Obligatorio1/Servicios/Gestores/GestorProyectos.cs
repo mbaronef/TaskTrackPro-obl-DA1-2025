@@ -193,7 +193,7 @@ public class GestorProyectos
             throw new ExcepcionServicios("El solicitante no es administrador de sistema.");
     }
 
-    private void VerificarUsuarioMiembroDelProyecto(int idUsuario, Proyecto proyecto)
+    public void VerificarUsuarioMiembroDelProyecto(int idUsuario, Proyecto proyecto)
     {
         Usuario usuario = ObtenerMiembro(idUsuario, proyecto);
         
