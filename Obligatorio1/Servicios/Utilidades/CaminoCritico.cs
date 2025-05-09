@@ -4,13 +4,13 @@ using Dominio.Excepciones;
 namespace Servicios.Utilidades;
 
 public static class CaminoCritico
-{
+{ 
     public static void CalcularCaminoCritico(Proyecto proyecto)
     {
         List<Tarea> tareas = proyecto.Tareas;
-        List<Tarea> tareasOrdenadas = ordenarTopologicamente(tareas);
+        List<Tarea> tareasOrdenTopologico = OrdenarTopologicamente(tareas);
         
-        foreach (Tarea tarea in tareasOrdenadas)
+        foreach (Tarea tarea in tareasOrdenTopologico)
         {
             if (!tarea.Dependencias.Any())
             {
@@ -18,110 +18,88 @@ public static class CaminoCritico
             }
             else
             {
-                DateTime maxFecha = DateTime.MinValue;
-
-                foreach (Dependencia dependencia in tarea.Dependencias)
-                {
-                    Tarea anterior = dependencia.Tarea;
-
-                    if (dependencia.Tipo == "FS")
-                    {
-                        maxFecha = DateTime.Compare(maxFecha, anterior.FechaFinMasTemprana) > 0 ? maxFecha : anterior.FechaFinMasTemprana;
-                    }
-                    else if (dependencia.Tipo == "SS")
-                    {
-                        maxFecha = DateTime.Compare(maxFecha, anterior.FechaInicioMasTemprana) > 0 ? maxFecha : anterior.FechaInicioMasTemprana;
-                    }
-                }
-
-                tarea.FechaInicioMasTemprana = maxFecha;
+                CalcularFechasMasTempranas(tarea);
             }
         }
-        
+
         proyecto.FechaFinMasTemprana = tareas.Max(t => t.FechaFinMasTemprana);
         
-        Dictionary<Tarea, List<Tarea>> sucesoras = MapearSucesoras(tareas);
-
-        for (int i = tareasOrdenadas.Count - 1; i >= 0; i--) 
-        {
-            Tarea tarea = tareasOrdenadas[i];
-
-            DateTime fechaLimite;
-            if (!sucesoras[tarea].Any())
-            {
-                fechaLimite = proyecto.FechaFinMasTemprana;
-            }
-            else
-            {
-                List<DateTime> posiblesLimites = new List<DateTime>();
-
-                foreach (Tarea sucesora in sucesoras[tarea])
-                {
-                    foreach (Dependencia dependencia in sucesora.Dependencias.Where(d => d.Tarea == tarea))
-                    {
-                        if (dependencia.Tipo == "FS")
-                            posiblesLimites.Add(sucesora.FechaInicioMasTemprana);
-                        else if (dependencia.Tipo == "SS")
-                            posiblesLimites.Add(sucesora.FechaInicioMasTemprana);
-                    }
-                }
-
-                fechaLimite = posiblesLimites.Min();
-            }
-
-            tarea.Holgura = (int)(fechaLimite - tarea.FechaFinMasTemprana).TotalDays;
-        }
+        Dictionary<Tarea, List<Tarea>> sucesoras = ObtenerSucesorasPorTarea(tareas);
+        CalcularHolguras(tareasOrdenTopologico, sucesoras, proyecto);
     }
-
-    private static List<Tarea> ordenarTopologicamente(List<Tarea> tareas)
+    
+    private static List<Tarea> OrdenarTopologicamente(List<Tarea> tareas)
     {
         List<Tarea> tareasOrdenadas = new List<Tarea>();
-        
-        Dictionary<Tarea,int> gradoEntrada = new Dictionary<Tarea, int>();
+
+        Dictionary<Tarea, int> gradosDeEntrada = new Dictionary<Tarea, int>();
         Dictionary<Tarea, List<Tarea>> sucesoras = new Dictionary<Tarea, List<Tarea>>();
+        InicializarGradosDeEntradaYSucesoras(tareas, gradosDeEntrada, sucesoras);
         
-        foreach (Tarea tarea in tareas)
-        {
-            gradoEntrada[tarea] = 0;
-            sucesoras[tarea] = new List<Tarea>();
-        }
-        
-        foreach (Tarea tarea in tareas)
-        {
-            foreach (Dependencia dependencia in tarea.Dependencias)
-            {
-                Tarea anterior = dependencia.Tarea;
-                gradoEntrada[tarea]++;
-                sucesoras[anterior].Add(tarea);
-            }
-        }
-        
-        Queue<Tarea> cola = new Queue<Tarea>(tareas.Where(t => gradoEntrada[t] == 0));
-        while (cola.Count > 0)
+        Queue<Tarea> cola = new Queue<Tarea>(tareas.Where(t => gradosDeEntrada[t] == 0));
+        while (cola.Any())
         {
             Tarea tareaActual = cola.Dequeue();
-            tareasOrdenadas.Add(tareaActual); // ordenar tambien por menos fecha de inicio???
-
+            tareasOrdenadas.Add(tareaActual);
+            
             foreach (Tarea siguiente in sucesoras[tareaActual])
             {
-                gradoEntrada[siguiente]--;
-                if (gradoEntrada[siguiente] == 0)
+                gradosDeEntrada[siguiente]--;
+                if (gradosDeEntrada[siguiente] == 0)
                 {
                     cola.Enqueue(siguiente);
                 }
             }
         }
         
-        // Validación: si hay ciclo, no se procesaron todas
         if (tareasOrdenadas.Count != tareas.Count)
-        {
+        { // Validación: si hay ciclo, no se procesaron todas
             throw new ExcepcionDominio("El grafo de tareas tiene dependencias cíclicas.");
         }
         
         return tareasOrdenadas;
     }
     
-    public static Dictionary<Tarea, List<Tarea>> MapearSucesoras(List<Tarea> tareas)
+    private static void InicializarGradosDeEntradaYSucesoras(List<Tarea> tareas,  Dictionary<Tarea, int> gradosDeEntrada, Dictionary<Tarea, List<Tarea>> sucesoras)
+    {
+        foreach (Tarea tarea in tareas)
+        {
+            gradosDeEntrada[tarea] = 0;
+            sucesoras[tarea] = new List<Tarea>();
+        }
+        foreach (Tarea tarea in tareas)
+        {
+            foreach (Dependencia dependencia in tarea.Dependencias)
+            {
+                Tarea anterior = dependencia.Tarea;
+                gradosDeEntrada[tarea]++;
+                sucesoras[anterior].Add(tarea);
+            }
+        }
+    }
+    
+    private static void CalcularFechasMasTempranas(Tarea tarea)
+    {
+        List<DateTime> fechas = new List<DateTime>();
+        
+        foreach (Dependencia dependencia in tarea.Dependencias)
+        {
+            Tarea tareaAnterior = dependencia.Tarea;
+
+            if (dependencia.Tipo == "FS")
+            {
+                fechas.Add(tareaAnterior.FechaFinMasTemprana);
+            }
+            else if (dependencia.Tipo == "SS")
+            {
+                fechas.Add(tareaAnterior.FechaInicioMasTemprana);
+            }
+        }
+        tarea.FechaInicioMasTemprana = fechas.Max();
+        tarea.CalcularFechaFinMasTemprana();
+    }
+
+    public static Dictionary<Tarea, List<Tarea>> ObtenerSucesorasPorTarea(List<Tarea> tareas)
     {
         Dictionary<Tarea, List<Tarea>> sucesoras = new Dictionary<Tarea, List<Tarea>>();
 
@@ -138,8 +116,32 @@ public static class CaminoCritico
                 sucesoras[tareaPredecesora].Add(tarea);
             }
         }
-
         return sucesoras;
     }
     
+    private static void CalcularHolguras(List<Tarea> tareasOrdenTopologico, Dictionary<Tarea, List<Tarea>> sucesoras,
+        Proyecto proyecto)
+    {
+        for (int i = tareasOrdenTopologico.Count - 1; i >= 0; i--)
+        {
+            Tarea tarea = tareasOrdenTopologico[i];
+            DateTime fechaLimite = ObtenerFechaLimite(tarea, sucesoras, proyecto.FechaFinMasTemprana);
+            tarea.Holgura = (int)(fechaLimite - tarea.FechaFinMasTemprana).TotalDays;
+        }
+    }
+
+    private static DateTime ObtenerFechaLimite(Tarea tarea, Dictionary<Tarea, List<Tarea>> sucesoras, DateTime fechaFinProyecto)
+    {
+        if (!sucesoras[tarea].Any())
+        {
+            return fechaFinProyecto;
+        }
+
+        List<DateTime> posiblesLimites = sucesoras[tarea]
+            .SelectMany(sucesora => sucesora.Dependencias
+                .Where(dep => dep.Tarea == tarea)
+                .Select(_ => sucesora.FechaInicioMasTemprana))
+            .ToList();
+        return posiblesLimites.Min();
+    }
 }
