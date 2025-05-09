@@ -69,4 +69,32 @@ public class CaminoCriticoTests
         Assert.AreEqual(_fechaHoy.AddDays(2), _tarea3.FechaInicioMasTemprana);
         Assert.AreEqual(_fechaHoy.AddDays(2), _tarea2.FechaInicioMasTemprana);
     }
+
+    [TestMethod]
+    public void SeCalculanHolgurasCorrectamente()
+    {
+        Proyecto proyecto = new Proyecto("Nombre", "desc", _fechaHoy, 
+        new Usuario("Juan", "Pérez", new DateTime(1999,2,2), "email@email.com", "Contra5e{a"), 
+        new List<Usuario>());
+
+        proyecto.ModificarFechaFinMasTemprana(_fechaHoy.AddDays(10));
+
+        proyecto.AgregarTarea(_tarea1);
+        proyecto.AgregarTarea(_tarea2);
+        proyecto.AgregarTarea(_tarea3);
+
+        CaminoCritico.CalcularFechasMasTempranas(_tarea1, proyecto);
+        CaminoCritico.CalcularFechasMasTempranas(_tarea3, proyecto);
+        CaminoCritico.CalcularFechasMasTempranas(_tarea2, proyecto);
+    
+        List<Tarea> tareas = new List<Tarea> { _tarea1, _tarea2, _tarea3 };
+        List<Tarea> ordenTopologico = CaminoCritico.OrdenarTopologicamente(tareas);
+        Dictionary<Tarea, List<Tarea>> sucesoras = CaminoCritico.ObtenerSucesorasPorTarea(tareas);
+        
+        CaminoCritico.CalcularHolguras(ordenTopologico, sucesoras, proyecto);
+    
+        Assert.AreEqual(0, _tarea1.Holgura); // sucesora más cercana empieza día 2 → fin = 2 → holgura 0
+        Assert.AreEqual(0, _tarea3.Holgura); // sucesora (_tarea2) empieza día 3 → fin = 6 → holgura 0
+        Assert.AreEqual(4, _tarea2.Holgura); // fin proyecto = día 10 → fin tarea = 6 → holgura 4
+    }
 }
