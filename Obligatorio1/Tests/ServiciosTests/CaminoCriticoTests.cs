@@ -1,4 +1,5 @@
 using Dominio;
+using Servicios.Excepciones;
 using Servicios.Utilidades;
 
 namespace Tests.ServiciosTests;
@@ -6,95 +7,94 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class CaminoCriticoTests
 {
+    private Proyecto _proyecto;
     private Tarea _tarea1;
     private Tarea _tarea2;
     private Tarea _tarea3;
+    private Tarea _tarea4;
     private DateTime _fechaHoy = DateTime.Today;
-    
+
     [TestInitialize]
     public void SetUp()
     {
-        _tarea1 = new Tarea("Tarea 1", "desc", 2,_fechaHoy);
+        _tarea1 = new Tarea("Tarea 1", "desc", 2, _fechaHoy);
         _tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy.AddDays(3));
         _tarea3 = new Tarea("Tarea 3", "desc", 4, _fechaHoy.AddDays(4));
-        
+        _tarea4 = new Tarea("Tarea 4", "desc", 1, _fechaHoy.AddDays(5));
+
         _tarea1.Id = 1; // por simplicidad de tests, harcodeamos ids en vez de usar el repositorio
         _tarea2.Id = 2;
         _tarea3.Id = 3;
+        _tarea4.Id = 4;
 
         _tarea2.AgregarDependencia(new Dependencia("SS", _tarea1));
         _tarea2.AgregarDependencia(new Dependencia("FS", _tarea3));
         _tarea3.AgregarDependencia(new Dependencia("FS", _tarea1));
+
+        _proyecto = new Proyecto("Nombre", "desc", _fechaHoy,
+            new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "email@email.com", "Contra5e{a"),
+            new List<Usuario>());
+
+        _proyecto.AgregarTarea(_tarea1);
+        _proyecto.AgregarTarea(_tarea2);
+        _proyecto.AgregarTarea(_tarea3);
+        _proyecto.AgregarTarea(_tarea4);
     }
 
     [TestMethod]
-    public void OrdenTopologicoOrdenaOk()
+    public void CalculaCaminoCriticoOk()
     {
-        List<Tarea> tareas = new List<Tarea> { _tarea1, _tarea2, _tarea3 };
-        
-        List<Tarea> resultado = CaminoCritico.OrdenarTopologicamente(tareas);
-        
-        Assert.AreEqual(tareas.Count, resultado.Count);
-        Assert.AreEqual(_tarea1.Titulo, resultado.ElementAt(0).Titulo);
-        Assert.AreEqual(_tarea3.Titulo, resultado.ElementAt(1).Titulo);
-        Assert.AreEqual(_tarea2.Titulo, resultado.ElementAt(2).Titulo);
-    }
+        CaminoCritico.CalcularCaminoCritico(_proyecto);
 
-    [TestMethod]
-    public void SeObtienenSucesorasPorTarea()
-    {
-        List<Tarea> tareas = new List<Tarea> { _tarea1, _tarea2, _tarea3 };
+        Assert.IsTrue(_tarea1.EsCritica());
+        Assert.IsTrue(_tarea2.EsCritica());
+        Assert.IsTrue(_tarea3.EsCritica());
+        Assert.IsFalse(_tarea4.EsCritica());
+        Assert.AreEqual(8, _tarea4.Holgura);
 
-        Dictionary<Tarea, List<Tarea>> sucesoras = CaminoCritico.ObtenerSucesorasPorTarea(tareas);
-        
-        Assert.AreEqual(tareas.Count, sucesoras.Count);
-        Assert.AreEqual(2, sucesoras[_tarea1].Count);
-        Assert.IsTrue(sucesoras[_tarea1].Contains(_tarea2));
-        Assert.IsTrue(sucesoras[_tarea1].Contains(_tarea3));
-    }
-
-    [TestMethod]
-    public void CalculaCorrectamenteFechasDeUnaTarea()
-    {
-        Proyecto proyecto = new Proyecto("Nombre", "desc", _fechaHoy, new Usuario("Juan", "Pérez", new DateTime(1999,2,2), "email@email.com", "Contra5e{a"), new List<Usuario>());
-        proyecto.AgregarTarea(_tarea1);
-        proyecto.AgregarTarea(_tarea2);
-        proyecto.AgregarTarea(_tarea3);
-        
-        CaminoCritico.CalcularFechasMasTempranas(_tarea1, proyecto);
-        CaminoCritico.CalcularFechasMasTempranas(_tarea3, proyecto);
-        CaminoCritico.CalcularFechasMasTempranas(_tarea2, proyecto);
-        
         Assert.AreEqual(_fechaHoy, _tarea1.FechaInicioMasTemprana);
         Assert.AreEqual(_fechaHoy.AddDays(2), _tarea3.FechaInicioMasTemprana);
         Assert.AreEqual(_fechaHoy.AddDays(6), _tarea2.FechaInicioMasTemprana);
+        Assert.AreEqual(_fechaHoy, _tarea4.FechaInicioMasTemprana);
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoSeCalculaCaminoCriticoSiHayCiclos()
+    {
+        _tarea3.AgregarDependencia(new Dependencia("SS", _tarea2));
+        CaminoCritico.CalcularCaminoCritico(_proyecto);
+    }
+    
+    [TestMethod]
+    public void CalcularCaminoCriticoEnProyectoSinTareasNoLanzaExcepcion()
+    {
+        Proyecto proyectoVacio = new Proyecto("Vacío", "sin tareas", _fechaHoy,
+            new Usuario("Nombre", "Apellido", new DateTime(1990, 1, 1), "a@b.com", "Clave123"), new List<Usuario>());
+
+        CaminoCritico.CalcularCaminoCritico(proyectoVacio);
+        Assert.IsTrue(true); // No se lanzó excepción
     }
 
     [TestMethod]
-    public void SeCalculanHolgurasCorrectamente()
+    public void VariasTareasIndependientesCaminoCriticoOk()
     {
-        Proyecto proyecto = new Proyecto("Nombre", "desc", _fechaHoy, 
-        new Usuario("Juan", "Pérez", new DateTime(1999,2,2), "email@email.com", "Contra5e{a"), 
-        new List<Usuario>());
+        Tarea tarea5 = new Tarea("Tarea 5", "desc", 2, _fechaHoy) { Id = 5 };
+        Tarea tarea6 = new Tarea("Tarea 6", "desc", 1, _fechaHoy) { Id = 6 };
 
-        proyecto.ModificarFechaFinMasTemprana(_fechaHoy.AddDays(8));
+        _proyecto.AgregarTarea(tarea5);
+        _proyecto.AgregarTarea(tarea6);
 
-        proyecto.AgregarTarea(_tarea1);
-        proyecto.AgregarTarea(_tarea2);
-        proyecto.AgregarTarea(_tarea3);
+        CaminoCritico.CalcularCaminoCritico(_proyecto);
 
-        CaminoCritico.CalcularFechasMasTempranas(_tarea1, proyecto);
-        CaminoCritico.CalcularFechasMasTempranas(_tarea3, proyecto);
-        CaminoCritico.CalcularFechasMasTempranas(_tarea2, proyecto);
+        Assert.IsFalse(tarea5.EsCritica());
+        Assert.IsFalse(tarea6.EsCritica());
+    }
     
-        List<Tarea> tareas = new List<Tarea> { _tarea1, _tarea2, _tarea3 };
-        List<Tarea> ordenTopologico = CaminoCritico.OrdenarTopologicamente(tareas);
-        Dictionary<Tarea, List<Tarea>> sucesoras = CaminoCritico.ObtenerSucesorasPorTarea(tareas);
-        
-        CaminoCritico.CalcularHolguras(ordenTopologico, sucesoras, proyecto);
-    
-        Assert.AreEqual(0, _tarea1.Holgura);
-        Assert.AreEqual(0, _tarea3.Holgura);
-        Assert.AreEqual(0, _tarea2.Holgura);
+    [TestMethod]
+    public void TareaSinDependenciasFueraDelCaminoCriticoTieneHolgura()
+    {
+        CaminoCritico.CalcularCaminoCritico(_proyecto);
+        Assert.IsTrue(_tarea4.Holgura > 0);
     }
 }

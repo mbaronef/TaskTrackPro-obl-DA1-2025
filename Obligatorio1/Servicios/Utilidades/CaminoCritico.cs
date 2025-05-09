@@ -4,35 +4,32 @@ using Servicios.Excepciones;
 namespace Servicios.Utilidades;
 
 public static class CaminoCritico
-{
-    using Dominio;
-using Servicios.Excepciones;
-
-namespace Servicios.Utilidades;
-
-public static class CaminoCritico
 { 
     public static void CalcularCaminoCritico(Proyecto proyecto)
     {
-        List<Tarea> tareas = proyecto.Tareas;
-        List<Tarea> tareasOrdenTopologico = OrdenarTopologicamente(tareas);
-        
-        foreach (Tarea tarea in tareasOrdenTopologico)
+        if (ProyectoTieneTareas(proyecto))
         {
-            if (!tarea.Dependencias.Any())
-            {
-                tarea.FechaInicioMasTemprana = proyecto.FechaInicio;
-            }
-            else
-            {
-                CalcularFechasMasTempranas(tarea);
-            }
-        }
+            List<Tarea> tareas = proyecto.Tareas;
+            List<Tarea> tareasOrdenTopologico = OrdenarTopologicamente(tareas);
 
-        proyecto.FechaFinMasTemprana = tareas.Max(t => t.FechaFinMasTemprana);
-        
-        Dictionary<Tarea, List<Tarea>> sucesoras = ObtenerSucesorasPorTarea(tareas);
-        CalcularHolguras(tareasOrdenTopologico, sucesoras, proyecto);
+            foreach (Tarea tarea in tareasOrdenTopologico)
+            {
+                if (!tarea.Dependencias.Any())
+                {
+                    tarea.FechaInicioMasTemprana = proyecto.FechaInicio;
+                    tarea.CalcularFechaFinMasTemprana();
+                }
+                else
+                {
+                    CalcularFechasMasTempranas(tarea);
+                }
+            }
+
+            proyecto.FechaFinMasTemprana = tareas.Max(t => t.FechaFinMasTemprana);
+
+            Dictionary<Tarea, List<Tarea>> sucesoras = ObtenerSucesorasPorTarea(tareas);
+            CalcularHolguras(tareasOrdenTopologico, sucesoras, proyecto);
+        }
     }
     
     private static List<Tarea> OrdenarTopologicamente(List<Tarea> tareas)
@@ -152,5 +149,10 @@ public static class CaminoCritico
                     : sucesora.FechaInicioMasTemprana))
             .ToList();
         return posiblesLimites.Min();
+    }
+    
+    private static bool ProyectoTieneTareas(Proyecto proyecto)
+    {
+        return proyecto.Tareas.Any();
     }
 }
