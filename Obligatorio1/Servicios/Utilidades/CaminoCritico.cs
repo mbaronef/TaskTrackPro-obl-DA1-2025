@@ -11,28 +11,14 @@ public static class CaminoCritico
 
         Dictionary<Tarea, int> gradosDeEntrada = new Dictionary<Tarea, int>();
         Dictionary<Tarea, List<Tarea>> sucesoras = new Dictionary<Tarea, List<Tarea>>();
-        foreach (Tarea tarea in tareas)
-        {
-            gradosDeEntrada[tarea] = 0;
-            sucesoras[tarea] = new List<Tarea>();
-        }
-
-        foreach (Tarea tarea in tareas)
-        {
-            foreach (Dependencia dependencia in tarea.Dependencias)
-            {
-                Tarea anterior = dependencia.Tarea;
-                gradosDeEntrada[tarea]++;
-                sucesoras[anterior].Add(tarea);
-            }
-        }
-
+        InicializarGradosDeEntradaYSucesoras(tareas, gradosDeEntrada, sucesoras);
+        
         Queue<Tarea> cola = new Queue<Tarea>(tareas.Where(t => gradosDeEntrada[t] == 0));
         while (cola.Any())
         {
             Tarea tareaActual = cola.Dequeue();
             tareasOrdenadas.Add(tareaActual);
-
+            
             foreach (Tarea siguiente in sucesoras[tareaActual])
             {
                 gradosDeEntrada[siguiente]--;
@@ -42,13 +28,31 @@ public static class CaminoCritico
                 }
             }
         }
-
+        
         if (tareasOrdenadas.Count != tareas.Count)
-        {
-            // Validación: si hay ciclo, no se procesaron todas
+        { // Validación: si hay ciclo, no se procesaron todas
             throw new ExcepcionServicios("El grafo de tareas tiene dependencias cíclicas.");
         }
-
+        
         return tareasOrdenadas;
     }
+    
+    private static void InicializarGradosDeEntradaYSucesoras(List<Tarea> tareas,  Dictionary<Tarea, int> gradosDeEntrada, Dictionary<Tarea, List<Tarea>> sucesoras)
+    {
+        foreach (Tarea tarea in tareas)
+        {
+            gradosDeEntrada[tarea] = 0;
+            sucesoras[tarea] = new List<Tarea>();
+        }
+        foreach (Tarea tarea in tareas)
+        {
+            foreach (Dependencia dependencia in tarea.Dependencias)
+            {
+                Tarea anterior = dependencia.Tarea;
+                gradosDeEntrada[tarea]++;
+                sucesoras[anterior].Add(tarea);
+            }
+        }
+    }
+
 }
