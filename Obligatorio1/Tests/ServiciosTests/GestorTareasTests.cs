@@ -433,6 +433,23 @@ public class GestorTareasTests
             Assert.IsTrue(tareaPrincipal.Dependencias.Contains(dependencia));
         }
         
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionServicios))]
+        public void AgregarDependencia_TipoDependenciaEsNullLanzaExcepcion()
+        {
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            Tarea tarea1 = CrearTarea();
+            Tarea tarea2 = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
+
+            _gestorTareas.AgregarDependenciaATarea(_admin, tarea1.Id, tarea2.Id, proyecto.Id, null);
+        }
+        
+        
+
+
+        
         // Tests faltantes de AgregarDependencia: si es null, si un miembro quiere agregar, si un usuario no miembro quiere agregar ...
         
         [TestMethod]
