@@ -6,46 +6,49 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class CaminoCriticoTests
 {
+    private Tarea _tarea1;
+    private Tarea _tarea2;
+    private Tarea _tarea3;
+    
+    [TestInitialize]
+    public void SetUp()
+    {
+        _tarea1 = new Tarea("Tarea 1", "desc", 2, DateTime.Today);
+        _tarea2 = new Tarea("Tarea 2", "desc", 3, DateTime.Today);
+        _tarea3 = new Tarea("Tarea 3", "desc", 4, DateTime.Today);
+        
+        _tarea1.Id = 1; // por simplicidad de tests, harcodeamos ids en vez de usar el repositorio
+        _tarea2.Id = 2;
+        _tarea3.Id = 3;
+
+        _tarea2.AgregarDependencia(new Dependencia("SS", _tarea1));
+        _tarea2.AgregarDependencia(new Dependencia("SS", _tarea3));
+        _tarea3.AgregarDependencia(new Dependencia("FS", _tarea1));
+    }
+
     [TestMethod]
     public void OrdenTopologicoOrdenaOk()
     {
-        Tarea tarea1 = new Tarea("Tarea 1", "desc", 2, DateTime.Today);
-        Tarea tarea2 = new Tarea("Tarea 2", "desc", 3, DateTime.Today);
-        Tarea tarea3 = new Tarea("Tarea 3", "desc", 4, DateTime.Today);
-
-        tarea2.AgregarDependencia(new Dependencia("SS", tarea1));
-        tarea2.AgregarDependencia(new Dependencia("SS", tarea3));
-        tarea3.AgregarDependencia(new Dependencia("FS", tarea1));
-
-        List<Tarea> tareas = new List<Tarea> { tarea1, tarea2, tarea3 };
+        List<Tarea> tareas = new List<Tarea> { _tarea1, _tarea2, _tarea3 };
         
         List<Tarea> resultado = CaminoCritico.OrdenarTopologicamente(tareas);
         
         Assert.AreEqual(tareas.Count, resultado.Count);
-        Assert.AreEqual(tarea1.Titulo, resultado.ElementAt(0).Titulo);
-        Assert.AreEqual(tarea3.Titulo, resultado.ElementAt(1).Titulo);
-        Assert.AreEqual(tarea2.Titulo, resultado.ElementAt(2).Titulo);
+        Assert.AreEqual(_tarea1.Titulo, resultado.ElementAt(0).Titulo);
+        Assert.AreEqual(_tarea3.Titulo, resultado.ElementAt(1).Titulo);
+        Assert.AreEqual(_tarea2.Titulo, resultado.ElementAt(2).Titulo);
     }
 
     [TestMethod]
     public void SeObtienenSucesorasPorTarea()
     {
-        Tarea tarea1 = new Tarea("Tarea 1", "desc", 2, DateTime.Today);
-        Tarea tarea2 = new Tarea("Tarea 2", "desc", 3, DateTime.Today);
-        Tarea tarea3 = new Tarea("Tarea 3", "desc", 4, DateTime.Today);
-
-        tarea2.AgregarDependencia(new Dependencia("SS", tarea1));
-        tarea2.AgregarDependencia(new Dependencia("SS", tarea3));
-        tarea3.AgregarDependencia(new Dependencia("FS", tarea1));
-        
-        List<Tarea> tareas = new List<Tarea> { tarea1, tarea2, tarea3 };
+        List<Tarea> tareas = new List<Tarea> { _tarea1, _tarea2, _tarea3 };
 
         Dictionary<Tarea, List<Tarea>> sucesoras = CaminoCritico.ObtenerSucesorasPorTarea(tareas);
         
         Assert.AreEqual(tareas.Count, sucesoras.Count);
-        Assert.AreEqual(2, sucesoras[tarea1].Count);
-        Assert.IsTrue(sucesoras[tarea1].Contains(tarea2));
-        Assert.IsTrue(sucesoras[tarea1].Contains(tarea3));
-
+        Assert.AreEqual(2, sucesoras[_tarea1].Count);
+        Assert.IsTrue(sucesoras[_tarea1].Contains(_tarea2));
+        Assert.IsTrue(sucesoras[_tarea1].Contains(_tarea3));
     }
 }
