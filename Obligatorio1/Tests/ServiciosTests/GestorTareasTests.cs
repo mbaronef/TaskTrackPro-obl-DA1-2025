@@ -17,6 +17,7 @@ public class GestorTareasTests
     [TestInitialize]
     public void Inicializar()
     {
+        typeof(GestorTareas).GetField("_cantidadTareas", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         _gestorProyectos = new GestorProyectos();
         _gestorTareas = new GestorTareas(_gestorProyectos);
         _admin = CrearAdministradorProyecto();
