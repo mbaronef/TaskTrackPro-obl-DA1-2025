@@ -448,11 +448,11 @@ public class GestorTareasTests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionServicios))]
-        public void AgregarDependencia_MiembroNoAdminNoPuedeAgregar_LanzaExcepcion()
+        public void AgregarDependencia_MiembroNoAdminNoPuedeAgregarLanzaExcepcion()
         {
             _noAdmin.Id = 40;
             Proyecto proyecto = CrearYAgregarProyecto(_admin);
-            proyecto.AsignarMiembro(_noAdmin); // Asegurate que exista este método
+            proyecto.AsignarMiembro(_noAdmin);
             Tarea tarea1 = CrearTarea();
             Tarea tarea2 = CrearTarea();
             _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
@@ -460,6 +460,21 @@ public class GestorTareasTests
 
             _gestorTareas.AgregarDependenciaATarea(_noAdmin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionServicios))]
+        public void AgregarDependencia_UsuarioNoMiembroNoPuedeAgregarLanzaExcepcion()
+        {
+            _noAdmin.Id = 40;
+            Proyecto proyecto = CrearYAgregarProyecto(_admin);
+            Tarea tarea1 = CrearTarea();
+            Tarea tarea2 = CrearTarea();
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
+            _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
+
+            _gestorTareas.AgregarDependenciaATarea(_noAdmin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
+        }
+
 
 
 
