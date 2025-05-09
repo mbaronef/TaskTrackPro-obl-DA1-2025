@@ -9,13 +9,14 @@ public class CaminoCriticoTests
     private Tarea _tarea1;
     private Tarea _tarea2;
     private Tarea _tarea3;
+    private DateTime _fechaHoy = DateTime.Today;
     
     [TestInitialize]
     public void SetUp()
     {
-        _tarea1 = new Tarea("Tarea 1", "desc", 2, DateTime.Today);
-        _tarea2 = new Tarea("Tarea 2", "desc", 3, DateTime.Today.AddDays(3));
-        _tarea3 = new Tarea("Tarea 3", "desc", 4, DateTime.Today.AddDays(4));
+        _tarea1 = new Tarea("Tarea 1", "desc", 2,_fechaHoy);
+        _tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy.AddDays(3));
+        _tarea3 = new Tarea("Tarea 3", "desc", 4, _fechaHoy.AddDays(4));
         
         _tarea1.Id = 1; // por simplicidad de tests, harcodeamos ids en vez de usar el repositorio
         _tarea2.Id = 2;
@@ -55,13 +56,17 @@ public class CaminoCriticoTests
     [TestMethod]
     public void CalculaCorrectamenteFechasDeUnaTarea()
     {
-        List<Tarea> tareas = new List<Tarea> { _tarea1, _tarea2, _tarea3 };
+        Proyecto proyecto = new Proyecto("Nombre", "desc", _fechaHoy, new Usuario("Juan", "Pérez", new DateTime(1999,2,2), "email@email.com", "Contra5e{a"), new List<Usuario>());
+        proyecto.AgregarTarea(_tarea1);
+        proyecto.AgregarTarea(_tarea2);
+        proyecto.AgregarTarea(_tarea3);
         
-        CaminoCritico.CalcularFechasMasTempranas(tareas);
+        CaminoCritico.CalcularFechasMasTempranas(_tarea1, proyecto);
+        CaminoCritico.CalcularFechasMasTempranas(_tarea3, proyecto);
+        CaminoCritico.CalcularFechasMasTempranas(_tarea2, proyecto);
         
-        Assert.AreEqual(_tarea1.FechaInicioMasTemprana, DateTime.Today);
-        Assert.AreEqual(_tarea3.FechaInicioMasTemprana, DateTime.Today.AddDays(2));
-        
-        Assert.AreEqual(_tarea2.FechaInicioMasTemprana, DateTime.Today.AddDays(6));
+        Assert.AreEqual(_fechaHoy, _tarea1.FechaInicioMasTemprana);
+        Assert.AreEqual(_fechaHoy.AddDays(2), _tarea3.FechaInicioMasTemprana);
+        Assert.AreEqual(_fechaHoy.AddDays(2), _tarea2.FechaInicioMasTemprana);
     }
 }

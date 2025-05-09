@@ -74,6 +74,37 @@ public static class CaminoCritico
         }
         return sucesoras;
     }
+    
+    public static void CalcularFechasMasTempranas(Tarea tarea, Proyecto proyecto)
+    {
+        if (!tarea.Dependencias.Any())
+        {
+            tarea.FechaInicioMasTemprana = proyecto.FechaInicio;
+        }
+        else
+        {
+            List<DateTime> fechas = new List<DateTime>();
+
+            foreach (Dependencia dependencia in tarea.Dependencias)
+            {
+                Tarea tareaAnterior = dependencia.Tarea;
+
+                if (dependencia.Tipo == "FS")
+                {
+                    fechas.Add(tareaAnterior.FechaFinMasTemprana.AddDays(1));
+                }
+                else if (dependencia.Tipo == "SS")
+                {
+                    fechas.Add(tareaAnterior.FechaInicioMasTemprana);
+                }
+            }
+
+            tarea.FechaInicioMasTemprana = fechas.Max();
+            tarea.CalcularFechaFinMasTemprana();
+        }
+    }
+
+
 
 
 }
