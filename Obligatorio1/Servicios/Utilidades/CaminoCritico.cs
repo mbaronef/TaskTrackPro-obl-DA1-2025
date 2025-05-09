@@ -103,8 +103,32 @@ public static class CaminoCritico
             tarea.CalcularFechaFinMasTemprana();
         }
     }
+    
+    public static void CalcularHolguras(List<Tarea> tareasOrdenTopologico, Dictionary<Tarea, List<Tarea>> sucesoras,
+        Proyecto proyecto)
+    {
+        for (int i = tareasOrdenTopologico.Count - 1; i >= 0; i--)
+        {
+            Tarea tarea = tareasOrdenTopologico[i];
+            DateTime fechaLimite = ObtenerFechaLimite(tarea, sucesoras, proyecto.FechaFinMasTemprana);
+            tarea.Holgura = (int)(fechaLimite - tarea.FechaFinMasTemprana).TotalDays;
+        }
+    }
 
+    private static DateTime ObtenerFechaLimite(Tarea tarea, Dictionary<Tarea, List<Tarea>> sucesoras, DateTime fechaFinProyecto)
+    {
+        if (!sucesoras[tarea].Any())
+        {
+            return fechaFinProyecto;
+        }
 
-
-
+        List<DateTime> posiblesLimites = sucesoras[tarea]
+            .SelectMany(sucesora => sucesora.Dependencias
+                .Where(dep => dep.Tarea == tarea)
+                .Select(dep => dep.Tipo == "FS"
+                    ? sucesora.FechaInicioMasTemprana.AddDays(-1)
+                    : sucesora.FechaInicioMasTemprana))
+            .ToList();
+        return posiblesLimites.Min();
+    }
 }
