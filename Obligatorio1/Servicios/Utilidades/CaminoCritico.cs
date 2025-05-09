@@ -54,5 +54,26 @@ public static class CaminoCritico
             }
         }
     }
+    
+    public static Dictionary<Tarea, List<Tarea>> ObtenerSucesorasPorTarea(List<Tarea> tareas)
+    {
+        Dictionary<Tarea, List<Tarea>> sucesoras = new Dictionary<Tarea, List<Tarea>>();
+
+        foreach (Tarea tarea in tareas)
+        {
+            sucesoras[tarea] = new List<Tarea>();
+        }
+
+        foreach (Tarea tarea in tareas)
+        {
+            foreach (Dependencia dependencia in tarea.Dependencias)
+            {
+                Tarea tareaPredecesora = dependencia.Tarea;
+                sucesoras[tareaPredecesora].Add(tarea);
+            }
+        }
+        return sucesoras;
+    }
+
 
 }
