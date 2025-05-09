@@ -14,8 +14,8 @@ public class CaminoCriticoTests
     public void SetUp()
     {
         _tarea1 = new Tarea("Tarea 1", "desc", 2, DateTime.Today);
-        _tarea2 = new Tarea("Tarea 2", "desc", 3, DateTime.Today);
-        _tarea3 = new Tarea("Tarea 3", "desc", 4, DateTime.Today);
+        _tarea2 = new Tarea("Tarea 2", "desc", 3, DateTime.Today.AddDays(3));
+        _tarea3 = new Tarea("Tarea 3", "desc", 4, DateTime.Today.AddDays(4));
         
         _tarea1.Id = 1; // por simplicidad de tests, harcodeamos ids en vez de usar el repositorio
         _tarea2.Id = 2;
@@ -50,5 +50,18 @@ public class CaminoCriticoTests
         Assert.AreEqual(2, sucesoras[_tarea1].Count);
         Assert.IsTrue(sucesoras[_tarea1].Contains(_tarea2));
         Assert.IsTrue(sucesoras[_tarea1].Contains(_tarea3));
+    }
+
+    [TestMethod]
+    public void CalculaCorrectamenteFechasDeUnaTarea()
+    {
+        List<Tarea> tareas = new List<Tarea> { _tarea1, _tarea2, _tarea3 };
+        
+        CaminoCritico.CalcularFechasMasTempranas(tareas);
+        
+        Assert.AreEqual(_tarea1.FechaInicioMasTemprana, DateTime.Today);
+        Assert.AreEqual(_tarea3.FechaInicioMasTemprana, DateTime.Today.AddDays(2));
+        
+        Assert.AreEqual(_tarea2.FechaInicioMasTemprana, DateTime.Today.AddDays(6));
     }
 }
