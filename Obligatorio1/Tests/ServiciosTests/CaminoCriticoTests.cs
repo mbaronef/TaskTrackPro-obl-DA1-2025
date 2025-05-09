@@ -14,16 +14,16 @@ public class CaminoCriticoTests
         Tarea tarea3 = new Tarea("Tarea 3", "desc", 4, DateTime.Today);
 
         tarea2.AgregarDependencia(new Dependencia("SS", tarea1));
-        tarea3.AgregarDependencia(new Dependencia("SS", tarea1));
-        tarea3.AgregarDependencia(new Dependencia("FS", tarea2));
+        tarea2.AgregarDependencia(new Dependencia("SS", tarea3));
+        tarea3.AgregarDependencia(new Dependencia("FS", tarea1));
 
         List<Tarea> tareas = new List<Tarea> { tarea1, tarea2, tarea3 };
         
         List<Tarea> resultado = CaminoCritico.OrdenarTopologicamente(tareas);
         
         Assert.AreEqual(tareas.Count, resultado.Count);
-        Assert.AreEqual(tarea1, resultado.ElementAt(0));
-        Assert.AreEqual(tarea3, resultado.ElementAt(1));
-        Assert.AreEqual(tarea2, resultado.ElementAt(2));
+        Assert.AreEqual(tarea1.Titulo, resultado.ElementAt(0).Titulo);
+        Assert.AreEqual(tarea3.Titulo, resultado.ElementAt(1).Titulo);
+        Assert.AreEqual(tarea2.Titulo, resultado.ElementAt(2).Titulo);
     }
 }
