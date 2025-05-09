@@ -552,5 +552,38 @@ public class GestorTareasTests
         _gestorTareas.AgregarDependenciaATarea(_admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
         _gestorTareas.EliminarDependenciaDeTarea(_noAdmin, tarea1.Id, tarea2.Id, proyecto.Id);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionServicios))]
+    public void EliminarDependencia_UsuarioAdminSistemaNoPuedeEliminarLanzaExcepcion()
+    {
+        Usuario adminSistema = CrearAdministradorSistema();
+        adminSistema.Id = 40;
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        Tarea tarea1 = CrearTarea();
+        Tarea tarea2 = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
+
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
+        _gestorTareas.EliminarDependenciaDeTarea(adminSistema, tarea1.Id, tarea2.Id, proyecto.Id);
+    }
+        
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionServicios))]
+    public void EliminarDependencia_UsuarioAdminSistemaPeroMiembroNoPuedeEliminarLanzaExcepcion()
+    {
+        Usuario adminSistema = CrearAdministradorSistema();
+        adminSistema.Id = 40;
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        proyecto.AsignarMiembro(adminSistema);
+        Tarea tarea1 = CrearTarea();
+        Tarea tarea2 = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
+
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
+        _gestorTareas.EliminarDependenciaDeTarea(adminSistema, tarea1.Id, tarea2.Id, proyecto.Id);
+    }
 
 }
