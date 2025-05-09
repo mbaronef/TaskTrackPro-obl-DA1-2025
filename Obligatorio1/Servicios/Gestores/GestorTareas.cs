@@ -1,4 +1,5 @@
 ﻿using Dominio;
+using Dominio.Excepciones;
 using Servicios.Excepciones;
 //using servicios.utilidades;
 
@@ -109,8 +110,15 @@ public class GestorTareas
         _gestorProyectos.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto); // cambiar con TDD
         Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
         Tarea tareaDependencia = ObtenerTareaPorId(proyecto.Id, idTareaDependencia);
-        Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
-        tarea.AgregarDependencia(dependencia);
+        try
+        {
+            Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
+            tarea.AgregarDependencia(dependencia);
+        }
+        catch (ExcepcionDominio ex)
+        {
+            throw new ExcepcionServicios("Error al agregar dependencia");
+        }
         proyecto.NotificarMiembros($"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{proyecto.Nombre}' del tipo {tipoDependencia} con la tarea id {tareaDependencia.Id}.");
     }
     
