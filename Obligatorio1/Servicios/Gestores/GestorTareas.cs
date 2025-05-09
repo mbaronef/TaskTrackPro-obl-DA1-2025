@@ -107,7 +107,7 @@ public class GestorTareas
         string tipoDependencia)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
-        _gestorProyectos.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto); // cambiar con TDD
+        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         Tarea tarea = ObtenerTareaPorId(proyecto.Id, idTarea);
         Tarea tareaDependencia = ObtenerTareaPorId(proyecto.Id, idTareaDependencia);
         try
