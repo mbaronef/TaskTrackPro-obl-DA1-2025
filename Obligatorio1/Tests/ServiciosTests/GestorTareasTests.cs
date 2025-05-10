@@ -635,4 +635,23 @@ public class GestorTareasTests
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
     }
 
+    [TestMethod]
+    public void SeNotificaLaAsignacionDeUnMiembroALosMiembrosDeLaTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        string mensajeEsperado = $"Se cambió el miembro {_noAdmin.ToString()} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
+        
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
+    }
 }
