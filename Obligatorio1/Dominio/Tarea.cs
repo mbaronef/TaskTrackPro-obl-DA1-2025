@@ -42,8 +42,8 @@ public class Tarea
         if (objeto is null)
             throw new ExcepcionDominio(mensajeError);
     }
-    
-    private void CalcularFechaFinMasTemprana()
+
+    public void CalcularFechaFinMasTemprana()
     {
         FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias - 1);
     }
