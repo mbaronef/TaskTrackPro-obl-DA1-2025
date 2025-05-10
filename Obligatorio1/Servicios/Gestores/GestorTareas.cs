@@ -143,6 +143,24 @@ public class GestorTareas
         NotificarCambio($"miembro {miembro.ToString()}", idTarea, idProyecto);
     }
     
+    public void AgregarRecursoATarea(Usuario solicitante, int idTarea, int idProyecto, Recurso nuevoRecurso)
+    {
+        ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        
+        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        tarea.AgregarRecurso(nuevoRecurso);
+        NotificarCambio($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
+    }
+
+    public void EliminarRecursoDeTarea(Usuario solicitante, int idTarea, int idProyecto, Recurso recurso)
+    {
+        ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        ValidarRecursoExistente(recurso, idTarea, idProyecto);
+        
+        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        tarea.EliminarRecurso(recurso.Id);
+        NotificarCambio($"recurso {recurso.Nombre}", idTarea, idProyecto);
+    }
     private Proyecto ObtenerProyecto(int idProyecto){
         return _gestorProyectos.ObtenerProyectoPorId(idProyecto);
     }
@@ -170,5 +188,12 @@ public class GestorTareas
     private void Notificar(Proyecto proyecto, string mensaje)
     {
         proyecto.NotificarMiembros(mensaje);
+    }
+
+    private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
+    {
+        Tarea tarea = ObtenerTareaPorId(idTarea, idProyecto);
+        if (!tarea.RecursosNecesarios.Contains(recurso))
+            throw new ExcepcionServicios("El recurso no está asignado a la tarea.");
     }
 }

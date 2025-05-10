@@ -433,7 +433,9 @@ public class TareaTests
     public void DarListaRecursosNecesarios_DevuelveListaDeRecursosNecesarios()
     {
         Recurso necesario = CrearRecursoValido();
+        necesario.Id = 1;
         Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion" );
+        necesario2.Id = 2;
         Tarea tarea = CrearTareaValida();
         tarea.AgregarRecurso(necesario);
         tarea.AgregarRecurso(necesario2);

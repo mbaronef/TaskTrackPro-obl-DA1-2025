@@ -77,4 +77,20 @@ public class Recurso
             throw new ExcepcionDominio($"El atributo {nombreAtributo} no puede ser vacío");
         }
     }
+    
+    public override bool Equals(object? otro)
+    {
+        Recurso otroRecurso = otro as Recurso;
+        return otroRecurso != null && Id == otroRecurso.Id;
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
+    
+    public override string ToString()
+    {
+        return $"Nombre: {Nombre}, tipo: {Tipo}, descripción: {Descripcion}";
+    }
 }
