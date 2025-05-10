@@ -152,13 +152,12 @@ public class TareaTests
     }
     
     [TestMethod]
-    public void CambiarEstado_AEnProcesoIncrementaCantidadDeTareasUsando()
+    public void CambiarEstado_AEnProcesoModificaLaFechaInicioMasTemprana()
     {
-        Recurso recurso = CrearRecursoValido();
         Tarea tarea = CrearTareaValida();
-        tarea.AgregarRecurso(recurso);
+        tarea.ModificarFechaInicioMasTemprana(DateTime.Today.AddDays(5));
         tarea.CambiarEstado(EstadoTarea.EnProceso);
-        Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
+        Assert.AreEqual(DateTime.Today, tarea.FechaInicioMasTemprana);
     }
     
     [TestMethod]
@@ -171,6 +170,8 @@ public class TareaTests
         tarea.CambiarEstado(EstadoTarea.Completada);
         Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
         Assert.AreEqual(DateTime.Today, tarea.FechaDeEjecucion);
+        Assert.AreEqual(DateTime.Today, tarea.FechaFinMasTemprana);
+        Assert.AreEqual(1,tarea.DuracionEnDias);
     }
 
     [TestMethod]
@@ -492,6 +493,28 @@ public class TareaTests
         tarea.AgregarDependencia(dependencia); 
         Assert.IsTrue(tarea.Dependencias.Contains(dependencia));
         Assert.AreEqual(1, tarea.Dependencias.Count);
+    }
+    
+    [TestMethod]
+    public void AgregarDependencia_AgregarDependenciaAListaYModificaEstado()
+    {
+        Tarea tarea = CrearTareaValida();
+        Dependencia dependencia = CrearDependenciaValida();
+        tarea.AgregarDependencia(dependencia); 
+        Assert.AreEqual(EstadoTarea.Bloqueada, tarea.Estado);
+    }
+    
+    [TestMethod]
+    public void AgregarDependenciaCompletada_AgregarDependenciaAListaYModificaEstado()
+    {
+        Tarea tarea = CrearTareaValida();
+        
+        Dependencia dependencia = CrearDependenciaValida();
+        dependencia.Tarea.CambiarEstado(EstadoTarea.EnProceso);
+        dependencia.Tarea.CambiarEstado(EstadoTarea.Completada);
+        
+        tarea.AgregarDependencia(dependencia); 
+        Assert.AreEqual(EstadoTarea.Pendiente, tarea.Estado);
     }
     
     [TestMethod]

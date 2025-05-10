@@ -88,9 +88,19 @@ public class GestorTareas
     {
         Proyecto proyecto = ObtenerProyecto(idProyecto);
         _gestorProyectos.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
+        VerificarEstadoEditablePorUsuario(nuevoEstado);
+        
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.CambiarEstado(nuevoEstado);
+        
+        CaminoCritico.CalcularCaminoCritico(proyecto);
+        
         Notificar(proyecto, $"Se cambió el estado de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}' a {nuevoEstado}.");
+
+        if (nuevoEstado == EstadoTarea.Completada)
+        {
+            ActualizarEstadosTareasDelProyecto(proyecto);
+        }
     }
 
     public void AgregarDependenciaATarea(Usuario solicitante, int idTarea, int idTareaDependencia, int idProyecto, string tipoDependencia)
@@ -189,10 +199,21 @@ public class GestorTareas
         proyecto.NotificarMiembros(mensaje);
     }
 
+    private void VerificarEstadoEditablePorUsuario(EstadoTarea estado)
+    {
+        if (estado != EstadoTarea.EnProceso && estado != EstadoTarea.Completada)
+            throw new ExcepcionServicios("No se puede cambiar manualmente a un estado distinto de 'En Proceso' o 'Completada'.");
+    }
+
     private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
     {
         Tarea tarea = ObtenerTareaPorId(idTarea, idProyecto);
         if (!tarea.RecursosNecesarios.Contains(recurso))
             throw new ExcepcionServicios("El recurso no está asignado a la tarea.");
+    }
+
+    private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
+    {
+        proyecto.Tareas.ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
     }
 }

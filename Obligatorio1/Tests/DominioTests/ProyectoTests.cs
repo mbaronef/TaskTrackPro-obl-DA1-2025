@@ -655,10 +655,11 @@ public class ProyectoTests
 
     private Tarea CrearTarea(int id = 1, DateTime? inicio = null)
     {
-        return new Tarea("titulo", "descripcion", 5, DateTime.Today)
+        Tarea tarea = new Tarea("titulo", "descripcion", 5, DateTime.Today)
         {
             Id = id,
-            FechaInicioMasTemprana = inicio ?? DateTime.Today
         };
+        tarea.ModificarFechaInicioMasTemprana(inicio ?? DateTime.Today);
+        return tarea;
     }
 }
