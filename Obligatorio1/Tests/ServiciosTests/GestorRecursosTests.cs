@@ -392,7 +392,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarNombreRecurso(_adminSistema, recurso.Id, "Otro nombre");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', Tipo: 'Humano', Descripción: 'Un analista Senior con experiencia'.", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -411,7 +411,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarNombreRecurso(_adminSistema, recurso.Id, "Otro nombre");
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', Tipo: 'Humano', Descripción: 'Un analista Senior con experiencia'.", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -425,7 +425,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarTipoRecurso(_adminSistema, recurso.Id, "Otro tipo");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', Tipo: 'Otro tipo', Descripción: 'Un analista Senior con experiencia'.", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -444,7 +444,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarTipoRecurso(_adminSistema, recurso.Id, "Otro tipo");
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', Tipo: 'Otro tipo', Descripción: 'Un analista Senior con experiencia'.", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -458,7 +458,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistema, recurso.Id, "Otra descripción");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', Tipo: 'Humano', Descripción: 'Otra descripción'.", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -477,7 +477,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistema, recurso.Id, "Otra descripción");
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', Tipo: 'Humano', Descripción: 'Otra descripción'.", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 

@@ -242,7 +242,7 @@ public class RecursoTests
     public void ToStringFuncionaCorrectamente()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
-        string resultadoEsperado = $"Nombre: {recurso.Nombre}, tipo: {recurso.Tipo}, descripción: {recurso.Descripcion}";
+        string resultadoEsperado = $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'";
         Assert.AreEqual(resultadoEsperado, recurso.ToString());
     }
 }

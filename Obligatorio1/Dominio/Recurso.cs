@@ -91,6 +91,6 @@ public class Recurso
     
     public override string ToString()
     {
-        return $"Nombre: {Nombre}, tipo: {Tipo}, descripción: {Descripcion}";
+        return $"Nombre: '{Nombre}', tipo: '{Tipo}', descripción: '{Descripcion}'";
     }
 }
