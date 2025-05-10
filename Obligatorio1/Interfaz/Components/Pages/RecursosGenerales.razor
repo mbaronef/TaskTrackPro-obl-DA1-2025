@@ -12,7 +12,7 @@
     <button class="btn btn-primary mb-3" @onclick="CrearNuevoRecurso">Crear nuevo recurso</button>
 }
 
-@if (GestorRecursos.Recursos.Count == 0)
+@if (GestorRecursos.ObtenerRecursosGenerales().Count == 0)
 {
     <p>No hay recursos disponibles.</p>
 }
@@ -31,7 +31,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var recurso in GestorRecursos.Recursos)
+        @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosGenerales())
         {
             <tr>
                 <td>@recurso.Nombre</td>

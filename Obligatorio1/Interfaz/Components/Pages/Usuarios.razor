@@ -26,7 +26,7 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (Usuario usuario in GestorUsuarios.Usuarios)
+        @foreach (Usuario usuario in GestorUsuarios.Usuarios.ObtenerTodos())
         {
             <tr>
                 <td>@usuario.Nombre</td>
