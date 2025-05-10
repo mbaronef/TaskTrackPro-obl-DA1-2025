@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Dominio.Excepciones;
 
 namespace Dominio;
@@ -142,10 +143,7 @@ public class Tarea
     {
         if (Estado == EstadoTarea.Bloqueada || Estado == EstadoTarea.Pendiente)
         {
-            bool dependenciasFSCompletas = Dependencias.Where(d => d.Tipo == "FS").All(d => d.Tarea.Estado == EstadoTarea.Completada);
-            bool dependenciasSSEnProcesoOCompletadas = Dependencias.Where(d => d.Tipo == "SS")
-                .All(d => d.Tarea.Estado == EstadoTarea.EnProceso || d.Tarea.Estado == EstadoTarea.Completada);
-            if (dependenciasFSCompletas && dependenciasSSEnProcesoOCompletadas)
+            if (SePuedeRealizar())
             {
                 CambiarEstado(EstadoTarea.Pendiente);
             }
@@ -300,7 +298,16 @@ public class Tarea
             recurso.DecrementarCantidadDeTareasUsandolo();
         }
     }
-    
+
+    private bool SePuedeRealizar()
+    {
+        bool dependenciasFSCompletas =
+            Dependencias.Where(d => d.Tipo == "FS").All(d => d.Tarea.Estado == EstadoTarea.Completada);
+        bool dependenciasSSEnProcesoOCompletadas = Dependencias.Where(d => d.Tipo == "SS")
+            .All(d => d.Tarea.Estado == EstadoTarea.EnProceso || d.Tarea.Estado == EstadoTarea.Completada);
+        return dependenciasFSCompletas && dependenciasSSEnProcesoOCompletadas;
+    }
+
     public override bool Equals(object obj)
     {
         if (obj is not Tarea otra) return false;
