@@ -1,6 +1,6 @@
-using Dominio;
 using Dominio.Excepciones;
 
+namespace Dominio;
 public class Tarea
 {
     public int Id {get; set;}
