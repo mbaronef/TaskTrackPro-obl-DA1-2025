@@ -605,4 +605,20 @@ public class GestorTareasTests
         Assert.IsTrue(tarea.UsuariosAsignados.Contains(_noAdmin));
     }
 
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoAdminNoPuedeAgregarMiembroATarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_noAdmin, tarea.Id, proyecto.Id, _noAdmin);
+    }
+
 }
