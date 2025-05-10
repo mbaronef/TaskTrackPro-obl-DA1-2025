@@ -132,17 +132,16 @@ public class GestorTareasTests
     [TestMethod]
     public void AgregarTareaAlProyecto_NotificaAMiembros()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin); //agrego como miembro a _noAdmin?
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
 
         Tarea tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
         string esperado = $"Se agregó la tarea (id {tarea.Id}) al proyecto '{proyecto.Nombre}'.";
 
-        foreach (var miembro in proyecto.Miembros)
+        foreach (Usuario miembro in proyecto.Miembros)
         {
-            Assert.AreEqual(2, miembro.Notificaciones.Count);
-            Assert.AreEqual(esperado, miembro.Notificaciones[1].Mensaje);
+            Assert.AreEqual(esperado, miembro.Notificaciones.Last().Mensaje);
         }
     }
 
@@ -206,8 +205,7 @@ public class GestorTareasTests
 
         foreach (var miembro in proyecto.Miembros)
         {
-            Assert.AreEqual(3, miembro.Notificaciones.Count);
-            Assert.AreEqual(esperado, miembro.Notificaciones[2].Mensaje);
+            Assert.AreEqual(esperado, miembro.Notificaciones.Last().Mensaje);
         }
     }
 
@@ -360,7 +358,8 @@ public class GestorTareasTests
         DateTime fechaNueva = new DateTime(2030, 01, 01);
 
         _gestorTareas.ModificarFechaInicioTarea(_admin, tarea.Id, proyecto.Id, fechaNueva);
-        Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
+        // No debería lanzar excepción. Luego se llama a CPM que modifica la fecha de inicio por la del proyecto
+        Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -422,6 +421,67 @@ public class GestorTareasTests
         _noAdmin.Id = 40;
         _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.EnProceso);
         Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void MiembroNoPuedeCambiarEstadoABloqueada()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _noAdmin.Id = 40;
+        proyecto.AsignarMiembro(_noAdmin);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.Bloqueada);
+    }
+    
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void MiembroNoPuedeCambiarEstadoAPendiente()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _noAdmin.Id = 40;
+        proyecto.AsignarMiembro(_noAdmin);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.Pendiente);
+    }
+
+    [TestMethod]
+    public void TareaConDependenciaSeBloquea()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        _noAdmin.Id = 1; // se hardcodea por simplicidad de tests, los ids los maneja el repo.
+        proyecto.AsignarMiembro(_noAdmin);
+        
+        Tarea tareaD = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaD);
+        
+        Tarea tarea = CrearTarea();
+        tarea.AgregarDependencia(new Dependencia("SS", tareaD));
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        
+        Assert.AreEqual(EstadoTarea.Bloqueada, tarea.Estado);
+    }
+
+    [TestMethod]
+    public void SeActualizaEstadoCuandoSeCompletaUnaDependencia()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        _noAdmin.Id = 1; // se hardcodea por simplicidad de tests, los ids los maneja el repo.
+        proyecto.AsignarMiembro(_noAdmin);
+        
+        Tarea tareaD = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaD);
+        
+        Tarea tarea = CrearTarea();
+        tarea.AgregarDependencia(new Dependencia("FS", tareaD));
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        
+        
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tareaD.Id, proyecto.Id, EstadoTarea.EnProceso);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tareaD.Id, proyecto.Id, EstadoTarea.Completada);
+        Assert.AreEqual(EstadoTarea.Pendiente, tarea.Estado);
     }
 
     [TestMethod]

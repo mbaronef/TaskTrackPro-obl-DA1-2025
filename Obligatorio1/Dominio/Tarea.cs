@@ -7,10 +7,10 @@ public class Tarea
     public string Titulo { get; set; }
     public string Descripcion { get; set; }
     public int DuracionEnDias { get; set; }
-    public DateTime FechaInicioMasTemprana { get; set; }
+    public DateTime FechaInicioMasTemprana { get; private set; }
     public DateTime FechaFinMasTemprana { get; private set; }
     public DateTime FechaDeEjecucion { get; private set; } = DateTime.MinValue;
-    public EstadoTarea Estado { get; set; } = EstadoTarea.Pendiente;
+    public EstadoTarea Estado { get; private set; } = EstadoTarea.Pendiente;
     public float Holgura {get; set;}
     public List<Usuario> UsuariosAsignados { get; }
     public List<Recurso> RecursosNecesarios { get; }
@@ -42,10 +42,16 @@ public class Tarea
         EstadoPendienteACompletada(nuevoEstado);
         EstadoBloqueadaACompletada(nuevoEstado);
         Estado = nuevoEstado;
-        if (nuevoEstado == EstadoTarea.Completada)
+        if (nuevoEstado == EstadoTarea.EnProceso)
+        {
+            ModificarFechaInicioMasTemprana(DateTime.Today);
+        }
+        else if (nuevoEstado == EstadoTarea.Completada)
         {
             LiberaRecursos();
             FechaDeEjecucion = DateTime.Today;
+            FechaFinMasTemprana = DateTime.Today;
+            DuracionEnDias = (int)(FechaFinMasTemprana - FechaInicioMasTemprana).TotalDays + 1;
         }
     }
     
@@ -82,6 +88,7 @@ public class Tarea
         ValidarObjetoNoNull(dependencia,"No se puede agregar una dependencia null.");
         VerificarDependenciaNoEstaAgregada(dependencia);
         Dependencias.Add(dependencia);
+        ActualizarEstadoBloqueadaOPendiente();
     }
     
     public void EliminarDependencia(int idTarea)
@@ -89,6 +96,7 @@ public class Tarea
         Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
         ValidarObjetoNoNull(dependenciaAEliminar,"La dependencia no se encuentra dentro de la lista de dependencias.");
         Dependencias.Remove(dependenciaAEliminar);
+        ActualizarEstadoBloqueadaOPendiente();
     }
     
     public void ModificarTitulo(string tituloNuevo)
@@ -128,6 +136,24 @@ public class Tarea
     public bool EsCritica()
     {
         return Holgura == 0;
+    }
+    
+    public void ActualizarEstadoBloqueadaOPendiente()
+    {
+        if (Estado == EstadoTarea.Bloqueada || Estado == EstadoTarea.Pendiente)
+        {
+            bool dependenciasFSCompletas = Dependencias.Where(d => d.Tipo == "FS").All(d => d.Tarea.Estado == EstadoTarea.Completada);
+            bool dependenciasSSEnProcesoOCompletadas = Dependencias.Where(d => d.Tipo == "SS")
+                .All(d => d.Tarea.Estado == EstadoTarea.EnProceso || d.Tarea.Estado == EstadoTarea.Completada);
+            if (dependenciasFSCompletas && dependenciasSSEnProcesoOCompletadas)
+            {
+                CambiarEstado(EstadoTarea.Pendiente);
+            }
+            else
+            {
+                CambiarEstado(EstadoTarea.Bloqueada);
+            }
+        }
     }
     
     public bool EsMiembro(Usuario usuario)

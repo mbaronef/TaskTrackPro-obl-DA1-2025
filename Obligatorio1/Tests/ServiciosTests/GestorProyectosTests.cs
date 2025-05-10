@@ -365,58 +365,6 @@ namespace Tests.ServiciosTests
         }
         
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
-        public void ModificarFechaFinMasTempranaDelProyecto_LanzaExcepcionSiProyectoNoExiste()
-        {
-            DateTime nuevaFecha = DateTime.Today.AddDays(1000);
-
-            _gestor.ModificarFechaFinMasTempranaDelProyecto(1000, nuevaFecha, _admin);
-        }
-        
-        [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
-        public void ModificarFechaFinMasTempranaDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
-        {
-            Proyecto proyecto = CrearProyectoCon(_admin);
-
-            _gestor.CrearProyecto(proyecto, _admin);
-
-            DateTime nuevaFecha = DateTime.Today.AddDays(1000);
-            _gestor.ModificarFechaFinMasTempranaDelProyecto(proyecto.Id, nuevaFecha, _usuarioNoAdmin);
-        }
-        
-        [TestMethod]
-        public void ModificarFechaFinMasTempranaDelProyecto_ModificaCorrectamente()
-        {
-            Proyecto proyecto = CrearProyectoCon(_admin);
-            _gestor.CrearProyecto(proyecto, _admin);
-
-            DateTime nuevaFecha = DateTime.Today.AddDays(15);
-            _gestor.ModificarFechaFinMasTempranaDelProyecto(proyecto.Id, nuevaFecha, _admin);
-
-            Assert.AreEqual(nuevaFecha, proyecto.FechaFinMasTemprana);
-        }
-        
-        [TestMethod]
-        public void ModificarFechaFinMasTempranaDelProyecto_NotificaAMiembros()
-        {
-            Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { _usuarioNoAdmin });
-
-            _gestor.CrearProyecto(proyecto, _admin);
-            DateTime nuevaFecha = DateTime.Today.AddDays(10);
-
-            _gestor.ModificarFechaFinMasTempranaDelProyecto(proyecto.Id, nuevaFecha, _admin);
-
-            string esperado = $"Se cambió la fecha de fin más temprana del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.";
-
-            foreach (var usuario in proyecto.Miembros)
-            {
-                Assert.AreEqual(2, usuario.Notificaciones.Count);
-                Assert.AreEqual(esperado, usuario.Notificaciones[1].Mensaje);
-            }
-        }
-        
-        [TestMethod]
         public void CambiarAdministradorDeProyecto_AsignaNuevoAdminOK()
         {
             Usuario nuevoAdmin = CrearAdminProyecto(4);

@@ -1,6 +1,7 @@
 ﻿using Dominio;
 using Dominio.Excepciones;
 using Servicios.Excepciones;
+using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
@@ -23,8 +24,7 @@ public class GestorTareas
         
         proyecto.AgregarTarea(nuevaTarea);
 
-        // CPM: Recalcular ruta crítica del proyecto tras agregar nueva tarea
-        // proyecto.CalcularRutaCritica();
+        CaminoCritico.CalcularCaminoCritico(proyecto);
 
         Notificar(proyecto, $"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
     }
@@ -34,8 +34,7 @@ public class GestorTareas
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         proyecto.EliminarTarea(idTareaAEliminar);
 
-        // CPM: Recalcular ruta crítica tras eliminar tarea
-        // proyecto.CalcularRutaCritica();
+        CaminoCritico.CalcularCaminoCritico(proyecto);
 
         Notificar(proyecto, $"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
     }
@@ -68,8 +67,8 @@ public class GestorTareas
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
         tarea.ModificarDuracion(nuevaDuracion);
 
-        // CPM: Recalcular ruta crítica tras modificar duración
-        // ObtenerProyecto(idProyecto).CalcularRutaCritica();
+        Proyecto proyecto = ObtenerProyecto(idProyecto);
+        CaminoCritico.CalcularCaminoCritico(proyecto);
 
         NotificarCambio("duración", idTarea, idProyecto);
     }
@@ -79,8 +78,8 @@ public class GestorTareas
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
-        // CPM: Posible impacto si se considera fecha de inicio en el cálculo
-        // ObtenerProyecto(idProyecto).CalcularRutaCritica();
+        Proyecto proyecto = ObtenerProyecto(idProyecto);
+        CaminoCritico.CalcularCaminoCritico(proyecto);
 
         NotificarCambio("fecha de inicio", idTarea, idProyecto);
     }
@@ -89,9 +88,19 @@ public class GestorTareas
     {
         Proyecto proyecto = ObtenerProyecto(idProyecto);
         _gestorProyectos.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
+        VerificarEstadoEditablePorUsuario(nuevoEstado);
+        
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.CambiarEstado(nuevoEstado);
+        
+        CaminoCritico.CalcularCaminoCritico(proyecto);
+        
         Notificar(proyecto, $"Se cambió el estado de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}' a {nuevoEstado}.");
+
+        if (nuevoEstado == EstadoTarea.Completada)
+        {
+            ActualizarEstadosTareasDelProyecto(proyecto);
+        }
     }
 
     public void AgregarDependenciaATarea(Usuario solicitante, int idTarea, int idTareaDependencia, int idProyecto, string tipoDependencia)
@@ -104,12 +113,12 @@ public class GestorTareas
         {
             Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
             tarea.AgregarDependencia(dependencia);
+            CaminoCritico.CalcularCaminoCritico(proyecto);
         }
         catch (ExcepcionDominio)
         {
             throw new ExcepcionServicios("Error al agregar dependencia");
         }
-        // proyecto.CalcularRutaCritica(); -> manejar excepcion ciclos con catch.
 
         Notificar(proyecto, $"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{proyecto.Nombre}' del tipo {tipoDependencia} con la tarea id {tareaDependencia.Id}.");
     }
@@ -119,7 +128,7 @@ public class GestorTareas
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.EliminarDependencia(idTareaDependencia);
-        // proyecto.CalcularRutaCritica();
+        CaminoCritico.CalcularCaminoCritico(proyecto);
         Notificar(proyecto, $"Se eliminó la dependencia de la tarea id {idTareaDependencia} con la tarea id {idTarea} del proyecto '{proyecto.Nombre}'.");
     }
 
@@ -190,10 +199,21 @@ public class GestorTareas
         proyecto.NotificarMiembros(mensaje);
     }
 
+    private void VerificarEstadoEditablePorUsuario(EstadoTarea estado)
+    {
+        if (estado != EstadoTarea.EnProceso && estado != EstadoTarea.Completada)
+            throw new ExcepcionServicios("No se puede cambiar manualmente a un estado distinto de 'En Proceso' o 'Completada'.");
+    }
+
     private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
     {
         Tarea tarea = ObtenerTareaPorId(idTarea, idProyecto);
         if (!tarea.RecursosNecesarios.Contains(recurso))
             throw new ExcepcionServicios("El recurso no está asignado a la tarea.");
+    }
+
+    private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
+    {
+        proyecto.Tareas.ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
     }
 }
