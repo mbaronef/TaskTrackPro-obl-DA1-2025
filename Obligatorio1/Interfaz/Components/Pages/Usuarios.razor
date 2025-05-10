@@ -8,12 +8,11 @@
 {
     <p class="text-danger">Acceso denegado. Solo disponible para administradores del sistema.</p>
 } <!-- falta que al usuario que no sea admin sistema ni le aparezca esta opcion en el menu-->
-else
+@if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
 {
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3>USUARIOS:</h3>
-        <button class="btn btn-dark">Crear nuevo usuario</button>
-        <!-- falta funcionalidad para  crear un nuevo usuario-->
+        <NavLink href="/usuarios/crear" class="btn btn-dark">Crear nuevo usuario</NavLink>
     </div>
 
     <table class="table">

@@ -1,0 +1,72 @@
+@page "/usuarios/crear"
+@inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@inject GestorUsuarios GestorUsuarios
+@using Dominio
+@using Servicios.Gestores
+@inject NavigationManager NavigationManager
+
+
+<h3>Crear nuevo usuario</h3>
+
+@if (!UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+{
+    <p class="text-danger">Acceso denegado. Solo disponible para administradores del sistema.</p>
+}
+@if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+{
+    <EditForm Model="nuevoUsuario" OnValidSubmit="CrearUsuario">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Nombre:</label>
+            <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre" />
+        </div>
+        <div class="mb-3">
+            <label>Apellido:</label>
+            <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido" />
+        </div>
+        <div class="mb-3">
+            <label>Fecha de nacimiento:</label>
+            <InputDate class="form-control" @bind-Value="nuevoUsuario.FechaNacimiento" />
+        </div>
+        <div class="mb-3">
+            <label>Email:</label>
+            <InputText class="form-control" @bind-Value="nuevoUsuario.Email" />
+        </div>
+        <div class="mb-3">
+            <label>Contraseña:</label>
+            <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" />
+            <button class="btn btn-secondary mt-2" @onclick="GenerarContrasenaPorDefecto">Generar contraseña por defecto</button>
+        </div>
+
+        <button type="submit" class="btn btn-success">Crear nuevo usuario</button>
+    </EditForm>
+}
+
+<!-- aun no se guarda correctamente el usuario-->
+
+@code {
+    private UsuarioDTO nuevoUsuario = new UsuarioDTO();
+
+    private void GenerarContrasenaPorDefecto()
+    {
+        nuevoUsuario.Contrasena = "TaskTrackPro@2025";
+    }
+
+    private void CrearUsuario()
+    {
+        Usuario nuevo = GestorUsuarios.CrearUsuario(nuevoUsuario.Nombre, nuevoUsuario.Apellido, nuevoUsuario.FechaNacimiento, nuevoUsuario.Email, nuevoUsuario.Contrasena);
+        GestorUsuarios.AgregarUsuario(UsuarioActual.UsuarioLogueado, nuevo);
+        NavigationManager.NavigateTo("/usuarios");
+    }
+
+    public class UsuarioDTO
+    {
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public DateTime FechaNacimiento { get; set; }
+        public string Email { get; set; }
+        public string Contrasena { get; set; }
+    }
+}
