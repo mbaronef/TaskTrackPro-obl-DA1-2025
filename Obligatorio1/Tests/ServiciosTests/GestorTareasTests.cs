@@ -588,4 +588,19 @@ public class GestorTareasTests
         _gestorTareas.EliminarDependenciaDeTarea(adminSistema, tarea1.Id, tarea2.Id, proyecto.Id);
     }
 
+    [TestMethod]
+    public void AdminDeProyectoPuedeAgregarMiembroATarea()
+    {
+        Usuario admin = CrearAdministradorProyecto();
+        Proyecto proyecto = CrearYAgregarProyecto(admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        Assert.IsTrue(tarea.UsuariosAsignados.Contains(_noAdmin));
+    }
+
 }
