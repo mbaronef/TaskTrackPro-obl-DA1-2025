@@ -591,14 +591,16 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeAgregarMiembroATarea()
     {
-        Usuario admin = CrearAdministradorProyecto();
-        Proyecto proyecto = CrearYAgregarProyecto(admin);
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
         
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, admin, _noAdmin);
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
         Tarea tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
-        _gestorTareas.AgregarMiembroATarea(admin, tarea.Id, proyecto.Id, _noAdmin);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
 
         Assert.IsTrue(tarea.UsuariosAsignados.Contains(_noAdmin));
     }

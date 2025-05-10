@@ -123,6 +123,16 @@ public class GestorTareas
         Notificar(proyecto, $"Se eliminó la dependencia de la tarea id {idTareaDependencia} con la tarea id {idTarea} del proyecto '{proyecto.Nombre}'.");
     }
 
+    public void AgregarMiembroATarea(Usuario solicitante, int idTarea, int idProyecto, Usuario nuevoMiembro)
+    {
+        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        _gestorProyectos.VerificarUsuarioMiembroDelProyecto(nuevoMiembro.Id, proyecto);
+        
+        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        tarea.AsignarUsuario(nuevoMiembro);
+        NotificarCambio($"miembro {nuevoMiembro.ToString()}", idTarea, idProyecto);
+    }
+
     private Proyecto ObtenerProyecto(int idProyecto){
         return _gestorProyectos.ObtenerProyectoPorId(idProyecto);
     }

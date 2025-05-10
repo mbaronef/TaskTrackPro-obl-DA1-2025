@@ -109,4 +109,9 @@ public class Usuario
     {
         return Id.GetHashCode();
     }
+
+    public override string ToString()
+    {
+        return $"{Nombre} {Apellido} ({Email})";
+    }
 }
