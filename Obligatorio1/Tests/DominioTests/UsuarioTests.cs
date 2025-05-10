@@ -260,5 +260,13 @@ namespace Tests.DominioTests
             Assert.AreEqual(usuario1.GetHashCode(), usuario2.GetHashCode());
             Assert.AreNotEqual(usuario3.GetHashCode(), usuario1.GetHashCode());
         }
+
+        [TestMethod]
+        public void ToStringFuncionaCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            string resultadoEsperado = $"{usuario.Nombre} {usuario.Apellido} ({usuario.Email})";
+            Assert.AreEqual(resultadoEsperado,usuario.ToString());
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Dominio;
 using Dominio.Excepciones;
+using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Gestores;
 using Servicios.Utilidades;
@@ -18,6 +19,8 @@ public class GestorTareasTests
     public void Inicializar()
     {
         typeof(GestorTareas).GetField("_cantidadTareas", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        typeof(RepositorioProyectos).GetField("_cantidadProyectos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        
         _gestorProyectos = new GestorProyectos();
         _gestorTareas = new GestorTareas(_gestorProyectos);
         _admin = CrearAdministradorProyecto();
@@ -129,17 +132,16 @@ public class GestorTareasTests
     [TestMethod]
     public void AgregarTareaAlProyecto_NotificaAMiembros()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin); //agrego como miembro a _noAdmin?
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
 
         Tarea tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
         string esperado = $"Se agregó la tarea (id {tarea.Id}) al proyecto '{proyecto.Nombre}'.";
 
-        foreach (var miembro in proyecto.Miembros)
+        foreach (Usuario miembro in proyecto.Miembros)
         {
-            Assert.AreEqual(2, miembro.Notificaciones.Count);
-            Assert.AreEqual(esperado, miembro.Notificaciones[1].Mensaje);
+            Assert.AreEqual(esperado, miembro.Notificaciones.Last().Mensaje);
         }
     }
 
@@ -203,8 +205,7 @@ public class GestorTareasTests
 
         foreach (var miembro in proyecto.Miembros)
         {
-            Assert.AreEqual(3, miembro.Notificaciones.Count);
-            Assert.AreEqual(esperado, miembro.Notificaciones[2].Mensaje);
+            Assert.AreEqual(esperado, miembro.Notificaciones.Last().Mensaje);
         }
     }
 
@@ -215,8 +216,8 @@ public class GestorTareasTests
         Proyecto proyecto = CrearYAgregarProyecto(admin);
         Tarea tarea1 = CrearTarea();
         Tarea tarea2 = CrearTarea();
-        proyecto.AgregarTarea(tarea1);
-        proyecto.AgregarTarea(tarea2);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
         Tarea tareaObtenida1 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea1.Id);
         Tarea tareaObtenida2 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea2.Id);
@@ -231,7 +232,7 @@ public class GestorTareasTests
     {
         Usuario admin = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(admin);
-        Tarea tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, 20);
+        Tarea tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, -1);
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -357,7 +358,8 @@ public class GestorTareasTests
         DateTime fechaNueva = new DateTime(2030, 01, 01);
 
         _gestorTareas.ModificarFechaInicioTarea(_admin, tarea.Id, proyecto.Id, fechaNueva);
-        Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
+        // No debería lanzar excepción. Luego se llama a CPM que modifica la fecha de inicio por la del proyecto
+        Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -419,6 +421,67 @@ public class GestorTareasTests
         _noAdmin.Id = 40;
         _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.EnProceso);
         Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void MiembroNoPuedeCambiarEstadoABloqueada()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _noAdmin.Id = 40;
+        proyecto.AsignarMiembro(_noAdmin);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.Bloqueada);
+    }
+    
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void MiembroNoPuedeCambiarEstadoAPendiente()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _noAdmin.Id = 40;
+        proyecto.AsignarMiembro(_noAdmin);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.Pendiente);
+    }
+
+    [TestMethod]
+    public void TareaConDependenciaSeBloquea()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        _noAdmin.Id = 1; // se hardcodea por simplicidad de tests, los ids los maneja el repo.
+        proyecto.AsignarMiembro(_noAdmin);
+        
+        Tarea tareaD = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaD);
+        
+        Tarea tarea = CrearTarea();
+        tarea.AgregarDependencia(new Dependencia("SS", tareaD));
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        
+        Assert.AreEqual(EstadoTarea.Bloqueada, tarea.Estado);
+    }
+
+    [TestMethod]
+    public void SeActualizaEstadoCuandoSeCompletaUnaDependencia()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        _noAdmin.Id = 1; // se hardcodea por simplicidad de tests, los ids los maneja el repo.
+        proyecto.AsignarMiembro(_noAdmin);
+        
+        Tarea tareaD = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaD);
+        
+        Tarea tarea = CrearTarea();
+        tarea.AgregarDependencia(new Dependencia("FS", tareaD));
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        
+        
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tareaD.Id, proyecto.Id, EstadoTarea.EnProceso);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tareaD.Id, proyecto.Id, EstadoTarea.Completada);
+        Assert.AreEqual(EstadoTarea.Pendiente, tarea.Estado);
     }
 
     [TestMethod]
@@ -587,4 +650,272 @@ public class GestorTareasTests
         _gestorTareas.EliminarDependenciaDeTarea(adminSistema, tarea1.Id, tarea2.Id, proyecto.Id);
     }
 
+    [TestMethod]
+    public void AdminDeProyectoPuedeAgregarMiembroATarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        Assert.IsTrue(tarea.UsuariosAsignados.Contains(_noAdmin));
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoAdminNoPuedeAgregarMiembroATarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_noAdmin, tarea.Id, proyecto.Id, _noAdmin);
+    }
+    
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoSePuedeAgregarMiembroATareaSiNoEsMiembroDelProyecto()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+    }
+
+    [TestMethod]
+    public void SeNotificaLaAsignacionDeUnMiembroALosMiembrosDeLaTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        string mensajeEsperado = $"Se cambió el miembro {_noAdmin.ToString()} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
+        
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
+    }
+    
+    [TestMethod]
+    public void AdminDeProyectoPuedeEliminarMiembroDeTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+        _gestorTareas.EliminarMiembroDeTarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        Assert.IsFalse(tarea.UsuariosAsignados.Contains(_noAdmin));
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoAdminNoPuedeEliminarMiembroDeTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+        _gestorTareas.EliminarMiembroDeTarea(_noAdmin, tarea.Id, proyecto.Id, _noAdmin);
+    }
+    
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoSePuedeEliminarNoMiembroDeTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        
+        _gestorTareas.EliminarMiembroDeTarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+    }
+
+    [TestMethod]
+    public void SeNotificaLaEliminacionDeUnMiembroALosMiembrosDeLaTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+        _gestorTareas.EliminarMiembroDeTarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        string mensajeEsperado = $"Se cambió el miembro {_noAdmin.ToString()} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
+        
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
+    }
+    
+    [TestMethod]
+    public void AdminDeProyectoPuedeAgregarRecursoATarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+
+        Assert.IsTrue(tarea.RecursosNecesarios.Contains(recurso));
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoAdminNoPuedeAgregarRecursoATarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarRecursoATarea(_noAdmin, tarea.Id, proyecto.Id, recurso);
+    }
+
+    [TestMethod]
+    public void SeNotificaElAgregadoDeUnRecursoALosMiembrosDeLaTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+
+        string mensajeEsperado = $"Se cambió el recurso {recurso.Nombre} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
+        
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
+    }
+    
+    [TestMethod]
+    public void AdminDeProyectoPuedeEliminarRecursoNecesarioDeTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
+
+        Assert.IsFalse(tarea.RecursosNecesarios.Contains(recurso));
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoAdminNoPuedeEliminarRecursoDeTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.EliminarRecursoDeTarea(_noAdmin, tarea.Id, proyecto.Id, recurso);
+    }
+    
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoSePuedeEliminarRecursoDeTareaNoExistente()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
+    }
+
+    [TestMethod]
+    public void SeNotificaLaEliminacionDeUnRecursoALosMiembrosDeLaTarea()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
+
+        string mensajeEsperado = $"Se cambió el recurso {recurso.Nombre} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
+        
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
+    }
 }

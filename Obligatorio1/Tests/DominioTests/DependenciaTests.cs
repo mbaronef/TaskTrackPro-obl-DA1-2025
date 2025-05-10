@@ -75,5 +75,52 @@ public class DependenciaTests
         Dependencia dependencia = new Dependencia("FF", _tarea);
     }
     
+    [TestMethod]
+    public void EqualsRetornaTrueSiLasTareasYTiposSonIguales() 
+    {
+        Dependencia dependencia1 = new Dependencia("SS", _tarea);
+        Dependencia dependencia2 = new Dependencia("SS", _tarea);
+        bool sonIguales = dependencia1.Equals(dependencia2);
+        Assert.IsTrue(sonIguales); 
+    }
 
+    [TestMethod]
+    public void EqualsRetornaFalseSiLosTiposNoSonIguales()
+    {
+        Dependencia dependencia1 = new Dependencia("FS", _tarea);
+        Dependencia dependencia2 = new Dependencia("SS", _tarea);
+        bool sonIguales = dependencia1.Equals(dependencia2);
+        Assert.IsFalse(sonIguales); 
+    }
+
+    [TestMethod]
+    public void EqualsRetornaFalseSiUnObjetoEsNull()
+    {
+        Dependencia dependencia = new Dependencia("SS", _tarea);
+        bool sonIguales = dependencia.Equals(null);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod]
+    public void EqualsRetornaFalseSiUnObjetoNoEsTarea()
+    { 
+        Dependencia dependencia = new Dependencia("SS", _tarea);
+        int otro = 0; 
+        bool sonIguales = dependencia.Equals(otro); 
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod]
+    public void GetHashCodeFuncionaOk()
+    {
+        Dependencia dependencia1 = new Dependencia("SS", _tarea);
+        Dependencia dependencia2 = new Dependencia("SS", _tarea);
+
+        Tarea nueva = new Tarea("titulo", "descripcion", 6, DateTime.Now);
+        nueva.Id = 2;
+        Dependencia dependencia3 = new Dependencia("SS", nueva);
+        
+        Assert.AreEqual(dependencia1.GetHashCode(), dependencia2.GetHashCode());
+        Assert.AreNotEqual(dependencia3.GetHashCode(), dependencia1.GetHashCode());
+    }
 }

@@ -16,8 +16,7 @@ public static class CaminoCritico
             {
                 if (!tarea.Dependencias.Any())
                 {
-                    tarea.FechaInicioMasTemprana = proyecto.FechaInicio;
-                    tarea.CalcularFechaFinMasTemprana();
+                    tarea.ModificarFechaInicioMasTemprana(proyecto.FechaInicio);
                 }
                 else
                 {
@@ -26,6 +25,8 @@ public static class CaminoCritico
             }
 
             proyecto.FechaFinMasTemprana = tareas.Max(t => t.FechaFinMasTemprana);
+            proyecto.NotificarMiembros(
+                $"Se cambió la fecha de fin más temprana del proyecto '{proyecto.Nombre}' a '{proyecto.FechaFinMasTemprana:dd/MM/yyyy}'.");
 
             Dictionary<Tarea, List<Tarea>> sucesoras = ObtenerSucesorasPorTarea(tareas);
             CalcularHolguras(tareasOrdenTopologico, sucesoras, proyecto);
@@ -99,8 +100,7 @@ public static class CaminoCritico
                 fechas.Add(tareaAnterior.FechaInicioMasTemprana);
             }
         }
-        tarea.FechaInicioMasTemprana = fechas.Max();
-        tarea.CalcularFechaFinMasTemprana();
+        tarea.ModificarFechaInicioMasTemprana(fechas.Max());
     }
 
     private static Dictionary<Tarea, List<Tarea>> ObtenerSucesorasPorTarea(List<Tarea> tareas)

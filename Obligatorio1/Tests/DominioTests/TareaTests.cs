@@ -152,13 +152,12 @@ public class TareaTests
     }
     
     [TestMethod]
-    public void CambiarEstado_AEnProcesoIncrementaCantidadDeTareasUsando()
+    public void CambiarEstado_AEnProcesoModificaLaFechaInicioMasTemprana()
     {
-        Recurso recurso = CrearRecursoValido();
         Tarea tarea = CrearTareaValida();
-        tarea.AgregarRecurso(recurso);
+        tarea.ModificarFechaInicioMasTemprana(DateTime.Today.AddDays(5));
         tarea.CambiarEstado(EstadoTarea.EnProceso);
-        Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
+        Assert.AreEqual(DateTime.Today, tarea.FechaInicioMasTemprana);
     }
     
     [TestMethod]
@@ -171,6 +170,8 @@ public class TareaTests
         tarea.CambiarEstado(EstadoTarea.Completada);
         Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
         Assert.AreEqual(DateTime.Today, tarea.FechaDeEjecucion);
+        Assert.AreEqual(DateTime.Today, tarea.FechaFinMasTemprana);
+        Assert.AreEqual(1,tarea.DuracionEnDias);
     }
 
     [TestMethod]
@@ -433,7 +434,9 @@ public class TareaTests
     public void DarListaRecursosNecesarios_DevuelveListaDeRecursosNecesarios()
     {
         Recurso necesario = CrearRecursoValido();
+        necesario.Id = 1;
         Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion" );
+        necesario2.Id = 2;
         Tarea tarea = CrearTareaValida();
         tarea.AgregarRecurso(necesario);
         tarea.AgregarRecurso(necesario2);
@@ -493,6 +496,28 @@ public class TareaTests
     }
     
     [TestMethod]
+    public void AgregarDependencia_AgregarDependenciaAListaYModificaEstado()
+    {
+        Tarea tarea = CrearTareaValida();
+        Dependencia dependencia = CrearDependenciaValida();
+        tarea.AgregarDependencia(dependencia); 
+        Assert.AreEqual(EstadoTarea.Bloqueada, tarea.Estado);
+    }
+    
+    [TestMethod]
+    public void AgregarDependenciaCompletada_AgregarDependenciaAListaYModificaEstado()
+    {
+        Tarea tarea = CrearTareaValida();
+        
+        Dependencia dependencia = CrearDependenciaValida();
+        dependencia.Tarea.CambiarEstado(EstadoTarea.EnProceso);
+        dependencia.Tarea.CambiarEstado(EstadoTarea.Completada);
+        
+        tarea.AgregarDependencia(dependencia); 
+        Assert.AreEqual(EstadoTarea.Pendiente, tarea.Estado);
+    }
+    
+    [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarDependencia_LanzarExcepcionSiDependenciaEsNull()
     {
@@ -541,6 +566,57 @@ public class TareaTests
         Dependencia dependencia = CrearDependenciaValida();
         tarea.AgregarDependencia(dependencia);
         tarea.AgregarDependencia(dependencia);
+    }
+    
+    [TestMethod]
+    public void EqualsRetornaTrueSiLosIdsSonIguales()
+    {
+        Tarea tarea1 = CrearTareaValida();
+        tarea1.Id = 1;
+        Tarea tarea2 = CrearTareaValida();
+        tarea2.Id = 1;
+        bool sonIguales = tarea1.Equals(tarea2);
+        Assert.IsTrue(sonIguales);
+    }
+    
+    [TestMethod]
+    public void EqualsRetornaFalseSiLosIdsNoSonIguales()
+    {
+        Tarea tarea1 = CrearTareaValida();
+        tarea1.Id = 1;
+        Tarea tarea2 = CrearTareaValida();
+        tarea2.Id = 2;
+        bool sonIguales = tarea1.Equals(tarea2);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod]
+    public void EqualsRetornaFalseSiUnObjetoEsNull()
+    { 
+        Tarea tarea = CrearTareaValida();
+        bool sonIguales = tarea.Equals(null);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod]
+    public void EqualsRetornaFalseSiUnObjetoNoEsTarea()
+    {
+        Tarea tarea = CrearTareaValida();
+        int otro = 0;
+        bool sonIguales = tarea.Equals(otro);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod] 
+    public void GetHashCodeFuncionaOk()
+    {
+        Tarea tarea1 = CrearTareaValida();
+        Tarea tarea2 = CrearTareaValida();
+        //ambos tienen mismo id ya que no hay un gestor que maneje ids
+        Tarea tarea3 = CrearTareaValida();
+        tarea3.Id = 3; //  id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
+        Assert.AreEqual(tarea1.GetHashCode(), tarea2.GetHashCode());
+        Assert.AreNotEqual(tarea3.GetHashCode(), tarea1.GetHashCode());
     }
     
     // HELPERS

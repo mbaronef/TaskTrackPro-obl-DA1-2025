@@ -8,9 +8,9 @@ public class Proyecto
     public int Id { get; set; }
     public string Nombre { get; set; }
     public string Descripcion { get; set; }
-    public List<Tarea> Tareas { get; set; }
+    public List<Tarea> Tareas { get; }
     public Usuario Administrador { get; set; }
-    public List<Usuario> Miembros { get; set; }
+    public List<Usuario> Miembros { get; }
     
     public DateTime FechaInicio { get; set; } = DateTime.Today.AddDays(1);
     
@@ -32,18 +32,14 @@ public class Proyecto
         FechaInicio = fechaInicio;
         Administrador = administrador;
         Miembros = miembros;
+        FechaInicio = fechaInicio;
         FechaFinMasTemprana = fechaInicio.AddDays(100000);
-    }
-    
-    public void AsignarId(int id)
-    {
-        Id = id;
     }
     
     public void AgregarTarea(Tarea tarea)
     {
         ValidarNoNulo(tarea,"No se puede agregar una tarea null.");
-        //ValidarTareaNoDuplicada(tarea);
+        ValidarTareaNoDuplicada(tarea);
         
         Tareas.Add(tarea);
     }
@@ -141,13 +137,7 @@ public class Proyecto
     {
         return Miembros.Any(u => u.Id == idUsuario);
     }
-
-    public bool EsMiembro(Usuario usuario)
-    {
-        return Miembros.Contains(usuario);
-    }
-
-
+    
     private Tarea BuscarTareaPorId(int id)
     {
         return Tareas.FirstOrDefault(t => t.Id == id);
@@ -176,7 +166,7 @@ public class Proyecto
             throw new ExcepcionDominio(mensajeError);
     }
 
-    public void ValidarTareaNoDuplicada(Tarea tarea)
+    private void ValidarTareaNoDuplicada(Tarea tarea)
     {
         if(Tareas.Contains(tarea))
             throw new ExcepcionDominio("La tarea ya fue agregada al proyecto.");

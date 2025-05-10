@@ -10,11 +10,11 @@ public class RecursoTests
     public void ConstructorCreaRecursoYAsignaOk()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        Assert.AreEqual("Nombre",recurso.Nombre);
+        Assert.AreEqual("Nombre", recurso.Nombre);
         Assert.AreEqual("Tipo", recurso.Tipo);
         Assert.AreEqual("Descripción", recurso.Descripcion);
         Assert.IsNull(recurso.ProyectoAsociado);
-        Assert.AreEqual(0,recurso.CantidadDeTareasUsandolo);
+        Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
     }
 
     [TestMethod]
@@ -22,8 +22,8 @@ public class RecursoTests
     {
         Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
         List<Usuario> usuarios = new List<Usuario>();
-        DateTime fechaInicio =  DateTime.Today.AddDays(1);
-        Proyecto proyecto = new Proyecto("Nombre", "Descripcion",fechaInicio, usuario, usuarios);
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto proyecto = new Proyecto("Nombre", "Descripcion", fechaInicio, usuario, usuarios);
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
         recurso.AsociarAProyecto(proyecto);
         Assert.IsTrue(recurso.EsExclusivo());
@@ -35,9 +35,9 @@ public class RecursoTests
     {
         Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
         List<Usuario> usuarios = new List<Usuario>();
-        DateTime fechaInicio =  DateTime.Today.AddDays(1);
-        Proyecto proyecto1 = new Proyecto("Nombre", "Descripción",fechaInicio, usuario, usuarios);
-        Proyecto proyecto2 = new Proyecto("Otro nombre", "Otra descripción",fechaInicio, usuario, usuarios);
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto proyecto1 = new Proyecto("Nombre", "Descripción", fechaInicio, usuario, usuarios);
+        Proyecto proyecto2 = new Proyecto("Otro nombre", "Otra descripción", fechaInicio, usuario, usuarios);
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
         recurso.AsociarAProyecto(proyecto1);
         recurso.AsociarAProyecto(proyecto2);
@@ -49,42 +49,42 @@ public class RecursoTests
     {
         Recurso recurso = new Recurso("", "Tipo", "Descripcion");
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConNombreNull()
     {
         Recurso recurso = new Recurso(null, "Tipo", "Descripcion");
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConTipoVacio()
     {
         Recurso recurso = new Recurso("Nombre", "", "Descripcion");
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConTipoNull()
     {
         Recurso recurso = new Recurso("Nombre", null, "Descripcion");
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConDescripcionVacia()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", " ");
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConDescripcionNull()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", null);
     }
-    
+
     [TestMethod]
     public void SeModificaNombreOk()
     {
@@ -93,7 +93,7 @@ public class RecursoTests
         recurso.ModificarNombre(nuevoNombre);
         Assert.AreEqual(nuevoNombre, recurso.Nombre);
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorModificarPorNombreVacio()
@@ -102,7 +102,7 @@ public class RecursoTests
         string nuevoNombre = "";
         recurso.ModificarNombre(nuevoNombre);
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorModificarPorNombreNull()
@@ -111,7 +111,7 @@ public class RecursoTests
         string nuevoNombre = null;
         recurso.ModificarNombre(nuevoNombre);
     }
-    
+
     [TestMethod]
     public void SeModificaTipoOk()
     {
@@ -120,7 +120,7 @@ public class RecursoTests
         recurso.ModificarTipo(nuevoTipo);
         Assert.AreEqual(nuevoTipo, recurso.Tipo);
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorModificarPorTipoVacio()
@@ -129,7 +129,7 @@ public class RecursoTests
         string nuevoTipo = "";
         recurso.ModificarTipo(nuevoTipo);
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorModificarPorTipoNull()
@@ -138,7 +138,7 @@ public class RecursoTests
         string nuevoTipo = null;
         recurso.ModificarTipo(nuevoTipo);
     }
-    
+
     [TestMethod]
     public void SeModificaDescripcionOk()
     {
@@ -147,7 +147,7 @@ public class RecursoTests
         recurso.ModificarDescripcion(nuevaDesc);
         Assert.AreEqual(nuevaDesc, recurso.Descripcion);
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorModificarPorDescripcionVacia()
@@ -156,7 +156,7 @@ public class RecursoTests
         string nuevaDesc = "";
         recurso.ModificarDescripcion(nuevaDesc);
     }
-    
+
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorModificarPorDescripcionNull()
@@ -188,5 +188,61 @@ public class RecursoTests
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
         Assert.IsFalse(recurso.SeEstaUsando());
+    }
+
+    [TestMethod]
+    public void EqualsRetornaTrueSiLosIdsSonIguales()
+    {
+        // por simplicidad se hardcodean los ids, los gestiona el repo.
+        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") {Id = 1};
+        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion"){Id = 1};
+        bool sonIguales = recurso1.Equals(recurso2);
+        Assert.IsTrue(sonIguales);
+    }
+
+    [TestMethod]
+    public void EqualsRetornaFalseSiLosIdsNoSonIguales()
+    {
+        // por simplicidad se hardcodean los ids, los gestiona el repo.
+        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") {Id = 1};
+        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion"){Id = 2};
+        bool sonIguales = recurso1.Equals(recurso2);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod]
+    public void EqualsRetornaFalseSiUnObjetoEsNull()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        bool sonIguales = recurso.Equals(null);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod]
+    public void EqualsRetornaFalseSiUnObjetoNoEsUsuario()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        int otro = 0;
+        bool sonIguales = recurso.Equals(otro);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod]
+    public void GetHashCodeFuncionaOk()
+    {
+        // por simplicidad se hardcodean los ids, los gestiona el repo.
+        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") {Id = 1};
+        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion"){Id = 1};
+        Recurso recurso3 = new Recurso("Nombre", "Tipo", "Descripcion"){Id = 2};
+        Assert.AreEqual(recurso1.GetHashCode(), recurso2.GetHashCode());
+        Assert.AreNotEqual(recurso3.GetHashCode(), recurso1.GetHashCode());
+    }
+
+    [TestMethod]
+    public void ToStringFuncionaCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        string resultadoEsperado = $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'";
+        Assert.AreEqual(resultadoEsperado, recurso.ToString());
     }
 }

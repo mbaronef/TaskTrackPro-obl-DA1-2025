@@ -144,7 +144,7 @@ public class GestorRecursos
     private void NotificarModificacion(Recurso recurso, string nombreAnterior)
     {
         string mensaje =
-            $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: Nombre: '{recurso.Nombre}', Tipo: '{recurso.Tipo}', Descripción: '{recurso.Descripcion}'.";
+            $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: {recurso.ToString()}";
         if (recurso.EsExclusivo())
         {
             recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
