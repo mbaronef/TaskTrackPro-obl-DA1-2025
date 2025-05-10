@@ -46,6 +46,8 @@ public class Tarea
         {
             LiberaRecursos();
             FechaDeEjecucion = DateTime.Today;
+            FechaFinMasTemprana = DateTime.Today;
+            DuracionEnDias = DuracionEnDias;
         }
     }
     

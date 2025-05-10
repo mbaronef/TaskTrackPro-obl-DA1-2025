@@ -1,6 +1,7 @@
 using Dominio;
 using Repositorios;
 using Servicios.Excepciones;
+using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
@@ -68,23 +69,11 @@ public class GestorProyectos
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         proyecto.ModificarFechaInicio(nuevaFecha);
+        
+        CaminoCritico.CalcularCaminoCritico(proyecto);
 
         proyecto.NotificarMiembros($"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
     }
-
-    public void ModificarFechaFinMasTempranaDelProyecto(int idProyecto, DateTime nuevaFecha, Usuario solicitante)
-    {
-        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
-        if (nuevaFecha != proyecto.FechaFinMasTemprana)
-        {
-            VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
-            proyecto.ModificarFechaFinMasTemprana(nuevaFecha);
-
-            proyecto.NotificarMiembros(
-            $"Se cambió la fecha de fin más temprana del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
-        }
-    }  
 
     public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdmin)
     {

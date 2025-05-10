@@ -1,6 +1,7 @@
 ﻿using Dominio;
 using Dominio.Excepciones;
 using Servicios.Excepciones;
+using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
@@ -23,8 +24,7 @@ public class GestorTareas
         
         proyecto.AgregarTarea(nuevaTarea);
 
-        // CPM: Recalcular ruta crítica del proyecto tras agregar nueva tarea
-        // proyecto.CalcularRutaCritica();
+        CaminoCritico.CalcularCaminoCritico(proyecto);
 
         Notificar(proyecto, $"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
     }
@@ -34,8 +34,7 @@ public class GestorTareas
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         proyecto.EliminarTarea(idTareaAEliminar);
 
-        // CPM: Recalcular ruta crítica tras eliminar tarea
-        // proyecto.CalcularRutaCritica();
+        CaminoCritico.CalcularCaminoCritico(proyecto);
 
         Notificar(proyecto, $"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
     }
@@ -68,8 +67,8 @@ public class GestorTareas
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
         tarea.ModificarDuracion(nuevaDuracion);
 
-        // CPM: Recalcular ruta crítica tras modificar duración
-        // ObtenerProyecto(idProyecto).CalcularRutaCritica();
+        Proyecto proyecto = ObtenerProyecto(idProyecto);
+        CaminoCritico.CalcularCaminoCritico(proyecto);
 
         NotificarCambio("duración", idTarea, idProyecto);
     }
@@ -79,8 +78,8 @@ public class GestorTareas
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
-        // CPM: Posible impacto si se considera fecha de inicio en el cálculo
-        // ObtenerProyecto(idProyecto).CalcularRutaCritica();
+        Proyecto proyecto = ObtenerProyecto(idProyecto);
+        CaminoCritico.CalcularCaminoCritico(proyecto);
 
         NotificarCambio("fecha de inicio", idTarea, idProyecto);
     }
@@ -104,12 +103,12 @@ public class GestorTareas
         {
             Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
             tarea.AgregarDependencia(dependencia);
+            CaminoCritico.CalcularCaminoCritico(proyecto);
         }
         catch (ExcepcionDominio)
         {
             throw new ExcepcionServicios("Error al agregar dependencia");
         }
-        // proyecto.CalcularRutaCritica(); -> manejar excepcion ciclos con catch.
 
         Notificar(proyecto, $"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{proyecto.Nombre}' del tipo {tipoDependencia} con la tarea id {tareaDependencia.Id}.");
     }
@@ -119,7 +118,7 @@ public class GestorTareas
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.EliminarDependencia(idTareaDependencia);
-        // proyecto.CalcularRutaCritica();
+        CaminoCritico.CalcularCaminoCritico(proyecto);
         Notificar(proyecto, $"Se eliminó la dependencia de la tarea id {idTareaDependencia} con la tarea id {idTarea} del proyecto '{proyecto.Nombre}'.");
     }
 
