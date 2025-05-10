@@ -133,6 +133,16 @@ public class GestorTareas
         NotificarCambio($"miembro {nuevoMiembro.ToString()}", idTarea, idProyecto);
     }
 
+    public void EliminarMiembroDeTarea(Usuario solicitante, int idTarea, int idProyecto, Usuario miembro)
+    {
+        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        _gestorProyectos.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
+        
+        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        tarea.EliminarUsuario(miembro.Id);
+        NotificarCambio($"miembro {miembro.ToString()}", idTarea, idProyecto);
+    }
+    
     private Proyecto ObtenerProyecto(int idProyecto){
         return _gestorProyectos.ObtenerProyectoPorId(idProyecto);
     }
