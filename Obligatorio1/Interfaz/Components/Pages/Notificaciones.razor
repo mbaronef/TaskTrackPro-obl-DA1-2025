@@ -4,21 +4,34 @@
 
 <h3>Notificaciones</h3>
 
-@if (UsuarioActual.UsuarioLogueado.Notificaciones.Count == 0)
+@if (UsuarioActual.UsuarioLogueado.Notificaciones == null || UsuarioActual.UsuarioLogueado.Notificaciones.Count == 0)
 {
     <p>No tiene notificaciones pendientes.</p>
 }
 else
 {
-    @foreach (Notificacion notificacion in UsuarioActual.UsuarioLogueado.Notificaciones.ToList())
+    @foreach (var notificacion in UsuarioActual.UsuarioLogueado.Notificaciones)
     {
         <div class="alert alert-info d-flex justify-content-between align-items-center">
             <span>@notificacion.Mensaje</span>
-            <button class="btn-close" @onclick="@(() => UsuarioActual.UsuarioLogueado.BorrarNotificacion(notificacion.Id))" title="Eliminar notificación"></button>
+            <button class="btn-close" type="button" title="Cerrar"
+                    @onclick="@(() => EliminarNotificacion(notificacion.Id))">
+            </button>
         </div>
     }
 }
-<!--no se esta eliminando correctamente la notificacion de la lista o no se esta borrando el mensaje de la notificacion cuando se pone el boton x-->
-@code {
 
+@code {
+    private void EliminarNotificacion(int id)
+    {
+        try
+        {
+            UsuarioActual.UsuarioLogueado.BorrarNotificacion(id);
+            StateHasChanged(); 
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar notificación: {ex.Message}");
+        }
+    }
 }
