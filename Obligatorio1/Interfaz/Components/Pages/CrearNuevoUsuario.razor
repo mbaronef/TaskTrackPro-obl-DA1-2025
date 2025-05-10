@@ -1,0 +1,108 @@
+@page "/usuarios/crear"
+@inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@inject GestorUsuarios GestorUsuarios
+@inject NavigationManager NavigationManager
+@using System.ComponentModel.DataAnnotations
+@using Dominio.Excepciones
+@using Dominio
+@using Servicios.Gestores
+
+<!-- No funciona el boton de agregar nuevo usuario, probar hacerlo con cards en la ventana /usuario-->
+<h3>Crear nuevo usuario</h3>
+
+@if (!UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+{
+    <p class="text-danger">Acceso denegado. Solo disponible para administradores del sistema.</p>
+}
+else
+{
+    @if (!string.IsNullOrEmpty(errorMensaje))
+    {
+        <div class="alert alert-danger">@errorMensaje</div>
+    }
+
+    <EditForm Model="nuevoUsuario" OnValidSubmit="CrearUsuario">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Nombre:</label>
+            <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre" />
+        </div>
+        <div class="mb-3">
+            <label>Apellido:</label>
+            <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido" />
+        </div>
+        <div class="mb-3">
+            <label>Fecha de nacimiento:</label>
+            <InputDate class="form-control" @bind-Value="nuevoUsuario.FechaNacimiento" />
+        </div>
+        <div class="mb-3">
+            <label>Email:</label>
+            <InputText class="form-control" @bind-Value="nuevoUsuario.Email" />
+        </div>
+        <div class="mb-3">
+            <label>Contraseña:</label>
+            <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" />
+            <button type="button" class="btn btn-secondary mt-2" @onclick="GenerarContrasenaPorDefecto">Generar contraseña por defecto</button>
+        </div>
+
+        <button type="submit" class="btn btn-success">Crear nuevo usuario</button>
+    </EditForm>
+}
+
+@code {
+    private UsuarioDTO nuevoUsuario = new UsuarioDTO();
+    private string errorMensaje;
+
+    private void GenerarContrasenaPorDefecto()
+    {
+        nuevoUsuario.Contrasena = "TaskTrackPro@2025";
+    }
+
+    private void CrearUsuario()
+    {
+        try
+        {
+            Usuario nuevo = GestorUsuarios.CrearUsuario(
+                nuevoUsuario.Nombre,
+                nuevoUsuario.Apellido,
+                nuevoUsuario.FechaNacimiento,
+                nuevoUsuario.Email,
+                nuevoUsuario.Contrasena);
+
+            GestorUsuarios.AgregarUsuario(UsuarioActual.UsuarioLogueado, nuevo);
+
+            nuevoUsuario = new UsuarioDTO(); // limpia el form
+            errorMensaje = null;
+            NavigationManager.NavigateTo("/usuarios", true); // redirecciona y recarga
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensaje = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = "Ocurrió un error inesperado al crear el usuario.";
+        }
+    }
+
+    public class UsuarioDTO
+    {
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "El apellido es obligatorio.")]
+        public string Apellido { get; set; }
+
+        [Required(ErrorMessage = "La fecha de nacimiento es obligatoria.")]
+        public DateTime FechaNacimiento { get; set; } = DateTime.Today;
+
+        [Required(ErrorMessage = "El email es obligatorio.")]
+        [EmailAddress(ErrorMessage = "Formato de email inválido.")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        public string Contrasena { get; set; }
+    }
+}

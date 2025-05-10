@@ -1,0 +1,62 @@
+@page "/RecursosGenerales"
+@inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@inject GestorRecursos GestorRecursos
+@using Dominio
+@using Servicios.Gestores
+@inject NavigationManager NavigationManager
+
+<h3>Recursos Generales</h3>
+
+@if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+{
+    <button class="btn btn-primary mb-3" @onclick="CrearNuevoRecurso">Crear nuevo recurso</button>
+}
+
+@if (GestorRecursos.Recursos.Count == 0)
+{
+    <p>No hay recursos disponibles.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            @if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+            {
+                <th></th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var recurso in GestorRecursos.Recursos)
+        {
+            <tr>
+                <td>@recurso.Nombre</td>
+                <td>@recurso.Tipo</td>
+                <td>@recurso.Descripcion</td>
+                @if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+                {
+                    <td>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EditarRecurso(recurso.Id)">Editar</button>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private void CrearNuevoRecurso()
+    {
+        NavigationManager.NavigateTo("/recursosGenerales/crear");
+    }
+
+    private void EditarRecurso(int idRecurso)
+    {
+        NavigationManager.NavigateTo($"/recursosGenerales/editar/{idRecurso}");
+    }
+}

@@ -1,0 +1,46 @@
+@page "/"
+@using Dominio
+@using Servicios.Gestores
+@inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@inject GestorProyectos GestorProyectos
+
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-5">Bienvenido, @UsuarioActual.UsuarioLogueado?.Nombre @UsuarioActual.UsuarioLogueado?.Apellido a <strong>TaskTrackPro</strong></h1>
+        <h3 class="lead">Tu solución integral para la gestión de proyectos.</h3>
+    </div>
+
+    <hr />
+
+    <p>
+        TaskTrackPro es una aplicación web diseñada para facilitar la organización, seguimiento y planificación de proyectos en equipo.
+        Permite crear y administrar proyectos, asignar tareas con dependencias, establecer fechas clave y calcular automáticamente el camino crítico para optimizar la duración del proyecto.
+    </p>
+
+    <p>
+        Con un enfoque colaborativo, TaskTrackPro ofrece funcionalidades como notificaciones automáticas, control de permisos por roles
+        y visualización clara del progreso del proyecto.
+    </p>
+
+    <p>
+        Ideal para equipos que buscan eficiencia, transparencia y control total en la ejecución de sus proyectos.
+    </p>
+</div>
+
+
+@code {
+    // para que se cree el usuario porque no esta log in aun
+    protected override void OnInitialized()
+    {
+        if (UsuarioActual.UsuarioLogueado == null)
+        {
+            Usuario admin = new Usuario("Juan", "Pérez", new DateTime(1990,1,1), "admin@gmail.com", "Admin123$");
+            admin.EsAdministradorProyecto = true;
+            UsuarioActual.EstablecerUsuario(admin);
+
+            Proyecto proyecto = new Proyecto("Proyecto test", "Descripción", DateTime.Today.AddDays(1), admin, new List<Usuario>());
+            GestorProyectos.CrearProyecto(proyecto, admin);
+        }
+    }
+}
