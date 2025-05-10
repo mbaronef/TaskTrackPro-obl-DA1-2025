@@ -1,0 +1,29 @@
+@page "/perfil"
+@inject ServiciosInterfaz.UsuarioActual UsuarioActual
+
+<h3>Perfil de usuario</h3>
+
+<p><strong>Nombre:</strong> @UsuarioActual.UsuarioLogueado?.Nombre</p>
+<p><strong>Apellido:</strong> @UsuarioActual.UsuarioLogueado?.Apellido</p>
+<p><strong>Fecha de nacimiento:</strong> @UsuarioActual.UsuarioLogueado?.FechaNacimiento.ToShortDateString()</p>
+<p><strong>Email:</strong> @UsuarioActual.UsuarioLogueado?.Email</p>
+<p><strong>Roles:</strong> 
+    @if (UsuarioActual.UsuarioLogueado?.EsAdministradorSistema == true)
+    {
+        <span class="badge bg-secondary me-1">Administrador sistema</span>
+    }
+    @if (UsuarioActual.UsuarioLogueado?.EsAdministradorProyecto == true)
+    {
+        <span class="badge bg-info me-1">Administrador proyecto</span>
+    }
+</p>
+<p><strong>Contraseña:</strong>
+    <button class="btn btn-danger">Cambiar</button>
+    <button class="btn btn-danger">Reiniciar</button>
+</p>
+
+<button class="btn btn-danger">Cerrar sesión</button>
+
+@code {
+    
+}

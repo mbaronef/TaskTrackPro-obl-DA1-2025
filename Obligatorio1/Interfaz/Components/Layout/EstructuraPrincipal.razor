@@ -5,57 +5,43 @@
 
 <div class="d-flex">
 
-    <!-- Sidebar visible o no -->
-    @if (menuAbierto)
-    {
-        <div class="bg-dark text-white p-3" style="width: 250px; min-height: 100vh;">
-            <h4 class="text-white">TaskTrackPro</h4>
-            <hr />
-            <NavLink class="nav-link text-white" href="/">Inicio</NavLink>
+    <!-- Sidebar siempre visible -->
+    <div class="bg-dark text-white p-3" style="width: 250px; min-height: 100vh;">
+        <h4 class="text-white">TaskTrackPro</h4>
+        <hr />
+        <NavLink class="nav-link text-white" href="/">Inicio</NavLink>
 
-            <div class="mt-3">
-                <p class="fw-bold">Proyectos</p>
-                @if (UsuarioActual.UsuarioLogueado is not null)
+        <div class="mt-3">
+            <p class="fw-bold">Proyectos</p>
+            @if (UsuarioActual.UsuarioLogueado is not null)
+            {
+                var proyectos = GestorProyectos.ObtenerProyectosPorUsuario(UsuarioActual.UsuarioLogueado.Id);
+                foreach (var proyecto in proyectos)
                 {
-                    var proyectos = GestorProyectos.ObtenerProyectosPorUsuario(UsuarioActual.UsuarioLogueado.Id);
-                    foreach (var proyecto in proyectos)
-                    {
-                        <details class="mb-2">
-                            <summary>@proyecto.Nombre</summary>
-                            <ul class="list-unstyled ms-3">
-                                <li><NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link text-white">Gantt</NavLink></li>
-                                <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
-                                <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white">Recursos</NavLink></li>
-                                <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros</NavLink></li>
-                            </ul>
-                        </details>
-                    }
+                    <details class="mb-2">
+                        <summary>@proyecto.Nombre</summary>
+                        <ul class="list-unstyled ms-3">
+                            <li><NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link text-white">Gantt</NavLink></li>
+                            <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
+                            <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white">Recursos</NavLink></li>
+                            <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros</NavLink></li>
+                        </ul>
+                    </details>
                 }
-            </div>
-
-            <hr />
-            <NavLink href="/recursos_generales" class="nav-link text-white">Recursos Generales</NavLink>
-            <NavLink href="/usuarios" class="nav-link text-white">Usuarios</NavLink>
-            <NavLink href="/notificaciones" class="nav-link text-white">Notificaciones</NavLink>
+            }
         </div>
-    }
 
-    <!-- Main content -->
+        <hr />
+        <NavLink href="/recursos_generales" class="nav-link text-white">Recursos Generales</NavLink>
+        <NavLink href="/usuarios" class="nav-link text-white">Usuarios</NavLink>
+        <NavLink href="/notificaciones" class="nav-link text-white">Notificaciones</NavLink>
+    </div>
+
     <div class="flex-grow-1">
-        <div class="d-flex justify-content-between p-2 border-bottom bg-light">
-            <button class="btn btn-outline-dark" @onclick="ToggleMenu">☰</button>
-            <button class="btn btn-outline-secondary" @onclick="TogglePerfil">👤</button>
+        <div class="d-flex justify-content-end p-2 border-bottom bg-light">
+            <NavLink href="/perfil" class="btn btn-outline-secondary me-3">👤</NavLink>
         </div>
-
-        @if (mostrarPerfil)
-        {
-            <div class="m-3 p-3 border rounded bg-light">
-                <p><strong>@UsuarioActual.UsuarioLogueado?.Nombre @UsuarioActual.UsuarioLogueado?.Apellido</strong></p>
-                <p>@UsuarioActual.UsuarioLogueado?.Email</p>
-                <p><em>(Roles vendrán después)</em></p>
-            </div>
-        }
-
+        
         <div class="p-4">
             @Body
         </div>
@@ -63,9 +49,4 @@
 </div>
 
 @code {
-    private bool mostrarPerfil = false;
-    private bool menuAbierto = true;
-
-    private void TogglePerfil() => mostrarPerfil = !mostrarPerfil;
-    private void ToggleMenu() => menuAbierto = !menuAbierto;
 }
