@@ -16,6 +16,10 @@
     {
         <span class="badge bg-info me-1">Administrador proyecto</span>
     }
+    @if (!UsuarioActual.UsuarioLogueado.EsAdministradorSistema && !UsuarioActual.UsuarioLogueado.EsAdministradorProyecto)
+    {
+        <span>No tiene el rol de administrador de sistema ni de administrador de proyecto.</span>
+    }
 </p>
 <p><strong>Contraseña:</strong>
     <button class="btn btn-danger">Cambiar</button>
