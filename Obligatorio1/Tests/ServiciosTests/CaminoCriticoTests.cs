@@ -34,16 +34,16 @@ public class CaminoCriticoTests
         _proyecto = new Proyecto("Nombre", "desc", _fechaHoy,
             new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "email@email.com", "Contra5e{a"),
             new List<Usuario>());
-
-        _proyecto.AgregarTarea(_tarea1);
-        _proyecto.AgregarTarea(_tarea2);
-        _proyecto.AgregarTarea(_tarea3);
-        _proyecto.AgregarTarea(_tarea4);
     }
 
     [TestMethod]
     public void CalculaCaminoCriticoOk()
     {
+        _proyecto.AgregarTarea(_tarea1);
+        _proyecto.AgregarTarea(_tarea2);
+        _proyecto.AgregarTarea(_tarea3);
+        _proyecto.AgregarTarea(_tarea4);
+        
         CaminoCritico.CalcularCaminoCritico(_proyecto);
 
         Assert.IsTrue(_tarea1.EsCritica());
@@ -62,17 +62,19 @@ public class CaminoCriticoTests
     [TestMethod]
     public void NoSeCalculaCaminoCriticoSiHayCiclos()
     {
+        _proyecto.AgregarTarea(_tarea1);
+        _proyecto.AgregarTarea(_tarea2);
+        _proyecto.AgregarTarea(_tarea3);
+        _proyecto.AgregarTarea(_tarea4);
+        
         _tarea3.AgregarDependencia(new Dependencia("SS", _tarea2));
         CaminoCritico.CalcularCaminoCritico(_proyecto);
     }
-    
+
     [TestMethod]
     public void CalcularCaminoCriticoEnProyectoSinTareasNoLanzaExcepcion()
     {
-        Proyecto proyectoVacio = new Proyecto("Vacío", "sin tareas", _fechaHoy,
-            new Usuario("Nombre", "Apellido", new DateTime(1990, 1, 1), "a@b.com", "Clave123"), new List<Usuario>());
-
-        CaminoCritico.CalcularCaminoCritico(proyectoVacio);
+        CaminoCritico.CalcularCaminoCritico(_proyecto);
         Assert.IsTrue(true); // No se lanzó excepción
     }
 
@@ -82,6 +84,10 @@ public class CaminoCriticoTests
         Tarea tarea5 = new Tarea("Tarea 5", "desc", 2, _fechaHoy) { Id = 5 };
         Tarea tarea6 = new Tarea("Tarea 6", "desc", 1, _fechaHoy) { Id = 6 };
 
+        _proyecto.AgregarTarea(_tarea1);
+        _proyecto.AgregarTarea(_tarea2);
+        _proyecto.AgregarTarea(_tarea3);
+        _proyecto.AgregarTarea(_tarea4);
         _proyecto.AgregarTarea(tarea5);
         _proyecto.AgregarTarea(tarea6);
 
@@ -90,11 +96,64 @@ public class CaminoCriticoTests
         Assert.IsFalse(tarea5.EsCritica());
         Assert.IsFalse(tarea6.EsCritica());
     }
-    
+
     [TestMethod]
     public void TareaSinDependenciasFueraDelCaminoCriticoTieneHolgura()
     {
+        _proyecto.AgregarTarea(_tarea1);
+        _proyecto.AgregarTarea(_tarea2);
+        _proyecto.AgregarTarea(_tarea3);
+        _proyecto.AgregarTarea(_tarea4);
+        
         CaminoCritico.CalcularCaminoCritico(_proyecto);
         Assert.IsTrue(_tarea4.Holgura > 0);
+    }
+
+    [TestMethod]
+    public void TareaUnicaEsCritica()
+    {
+        Tarea tarea = new Tarea("Única", "desc", 5, _fechaHoy) { Id = 1 };
+        _proyecto.AgregarTarea(tarea);
+
+        CaminoCritico.CalcularCaminoCritico(_proyecto);
+
+        Assert.IsTrue(tarea.EsCritica());
+    }
+
+    [TestMethod]
+    public void DependenciasSSOk()
+    {
+        _tarea1 = new Tarea("Tarea 1", "desc", 2, _fechaHoy);
+        _tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy.AddDays(3));
+        
+        _tarea2.AgregarDependencia(new Dependencia("SS", _tarea1));
+        
+        _proyecto.AgregarTarea(_tarea1);
+        _proyecto.AgregarTarea(_tarea2);
+        
+        CaminoCritico.CalcularCaminoCritico(_proyecto);
+        
+        Assert.IsTrue(_tarea1.EsCritica());
+        Assert.IsTrue(_tarea2.EsCritica());
+        Assert.AreEqual(_tarea1.FechaInicioMasTemprana,_tarea2.FechaInicioMasTemprana);
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void DetectaCicloConDependenciasSS()
+    {
+        Tarea tarea1 = new Tarea("Tarea 1", "desc", 2, _fechaHoy) { Id = 1 };
+        Tarea tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy) { Id = 2 };
+
+        tarea1.AgregarDependencia(new Dependencia("SS", tarea2));
+        tarea2.AgregarDependencia(new Dependencia("SS", tarea1));
+
+        _proyecto.AgregarTarea(tarea1);
+        _proyecto.AgregarTarea(tarea2);
+
+        CaminoCritico.CalcularCaminoCritico(_proyecto);
+        Assert.IsTrue(_tarea1.FechaInicioMasTemprana == _tarea2.FechaInicioMasTemprana);
+        Assert.IsFalse(_tarea1.EsCritica());
+        Assert.IsFalse(_tarea2.EsCritica());
     }
 }

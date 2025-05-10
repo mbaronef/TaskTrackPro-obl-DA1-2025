@@ -130,7 +130,9 @@ public static class CaminoCritico
         {
             Tarea tarea = tareasOrdenTopologico[i];
             DateTime fechaLimite = ObtenerFechaLimite(tarea, sucesoras, proyecto.FechaFinMasTemprana);
-            tarea.Holgura = (int)(fechaLimite - tarea.FechaFinMasTemprana).TotalDays;
+            
+            int holgura = (int)(fechaLimite - tarea.FechaFinMasTemprana).TotalDays;
+            tarea.Holgura = Math.Max(0, holgura);
         }
     }
     
