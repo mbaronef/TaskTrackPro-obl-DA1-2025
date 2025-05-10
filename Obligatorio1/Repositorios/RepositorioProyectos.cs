@@ -6,6 +6,7 @@ namespace Repositorios;
 public class RepositorioProyectos : IRepositorioProyectos
 {
     private List<Proyecto> _proyectos;
+    private static int _cantidadProyectos;
 
     public RepositorioProyectos()
     {
@@ -14,6 +15,7 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void Agregar(Proyecto objeto)
     {
+        objeto.AsignarId(++_cantidadProyectos);
         _proyectos.Add(objeto);
     }
 

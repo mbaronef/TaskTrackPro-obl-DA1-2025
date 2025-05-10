@@ -129,10 +129,7 @@ public class Proyecto
     
     public void NotificarMiembros(string mensaje)
     {
-        foreach (Usuario usuario in Miembros)
-        {
-            usuario.RecibirNotificacion(mensaje);
-        }
+        Miembros.ForEach(miembro => miembro.RecibirNotificacion(mensaje));
     }
 
     public void NotificarAdministrador(string mensaje)

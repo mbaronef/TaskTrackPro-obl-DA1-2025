@@ -1,4 +1,5 @@
 using Dominio;
+using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Utilidades;
 
@@ -6,19 +7,14 @@ namespace Servicios.Gestores;
 
 public class GestorUsuarios
 {
-    private static int _cantidadUsuarios;
     private string _contrasenaPorDefecto = "TaskTrackPro@2025";
     
     public Usuario AdministradorInicial { get; private set; }
-    public List<Usuario> Usuarios { get; } = new List<Usuario>();
+    public RepositorioUsuarios Usuarios { get; } = new RepositorioUsuarios();
 
     public GestorUsuarios()
     {
-        string contrasenaAdminEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("AdminTaskTrackPro@2025");
-        AdministradorInicial = new Usuario("admin", "admin",  new DateTime(1999,1,1),"admin@admin.com",contrasenaAdminEncriptada);
-        Usuarios.Add(AdministradorInicial);
-        AdministradorInicial.EsAdministradorSistema = true;
-        //No se manejan ids, el primer administrador tiene id 0
+        AdministradorInicial = Usuarios.ObtenerTodos().Last(); //primer administrador (con id 0)
     }
     
     public Usuario CrearUsuario(string nombre, string apellido, DateTime fechaNacimiento, string email, string contrasena)
@@ -30,8 +26,7 @@ public class GestorUsuarios
     public void AgregarUsuario(Usuario solicitante, Usuario usuario)
     {
         VerificarPermisoAdministradorSistema(solicitante, "crear usuarios");
-        usuario.Id = ++_cantidadUsuarios;
-        Usuarios.Add(usuario);
+        Usuarios.Agregar(usuario);
         string mensajeNotificacion =
             $"Se creó un nuevo usuario: {usuario.Nombre} {usuario.Apellido}";
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
@@ -48,14 +43,14 @@ public class GestorUsuarios
         {
             throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar usuarios");
         }
-        Usuarios.Remove(usuario);
+        Usuarios.Eliminar(usuario.Id);
         string mensajeNotificacion = $"Se eliminó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
     }
 
     public Usuario ObtenerUsuarioPorId(int idUsuario)
     {
-        Usuario usuario = Usuarios.SingleOrDefault(u => u.Id == idUsuario);
+        Usuario usuario = Usuarios.ObtenerPorId(idUsuario);
         if (usuario == null)
         {
             throw new ExcepcionServicios("El usuario no existe");
@@ -143,7 +138,7 @@ public class GestorUsuarios
     
     public Usuario LogIn(string email, string contrasena)
     {
-        Usuario usuario = Usuarios.FirstOrDefault(u => u.Email == email);
+        Usuario usuario = Usuarios.ObtenerUsuarioPorEmail(email);
         if (usuario == null)
         {
             throw new ExcepcionServicios("Correo electrónico no registrado.");
@@ -154,7 +149,12 @@ public class GestorUsuarios
         }
         return usuario;
     }
-    
+
+    public List<Usuario> ObtenerUsuariosDiferentes(List<Usuario> usuarios)
+    {
+        return Usuarios.ObtenerTodos().Except(usuarios).ToList();
+    }
+
     private void VerificarPermisoAdministradorSistema(Usuario usuario, string accion)
     {
         if (!usuario.EsAdministradorSistema)
@@ -165,11 +165,8 @@ public class GestorUsuarios
     
     private void NotificarAdministradoresSistema(Usuario solicitante, string mensajeNotificacion)
     {
-        List<Usuario> administradores = Usuarios.Where(u => u.EsAdministradorSistema && !u.Equals(solicitante)).ToList();
-        foreach (Usuario admin in administradores)
-        {
-            Notificar(admin, mensajeNotificacion);
-        }
+        List<Usuario> administradores = Usuarios.ObtenerTodos().Where(usuario => usuario.EsAdministradorSistema && !usuario.Equals(solicitante)).ToList();
+        administradores.ForEach(admin => Notificar(admin, mensajeNotificacion));
     }
     
     private void Notificar(Usuario usuario, string mensajeNotificacion)

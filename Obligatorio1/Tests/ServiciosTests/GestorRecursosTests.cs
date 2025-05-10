@@ -1,4 +1,5 @@
 using Dominio;
+using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Gestores;
 using Servicios.Utilidades;
@@ -16,8 +17,9 @@ public class GestorRecursosTests
     public void SetUp()
     {
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(GestorRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-        _gestorProyectos = new GestorProyectos();
+        typeof(RepositorioRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+
+       _gestorProyectos = new GestorProyectos();
         _gestorRecursos = new GestorRecursos(_gestorProyectos);
         _adminSistema = CrearAdministradorSistema();
     }
@@ -69,7 +71,7 @@ public class GestorRecursosTests
     public void ConstructorCreaGestorValido()
     {
         Assert.IsNotNull(_gestorRecursos);
-        Assert.AreEqual(0, _gestorRecursos.Recursos.Count);
+        Assert.AreEqual(0, _gestorRecursos.Recursos.ObtenerTodos().Count);
     }
 
     [TestMethod]
@@ -80,9 +82,9 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(_adminSistema, recurso1);
         _gestorRecursos.AgregarRecurso(_adminSistema, recurso2);
 
-        Assert.AreEqual(2, _gestorRecursos.Recursos.Count);
-        Assert.AreEqual(recurso1, _gestorRecursos.Recursos.ElementAt(0));
-        Assert.AreEqual(recurso2, _gestorRecursos.Recursos.ElementAt(1));
+        Assert.AreEqual(2, _gestorRecursos.Recursos.ObtenerTodos().Count);
+        Assert.AreEqual(recurso1, _gestorRecursos.Recursos.ObtenerTodos().ElementAt(0));
+        Assert.AreEqual(recurso2, _gestorRecursos.Recursos.ObtenerTodos().ElementAt(1));
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -104,18 +106,6 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
 
         Assert.IsTrue(recurso.EsExclusivo());
-    }
-
-    [TestMethod]
-    public void GestorLlevaCuentaDeUsuariosCorrectamenteYAsignaIdsIncrementales()
-    {
-        Recurso recurso1 = CrearRecurso();
-        Recurso recurso2 = CrearRecurso();
-        _gestorRecursos.AgregarRecurso(_adminSistema, recurso1);
-        _gestorRecursos.AgregarRecurso(_adminSistema, recurso2);
-
-        Assert.AreEqual(1, recurso1.Id);
-        Assert.AreEqual(2, recurso2.Id);
     }
 
     [TestMethod]
@@ -141,10 +131,9 @@ public class GestorRecursosTests
     public void SeEliminaUnRecursoOk()
     {
         Recurso recurso = CrearRecurso();
-
-    _gestorRecursos.AgregarRecurso(_adminSistema, recurso);
+        _gestorRecursos.AgregarRecurso(_adminSistema, recurso);
         _gestorRecursos.EliminarRecurso(_adminSistema, recurso.Id);
-        Assert.AreEqual(0, _gestorRecursos.Recursos.Count());
+        Assert.AreEqual(0, _gestorRecursos.Recursos.ObtenerTodos().Count());
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -176,7 +165,7 @@ public class GestorRecursosTests
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
         _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
-        Assert.AreEqual(0, _gestorRecursos.Recursos.Count());
+        Assert.AreEqual(0, _gestorRecursos.Recursos.ObtenerTodos().Count());
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -196,13 +185,13 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeEliminarRecursosExclusivosDeOtrosProyectos()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo gestiona el gestor de usuarios
-        Proyecto proyecto1 = CrearYAgregarProyecto(adminProyecto);
-
+        adminProyecto.Id = 1; // lo gestiona el repo de usuarios
+        CrearYAgregarProyecto(adminProyecto);
+       
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo gestiona el gestor de usuarios
-        
-        Proyecto proyecto2 = CrearYAgregarProyecto(otroAdminProyecto);
+        otroAdminProyecto.Id = 2; // lo gestiona el repo de usuarios
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
 
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -224,16 +213,13 @@ public class GestorRecursosTests
     }
 
     [TestMethod]
-    public void EliminarRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
+    public void EliminarRecursoNoExclusivoNotificaAdminDeProyectos()
     {
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(_adminSistema, recurso);
         
         Usuario adminProyecto = CrearAdministradorProyecto();
-        Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        Tarea tarea = CrearTarea();
-        tarea.AgregarRecurso(recurso);
-        proyecto.AgregarTarea(tarea);
+        CrearYAgregarProyecto(adminProyecto);
         
         _gestorRecursos.EliminarRecurso(_adminSistema, recurso.Id);
         
@@ -279,13 +265,14 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarNombreDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el gestor de usuarios
-        Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+        adminProyecto.Id = 1; // lo hace el repo de usuarios
+        CrearYAgregarProyecto(adminProyecto);
 
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
+        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
         
-        Proyecto otroProyecto = CrearYAgregarProyecto(otroAdminProyecto);
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto( otroProyecto, otroAdminProyecto);
 
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -330,12 +317,13 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarTipoDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el gestor de usuarios
+        adminProyecto.Id = 1; // lo hace el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
+        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto( otroProyecto, otroAdminProyecto);
         
-        Proyecto otroProyecto = CrearYAgregarProyecto(otroAdminProyecto);
         
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -380,12 +368,13 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarDescripciónDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el gestor de usuarios
-        Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+        adminProyecto.Id = 1; // lo hace el repo de usuarios
+        CrearYAgregarProyecto(adminProyecto);
+
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el gestor de usuarios
-       
-        Proyecto otroProyecto = CrearYAgregarProyecto(otroAdminProyecto);
+        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
+        _gestorProyectos.CrearProyecto( otroProyecto, otroAdminProyecto);
 
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso);
@@ -490,5 +479,40 @@ public class GestorRecursosTests
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
         Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', Tipo: 'Humano', Descripción: 'Otra descripción'.", ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
+    }
+
+    [TestMethod]
+    public void SeMuestranRecursosGeneralesOk()
+    {
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        CrearYAgregarProyecto(adminProyecto); 
+        Recurso recursoExclusivo = CrearRecurso();
+        _gestorRecursos.AgregarRecurso(adminProyecto, recursoExclusivo);
+        
+        Recurso recurso1 = CrearRecurso();
+        Recurso recurso2 = CrearRecurso();
+        _gestorRecursos.AgregarRecurso(_adminSistema, recurso1);
+        _gestorRecursos.AgregarRecurso(_adminSistema, recurso2);
+
+        Assert.AreEqual(2, _gestorRecursos.ObtenerRecursosGenerales().Count);
+        Assert.AreEqual(recurso1, _gestorRecursos.ObtenerRecursosGenerales().ElementAt(0));
+        Assert.AreEqual(recurso2, _gestorRecursos.ObtenerRecursosGenerales().ElementAt(1));
+    }
+    
+    [TestMethod]
+    public void SeMuestranRecursosExclusivosDeUnProyectoOk()
+    {
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+        
+        Recurso recursoExclusivo1 = CrearRecurso();
+        Recurso recursoExclusivo2 = CrearRecurso();
+        _gestorRecursos.AgregarRecurso(adminProyecto, recursoExclusivo1);
+        _gestorRecursos.AgregarRecurso(adminProyecto, recursoExclusivo2);
+        
+        List<Recurso> recursosExclusivosDelProyecto = _gestorRecursos.ObtenerRecursosExclusivos(proyecto.Id);
+        Assert.AreEqual(2, recursosExclusivosDelProyecto.Count());
+        Assert.AreEqual(recursoExclusivo1, recursosExclusivosDelProyecto.ElementAt(0));
+        Assert.AreEqual(recursoExclusivo2, recursosExclusivosDelProyecto.ElementAt(1));
     }
 }

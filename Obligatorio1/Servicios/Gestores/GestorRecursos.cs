@@ -1,17 +1,16 @@
 using Dominio;
+using Repositorios;
 using Servicios.Excepciones;
 
 namespace Servicios.Gestores;
 
 public class GestorRecursos
 {
-    private static int _cantidadRecursos;
-    public List<Recurso> Recursos { get; private set; }
+    public RepositorioRecursos Recursos { get; } = new RepositorioRecursos();
     private GestorProyectos _gestorProyectos;
 
     public GestorRecursos(GestorProyectos gestorProyectos)
     {
-        Recursos = new List<Recurso>();
         _gestorProyectos = gestorProyectos;
     }
 
@@ -22,14 +21,12 @@ public class GestorRecursos
         {
             AsociarProyectoQueAdministraARecurso(solicitante, recurso);
         }
-        ++_cantidadRecursos;
-        recurso.Id = _cantidadRecursos;
-        Recursos.Add(recurso);
+        Recursos.Agregar(recurso);
     }
 
     public Recurso ObtenerRecursoPorId(int idRecurso)
     {
-        Recurso recurso = Recursos.FirstOrDefault(recurso => recurso.Id == idRecurso);
+        Recurso recurso = Recursos.ObtenerPorId(idRecurso);
         if (recurso == null)
         {
             throw new ExcepcionServicios("Recurso no existente");
@@ -46,7 +43,7 @@ public class GestorRecursos
         {
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         }
-        Recursos.Remove(recurso);
+        Recursos.Eliminar(recurso.Id);
         NotificarEliminacion(recurso);
     }
 
@@ -85,6 +82,17 @@ public class GestorRecursos
         }
         recurso.ModificarDescripcion(nuevaDescripcion);
         NotificarModificacion(recurso, recurso.Nombre);
+    }
+
+    public List<Recurso> ObtenerRecursosGenerales()
+    {
+        return Recursos.ObtenerTodos().Where(recurso => !recurso.EsExclusivo()).ToList();
+    }
+    
+    public List<Recurso> ObtenerRecursosExclusivos(int idProyecto)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+        return Recursos.ObtenerTodos().Where(recurso => recurso.ProyectoAsociado.Equals(proyecto)).ToList();
     }
 
     private void VerificarPermisoAdminSistemaOAdminProyecto(Usuario usuario, string accion)
@@ -128,8 +136,8 @@ public class GestorRecursos
             recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
         }
         else
-        {
-            NotificarAdministradoresDeProyectosQueUsanRecurso(recurso, mensaje);
+        { // decidimos que si el recurso no es exclusivo, se notifica a todos los admins de todos los proyectos.
+            NotificarAdministradoresDeTodosLosProyectos(mensaje);
         }
     }
 
@@ -142,21 +150,20 @@ public class GestorRecursos
             recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
         }
         else
-        {
+        { 
             NotificarAdministradoresDeProyectosQueUsanRecurso(recurso, mensaje);
         }
     }
     
-    
+    private void NotificarAdministradoresDeTodosLosProyectos(string mensaje)
+    {
+        _gestorProyectos.Proyectos.ObtenerTodos().ForEach(proyecto => proyecto.NotificarAdministrador(mensaje));
+    }
     private void NotificarAdministradoresDeProyectosQueUsanRecurso(Recurso recurso, string mensaje)
     {
-        foreach (Proyecto proyecto in _gestorProyectos.Proyectos)
-        {
-            if(RecursosNecesariosPorProyecto(proyecto).Contains(recurso))
-            {
-                proyecto.NotificarAdministrador(mensaje);
-            }
-        }
+        List<Proyecto> proyectosQueUsanElRecurso = _gestorProyectos.Proyectos.ObtenerTodos()
+            .Where(proyecto => RecursosNecesariosPorProyecto(proyecto).Contains(recurso)).ToList();
+        proyectosQueUsanElRecurso.ForEach(proyecto => proyecto.NotificarAdministrador(mensaje));
     }
 
     private List<Recurso> RecursosNecesariosPorProyecto(Proyecto proyecto)

@@ -13,6 +13,9 @@ public class RepositorioUsuariosTests
     [TestInitialize]
     public void Setup()
     { 
+        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
+        typeof(RepositorioUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+
         _repositorioUsuarios = new RepositorioUsuarios();
         _usuario = new Usuario("Juan", "Pérez", new DateTime(1998,7,6), "unEmail@gmail.com", "uNaC@ntr4seña");
     }
@@ -29,10 +32,20 @@ public class RepositorioUsuariosTests
     [TestMethod]
     public void SeAgregaUnUsuarioOk()
     {
-        _usuario.Id = 1;
         _repositorioUsuarios.Agregar(_usuario);
         Usuario ultimoDelRepositorioUsuario = _repositorioUsuarios.ObtenerPorId(1);
         Assert.AreEqual(_usuario, ultimoDelRepositorioUsuario);
+    }
+    
+    [TestMethod]
+    public void SeAsignanIdsOk()
+    {
+        _repositorioUsuarios.Agregar(_usuario);
+        Usuario usuario2 = new Usuario("Mateo", "Pérez", new DateTime(1999,2,2), "email@gmail.com", "contr5Ase{a");
+        _repositorioUsuarios.Agregar(usuario2);
+        
+        Assert.AreEqual(1,_usuario.Id);
+        Assert.AreEqual(2,usuario2.Id);
     }
 
     [TestMethod]

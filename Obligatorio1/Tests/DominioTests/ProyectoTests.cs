@@ -390,9 +390,10 @@ public class ProyectoTests
         _proyecto = CrearProyectoCon(_admin);
 
         Tarea tarea = CrearTarea(1);
+
         _proyecto.AgregarTarea(tarea);
 
-        _proyecto.ModificarFechaFinMasTemprana(new DateTime(2026, 5, 1));
+        _proyecto.ModificarFechaFinMasTemprana(DateTime.Today.AddDays(1));
     }
 
     [TestMethod]
@@ -616,7 +617,7 @@ public class ProyectoTests
         Usuario admin3 = CrearAdmin(3);
         Proyecto proyecto3 = CrearProyectoCon(admin3);
         proyecto3.Id =
-            3; // usuario con id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
+            3; // proyecto con id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
         Assert.AreEqual(proyecto1.GetHashCode(), proyecto2.GetHashCode());
         Assert.AreNotEqual(proyecto3.GetHashCode(), proyecto1.GetHashCode());
     }
@@ -634,14 +635,14 @@ public class ProyectoTests
     {
         Usuario admin = new Usuario("Juan", "Perez", new DateTime(1999, 2, 2), "unemail@gmail.com", "Contrase#a3");
         admin.EsAdministradorProyecto = true;
-        admin.Id = id; // Se hardcodea pero en realidad lo gestiona el gestor de usuarios
+        admin.Id = id; // Se hardcodea pero en realidad lo gestiona el repo de usuarios
         return admin;
     }
 
     private Usuario CrearMiembro(int id)
     {
         Usuario miembro = new Usuario("Juan", "Perez", new DateTime(1999, 2, 2), "unemail@gmail.com", "Contrase#a3");
-        miembro.Id = id; // Se hardcodea pero en realidad lo gestiona el gestor de usuarios
+        miembro.Id = id; // Se hardcodea pero en realidad lo gestiona el repo de usuarios
         return miembro;
     }
 
@@ -652,14 +653,12 @@ public class ProyectoTests
         return new Proyecto("Proyecto", "Descripción", fechaInicio, admin, miembros);
     }
 
-    private Tarea CrearTarea(int id = 1,  DateTime? fin = null)
+    private Tarea CrearTarea(int id = 1, DateTime? inicio = null)
     {
-        string titulo = "Tarea";
-        string descripcion = "Prueba de tarea";
-        int duracionEnDias = 8;
-        DateTime fechaInicio = new DateTime(2500, 9, 1);
-        
-        Tarea tarea = new Tarea(titulo, descripcion, duracionEnDias, fechaInicio);
-        return tarea;
+        return new Tarea("titulo", "descripcion", 5, DateTime.Today)
+        {
+            Id = id,
+            FechaInicioMasTemprana = inicio ?? DateTime.Today
+        };
     }
 }

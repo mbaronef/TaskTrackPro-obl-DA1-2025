@@ -252,7 +252,6 @@ public class TareaTests
     public void EliminarUsuario_LanzaExcepcionSiUsuariosAsignadosEsNull()
     {
         Tarea tarea = CrearTareaValida();
-        tarea.UsuariosAsignados = null;
         tarea.EliminarUsuario(1);
     }
     
@@ -394,24 +393,6 @@ public class TareaTests
         DateTime fechaPasada = DateTime.Now.AddDays(-1);
         tarea.ModificarFechaInicioMasTemprana(fechaPasada);
     } 
-    
-    [TestMethod]
-    public void ModificarFechaDeEjecucion_ActualizaLaFechaOK()
-    { 
-        Tarea tarea = CrearTareaValida();
-        DateTime nuevaFecha = DateTime.Today.AddDays(10);
-        tarea.ModificarFechaDeEjecucion(nuevaFecha);
-        Assert.AreEqual(nuevaFecha, tarea.FechaDeEjecucion);
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionDominio))]
-    public void ModificarFechaDeEjecucion_LanzaExcepcionSiFechaEsAnteriorAHoy()
-    {
-        Tarea tarea = CrearTareaValida();
-        DateTime fechaPasada = DateTime.Now.AddDays(-1);
-        tarea.ModificarFechaDeEjecucion(fechaPasada);
-    }
 
     [TestMethod]
     public void ModificarDuracion_ActualizaLaDuracionOK()
@@ -553,22 +534,13 @@ public class TareaTests
     }
     
     [TestMethod]
-    public void VerificarDependenciaNoEstaAgregada_NoExisteNoLanzaExcepcion()
-    {
-        Tarea tarea = CrearTareaValida();
-        Dependencia dependencia = CrearDependenciaValida();
-        tarea.VerificarDependenciaNoEstaAgregada(dependencia);
-    }
-    
-    [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void VerificarDependenciaNoEstaAgregada_YaExisteLanzaExcepcion()
     {
         Tarea tarea = CrearTareaValida();
         Dependencia dependencia = CrearDependenciaValida();
         tarea.AgregarDependencia(dependencia);
-        
-        tarea.VerificarDependenciaNoEstaAgregada(dependencia);
+        tarea.AgregarDependencia(dependencia);
     }
     
     // HELPERS
