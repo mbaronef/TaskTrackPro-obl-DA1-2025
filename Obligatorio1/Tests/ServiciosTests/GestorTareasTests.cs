@@ -620,5 +620,19 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_noAdmin, tarea.Id, proyecto.Id, _noAdmin);
     }
+    
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoSePuedeAgregarMiembroATareaSiNoEsMiembroDelProyecto()
+    {
+        _admin.Id = 1;
+        _noAdmin.Id = 2;
+        
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        
+        Tarea tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+    }
 
 }
