@@ -22,6 +22,11 @@ GestorProyectos gestorProyectos = new GestorProyectos();
 gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today.AddDays(1), usuarioActual.UsuarioLogueado, new List<Usuario>()), usuarioActual.UsuarioLogueado);
 builder.Services.AddSingleton(gestorProyectos);
 
+GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);
+gestorRecursos.AgregarRecurso(usuarioActual.UsuarioLogueado, new Recurso("Recurso", "tipo", "descripcion"));
+builder.Services.AddSingleton(gestorRecursos);
+
+
 Usuario usuarioSinRol = gestorUsuarios.CrearUsuario("Sofía", "Martínez", new DateTime(2000, 5, 20), "sofia@gmail.com", "Contrasena123$");
 gestorUsuarios.AgregarUsuario(usuario, usuarioSinRol);
 
