@@ -543,6 +543,57 @@ public class TareaTests
         tarea.AgregarDependencia(dependencia);
     }
     
+    [TestMethod]
+    public void EqualsRetornaTrueSiLosIdsSonIguales()
+    {
+        Tarea tarea1 = CrearTareaValida();
+        tarea1.Id = 1;
+        Tarea tarea2 = CrearTareaValida();
+        tarea2.Id = 1;
+        bool sonIguales = tarea1.Equals(tarea2);
+        Assert.IsTrue(sonIguales);
+    }
+    
+    [TestMethod]
+    public void EqualsRetornaFalseSiLosIdsNoSonIguales()
+    {
+        Tarea tarea1 = CrearTareaValida();
+        tarea1.Id = 1;
+        Tarea tarea2 = CrearTareaValida();
+        tarea2.Id = 2;
+        bool sonIguales = tarea1.Equals(tarea2);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod]
+    public void EqualsRetornaFalseSiUnObjetoEsNull()
+    { 
+        Tarea tarea = CrearTareaValida();
+        bool sonIguales = tarea.Equals(null);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod]
+    public void EqualsRetornaFalseSiUnObjetoNoEsTarea()
+    {
+        Tarea tarea = CrearTareaValida();
+        int otro = 0;
+        bool sonIguales = tarea.Equals(otro);
+        Assert.IsFalse(sonIguales);
+    }
+
+    [TestMethod] 
+    public void GetHashCodeFuncionaOk()
+    {
+        Tarea tarea1 = CrearTareaValida();
+        Tarea tarea2 = CrearTareaValida();
+        //ambos tienen mismo id ya que no hay un gestor que maneje ids
+        Tarea tarea3 = CrearTareaValida();
+        tarea3.Id = 3; //  id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
+        Assert.AreEqual(tarea1.GetHashCode(), tarea2.GetHashCode());
+        Assert.AreNotEqual(tarea3.GetHashCode(), tarea1.GetHashCode());
+    }
+    
     // HELPERS
     private Tarea CrearTareaValida()
     {

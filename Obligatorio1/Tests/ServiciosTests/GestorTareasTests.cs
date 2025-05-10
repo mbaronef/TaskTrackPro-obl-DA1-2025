@@ -18,6 +18,7 @@ public class GestorTareasTests
     public void Inicializar()
     {
         typeof(GestorTareas).GetField("_cantidadTareas", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        
         _gestorProyectos = new GestorProyectos();
         _gestorTareas = new GestorTareas(_gestorProyectos);
         _admin = CrearAdministradorProyecto();
@@ -215,8 +216,8 @@ public class GestorTareasTests
         Proyecto proyecto = CrearYAgregarProyecto(admin);
         Tarea tarea1 = CrearTarea();
         Tarea tarea2 = CrearTarea();
-        proyecto.AgregarTarea(tarea1);
-        proyecto.AgregarTarea(tarea2);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
         Tarea tareaObtenida1 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea1.Id);
         Tarea tareaObtenida2 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea2.Id);
@@ -231,7 +232,7 @@ public class GestorTareasTests
     {
         Usuario admin = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(admin);
-        Tarea tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, 20);
+        Tarea tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, -1);
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]

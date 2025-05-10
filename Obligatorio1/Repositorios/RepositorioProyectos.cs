@@ -15,7 +15,7 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void Agregar(Proyecto objeto)
     {
-        objeto.AsignarId(++_cantidadProyectos);
+        objeto.Id = ++_cantidadProyectos;
         _proyectos.Add(objeto);
     }
 

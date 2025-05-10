@@ -1,7 +1,6 @@
 ﻿using Dominio;
 using Dominio.Excepciones;
 using Servicios.Excepciones;
-//using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
@@ -14,15 +13,14 @@ public class GestorTareas
     {
         _gestorProyectos = gestorProyectos;
     }
-
+    
     public void AgregarTareaAlProyecto(int idProyecto, Usuario solicitante, Tarea nuevaTarea)
     {
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         _cantidadTareas++;
         nuevaTarea.Id = _cantidadTareas;
-
-        proyecto.ValidarTareaNoDuplicada(nuevaTarea);
+        
         proyecto.AgregarTarea(nuevaTarea);
 
         // CPM: Recalcular ruta crítica del proyecto tras agregar nueva tarea
@@ -41,13 +39,13 @@ public class GestorTareas
 
         Notificar(proyecto, $"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
     }
-
+    
     public Tarea ObtenerTareaPorId(int idProyecto, int idTarea)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyecto(idProyecto);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
         Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
         if (tarea == null)
-            throw new ExcepcionServicios("Recurso no existente");
+            throw new ExcepcionServicios("Tarea no existente");
         return tarea;
     }
 
@@ -126,12 +124,12 @@ public class GestorTareas
     }
 
     private Proyecto ObtenerProyecto(int idProyecto){
-        return _gestorProyectos.ObtenerProyecto(idProyecto);
+        return _gestorProyectos.ObtenerProyectoPorId(idProyecto);
     }
 
     private Proyecto ObtenerProyectoValidandoAdmin(int idProyecto, Usuario solicitante)
     {
-        var proyecto = ObtenerProyecto(idProyecto);
+        Proyecto proyecto = ObtenerProyecto(idProyecto);
         _gestorProyectos.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
         _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         return proyecto;
@@ -139,7 +137,7 @@ public class GestorTareas
 
     private Tarea ObtenerTareaValidandoAdmin(Usuario solicitante, int idProyecto, int idTarea)
     {
-        var proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         return ObtenerTareaPorId(proyecto.Id, idTarea);
     }
 

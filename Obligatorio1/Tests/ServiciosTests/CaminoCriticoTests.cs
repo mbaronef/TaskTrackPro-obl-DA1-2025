@@ -123,19 +123,19 @@ public class CaminoCriticoTests
     [TestMethod]
     public void DependenciasSSOk()
     {
-        _tarea1 = new Tarea("Tarea 1", "desc", 2, _fechaHoy);
-        _tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy.AddDays(3));
+        Tarea tarea1 = new Tarea("Tarea 1", "desc", 2, _fechaHoy) {Id = 1};
+        Tarea tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy.AddDays(3)) {Id = 2};
         
-        _tarea2.AgregarDependencia(new Dependencia("SS", _tarea1));
+        tarea2.AgregarDependencia(new Dependencia("SS", tarea1));
         
-        _proyecto.AgregarTarea(_tarea1);
-        _proyecto.AgregarTarea(_tarea2);
+        _proyecto.AgregarTarea(tarea1);
+        _proyecto.AgregarTarea(tarea2);
         
         CaminoCritico.CalcularCaminoCritico(_proyecto);
         
-        Assert.IsTrue(_tarea1.EsCritica());
-        Assert.IsTrue(_tarea2.EsCritica());
-        Assert.AreEqual(_tarea1.FechaInicioMasTemprana,_tarea2.FechaInicioMasTemprana);
+        Assert.IsTrue(tarea1.EsCritica());
+        Assert.IsTrue(tarea2.EsCritica());
+        Assert.AreEqual(tarea1.FechaInicioMasTemprana,tarea2.FechaInicioMasTemprana);
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]

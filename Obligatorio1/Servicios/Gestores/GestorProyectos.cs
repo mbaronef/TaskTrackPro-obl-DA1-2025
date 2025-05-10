@@ -71,17 +71,20 @@ public class GestorProyectos
 
         proyecto.NotificarMiembros($"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
     }
-    
+
     public void ModificarFechaFinMasTempranaDelProyecto(int idProyecto, DateTime nuevaFecha, Usuario solicitante)
     {
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
+        if (nuevaFecha != proyecto.FechaFinMasTemprana)
+        {
+            VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
-        proyecto.ModificarFechaFinMasTemprana(nuevaFecha);
-        
-        proyecto.NotificarMiembros($"Se cambió la fecha de fin más temprana del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
-    }
+            proyecto.ModificarFechaFinMasTemprana(nuevaFecha);
+
+            proyecto.NotificarMiembros(
+            $"Se cambió la fecha de fin más temprana del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
+        }
+    }  
 
     public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdmin)
     {
@@ -133,33 +136,6 @@ public class GestorProyectos
         proyecto.NotificarMiembros($"Se eliminó a el miembro (id {idMiembroAEliminar}) del proyecto '{proyecto.Nombre}'.");
     }
 
-    public void AgregarTareaAlProyecto(int idProyecto,  Usuario solicitante, Tarea nuevaTarea)
-    {
-        Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
-        
-        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
-        
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
-        proyecto.AgregarTarea(nuevaTarea);
-        
-        proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
-    }
-
-    public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idTareaAEliminar)
-    {
-        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
-         
-        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
-        
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
-        proyecto.EliminarTarea(idTareaAEliminar);
-        
-        proyecto.NotificarMiembros($"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
-        
-    }
-
     public List<Proyecto> ObtenerProyectosPorUsuario(int idUsuario)
     {
         return Proyectos.ObtenerTodos().Where(proyecto => proyecto.Miembros.Any(usuario => usuario.Id == idUsuario)).ToList();
@@ -184,11 +160,25 @@ public class GestorProyectos
         
         return proyecto;
     }
-    
-    private void VerificarUsuarioEsAdminProyectoDeEseProyecto(Proyecto proyecto, Usuario usuario)
+
+    public void VerificarUsuarioEsAdminProyectoDeEseProyecto(Proyecto proyecto, Usuario usuario)
     {
         if (!proyecto.EsAdministrador(usuario))
             throw new ExcepcionServicios("Solo el administrador del proyecto puede realizar esta acción.");
+    }
+    
+    public void VerificarUsuarioTengaPermisosDeAdminProyecto(Usuario solicitante, String tipoUsuario)
+    {
+        if(!solicitante.EsAdministradorProyecto)
+            throw new ExcepcionServicios($"El {tipoUsuario} no tiene los permisos de administrador de proyecto.");
+    }
+    
+    public void VerificarUsuarioMiembroDelProyecto(int idUsuario, Proyecto proyecto)
+    {
+        Usuario usuario = ObtenerMiembro(idUsuario, proyecto);
+        
+        if (usuario is null)
+            throw new ExcepcionServicios("El usuario no es miembro del proyecto.");
     }
 
     private void VerificarNombreNoRepetido(string nuevoNombre)
@@ -205,24 +195,10 @@ public class GestorProyectos
             throw new ExcepcionServicios("El usuario ya está administrando un proyecto.");
     }
 
-    private void VerificarUsuarioTengaPermisosDeAdminProyecto(Usuario solicitante, String tipoUsuario)
-    {
-        if(!solicitante.EsAdministradorProyecto)
-            throw new ExcepcionServicios($"El {tipoUsuario} no tiene los permisos de administrador de proyecto.");
-    }
-
     private void VerificarUsuarioEsAdminSistema(Usuario usuario)
     {
         if (!usuario.EsAdministradorSistema)
             throw new ExcepcionServicios("El solicitante no es administrador de sistema.");
-    }
-
-    private void VerificarUsuarioMiembroDelProyecto(int idUsuario, Proyecto proyecto)
-    {
-        Usuario usuario = ObtenerMiembro(idUsuario, proyecto);
-        
-        if (usuario is null)
-            throw new ExcepcionServicios("El usuario no es miembro del proyecto.");
     }
 
     private Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
@@ -231,5 +207,4 @@ public class GestorProyectos
         
         return miembro;
     }
-
 }

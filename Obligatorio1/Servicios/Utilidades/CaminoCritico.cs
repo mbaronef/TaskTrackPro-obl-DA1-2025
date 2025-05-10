@@ -16,8 +16,7 @@ public static class CaminoCritico
             {
                 if (!tarea.Dependencias.Any())
                 {
-                    tarea.FechaInicioMasTemprana = proyecto.FechaInicio;
-                    tarea.CalcularFechaFinMasTemprana();
+                    tarea.ModificarFechaInicioMasTemprana(proyecto.FechaInicio);
                 }
                 else
                 {
@@ -99,8 +98,7 @@ public static class CaminoCritico
                 fechas.Add(tareaAnterior.FechaInicioMasTemprana);
             }
         }
-        tarea.FechaInicioMasTemprana = fechas.Max();
-        tarea.CalcularFechaFinMasTemprana();
+        tarea.ModificarFechaInicioMasTemprana(fechas.Max());
     }
 
     private static Dictionary<Tarea, List<Tarea>> ObtenerSucesorasPorTarea(List<Tarea> tareas)

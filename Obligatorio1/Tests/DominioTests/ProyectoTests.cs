@@ -153,7 +153,7 @@ public class ProyectoTests
     {
         Usuario admin = CrearAdmin(1);
         Proyecto proyecto = CrearProyectoCon(admin);
-        proyecto.AsignarId(42);
+        proyecto.Id = 42;
         Assert.AreEqual(42, proyecto.Id);
     }
 
@@ -556,7 +556,7 @@ public class ProyectoTests
         Usuario miembro = CrearMiembro(2);
         Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { miembro });
 
-        Assert.IsTrue(proyecto.EsMiembro(miembro));
+        Assert.IsTrue(proyecto.EsMiembro(miembro.Id));
     }
 
     [TestMethod]
@@ -566,7 +566,7 @@ public class ProyectoTests
         Usuario miembro = CrearMiembro(3);
         Proyecto proyecto = CrearProyectoCon(_admin, new List<Usuario> { miembro });
 
-        Assert.IsFalse(proyecto.EsMiembro(otro));
+        Assert.IsFalse(proyecto.EsMiembro(otro.Id));
     }
 
     //equals:
