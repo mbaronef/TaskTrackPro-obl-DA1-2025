@@ -1,8 +1,6 @@
 @page "/inicio"
-@using Dominio
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
-@inject ServiciosInterfaz.UsuarioActual UsuarioActual
 @inject GestorProyectos GestorProyectos
 @rendermode InteractiveServer
 @inject LogicaSesion Sesion
@@ -44,17 +42,14 @@ else
     {
         if (firstRender && !sesionCargada)
         {
-            Console.WriteLine("Verificando sesión...");
             bool haySesionActiva = await Sesion.HaySesionActiva();
 
             if (!haySesionActiva)
             {
-                Console.WriteLine("No hay sesión activa, redirigiendo...");
                 Navigation.NavigateTo("/");
             }
             else
             {
-                Console.WriteLine("Sesión activa.");
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }
 

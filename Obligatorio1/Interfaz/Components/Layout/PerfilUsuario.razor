@@ -1,0 +1,34 @@
+@using Interfaz.ServiciosInterfaz
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+
+@if (Sesion.UsuarioLogueado is not null)
+{
+    <NavLink href="/perfil" class="btn btn-outline-secondary me-3">👤</NavLink>
+}
+
+@code {
+    private bool sesionCargada = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+
+            sesionCargada = true;
+        }
+    }
+
+}

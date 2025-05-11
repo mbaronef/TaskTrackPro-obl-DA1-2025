@@ -7,14 +7,12 @@ using Servicios.Utilidades;
 
 var builder = WebApplication.CreateBuilder(args);
 
-UsuarioActual usuarioActual = new UsuarioActual();
 string contraseña = UtilidadesContrasena.ValidarYEncriptarContrasena("Admin123$");
 Usuario usuario = (new Usuario("Juan", "Pérez", new DateTime(1990,1,1), "admin@gmail.com", contraseña));
 usuario.EsAdministradorProyecto = true;
 usuario.EsAdministradorSistema = true;
-usuarioActual.EstablecerUsuario(usuario);
 
-builder.Services.AddSingleton(usuarioActual);
+builder.Services.AddSingleton(usuario);
 
 GestorUsuarios gestorUsuarios = new GestorUsuarios();
 builder.Services.AddSingleton(gestorUsuarios);
@@ -22,11 +20,11 @@ builder.Services.AddSingleton(gestorUsuarios);
 gestorUsuarios.AgregarUsuario(usuario, usuario);
 
 GestorProyectos gestorProyectos = new GestorProyectos();
-gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today.AddDays(1), usuarioActual.UsuarioLogueado, new List<Usuario>()), usuarioActual.UsuarioLogueado);
+gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today.AddDays(1), usuario, new List<Usuario>()), usuario);
 builder.Services.AddSingleton(gestorProyectos);
 
 GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);
-gestorRecursos.AgregarRecurso(usuarioActual.UsuarioLogueado, new Recurso("Recurso", "tipo", "descripcion"));
+gestorRecursos.AgregarRecurso(usuario, new Recurso("Recurso", "tipo", "descripcion"));
 builder.Services.AddSingleton(gestorRecursos);
 
 

@@ -1,34 +1,72 @@
 @page "/perfil"
-@inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@using Interfaz.ServiciosInterfaz
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
-<h3>Perfil de usuario</h3>
+@if (Sesion.UsuarioLogueado is not null)
+{
+    <h3>Perfil de usuario</h3>
 
-<p><strong>Nombre:</strong> @UsuarioActual.UsuarioLogueado?.Nombre</p>
-<p><strong>Apellido:</strong> @UsuarioActual.UsuarioLogueado?.Apellido</p>
-<p><strong>Fecha de nacimiento:</strong> @UsuarioActual.UsuarioLogueado?.FechaNacimiento.ToShortDateString()</p>
-<p><strong>Email:</strong> @UsuarioActual.UsuarioLogueado?.Email</p>
-<p><strong>Roles:</strong> 
-    @if (UsuarioActual.UsuarioLogueado?.EsAdministradorSistema == true)
-    {
-        <span class="badge bg-secondary me-1">Administrador sistema</span>
-    }
-    @if (UsuarioActual.UsuarioLogueado?.EsAdministradorProyecto == true)
-    {
-        <span class="badge bg-info me-1">Administrador proyecto</span>
-    }
-    @if (!UsuarioActual.UsuarioLogueado.EsAdministradorSistema && !UsuarioActual.UsuarioLogueado.EsAdministradorProyecto)
-    {
-        <span>No tiene el rol de administrador de sistema ni de administrador de proyecto.</span>
-    }
-</p>
-<p><strong>Contraseña:</strong>
-    <button class="btn btn-danger">Cambiar</button>
-    <button class="btn btn-danger">Reiniciar</button>
-</p>
+    <p><strong>Nombre:</strong> @Sesion.UsuarioLogueado?.Nombre</p>
+    <p><strong>Apellido:</strong> @Sesion.UsuarioLogueado?.Apellido</p>
+    <p><strong>Fecha de nacimiento:</strong> @Sesion.UsuarioLogueado?.FechaNacimiento.ToShortDateString()</p>
+    <p><strong>Email:</strong> @Sesion.UsuarioLogueado?.Email</p>
+    <p><strong>Roles:</strong> 
+        @if (Sesion.EsAdminSistema())
+        {
+            <span class="badge bg-secondary me-1">Administrador sistema</span>
+        }
+        @if (Sesion.EsAdminProyecto())
+        {
+            <span class="badge bg-info me-1">Administrador proyecto</span>
+        }
+        @if (!Sesion.EsAdminSistema() && !Sesion.EsAdminProyecto())
+        {
+            <span>No tiene el rol de administrador de sistema ni de administrador de proyecto.</span>
+        }
+    </p>
+    <p><strong>Contraseña:</strong>
+        <button class="btn btn-danger">Cambiar</button>
+        <button class="btn btn-danger">Reiniciar</button>
+    </p>
 
-<button class="btn btn-danger">Cerrar sesión</button>
+    <button class="btn btn-danger" @onclick="CerrarSesion">Cerrar sesión</button>
+    <button class="btn btn-danger" @onclick="IrAInicio">Atrás</button>
+}
+
 <!--aun falta funcionalidades de botones cambiar, reiniciar y cerrar sesión-->
 
 @code {
+    private bool sesionCargada = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+
+            sesionCargada = true;
+        }
+    }
     
+    private async Task CerrarSesion()
+    {
+        await Sesion.LogOut();
+        Navigation.NavigateTo("/");
+    }
+
+    private void IrAInicio()
+    {
+        Navigation.NavigateTo("/inicio");
+    }
 }
