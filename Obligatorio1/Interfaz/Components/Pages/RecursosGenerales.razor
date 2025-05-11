@@ -1,15 +1,52 @@
 @page "/RecursosGenerales"
+@rendermode InteractiveServer
 @inject ServiciosInterfaz.UsuarioActual UsuarioActual
 @inject GestorRecursos GestorRecursos
 @using Dominio
 @using Servicios.Gestores
 @inject NavigationManager NavigationManager
+@using System.ComponentModel.DataAnnotations
+@using Dominio.Excepciones
+
 
 <h3>Recursos Generales</h3>
 
 @if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
 {
-    <button class="btn btn-primary mb-3" @onclick="CrearNuevoRecurso">Crear nuevo recurso</button>
+    <button class="btn btn-primary mb-3" @onclick="MostrarFormularioCrearRecurso">Crear nuevo recurso</button>
+}
+@if (mostrarError)
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMensaje
+    </div>
+}
+@if (mostrarFormCrearRecurso)
+{
+    <EditForm Model="nuevoRecurso" OnValidSubmit="CrearRecurso">
+        <DataAnnotationsValidator />
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Nuevo Recurso</strong>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label>Nombre</label>
+                    <InputText class="form-control" @bind-Value="nuevoRecurso.Nombre" @oninput="OcultarError"/>
+                </div>
+                <div class="mb-3">
+                    <label>Tipo</label>
+                    <InputText class="form-control" @bind-Value="nuevoRecurso.Tipo" @oninput="OcultarError"/>
+                </div>
+                <div class="mb-3">
+                    <label>Descripción</label>
+                    <InputText class="form-control" @bind-Value="nuevoRecurso.Descripcion" @oninput="OcultarError"></InputText>
+                </div>
+                <button class="btn btn-success" @onclick="CrearRecurso">Guardar</button>
+                <button class="btn btn-secondary ms-2" @onclick="CancelarCrearRecurso">Cancelar</button>
+            </div>
+        </div>
+    </EditForm>
 }
 
 @if (GestorRecursos.ObtenerRecursosGenerales().Count == 0)
@@ -50,13 +87,85 @@ else
 }
 
 @code {
-    private void CrearNuevoRecurso()
+    private bool mostrarFormCrearRecurso = false;
+    private bool mostrarError = false;
+    private string errorMensaje;
+    private RecursoDTO nuevoRecurso = new RecursoDTO();
+
+
+    private void MostrarFormularioCrearRecurso()
     {
-        NavigationManager.NavigateTo("/recursosGenerales/crear");
+        mostrarFormCrearRecurso = true;
+        nuevoRecurso = new RecursoDTO();
+    }
+
+    private void CancelarCrearRecurso()
+    {
+        mostrarFormCrearRecurso = false;
+    }
+    
+    private void CrearRecurso()
+    {
+        mostrarError = false;
+        errorMensaje = "";
+
+        var errores = ValidarModelo(nuevoRecurso);
+        if (errores.Any())
+        {
+            errorMensaje = string.Join(" ", errores.Select(e => e.ErrorMessage));
+            mostrarError = true;
+            return;
+        }
+        try
+        {
+            Recurso nuevo = new Recurso(nuevoRecurso.Nombre, nuevoRecurso.Tipo, nuevoRecurso.Descripcion);
+            GestorRecursos.AgregarRecurso(UsuarioActual.UsuarioLogueado, nuevo);
+            mostrarFormCrearRecurso = false;
+            mostrarError = false;
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensaje = $"Error al crear recurso: {ex.Message}";
+            mostrarError = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = "Ocurrió un error inesperado al crear el recurso.";
+            mostrarError = true;
+        }
     }
 
     private void EditarRecurso(int idRecurso)
     {
         NavigationManager.NavigateTo($"/recursosGenerales/editar/{idRecurso}");
     }
+    
+    private void OcultarError(ChangeEventArgs e)
+    {
+        mostrarError = false;
+    }
+    
+    private List<ValidationResult> ValidarModelo(object modelo)
+    {
+        var resultados = new List<ValidationResult>();
+        var contexto = new ValidationContext(modelo, serviceProvider: null, items: null);
+        Validator.TryValidateObject(modelo, contexto, resultados, validateAllProperties: true);
+        return resultados;
+    }
+
+    public class RecursoDTO
+    {
+        public int Id { get; set; }
+        
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        public string Nombre { get; set; }
+        
+        [Required(ErrorMessage = "El tipo es obligatorio.")]
+        public string Tipo { get; set; }
+        
+        [Required(ErrorMessage = "La descripción es obligatoria.")]
+        public string Descripcion { get; set; }
+    }
+
+    
 }
