@@ -33,16 +33,11 @@ public class LogicaSesion
                 return false;
             }
         }
-        
-        public async Task IniciarSesion()
-        {
-            Usuario? usuario = await _localStorage.GetItemAsync<Usuario>(CURRENT_USER);
-            UsuarioLogueado = usuario;
-        }
 
         public async Task<bool> HaySesionActiva()
         {
             Usuario? usuario = await _localStorage.GetItemAsync<Usuario>(CURRENT_USER);
+            UsuarioLogueado = usuario;
 
             return usuario is not null;
         }

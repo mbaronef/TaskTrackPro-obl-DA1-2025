@@ -1,46 +1,64 @@
 @page "/inicio"
 @using Dominio
+@using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @inject ServiciosInterfaz.UsuarioActual UsuarioActual
 @inject GestorProyectos GestorProyectos
+@rendermode InteractiveServer
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigation
 
+@if(Sesion.UsuarioLogueado == null)
+{
+}
+else
+{
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1 class="display-5">Bienvenido, @Sesion.UsuarioLogueado?.Nombre @Sesion.UsuarioLogueado?.Apellido a <strong>TaskTrackPro</strong></h1>
+            <h3 class="lead">Tu solución integral para la gestión de proyectos.</h3>
+        </div>
 
-<div class="container mt-5">
-    <div class="text-center">
-        <h1 class="display-5">Bienvenido, @UsuarioActual.UsuarioLogueado?.Nombre @UsuarioActual.UsuarioLogueado?.Apellido a <strong>TaskTrackPro</strong></h1>
-        <h3 class="lead">Tu solución integral para la gestión de proyectos.</h3>
+        <hr />
+
+        <p>
+            TaskTrackPro es una aplicación web diseñada para facilitar la organización, seguimiento y planificación de proyectos en equipo.
+            Permite crear y administrar proyectos, asignar tareas con dependencias, establecer fechas clave y calcular automáticamente el camino crítico para optimizar la duración del proyecto.
+        </p>
+
+        <p>
+            Con un enfoque colaborativo, TaskTrackPro ofrece funcionalidades como notificaciones automáticas, control de permisos por roles
+            y visualización clara del progreso del proyecto.
+        </p>
+
+        <p>
+            Ideal para equipos que buscan eficiencia, transparencia y control total en la ejecución de sus proyectos.
+        </p>
     </div>
-
-    <hr />
-
-    <p>
-        TaskTrackPro es una aplicación web diseñada para facilitar la organización, seguimiento y planificación de proyectos en equipo.
-        Permite crear y administrar proyectos, asignar tareas con dependencias, establecer fechas clave y calcular automáticamente el camino crítico para optimizar la duración del proyecto.
-    </p>
-
-    <p>
-        Con un enfoque colaborativo, TaskTrackPro ofrece funcionalidades como notificaciones automáticas, control de permisos por roles
-        y visualización clara del progreso del proyecto.
-    </p>
-
-    <p>
-        Ideal para equipos que buscan eficiencia, transparencia y control total en la ejecución de sus proyectos.
-    </p>
-</div>
-
+}
 
 @code {
-    // para que se cree el usuario porque no esta log in aun
-    protected override void OnInitialized()
-    {
-        if (UsuarioActual.UsuarioLogueado == null)
-        {
-            Usuario admin = new Usuario("Juan", "Pérez", new DateTime(1990,1,1), "admin@gmail.com", "Admin123$");
-            admin.EsAdministradorProyecto = true;
-            UsuarioActual.EstablecerUsuario(admin);
+    private bool sesionCargada = false;
 
-            Proyecto proyecto = new Proyecto("Proyecto test", "Descripción", DateTime.Today.AddDays(1), admin, new List<Usuario>());
-            GestorProyectos.CrearProyecto(proyecto, admin);
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            Console.WriteLine("Verificando sesión...");
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Console.WriteLine("No hay sesión activa, redirigiendo...");
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                Console.WriteLine("Sesión activa.");
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+
+            sesionCargada = true;
         }
     }
 }
