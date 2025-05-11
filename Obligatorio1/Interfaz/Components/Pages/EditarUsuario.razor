@@ -1,0 +1,71 @@
+@page "/usuario/editar/{id:int}"
+@using Dominio
+@inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@using Servicios.Gestores
+@inject NavigationManager NavigationManager
+@inject GestorUsuarios GestorUsuarios
+
+<h3>Editar usuario</h3>
+
+@if (usuario == null)
+{
+    <p>Usuario no encontrado.</p>
+}
+else
+{
+    <div class="card p-4" style="width: 600px;">
+        <div><strong>Nombre:</strong> <input @bind="usuario.Nombre" /></div>
+        <div><strong>Apellido:</strong> <input @bind="usuario.Apellido" /></div>
+        <div><strong>Fecha de nacimiento:</strong> <input type="date" @bind="usuario.FechaNacimiento" /></div>
+        <div><strong>Email:</strong> <input @bind="usuario.Email" /></div>
+
+        <div class="my-2">
+            <strong>Contraseña:</strong>
+            <button class="btn btn-secondary mx-1">Generar por defecto</button>
+            <button class="btn btn-secondary mx-1">Cambiar</button>
+            <button class="btn btn-secondary mx-1">Reiniciar</button>
+        </div>
+
+        <div>
+            <input type="checkbox" @bind="usuario.EsAdministradorSistema" />
+            <label>Es administrador de sistema</label>
+        </div>
+        <div>
+            <input type="checkbox" @bind="usuario.EsAdministradorProyecto" />
+            <label>Es administrador de proyecto</label>
+        </div>
+
+        <div class="mt-4">
+            <button class="btn btn-success" @onclick="GuardarCambios">Guardar cambios</button>
+            <button class="btn btn-danger mx-2" @onclick="EliminarUsuario">Eliminar usuario</button>
+            <button class="btn btn-secondary" @onclick="Cancelar"> Cancelar </button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Usuario? usuario;
+
+    protected override void OnInitialized()
+    {
+        usuario = GestorUsuarios.Usuarios.ObtenerTodos().FirstOrDefault(u => u.Id == id);
+    }
+
+    private void GuardarCambios()
+    {
+        // Si fuera necesario, podrías hacer algo como actualizar en el repositorio también.
+        NavigationManager.NavigateTo("/usuarios", forceLoad: true);
+    }
+
+    private void EliminarUsuario()
+    {
+        GestorUsuarios.EliminarUsuario(UsuarioActual.UsuarioLogueado, usuario.Id);
+        NavigationManager.NavigateTo("/usuarios", forceLoad: true);
+    }
+    private void Cancelar() // no se porque no andan los botones
+    
+    {
+        NavigationManager.NavigateTo("/usuarios", true);
+    }
+}
