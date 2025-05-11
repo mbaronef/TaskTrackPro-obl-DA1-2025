@@ -1,19 +1,103 @@
 @page "/usuarios"
 @inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@rendermode InteractiveServer
 @inject GestorUsuarios GestorUsuarios
+@using System.ComponentModel.DataAnnotations
 @using Dominio
+@using Dominio.Excepciones
+@using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
+
+<h3>USUARIOS:</h3>
 
 @if (!UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
 {
     <p class="text-danger">Acceso denegado. Solo disponible para administradores del sistema.</p>
-} <!-- falta que al usuario que no sea admin sistema ni le aparezca esta opcion en el menu-->
-@if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+}
+else
 {
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>USUARIOS:</h3>
-        <NavLink href="/usuarios/crear" class="btn btn-dark">Crear nuevo usuario</NavLink>
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-dark" @onclick="MostrarFormularioCrearUsuario">Crear nuevo usuario</button>
     </div>
+
+    @if (mostrarError)
+    {
+        <div class="alert alert-danger" role="alert">@errorMensaje</div>
+    }
+
+    @if (mostrarFormCrear)
+    {
+        <EditForm Model="nuevoUsuario" OnValidSubmit="CrearUsuario">
+            <DataAnnotationsValidator />
+            <div class="card mb-4">
+                <div class="card-header"><strong>Nuevo Usuario</strong></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label>Nombre</label>
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Apellido</label>
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Fecha de nacimiento</label>
+                        <InputDate class="form-control" @bind-Value="nuevoUsuario.FechaNacimiento" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Contraseña</label>
+                        <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" />
+                    </div>
+                    <div>
+                        <button class="btn btn-success" type="submit">Crear</button>
+                        <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarCrearUsuario">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    }
+
+    @if (mostrarFormEditar)
+    {
+        <EditForm Model="usuarioAEditar" OnValidSubmit="GuardarCambiosUsuario">
+            <DataAnnotationsValidator />
+            <div class="card mb-4">
+                <div class="card-header"><strong>Editar Usuario</strong></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label>Nombre</label>
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Nombre" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Apellido</label>
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Apellido" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Fecha de nacimiento</label>
+                        <InputDate class="form-control" @bind-Value="usuarioAEditar.FechaNacimiento" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Roles</label><br />
+                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorSistema" /> <label class="me-3">Administrador de sistema</label>
+                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto" /> <label>Administrador de proyecto</label>
+                    </div>
+                    <div>
+                        <button class="btn btn-success" type="submit">Guardar cambios</button>
+                        <button class="btn btn-danger ms-2" type="button" @onclick="EliminarUsuario">Eliminar usuario</button>
+                        <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEditarUsuario">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    }
 
     <table class="table">
         <thead>
@@ -39,19 +123,139 @@
                     }
                     @if (usuario.EsAdministradorProyecto)
                     {
-                    <span class="badge bg-info text-dark ms-1">Administrador de proyecto</span>
+                        <span class="badge bg-info text-dark ms-1">Administrador de proyecto</span>
                     }
                 </td>
                 <td>
                     @if (!usuario.EsAdministradorSistema)
                     {
-                        <NavLink href=@($"/usuario/editar/{usuario.Id}") class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-pencil"></i> Editar
-                        </NavLink>
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditarUsuario(usuario)">Editar</button>
                     }
                 </td>
             </tr>
         }
         </tbody>
     </table>
+}
+
+@code {
+    private bool mostrarFormCrear = false;
+    private bool mostrarFormEditar = false;
+    private bool mostrarError = false;
+    private string errorMensaje;
+    
+
+    private UsuarioDTO nuevoUsuario = new UsuarioDTO();
+    private UsuarioDTO usuarioAEditar = new UsuarioDTO();
+    private int idUsuarioEditando;
+
+    private void MostrarFormularioCrearUsuario()
+    {
+        mostrarFormCrear = true;
+        mostrarFormEditar = false;
+        nuevoUsuario = new UsuarioDTO();
+    }
+
+    private void CancelarCrearUsuario()
+    {
+        mostrarFormCrear = false;
+        mostrarError = false;
+    }
+
+    private void CrearUsuario()
+    {
+        try
+        {
+            Usuario nuevo = GestorUsuarios.CrearUsuario(
+                nuevoUsuario.Nombre,
+                nuevoUsuario.Apellido,
+                nuevoUsuario.FechaNacimiento,
+                nuevoUsuario.Email,
+                nuevoUsuario.Contrasena);
+
+            GestorUsuarios.AgregarUsuario(UsuarioActual.UsuarioLogueado, nuevo);
+            mostrarFormCrear = false;
+            nuevoUsuario = new UsuarioDTO();
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensaje = ex.Message;
+            mostrarError = true;
+        }
+        catch
+        {
+            errorMensaje = "Ocurrió un error inesperado al crear el usuario.";
+            mostrarError = true;
+        }
+    }
+
+    private void EditarUsuario(Usuario usuario)
+    {
+        usuarioAEditar = new UsuarioDTO
+        {
+            Id = usuario.Id,
+            Nombre = usuario.Nombre,
+            Apellido = usuario.Apellido,
+            FechaNacimiento = usuario.FechaNacimiento,
+            Email = usuario.Email,
+            EsAdministradorSistema = usuario.EsAdministradorSistema,
+            EsAdministradorProyecto = usuario.EsAdministradorProyecto
+        };
+        idUsuarioEditando = usuario.Id;
+        mostrarFormEditar = true;
+        mostrarFormCrear = false;
+        mostrarError = false;
+    }
+
+    private void GuardarCambiosUsuario()
+    {
+        List<Usuario> lista = GestorUsuarios.Usuarios.ObtenerTodos();
+        Usuario usuarioOriginal = lista.FirstOrDefault(u => u.Id == idUsuarioEditando);
+
+        if (usuarioOriginal != null)
+        {
+            usuarioOriginal.Nombre = usuarioAEditar.Nombre;
+            usuarioOriginal.Apellido = usuarioAEditar.Apellido;
+            usuarioOriginal.FechaNacimiento = usuarioAEditar.FechaNacimiento;
+            usuarioOriginal.Email = usuarioAEditar.Email;
+            usuarioOriginal.EsAdministradorSistema = usuarioAEditar.EsAdministradorSistema;
+            usuarioOriginal.EsAdministradorProyecto = usuarioAEditar.EsAdministradorProyecto;
+        }
+        mostrarFormEditar = false;
+    }
+
+    private void EliminarUsuario()
+    {
+        GestorUsuarios.EliminarUsuario(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+        mostrarFormEditar = false;
+    }
+
+    private void CancelarEditarUsuario()
+    {
+        mostrarFormEditar = false;
+    }
+
+    public class UsuarioDTO
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "El apellido es obligatorio.")]
+        public string Apellido { get; set; }
+
+        [Required(ErrorMessage = "La fecha de nacimiento es obligatoria.")]
+        public DateTime FechaNacimiento { get; set; } = DateTime.Today;
+
+        [Required(ErrorMessage = "El email es obligatorio.")]
+        [EmailAddress(ErrorMessage = "Formato de email inválido.")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        public string Contrasena { get; set; }
+
+        public bool EsAdministradorSistema { get; set; }
+        public bool EsAdministradorProyecto { get; set; }
+    }
 }
