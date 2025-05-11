@@ -19,6 +19,13 @@ namespace Tests.DominioTests
         }
 
         [TestMethod]
+        public void ConstructorSinParametrosCreaUsuario()
+        {
+            Usuario usuario = new Usuario();
+            Assert.IsNotNull(usuario);
+        }
+
+        [TestMethod]
         public void ConstructorConParametrosAsignaCorrectamente()
         {
             Usuario usuario = CrearUsuarioValido();

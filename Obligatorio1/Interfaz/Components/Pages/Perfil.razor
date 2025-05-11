@@ -2,7 +2,6 @@
 @using System.ComponentModel.DataAnnotations
 @using Dominio
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Excepciones
 @using Servicios.Gestores
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
@@ -11,33 +10,65 @@
 
 @if (Sesion.UsuarioLogueado is not null)
 {
-    <h3>Perfil de usuario</h3>
+    <div class="card shadow-sm border-0 mb-4" style="max-width: 700px;"> 
+        <div class="card-body">
+            <h3 class="card-title mb-4">
+                <h3 class="d-flex align-items-center">
+                    <i class="bi bi-person-circle fs-1 me-4"></i>
+                    Perfil de Usuario
+                </h3>
+            </h3>
 
-    <p><strong>Nombre:</strong> @Sesion.UsuarioLogueado?.Nombre</p>
-    <p><strong>Apellido:</strong> @Sesion.UsuarioLogueado?.Apellido</p>
-    <p><strong>Fecha de nacimiento:</strong> @Sesion.UsuarioLogueado?.FechaNacimiento.ToShortDateString()</p>
-    <p><strong>Email:</strong> @Sesion.UsuarioLogueado?.Email</p>
-    <p><strong>Roles:</strong> 
-        @if (Sesion.EsAdminSistema())
-        {
-            <span class="badge bg-secondary me-1">Administrador sistema</span>
-        }
-        @if (Sesion.EsAdminProyecto())
-        {
-            <span class="badge bg-info me-1">Administrador proyecto</span>
-        }
-        @if (!Sesion.EsAdminSistema() && !Sesion.EsAdminProyecto())
-        {
-            <span>No tiene el rol de administrador de sistema ni de administrador de proyecto.</span>
-        }
-    </p>
-    <p><strong>Contraseña:</strong>
-        <button class="btn btn-danger" @onclick="MostrarVentanaEmergenteCambiar">Cambiar</button>
-        <button class="btn btn-danger" @onclick="MostrarVentanaEmergenteReinciar">Reiniciar</button>
-    </p>
+            <dl class="row">
+                <dt class="col-sm-4">Nombre</dt>
+                <dd class="col-sm-8">@Sesion.UsuarioLogueado?.Nombre</dd>
 
-    <button class="btn btn-danger" @onclick="CerrarSesion">Cerrar sesión</button>
-    <button class="btn btn-danger" @onclick="IrAInicio">Atrás</button>
+                <dt class="col-sm-4">Apellido</dt>
+                <dd class="col-sm-8">@Sesion.UsuarioLogueado?.Apellido</dd>
+
+                <dt class="col-sm-4">Fecha de nacimiento</dt>
+                <dd class="col-sm-8">@Sesion.UsuarioLogueado?.FechaNacimiento.ToShortDateString()</dd>
+
+                <dt class="col-sm-4">Email</dt>
+                <dd class="col-sm-8">@Sesion.UsuarioLogueado?.Email</dd>
+
+                <dt class="col-sm-4">Roles</dt>
+                <dd class="col-sm-8">
+                    @if (Sesion.EsAdminSistema())
+                    {
+                        <span class="badge bg-danger me-1">Administrador de sistema</span>
+                    }
+                    @if (Sesion.EsAdminProyecto())
+                    {
+                        <span class="badge bg-info me-1">Administrador de proyecto</span>
+                    }
+                    @if (!Sesion.EsAdminSistema() && !Sesion.EsAdminProyecto())
+                    {
+                        <span class="text-muted">Sin rol administrativo</span>
+                    }
+                </dd>
+                
+                <dd class="col-sm-8 mt-4">
+                    <div class="d-flex justify-content-center gap-3">
+                        <button class="btn btn-dark text-white px-4 py-2" style="font-size: 14px; width: 200px;" @onclick="MostrarVentanaEmergenteCambiar">
+                            Cambiar contraseña
+                        </button>
+                        <button class="btn btn-dark text-white px-4 py-2" style="font-size: 14px; width: 200px;" @onclick="MostrarVentanaEmergenteReinciar">
+                            Reiniciar contraseña
+                        </button>
+                    </div>
+                </dd>
+            </dl>
+
+            <div class="mt-4 d-flex justify-content-between">
+                <button class="btn btn-outline-secondary" @onclick="IrAInicio">⬅ Atrás</button>
+                <button class="btn btn-outline-danger" @onclick="CerrarSesion">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+
+
+
 }
 
 
