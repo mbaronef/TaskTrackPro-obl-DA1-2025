@@ -40,9 +40,11 @@ public class LogicaSesion
             UsuarioLogueado = usuario;
         }
 
-        public bool HaySesionActiva()
+        public async Task<bool> HaySesionActiva()
         {
-            return UsuarioLogueado is not null;
+            Usuario? usuario = await _localStorage.GetItemAsync<Usuario>(CURRENT_USER);
+
+            return usuario is not null;
         }
 
         public async Task LogOut()
