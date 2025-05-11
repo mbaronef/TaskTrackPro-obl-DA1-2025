@@ -36,6 +36,7 @@ public class GestorUsuariosTests
     {
         Assert.IsNotNull(_gestorUsuarios);
         Assert.AreEqual(1, _gestorUsuarios.Usuarios.ObtenerTodos().Count); // se crea solo con administrador
+        Assert.AreEqual("Admin", _gestorUsuarios.Usuarios.ObtenerTodos().Last().Nombre);
     }
 
     [TestMethod]

@@ -21,15 +21,6 @@ public class RepositorioUsuariosTests
     }
 
     [TestMethod]
-    public void ConstructorCreaRepositorioOk()
-    {
-        Usuario admin = _repositorioUsuarios.ObtenerPorId(0);
-        Assert.AreEqual("Admin", admin.Nombre);
-        Assert.AreEqual("Admin", admin.Apellido);
-        Assert.IsTrue(admin.EsAdministradorSistema);
-    }
-
-    [TestMethod]
     public void SeAgregaUnUsuarioOk()
     {
         _repositorioUsuarios.Agregar(_usuario);
@@ -60,10 +51,11 @@ public class RepositorioUsuariosTests
     [TestMethod]
     public void SeObtieneListaDelRepoOk()
     {
+        _repositorioUsuarios.Agregar(_usuario);
         List<Usuario> usuarios = _repositorioUsuarios.ObtenerTodos();
         Assert.IsNotNull(usuarios);
         Assert.AreEqual(1, usuarios.Count);
-        Assert.AreEqual("Admin", usuarios.First().Nombre);
+        Assert.AreEqual("Juan", usuarios.First().Nombre);
     }
 
     [TestMethod]
@@ -77,9 +69,10 @@ public class RepositorioUsuariosTests
     [TestMethod]
     public void SePuedeModificarContrasenaDeUsuario()
     {
-        string nuevaContrasena = UtilidadesContrasena.ValidarYEncriptarContrasena("1Admin=Sistema1");
-        _repositorioUsuarios.ActualizarContrasena(0, nuevaContrasena);
-        Usuario admin = _repositorioUsuarios.ObtenerPorId(0);
-        Assert.IsTrue(admin.Autenticar("1Admin=Sistema1"));
+        _repositorioUsuarios.Agregar(_usuario);
+        string nuevaContrasena = UtilidadesContrasena.ValidarYEncriptarContrasena("Otra1Contra{");
+        _repositorioUsuarios.ActualizarContrasena(1, nuevaContrasena);
+        Usuario admin = _repositorioUsuarios.ObtenerPorId(1);
+        Assert.IsTrue(admin.Autenticar("Otra1Contra{"));
     }
 }

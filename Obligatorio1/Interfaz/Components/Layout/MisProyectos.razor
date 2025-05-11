@@ -1,0 +1,48 @@
+@using Interfaz.ServiciosInterfaz
+@using Servicios.Gestores
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigation
+@inject GestorProyectos GestorProyectos
+@rendermode InteractiveServer
+
+
+@if (Sesion.UsuarioLogueado is not null)
+{
+    var proyectos = GestorProyectos.ObtenerProyectosPorUsuario(Sesion.UsuarioLogueado.Id);
+    foreach (var proyecto in proyectos)
+    {
+        <details class="mb-2">
+            <summary>@proyecto.Nombre</summary>
+            <ul class="list-unstyled ms-3">
+                <li><NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link text-white">Gantt</NavLink></li>
+                <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
+                <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white">Recursos</NavLink></li>
+                <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros</NavLink></li>
+            </ul>
+        </details>
+    }
+}
+
+@code {
+    private bool sesionCargada = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+
+            sesionCargada = true;
+        }
+    }
+
+}
