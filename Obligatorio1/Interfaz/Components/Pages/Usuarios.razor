@@ -34,23 +34,23 @@ else
                 <div class="card-body">
                     <div class="mb-3">
                         <label>Nombre</label>
-                        <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre" />
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre"  @oninput="OcultarError" />
                     </div>
                     <div class="mb-3">
                         <label>Apellido</label>
-                        <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido" />
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido"  @oninput="OcultarError" />
                     </div>
                     <div class="mb-3">
                         <label>Fecha de nacimiento</label>
-                        <InputDate class="form-control" @bind-Value="nuevoUsuario.FechaNacimiento" />
+                        <InputDate class="form-control" @bind-Value="nuevoUsuario.FechaNacimiento"  @oninput="OcultarError"/>
                     </div>
                     <div class="mb-3">
                         <label>Email</label>
-                        <InputText class="form-control" @bind-Value="nuevoUsuario.Email" />
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Email"  @oninput="OcultarError"/>
                     </div>
                     <div class="mb-3">
                         <label>Contraseña</label>
-                        <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" />
+                        <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena"  @oninput="OcultarError"/>
                     </div>
                     <div>
                         <button class="btn btn-success" type="submit">Crear</button>
@@ -63,7 +63,12 @@ else
     
     <!--falta validar que los campos sean correctos segun las validaciones del back-->
     <!--falta que se cambien correctamente los campos modificados y que se cierre la card una vez guardados-->
-
+    @if (mostrarErrorEditar)
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMensajeEditar
+        </div>
+    }
 
     @if (mostrarFormEditar)
     {
@@ -73,20 +78,20 @@ else
                 <div class="card-header"><strong>Editar Usuario</strong></div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label>Nombre</label>
-                        <InputText class="form-control" @bind-Value="usuarioAEditar.Nombre" />
+                        <label>Nombre</label> <!--no se puede editar, tiene que ser fijo-->
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Nombre" @oninput="OcultarErrorEditar" />
                     </div>
                     <div class="mb-3">
-                        <label>Apellido</label>
-                        <InputText class="form-control" @bind-Value="usuarioAEditar.Apellido" />
+                        <label>Apellido</label> <!--no se puede editar, tiene que ser fijo-->
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Apellido" @oninput="OcultarErrorEditar" />
                     </div>
                     <div class="mb-3">
-                        <label>Fecha de nacimiento</label>
-                        <InputDate class="form-control" @bind-Value="usuarioAEditar.FechaNacimiento" />
+                        <label>Fecha de nacimiento</label> <!--no se puede editar, tiene que ser fijo-->
+                        <InputDate class="form-control" @bind-Value="usuarioAEditar.FechaNacimiento" @oninput="OcultarErrorEditar" />
                     </div>
                     <div class="mb-3">
-                        <label>Email</label>
-                        <InputText class="form-control" @bind-Value="usuarioAEditar.Email" />
+                        <label>Email</label> 
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Email" @oninput="OcultarErrorEditar" />
                     </div>
                     <div class="mb-3">
                         <label>Roles</label><br />
@@ -94,7 +99,7 @@ else
                         <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto" /> <label>Administrador de proyecto</label>
                     </div>
                     <div>
-                        <button class="btn btn-success" type="submit">Guardar cambios</button>
+                        <button class="btn btn-success" @onclick="GuardarCambiosUsuario">Guardar cambios</button>
                         <button class="btn btn-danger ms-2" type="button" @onclick="EliminarUsuario">Eliminar usuario</button>
                         <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEditarUsuario">Cancelar</button>
                     </div>
@@ -102,61 +107,67 @@ else
             </div>
         </EditForm>
     }
-
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (Usuario usuario in GestorUsuarios.Usuarios.ObtenerTodos())
-        {
+    @if (GestorUsuarios.Usuarios.ObtenerTodos().Count == 0)
+    {
+        <p>No hay usuarios.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
             <tr>
-                <td>@usuario.Nombre</td>
-                <td>@usuario.Apellido</td>
-                <td>@usuario.Email</td>
-                <td>
-                    @if (usuario.EsAdministradorSistema)
-                    {
-                        <span class="badge bg-warning text-dark">Administrador de sistema</span>
-                    }
-                    @if (usuario.EsAdministradorProyecto)
-                    {
-                        <span class="badge bg-info text-dark ms-1">Administrador de proyecto</span>
-                    }
-                </td>
-                <td>
-                    @if (!usuario.EsAdministradorSistema)
-                    {
-                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditarUsuario(usuario)">Editar</button>
-                    }
-                </td>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th></th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (Usuario usuario in GestorUsuarios.Usuarios.ObtenerTodos())
+            {
+                <tr>
+                    <td>@usuario.Nombre</td>
+                    <td>@usuario.Apellido</td>
+                    <td>@usuario.Email</td>
+                    <td>
+                        @if (usuario.EsAdministradorSistema)
+                        {
+                            <span class="badge bg-warning text-dark">Administrador de sistema</span>
+                        }
+                        @if (usuario.EsAdministradorProyecto)
+                        {
+                            <span class="badge bg-info text-dark ms-1">Administrador de proyecto</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!usuario.EsAdministradorSistema)
+                        {
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditarUsuario(usuario.Id)">Editar</button>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
 }
 
 @code {
     private bool mostrarFormCrear = false;
+    
     private bool mostrarFormEditar = false;
     private bool mostrarError = false;
     private string errorMensaje;
-    
-
     private UsuarioDTO nuevoUsuario = new UsuarioDTO();
     private UsuarioDTO usuarioAEditar = new UsuarioDTO();
     private int idUsuarioEditando;
+    private bool mostrarErrorEditar = false;
+    private string errorMensajeEditar;
 
     private void MostrarFormularioCrearUsuario()
     {
         mostrarFormCrear = true;
-        mostrarFormEditar = false;
         nuevoUsuario = new UsuarioDTO();
     }
 
@@ -168,6 +179,17 @@ else
 
     private void CrearUsuario()
     {
+        mostrarError = false;
+        errorMensaje = "";
+        
+        List<ValidationResult> errores = ValidarModelo(nuevoUsuario);
+        if (errores.Any())
+        {
+            errorMensaje = string.Join(" ", errores.Select(e => e.ErrorMessage));
+            mostrarError = true;
+            return;
+        }
+
         try
         {
             Usuario nuevo = GestorUsuarios.CrearUsuario(
@@ -179,53 +201,88 @@ else
 
             GestorUsuarios.AgregarUsuario(UsuarioActual.UsuarioLogueado, nuevo);
             mostrarFormCrear = false;
-            nuevoUsuario = new UsuarioDTO();
+            mostrarError = false;
         }
         catch (ExcepcionDominio ex)
         {
-            errorMensaje = ex.Message;
+            errorMensaje = $"Error al crear usuario: {ex.Message}";
             mostrarError = true;
         }
-        catch
+        catch (Exception ex)
         {
             errorMensaje = "Ocurrió un error inesperado al crear el usuario.";
             mostrarError = true;
         }
     }
-
-    private void EditarUsuario(Usuario usuario)
+    
+    private void OcultarError(ChangeEventArgs e)
     {
-        usuarioAEditar = new UsuarioDTO
-        {
-            Id = usuario.Id,
-            Nombre = usuario.Nombre,
-            Apellido = usuario.Apellido,
-            FechaNacimiento = usuario.FechaNacimiento,
-            Email = usuario.Email,
-            EsAdministradorSistema = usuario.EsAdministradorSistema,
-            EsAdministradorProyecto = usuario.EsAdministradorProyecto
-        };
-        idUsuarioEditando = usuario.Id;
-        mostrarFormEditar = true;
-        mostrarFormCrear = false;
         mostrarError = false;
+    }
+    
+    private List<ValidationResult> ValidarModelo(object modelo)
+    {
+        List<ValidationResult> resultados = new List<ValidationResult>();
+        ValidationContext contexto = new ValidationContext(modelo, serviceProvider: null, items: null);
+        Validator.TryValidateObject(modelo, contexto, resultados, validateAllProperties: true);
+        return resultados;
+    }
+
+    private void EditarUsuario(int idUsuario)
+    {
+        Usuario usuario = GestorUsuarios.Usuarios.ObtenerTodos().FirstOrDefault(u => u.Id == idUsuario);
+        if (usuario != null)
+        {
+            usuarioAEditar = new UsuarioDTO()
+            {
+                Id = usuario.Id,
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                Email = usuario.Email,
+                EsAdministradorSistema = usuario.EsAdministradorSistema,
+                EsAdministradorProyecto = usuario.EsAdministradorProyecto
+                //contraseña no se como hacerla
+                
+            };
+            idUsuarioEditando = usuario.Id;
+            mostrarFormEditar = true;
+        }
     }
 
     private void GuardarCambiosUsuario()
     {
-        List<Usuario> lista = GestorUsuarios.Usuarios.ObtenerTodos();
-        Usuario usuarioOriginal = lista.FirstOrDefault(u => u.Id == idUsuarioEditando);
-
-        if (usuarioOriginal != null)
+        
+        mostrarErrorEditar = false;
+        errorMensajeEditar = "";
+        List<ValidationResult> errores = ValidarModelo(usuarioAEditar);
+        if (errores.Any())
         {
-            usuarioOriginal.Nombre = usuarioAEditar.Nombre;
-            usuarioOriginal.Apellido = usuarioAEditar.Apellido;
-            usuarioOriginal.FechaNacimiento = usuarioAEditar.FechaNacimiento;
-            usuarioOriginal.Email = usuarioAEditar.Email;
-            usuarioOriginal.EsAdministradorSistema = usuarioAEditar.EsAdministradorSistema;
-            usuarioOriginal.EsAdministradorProyecto = usuarioAEditar.EsAdministradorProyecto;
+            errorMensajeEditar = string.Join(" ", errores.Select(e => e.ErrorMessage));
+            mostrarErrorEditar = true;
+            return;
         }
-        mostrarFormEditar = false;
+        
+        try
+        {
+            GestorUsuarios.AsignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            //se tendria que fijar si el checkbox esta en true -> asigne el permiso
+            // si esta en false -> que desasigne (si se puede (no puede estar administrando un proyecto))
+            // faltaria que gestor usuarios tenga un metodo que sea asignar administrador sistema... desasignar no porque no se puede desasignar
+            // que se cambie la contraseña
+
+            mostrarFormEditar = false;
+            usuarioAEditar = null;
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEditar = $"Error al editar usuario: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception)
+        {
+            errorMensajeEditar = "Ocurrió un error inesperado al editar el usuario.";
+            mostrarErrorEditar = true;
+        }
     }
 
     private void EliminarUsuario()
@@ -237,6 +294,12 @@ else
     private void CancelarEditarUsuario()
     {
         mostrarFormEditar = false;
+        mostrarErrorEditar = false;
+    }
+    
+    private void OcultarErrorEditar(ChangeEventArgs e)
+    {
+        mostrarErrorEditar = false;
     }
 
     public class UsuarioDTO
@@ -263,3 +326,5 @@ else
         public bool EsAdministradorProyecto { get; set; }
     }
 }
+
+<!--cuando se pone guardar cambios (al editar) no se porque se muestra la contraseña es obligatoria-->
