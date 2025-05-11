@@ -1,8 +1,13 @@
 @page "/perfil"
+@using System.ComponentModel.DataAnnotations
+@using Dominio
 @using Interfaz.ServiciosInterfaz
+@using Servicios.Excepciones
+@using Servicios.Gestores
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
+@inject GestorUsuarios GestorUsuarios
 
 @if (Sesion.UsuarioLogueado is not null)
 {
@@ -27,18 +32,76 @@
         }
     </p>
     <p><strong>Contraseña:</strong>
-        <button class="btn btn-danger">Cambiar</button>
-        <button class="btn btn-danger">Reiniciar</button>
+        <button class="btn btn-danger" @onclick="MostrarVentanaEmergenteCambiar">Cambiar</button>
+        <button class="btn btn-danger" @onclick="MostrarVentanaEmergenteReinciar">Reiniciar</button>
     </p>
 
     <button class="btn btn-danger" @onclick="CerrarSesion">Cerrar sesión</button>
     <button class="btn btn-danger" @onclick="IrAInicio">Atrás</button>
 }
 
-<!--aun falta funcionalidades de botones cambiar, reiniciar y cerrar sesión-->
+
+
+<!-- Ventana emergente (modal) para cambiar contraseña -->
+<div class="modal fade @(mostrarVentanaEmergenteCambiar ? "show d-block" : "")" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cambiar Contraseña</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaEmergenteCambiar"></button>
+            </div>
+            <EditForm Model="modeloCambio" OnValidSubmit="CambiarContrasena" OnInvalidSubmit="MostrarErroresValidacion">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="d-none" />
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(mensaje))
+                    {
+                        <div class="alert alert-info mt-3">
+                            @mensaje
+                        </div>
+                    }
+                    <label for="nuevaContrasena" class="form-label">Nueva Contraseña</label>
+                    <InputText id="nuevaContrasena" class="form-control"
+                               @bind-Value="modeloCambio.NuevaContrasena"
+                               type="password"
+                               placeholder="Ingrese su nueva contraseña"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+<!-- Ventana emergente (modal) para reiniciar contraseña -->
+<div class="modal fade @(mostrarVentanaEmergenteReinciar ? "show d-block" : "")" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reiniciar Contraseña</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaEmergenteReinciar"></button>
+            </div>
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(mensaje))
+                    {
+                        <div class="alert alert-info mt-3">
+                            @mensaje
+                        </div>
+                    }
+                    <button class="btn btn-primary" @onclick="ReiniciarContrasena">Reiniciar Contraseña</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+
 
 @code {
     private bool sesionCargada = false;
+    private bool mostrarVentanaEmergenteCambiar = false;
+    private bool mostrarVentanaEmergenteReinciar = false;
+    private string mensaje;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -69,4 +132,76 @@
     {
         Navigation.NavigateTo("/inicio");
     }
+
+    private void MostrarVentanaEmergenteCambiar()
+    {
+        mostrarVentanaEmergenteCambiar = true;
+        mensaje = String.Empty;
+    }
+
+    private void MostrarVentanaEmergenteReinciar()
+    {
+        mostrarVentanaEmergenteReinciar = true;
+        mensaje = String.Empty;
+    }
+
+    private void CerrarVentanaEmergenteCambiar()
+    {
+        mostrarVentanaEmergenteCambiar = false;
+    }
+
+    private void CerrarVentanaEmergenteReinciar()
+    {
+        mostrarVentanaEmergenteReinciar = false;
+    }
+    
+    
+    
+    
+    private class ModeloCambioContraseña
+    {
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [RegularExpression(
+            @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$",
+            ErrorMessage = "La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.")]
+        public string NuevaContrasena { get; set; } = string.Empty;
+    }
+
+    private ModeloCambioContraseña modeloCambio = new ModeloCambioContraseña();
+
+    private void CambiarContrasena()
+    {
+        try
+        {
+            Usuario usuario = Sesion.UsuarioLogueado;
+            GestorUsuarios.ModificarContrasena(usuario, usuario.Id, modeloCambio.NuevaContrasena);
+            mensaje = "Contraseña cambiada con éxito.";
+            modeloCambio = new ModeloCambioContraseña(); // Limpiar el modelo
+        }
+        catch (Exception e)
+        {
+            mensaje = $"Error: {e.Message}";
+        }
+    }
+
+    private void MostrarErroresValidacion(EditContext editContext)
+    {
+        var errores = editContext.GetValidationMessages();
+        mensaje = string.Join("<br/>", errores);
+    }
+
+    private void ReiniciarContrasena()
+    {
+        try
+        {
+            Usuario usuario = Sesion.UsuarioLogueado;
+            GestorUsuarios.ReiniciarContrasena(usuario,usuario.Id);
+            mensaje = "Contraseña reiniciada con éxito. Se ha enviado una notificación con la nueva contraseña.";
+        }
+        catch (Exception e)
+        {
+            mensaje = $"Error: {e.Message}";
+        }
+    }
+
 }
