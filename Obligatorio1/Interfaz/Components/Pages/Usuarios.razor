@@ -24,8 +24,8 @@ else
     {
         <div class="alert alert-danger" role="alert">@errorMensaje</div>
     }
-
-    @if (mostrarFormCrear)
+    <!--falta validar que los campos sean correctos segun las validaciones del back-->
+    @if (mostrarFormCrear) 
     {
         <EditForm Model="nuevoUsuario" OnValidSubmit="CrearUsuario">
             <DataAnnotationsValidator />
@@ -60,6 +60,10 @@ else
             </div>
         </EditForm>
     }
+    
+    <!--falta validar que los campos sean correctos segun las validaciones del back-->
+    <!--falta que se cambien correctamente los campos modificados y que se cierre la card una vez guardados-->
+
 
     @if (mostrarFormEditar)
     {
