@@ -24,7 +24,8 @@ else
     {
         <div class="alert alert-danger" role="alert">@errorMensaje</div>
     }
-    <!--falta validar que los campos sean correctos segun las validaciones del back-->
+    <!--falta validar que los campos del nuevo usuario sean correctos segun las validaciones del back-->
+    
     @if (mostrarFormCrear) 
     {
         <EditForm Model="nuevoUsuario" OnValidSubmit="CrearUsuario">
@@ -50,7 +51,12 @@ else
                     </div>
                     <div class="mb-3">
                         <label>Contraseña</label>
-                        <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena"  @oninput="OcultarError"/>
+                        <div class="input-group">
+                            <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" @oninput="OcultarError" />
+                            <button type="button" class="btn btn-secondary" @onclick="GenerarContrasenaPorDefecto">
+                                Generar contraseña por defecto
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <button class="btn btn-success" type="submit">Crear</button>
@@ -61,8 +67,7 @@ else
         </EditForm>
     }
     
-    <!--falta validar que los campos sean correctos segun las validaciones del back-->
-    <!--falta que se cambien correctamente los campos modificados y que se cierre la card una vez guardados-->
+    
     @if (mostrarErrorEditar)
     {
         <div class="alert alert-danger" role="alert">
@@ -78,20 +83,28 @@ else
                 <div class="card-header"><strong>Editar Usuario</strong></div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label>Nombre</label> <!--no se puede editar, tiene que ser fijo-->
-                        <InputText class="form-control" @bind-Value="usuarioAEditar.Nombre" @oninput="OcultarErrorEditar" />
+                        <label>Nombre</label>
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Nombre" disabled />
                     </div>
                     <div class="mb-3">
-                        <label>Apellido</label> <!--no se puede editar, tiene que ser fijo-->
-                        <InputText class="form-control" @bind-Value="usuarioAEditar.Apellido" @oninput="OcultarErrorEditar" />
+                        <label>Apellido</label>
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Apellido" disabled />
                     </div>
                     <div class="mb-3">
-                        <label>Fecha de nacimiento</label> <!--no se puede editar, tiene que ser fijo-->
-                        <InputDate class="form-control" @bind-Value="usuarioAEditar.FechaNacimiento" @oninput="OcultarErrorEditar" />
+                        <label>Fecha de nacimiento</label>
+                        <p class="form-control-plaintext">@usuarioAEditar.FechaNacimiento.ToString("dd/MM/yyyy")</p>
                     </div>
                     <div class="mb-3">
-                        <label>Email</label> 
-                        <InputText class="form-control" @bind-Value="usuarioAEditar.Email" @oninput="OcultarErrorEditar" />
+                        <label>Email</label>
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Email" disabled />
+                    </div>
+                    <div class="mb-3">
+                        <label>Contraseña</label>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-secondary" type="button" @onclick="GenerarContrasenaPorDefecto">Generar por defecto</button>
+                            <button class="btn btn-secondary" type="button" @onclick="MostrarModalCambiarContrasena">Cambiar</button>
+                            <button class="btn btn-secondary" type="button" @onclick="ReiniciarContrasena">Reiniciar</button>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label>Roles</label><br />
@@ -107,6 +120,31 @@ else
             </div>
         </EditForm>
     }
+    
+    @if (mostrarModalCambiarContrasena)
+    {
+        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cambiar Contraseña</h5>
+                        <button type="button" class="btn-close" @onclick="CancelarCambioContrasena"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label>Nueva contraseña:</label>
+                        <InputText class="form-control" @bind-Value="nuevaContrasenaManual" type="password" />
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" @onclick="CancelarCambioContrasena">Cancelar</button>
+                        <button class="btn btn-primary" @onclick="ConfirmarCambioContrasena">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    
+    
     @if (GestorUsuarios.Usuarios.ObtenerTodos().Count == 0)
     {
         <p>No hay usuarios.</p>
@@ -155,15 +193,18 @@ else
 
 @code {
     private bool mostrarFormCrear = false;
-    
+    private Usuario usuarioOriginal;
     private bool mostrarFormEditar = false;
     private bool mostrarError = false;
     private string errorMensaje;
     private UsuarioDTO nuevoUsuario = new UsuarioDTO();
-    private UsuarioDTO usuarioAEditar = new UsuarioDTO();
+    private UsuarioEditarDTO usuarioAEditar = new UsuarioEditarDTO();
     private int idUsuarioEditando;
     private bool mostrarErrorEditar = false;
     private string errorMensajeEditar;
+    
+    private bool mostrarModalCambiarContrasena = false;
+    private string nuevaContrasenaManual = "";
 
     private void MostrarFormularioCrearUsuario()
     {
@@ -231,19 +272,22 @@ else
     private void EditarUsuario(int idUsuario)
     {
         Usuario usuario = GestorUsuarios.Usuarios.ObtenerTodos().FirstOrDefault(u => u.Id == idUsuario);
+        
         if (usuario != null)
         {
-            usuarioAEditar = new UsuarioDTO()
+            usuarioAEditar = new UsuarioEditarDTO()
             {
                 Id = usuario.Id,
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
+                FechaNacimiento = usuario.FechaNacimiento,
                 Email = usuario.Email,
                 EsAdministradorSistema = usuario.EsAdministradorSistema,
                 EsAdministradorProyecto = usuario.EsAdministradorProyecto
                 //contraseña no se como hacerla
                 
             };
+            usuarioOriginal = usuario; 
             idUsuarioEditando = usuario.Id;
             mostrarFormEditar = true;
         }
@@ -251,36 +295,35 @@ else
 
     private void GuardarCambiosUsuario()
     {
-        
-        mostrarErrorEditar = false;
-        errorMensajeEditar = "";
-        List<ValidationResult> errores = ValidarModelo(usuarioAEditar);
-        if (errores.Any())
-        {
-            errorMensajeEditar = string.Join(" ", errores.Select(e => e.ErrorMessage));
-            mostrarErrorEditar = true;
-            return;
-        }
-        
         try
         {
-            GestorUsuarios.AsignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
-            //se tendria que fijar si el checkbox esta en true -> asigne el permiso
-            // si esta en false -> que desasigne (si se puede (no puede estar administrando un proyecto))
-            // faltaria que gestor usuarios tenga un metodo que sea asignar administrador sistema... desasignar no porque no se puede desasignar
-            // que se cambie la contraseña
+            if (usuarioAEditar.EsAdministradorProyecto && !usuarioOriginal.EsAdministradorProyecto)
+            {
+                GestorUsuarios.AsignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            }
+            else if (!usuarioAEditar.EsAdministradorProyecto && usuarioOriginal.EsAdministradorProyecto)
+            {
+                GestorUsuarios.DesasignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            }
+
+            if (usuarioAEditar.EsAdministradorSistema && !usuarioOriginal.EsAdministradorSistema)
+            {
+                GestorUsuarios.AgregarAdministradorSistema(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            }
 
             mostrarFormEditar = false;
+            usuarioOriginal = null;
             usuarioAEditar = null;
+            StateHasChanged();
         }
         catch (ExcepcionDominio ex)
         {
             errorMensajeEditar = $"Error al editar usuario: {ex.Message}";
             mostrarErrorEditar = true;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            errorMensajeEditar = "Ocurrió un error inesperado al editar el usuario.";
+            errorMensajeEditar = $"Error inesperado: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }
@@ -297,9 +340,75 @@ else
         mostrarErrorEditar = false;
     }
     
-    private void OcultarErrorEditar(ChangeEventArgs e)
+    private void ReiniciarContrasena()
     {
-        mostrarErrorEditar = false;
+        try
+        {
+            GestorUsuarios.ReiniciarContrasena(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            mostrarErrorEditar = false;
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEditar = $"Error al reiniciar contraseña: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+    }
+    
+    private void GenerarContrasenaPorDefecto()
+    {
+        try
+        {
+            GestorUsuarios.AutogenerarContrasena(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            mostrarErrorEditar = false;
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEditar = $"Error al generar contraseña: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+    }
+    
+    private void MostrarModalCambiarContrasena()
+    {
+        nuevaContrasenaManual = "";
+        mostrarModalCambiarContrasena = true;
+    }
+
+    private void CancelarCambioContrasena()
+    {
+        mostrarModalCambiarContrasena = false;
+        nuevaContrasenaManual = "";
+    }
+    
+    private void ConfirmarCambioContrasena()
+    {
+        try
+        { 
+            GestorUsuarios.ModificarContrasena(UsuarioActual.UsuarioLogueado, idUsuarioEditando, nuevaContrasenaManual);
+            mostrarModalCambiarContrasena = false;
+            nuevaContrasenaManual = "";
+            mostrarErrorEditar = false;
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEditar = $"Error al modificar contraseña: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
     }
 
     public class UsuarioDTO
@@ -325,6 +434,16 @@ else
         public bool EsAdministradorSistema { get; set; }
         public bool EsAdministradorProyecto { get; set; }
     }
-}
+    
+    public class UsuarioEditarDTO
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public DateTime FechaNacimiento { get; set; }
+        public string Email { get; set; }
 
-<!--cuando se pone guardar cambios (al editar) no se porque se muestra la contraseña es obligatoria-->
+        public bool EsAdministradorSistema { get; set; }
+        public bool EsAdministradorProyecto { get; set; }
+    }
+}
