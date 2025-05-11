@@ -2,12 +2,14 @@
 @inject ServiciosInterfaz.UsuarioActual UsuarioActual
 @inject GestorUsuarios GestorUsuarios
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using Dominio.Excepciones
 @using Dominio
 @using Servicios.Gestores
 
-<!-- No funciona el boton de agregar nuevo usuario, probar hacerlo con cards en la ventana /usuario-->
+
+<!-- No valida los campos correctamente -->
 <h3>Crear nuevo usuario</h3>
 
 @if (!UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
@@ -21,7 +23,7 @@ else
         <div class="alert alert-danger">@errorMensaje</div>
     }
 
-    <EditForm Model="nuevoUsuario" OnValidSubmit="CrearUsuario">
+    <EditForm EditContext="editContext" OnValidSubmit="CrearUsuario">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -45,16 +47,26 @@ else
             <label>Contraseña:</label>
             <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" />
             <button type="button" class="btn btn-secondary mt-2" @onclick="GenerarContrasenaPorDefecto">Generar contraseña por defecto</button>
+            <!-- No funciona el boton aun-->
         </div>
-
-        <button type="submit" class="btn btn-success">Crear nuevo usuario</button>
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">Crear nuevo usuario</button>
+            <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+        </div>
     </EditForm>
 }
 
 @code {
     private UsuarioDTO nuevoUsuario = new UsuarioDTO();
     private string errorMensaje;
+    
+    private EditContext editContext;
 
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(nuevoUsuario);
+    }
+    
     private void GenerarContrasenaPorDefecto()
     {
         nuevoUsuario.Contrasena = "TaskTrackPro@2025";
@@ -104,5 +116,11 @@ else
 
         [Required(ErrorMessage = "La contraseña es obligatoria.")]
         public string Contrasena { get; set; }
+    }
+    
+    private void Cancelar()
+    {
+        nuevoUsuario = new UsuarioDTO(); 
+        NavigationManager.NavigateTo("/usuarios", true);
     }
 }
