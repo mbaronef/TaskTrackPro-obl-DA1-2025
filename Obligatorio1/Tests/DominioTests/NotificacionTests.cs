@@ -18,6 +18,13 @@ public class NotificacionTests
     }
     
     [TestMethod]
+    public void ConstructorSinParametrosCreaNotificacionOk()
+    {
+        Notificacion notificacion = new Notificacion();
+        Assert.IsNotNull(notificacion);
+    }
+    
+    [TestMethod]
     public void ConstructorAsignaMensajeOk()
     {
         Assert.AreEqual("Mensaje de notificación", _nuevaNotificacion.Mensaje);

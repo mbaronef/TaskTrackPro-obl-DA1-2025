@@ -10,6 +10,10 @@ public class Notificacion
     public string Mensaje { get; private set; }
     public DateTime Fecha { get; private set; }
 
+    public Notificacion()
+    {
+    }
+
     public Notificacion(string mensaje)
     {
         if (string.IsNullOrWhiteSpace(mensaje))

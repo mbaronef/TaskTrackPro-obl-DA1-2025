@@ -57,4 +57,12 @@ public class LogicaSesion
         {
             return UsuarioLogueado.EsAdministradorProyecto;
         }
+        
+        public void ActualizarSesion()
+        {
+            if (UsuarioLogueado != null)
+            {
+                UsuarioLogueado = _gestorUsuarios.ObtenerUsuarioPorId(UsuarioLogueado.Id);
+            }
+        }
 }

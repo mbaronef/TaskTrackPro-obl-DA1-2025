@@ -7,8 +7,8 @@ using Servicios.Utilidades;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string contraseña = UtilidadesContrasena.ValidarYEncriptarContrasena("Admin123$");
-Usuario usuario = (new Usuario("Juan", "Pérez", new DateTime(1990,1,1), "admin@gmail.com", contraseña));
+string contrasena = UtilidadesContrasena.ValidarYEncriptarContrasena("Admin123$");
+Usuario usuario = (new Usuario("Juan", "Pérez", new DateTime(1990,1,1), "admin@gmail.com", contrasena));
 usuario.EsAdministradorProyecto = true;
 usuario.EsAdministradorSistema = true;
 

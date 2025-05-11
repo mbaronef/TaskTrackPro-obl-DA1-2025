@@ -14,7 +14,7 @@ public class Usuario
     public string Apellido { get; set; }
     public DateTime FechaNacimiento { get; set; }
     public string Email { get; set; }
-    public List<Notificacion> Notificaciones { get; } = new List<Notificacion>();
+    public List<Notificacion> Notificaciones { get; private set; } = new List<Notificacion>();
     public bool EsAdministradorSistema { get; set; } = false;
 
     public bool EsAdministradorProyecto { get; set; } = false;

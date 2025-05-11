@@ -1,24 +1,52 @@
 @page "/notificaciones"
 @using Dominio
-@inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@using Interfaz.ServiciosInterfaz
+@inject LogicaSesion Sesion
+@rendermode InteractiveServer
+@inject NavigationManager Navigator
 
-<h3>Notificaciones</h3>
-
-@if (UsuarioActual.UsuarioLogueado.Notificaciones.Count == 0)
+@if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
-    <p>No tiene notificaciones pendientes.</p>
 }
 else
 {
-    @foreach (Notificacion notificacion in UsuarioActual.UsuarioLogueado.Notificaciones.ToList())
+    <h3>Notificaciones</h3>
+
+    @if (Sesion.UsuarioLogueado.Notificaciones.Count == 0)
     {
-        <div class="alert alert-info d-flex justify-content-between align-items-center">
-            <span>@notificacion.Mensaje</span>
-            <button class="btn-close" @onclick="@(() => UsuarioActual.UsuarioLogueado.BorrarNotificacion(notificacion.Id))" title="Eliminar notificación"></button>
-        </div>
+        <p>No tiene notificaciones pendientes.</p>
+    }
+    else
+    {
+        @foreach (Notificacion notificacion in Sesion.UsuarioLogueado.Notificaciones.ToList())
+        {
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <span>@notificacion.Mensaje</span>
+                <button class="btn-close" @onclick="@(() => Sesion.UsuarioLogueado.BorrarNotificacion(notificacion.Id))" title="Eliminar notificación"></button>
+            </div>
+        }
     }
 }
-<!--no se esta eliminando correctamente la notificacion de la lista o no se esta borrando el mensaje de la notificacion cuando se pone el boton x-->
-@code {
 
+@code {
+    private bool sesionCargada = false;
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigator.NavigateTo("/");
+            }
+            else
+            {
+                Sesion.ActualizarSesion();
+                sesionCargada = true;
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+        }
+    }
 }

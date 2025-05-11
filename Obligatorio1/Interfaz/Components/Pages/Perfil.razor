@@ -207,6 +207,7 @@
             Usuario usuario = Sesion.UsuarioLogueado;
             GestorUsuarios.ModificarContrasena(usuario, usuario.Id, modeloCambio.NuevaContrasena);
             mensaje = "Contraseña cambiada con éxito.";
+            Sesion.ActualizarSesion();
             modeloCambio = new ModeloCambioContraseña(); // Limpiar el modelo
         }
         catch (Exception e)
@@ -228,6 +229,7 @@
             Usuario usuario = Sesion.UsuarioLogueado;
             GestorUsuarios.ReiniciarContrasena(usuario,usuario.Id);
             mensaje = "Contraseña reiniciada con éxito. Se ha enviado una notificación con la nueva contraseña.";
+            Sesion.ActualizarSesion();
         }
         catch (Exception e)
         {
