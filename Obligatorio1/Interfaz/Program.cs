@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Dominio;
 using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
@@ -30,7 +31,13 @@ builder.Services.AddSingleton(gestorRecursos);
 Usuario usuarioSinRol = gestorUsuarios.CrearUsuario("Sofía", "Martínez", new DateTime(2000, 5, 20), "sofia@gmail.com", "Contrasena123$");
 gestorUsuarios.AgregarUsuario(usuario, usuarioSinRol);
 
+
 // Add services to the container.
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<LogicaSesion>();
+
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 

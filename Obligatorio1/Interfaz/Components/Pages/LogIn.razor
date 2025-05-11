@@ -1,0 +1,51 @@
+@page "/login"
+@rendermode InteractiveServer
+@using Interfaz.ServiciosInterfaz
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigation
+
+<PageTitle>LogIn</PageTitle>
+<h3>Iniciar sesión</h3>
+
+@if (loginFallido)
+{
+    <div class="alert alert-danger">
+        <strong>Error:</strong> Usuario o contraseña incorrectos.
+    </div>
+}
+
+<EditForm Model="modeloSesion" OnSubmit="Login" FormName="loginForm">
+    
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="modeloSesion.Email" />
+    </div>
+
+    <div class="form-group">
+        <label for="contraseña">Contraseña</label>
+        <InputText id="contraseña" type="password" class="form-control" @bind-Value="modeloSesion.Contraseña" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Log In</button>
+</EditForm>
+
+@code {
+    private ModeloSesion modeloSesion = new ModeloSesion();
+    private bool loginFallido;
+
+    public class ModeloSesion
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Contraseña { get; set; } = string.Empty;
+    }
+
+    private async Task Login()
+    {
+        loginFallido = !await Sesion.Login(modeloSesion.Email, modeloSesion.Contraseña);
+        if (!loginFallido)
+        {
+            Navigation.NavigateTo("/");
+            
+        }
+    }
+}

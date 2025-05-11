@@ -14,7 +14,9 @@ public class GestorUsuarios
 
     public GestorUsuarios()
     {
-        AdministradorInicial = Usuarios.ObtenerTodos().Last(); //primer administrador (con id 0)
+        AdministradorInicial = CrearUsuario("Admin", "Admin", new DateTime(1999, 01, 01), "admin@sistema.com", _contrasenaPorDefecto);
+        AdministradorInicial.EsAdministradorSistema = true; // primer administrador (con id 0)
+        Usuarios.Agregar(AdministradorInicial);
     }
     
     public Usuario CrearUsuario(string nombre, string apellido, DateTime fechaNacimiento, string email, string contrasena)
