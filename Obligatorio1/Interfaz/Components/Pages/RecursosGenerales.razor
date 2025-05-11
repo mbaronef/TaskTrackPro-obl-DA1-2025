@@ -13,7 +13,9 @@
 
 @if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
 {
-    <button class="btn btn-primary mb-3" @onclick="MostrarFormularioCrearRecurso">Crear nuevo recurso</button>
+    <button class="btn btn-primary mb-3" @onclick="MostrarFormularioCrearRecurso">
+        <i class="bi bi-plus-circle"></i> Crear recurso
+    </button>
 }
 @if (mostrarError)
 {
@@ -99,6 +101,7 @@ else
             @if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
             {
                 <th></th>
+                <th></th>
             }
         </tr>
         </thead>
@@ -112,7 +115,14 @@ else
                 @if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
                 {
                     <td>
-                        <button class="btn btn-sm btn-secondary" @onclick="() => EditarRecurso(recurso.Id)">Editar</button>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EditarRecurso(recurso.Id)">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EliminarRecurso(recurso.Id)">
+                            <i class="bi bi-trash3"></i>
+                        </button>
                     </td>
                 }
             </tr>
@@ -145,7 +155,7 @@ else
         mostrarFormCrearRecurso = false;
         mostrarError = false;
     }
-    
+
     private void CrearRecurso()
     {
         mostrarError = false;
@@ -158,6 +168,7 @@ else
             mostrarError = true;
             return;
         }
+
         try
         {
             Recurso nuevo = new Recurso(nuevoRecurso.Nombre, nuevoRecurso.Tipo, nuevoRecurso.Descripcion);
@@ -176,12 +187,12 @@ else
             mostrarError = true;
         }
     }
-    
+
     private void OcultarError(ChangeEventArgs e)
     {
         mostrarError = false;
     }
-    
+
     private List<ValidationResult> ValidarModelo(object modelo)
     {
         var resultados = new List<ValidationResult>();
@@ -189,7 +200,7 @@ else
         Validator.TryValidateObject(modelo, contexto, resultados, validateAllProperties: true);
         return resultados;
     }
-    
+
     private void EditarRecurso(int idRecurso)
     {
         var recurso = GestorRecursos.ObtenerRecursosGenerales().FirstOrDefault(r => r.Id == idRecurso);
@@ -206,12 +217,12 @@ else
             mostrarFormEditarRecurso = true;
         }
     }
-    
+
     private void GuardarCambiosRecurso()
     {
         mostrarErrorEditar = false;
         errorMensajeEditar = "";
-        
+
         var errores = ValidarModelo(recursoAEditar);
         if (errores.Any())
         {
@@ -219,6 +230,7 @@ else
             mostrarErrorEditar = true;
             return;
         }
+
         try
         {
             GestorRecursos.ModificarNombreRecurso(UsuarioActual.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Nombre);
@@ -240,17 +252,20 @@ else
         }
     }
 
-
-
     private void CancelarEdicionRecurso()
     {
         mostrarFormEditarRecurso = false;
         mostrarErrorEditar = false;
     }
-    
+
     private void OcultarErrorEditar(ChangeEventArgs e)
     {
         mostrarErrorEditar = false;
+    }
+
+    private void EliminarRecurso(int idRecurso)
+    {
+        GestorRecursos.EliminarRecurso(UsuarioActual.UsuarioLogueado, idRecurso);
     }
 
     public class RecursoDTO
