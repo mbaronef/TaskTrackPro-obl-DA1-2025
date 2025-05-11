@@ -1,32 +1,49 @@
-@page "/login"
+@page "/"
 @rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
 @using Interfaz.ServiciosInterfaz
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
 
-<PageTitle>LogIn</PageTitle>
-<h3>Iniciar sesión</h3>
+<div class="text-center">
+    <h2>Iniciar sesión</h2>
+</div>
 
 @if (loginFallido)
 {
-    <div class="alert alert-danger">
-        <strong>Error:</strong> Usuario o contraseña incorrectos.
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-4">
+                <div class="alert alert-danger" role="alert">
+                    <strong>Error:</strong> Usuario o contraseña incorrectos.
+                </div>
+            </div>
+        </div>
     </div>
 }
 
+
 <EditForm Model="modeloSesion" OnSubmit="Login" FormName="loginForm">
-    
-    <div class="form-group">
-        <label for="email">Email</label>
-        <InputText id="email" class="form-control" @bind-Value="modeloSesion.Email" />
-    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-4">
 
-    <div class="form-group">
-        <label for="contraseña">Contraseña</label>
-        <InputText id="contraseña" type="password" class="form-control" @bind-Value="modeloSesion.Contraseña" />
-    </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <InputText id="email" class="form-control" @bind-Value="modeloSesion.Email" />
+                </div>
 
-    <button class="btn btn-primary" type="submit">Log In</button>
+                <div class="form-group">
+                    <label for="contraseña">Contraseña</label>
+                    <InputText id="contraseña" type="password" class="form-control" @bind-Value="modeloSesion.Contraseña" />
+                </div>
+
+                <div class="mt-3 text-center">
+                    <button class="btn btn-primary w-100" type="submit">Log In</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </EditForm>
 
 @code {
@@ -35,7 +52,7 @@
 
     public class ModeloSesion
     {
-        public string Email { get; set; } = string.Empty;
+        [EmailAddress] public string Email { get; set; } = string.Empty;
         public string Contraseña { get; set; } = string.Empty;
     }
 
@@ -44,8 +61,7 @@
         loginFallido = !await Sesion.Login(modeloSesion.Email, modeloSesion.Contraseña);
         if (!loginFallido)
         {
-            Navigation.NavigateTo("/");
-            
+            Navigation.NavigateTo("/inicio");
         }
     }
 }

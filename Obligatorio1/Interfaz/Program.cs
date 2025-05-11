@@ -3,11 +3,13 @@ using Dominio;
 using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
 using Servicios.Gestores;
+using Servicios.Utilidades;
 
 var builder = WebApplication.CreateBuilder(args);
 
 UsuarioActual usuarioActual = new UsuarioActual();
-Usuario usuario = (new Usuario("Juan", "Pérez", new DateTime(1990,1,1), "admin@gmail.com", "Admin123$"));
+string contraseña = UtilidadesContrasena.ValidarYEncriptarContrasena("Admin123$");
+Usuario usuario = (new Usuario("Juan", "Pérez", new DateTime(1990,1,1), "admin@gmail.com", contraseña));
 usuario.EsAdministradorProyecto = true;
 usuario.EsAdministradorSistema = true;
 usuarioActual.EstablecerUsuario(usuario);
@@ -50,7 +52,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
