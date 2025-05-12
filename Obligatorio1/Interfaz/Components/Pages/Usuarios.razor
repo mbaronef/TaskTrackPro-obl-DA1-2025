@@ -67,8 +67,8 @@ else
                             <label>Contraseña</label>
                             <div class="input-group">
                                 <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" @oninput="OcultarError" placeholder="Ej: Contra$ena123"/>
-                                <button type="button" class="btn btn-secondary" @onclick="GenerarContrasenaPorDefecto">
-                                    Generar contraseña por defecto
+                                <button type="button" class="btn btn-secondary" @onclick="AutogenerarContrasena">
+                                    Autogenerar contraseña
                                 </button>
                             </div>
                         </div>
@@ -117,7 +117,7 @@ else
                             <div class="mb-3">
                                 <label>Contraseña</label>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-secondary" type="button" @onclick="GenerarContrasenaPorDefecto">Generar por defecto</button>
+                                    <button class="btn btn-secondary" type="button" @onclick="AutogenerarContrasena">Autogenerar</button>
                                     <button class="btn btn-secondary" type="button" @onclick="MostrarModalCambiarContrasena">Cambiar</button>
                                     <button class="btn btn-secondary" type="button" @onclick="ReiniciarContrasena">Reiniciar</button>
                                 </div>
@@ -332,7 +332,6 @@ else
                 Email = usuario.Email,
                 EsAdministradorSistema = usuario.EsAdministradorSistema,
                 EsAdministradorProyecto = usuario.EsAdministradorProyecto
-                //contraseña no se como hacerla
                 
             };
             usuarioOriginal = usuario; 
@@ -362,6 +361,11 @@ else
             if (usuarioAEditar.EsAdministradorSistema && !usuarioOriginal.EsAdministradorSistema)
             {
                 GestorUsuarios.AgregarAdministradorSistema(Sesion.UsuarioLogueado, idUsuarioEditando);
+            }
+            
+            if (Sesion.UsuarioLogueado.Id == idUsuarioEditando)
+            {
+                Sesion.ActualizarSesion();
             }
 
             mostrarFormEditar = false;
@@ -412,7 +416,7 @@ else
         }
     }
     
-    private void GenerarContrasenaPorDefecto()
+    private void AutogenerarContrasena()
     {
         try
         {
