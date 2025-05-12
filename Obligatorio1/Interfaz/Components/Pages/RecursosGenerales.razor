@@ -96,7 +96,7 @@ else
     }
 
 
-    @if (GestorRecursos.ObtenerRecursosGenerales().Count == 0)
+    @if (recursos.Count == 0)
     {
         <p>No hay recursos disponibles.</p>
     }
@@ -116,7 +116,7 @@ else
             </tr>
             </thead>
             <tbody>
-            @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosGenerales())
+            @foreach (Recurso recurso in recursos)
             {
                 <tr>
                     <td>@recurso.Nombre</td>
@@ -152,7 +152,8 @@ else
     private int idRecursoAEditar;
     private bool mostrarErrorEditar = false;
     private string errorMensajeEditar;
-
+    private bool sesionCargada = false;
+    private List<Recurso> recursos = new List<Recurso>();
 
 
     private void MostrarFormularioCrearRecurso()
@@ -186,6 +187,8 @@ else
             GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevo);
             mostrarFormCrearRecurso = false;
             mostrarError = false;
+            CargarRecursos();
+            StateHasChanged();
         }
         catch (ExcepcionDominio ex)
         {
@@ -250,6 +253,8 @@ else
 
             mostrarFormEditarRecurso = false;
             recursoAEditar = null;
+            CargarRecursos();
+            StateHasChanged();
         }
         catch (ExcepcionDominio ex)
         {
@@ -279,7 +284,10 @@ else
         GestorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
     }
     
-    private bool sesionCargada = false;
+    private void CargarRecursos()
+    {
+        recursos = GestorRecursos.ObtenerRecursosGenerales();
+    }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -295,7 +303,9 @@ else
             {
                 await Sesion.ActualizarSesion();
                 sesionCargada = true;
+                CargarRecursos();
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+                
             }
         }
     }

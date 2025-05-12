@@ -35,7 +35,6 @@ gestorUsuarios.AgregarUsuario(usuario, usuarioSinRol);
 // Add services to the container.
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<LogicaSesion>();
-//builder.Services.AddScoped<UsuarioActual>();
 
 
 builder.Services.AddRazorPages();
