@@ -63,7 +63,6 @@ public class LogicaSesion
             if (UsuarioLogueado != null)
             {
                 UsuarioLogueado = _gestorUsuarios.ObtenerUsuarioPorId(UsuarioLogueado.Id);
-                
                 await _localStorage.SetItemAsync(CURRENT_USER, UsuarioLogueado);
             }
         }

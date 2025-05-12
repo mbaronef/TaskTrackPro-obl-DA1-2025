@@ -123,4 +123,11 @@ public class DependenciaTests
         Assert.AreEqual(dependencia1.GetHashCode(), dependencia2.GetHashCode());
         Assert.AreNotEqual(dependencia3.GetHashCode(), dependencia1.GetHashCode());
     }
+
+    [TestMethod]
+    public void ToStringFuncionaOk()
+    {
+        Dependencia dependencia = new Dependencia("SS", _tarea);
+        Assert.AreEqual("titulo (SS)", dependencia.ToString());
+    }
 }

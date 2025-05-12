@@ -200,7 +200,7 @@
 
     private ModeloCambioContraseña modeloCambio = new ModeloCambioContraseña();
 
-    private async void CambiarContrasena()
+    private async Task CambiarContrasena()
     {
         try
         {
@@ -222,7 +222,7 @@
         mensaje = string.Join("<br/>", errores);
     }
 
-    private async void ReiniciarContrasena()
+    private async Task ReiniciarContrasena()
     {
         try
         {

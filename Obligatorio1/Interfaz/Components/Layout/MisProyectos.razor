@@ -1,3 +1,4 @@
+@using Dominio
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @inject LogicaSesion Sesion
@@ -8,11 +9,24 @@
 
 @if (Sesion.UsuarioLogueado is not null)
 {
-    var proyectos = GestorProyectos.ObtenerProyectosPorUsuario(Sesion.UsuarioLogueado.Id);
+    @if (Sesion.EsAdminSistema())
+    {
+        proyectos = GestorProyectos.Proyectos.ObtenerTodos();
+    }
+    else
+    {
+        proyectos = GestorProyectos.ObtenerProyectosPorUsuario(Sesion.UsuarioLogueado.Id);   
+    }
     foreach (var proyecto in proyectos)
     {
         <details class="mb-2">
-            <summary>@proyecto.Nombre</summary>
+            <summary>
+                @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
+                {
+                    <i class="bi bi-star-fill text-white me-1" title="Administrador del proyecto"></i>
+                }
+                @proyecto.Nombre
+            </summary>
             <ul class="list-unstyled ms-3">
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link text-white">Gantt</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
@@ -24,6 +38,7 @@
 }
 
 @code {
+    private List<Proyecto> proyectos;
     private bool sesionCargada = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -38,7 +53,7 @@
             }
             else
             {
-                 await Sesion.ActualizarSesion();
+                await Sesion.ActualizarSesion();
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }
