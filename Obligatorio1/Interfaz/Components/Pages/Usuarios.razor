@@ -1,59 +1,511 @@
 @page "/usuarios"
 @inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@rendermode InteractiveServer
 @inject GestorUsuarios GestorUsuarios
+@using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
 @using Dominio
+@using Dominio.Excepciones
+@using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
+
+<h3>USUARIOS:</h3>
+<!-- TODO:
+validar contraseñas autogeneradas que se generen bien y el resto de contraseñas, 
+que notifique o le aparezca al administrador (en una alterta verde) cual es la autogenerada cuando aprieta el boton 
+(hacer que autogeneradas tambien devuelva la contraseña (?))
+y checkear que funcione todo bien con el login -->
 
 @if (!UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
 {
     <p class="text-danger">Acceso denegado. Solo disponible para administradores del sistema.</p>
-} <!-- falta que al usuario que no sea admin sistema ni le aparezca esta opcion en el menu-->
-@if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+}
+else
 {
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>USUARIOS:</h3>
-        <NavLink href="/usuarios/crear" class="btn btn-dark">Crear nuevo usuario</NavLink>
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-dark" @onclick="MostrarFormularioCrearUsuario">Crear nuevo usuario</button>
     </div>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (Usuario usuario in GestorUsuarios.Usuarios.ObtenerTodos())
-        {
+    @if (mostrarError)
+    {
+        <div class="alert alert-danger" role="alert">@errorMensaje</div>
+    }
+    
+    @if (mostrarFormCrear) 
+    {
+        <EditForm Model="nuevoUsuario" OnValidSubmit="CrearUsuario">
+            <DataAnnotationsValidator />
+            <div class="card mb-4">
+                <div class="card-header"><strong>Nuevo Usuario</strong></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label>Nombre</label>
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre"  @oninput="OcultarError" placeholder="Ej: Juan"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Apellido</label>
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido"  @oninput="OcultarError" placeholder="Ej: Pérez"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Fecha de nacimiento</label>
+                        <InputDate class="form-control" @bind-Value="nuevoUsuario.FechaNacimiento"  @oninput="OcultarError"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Email"  @oninput="OcultarError" placeholder="Ej: juanperez2005@mail.com"/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Contraseña</label>
+                        <div class="input-group">
+                            <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" @oninput="OcultarError" placeholder="Ej: Contra$ena123"/>
+                            <button type="button" class="btn btn-secondary" @onclick="GenerarContrasenaPorDefecto">
+                                Generar contraseña por defecto
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-success" @onclick="CrearUsuario">Crear</button>
+                        <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarCrearUsuario">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    }
+    
+    
+    @if (mostrarErrorEditar)
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMensajeEditar
+        </div>
+    }
+
+    @if (mostrarFormEditar && UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+    {
+        <EditForm Model="usuarioAEditar" OnValidSubmit="GuardarCambiosUsuario">
+            <DataAnnotationsValidator/>
+            <div class="card mb-4">
+                <div class="card-header"><strong>Editar Usuario</strong></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label>Nombre</label>
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Nombre" disabled/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Apellido</label>
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Apellido" disabled/>
+                    </div>
+                    <div class="mb-3">
+                        <label>Fecha de nacimiento</label>
+                        <p class="form-control-plaintext">@usuarioAEditar.FechaNacimiento.ToString("dd/MM/yyyy")</p>
+                    </div>
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Email" disabled/>
+                    </div>
+                    @if (!usuarioOriginal.EsAdministradorSistema)
+                    {
+                        <div class="mb-3">
+                            <label>Contraseña</label>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-secondary" type="button" @onclick="GenerarContrasenaPorDefecto">Generar por defecto</button>
+                                <button class="btn btn-secondary" type="button" @onclick="MostrarModalCambiarContrasena">Cambiar</button>
+                                <button class="btn btn-secondary" type="button" @onclick="ReiniciarContrasena">Reiniciar</button>
+                            </div>
+                        </div>                    
+                    }
+                    <div class="mb-3">
+                        <label>Roles</label><br/>
+                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorSistema" disabled="@usuarioOriginal.EsAdministradorSistema" />
+                        <label class="me-3">Administrador de sistema</label>
+                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto" disabled="@usuarioOriginal.EstaAdministrandoUnProyecto" />
+                        <label class="me-3">Administrador de proyecto</label>
+                    </div>
+                    <div>
+                        <button class="btn btn-success" @onclick="GuardarCambiosUsuario">Guardar cambios</button>
+                        
+                        @if (!usuarioOriginal.EsAdministradorSistema)
+                        {
+                            <button class="btn btn-danger ms-2" type="button" @onclick="EliminarUsuario">Eliminar usuario</button>
+                        }
+                        
+                        <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEditarUsuario">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    }
+
+    @if (mostrarModalCambiarContrasena)
+    {
+        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cambiar Contraseña</h5>
+                        <button type="button" class="btn-close" @onclick="CancelarCambioContrasena"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label>Nueva contraseña:</label>
+                        <InputText class="form-control" @bind-Value="nuevaContrasenaManual" type="password" @oninput="OcultarErrorModalContrasena" />
+
+                        @if (mostrarErrorContrasenaModal)
+                        {
+                            <div class="text-danger mt-1">@errorContrasenaModal</div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" @onclick="CancelarCambioContrasena">Cancelar</button>
+                        <button class="btn btn-primary" @onclick="ConfirmarCambioContrasena">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    
+    
+    @if (GestorUsuarios.Usuarios.ObtenerTodos().Count == 0)
+    {
+        <p>No hay usuarios.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
             <tr>
-                <td>@usuario.Nombre</td>
-                <td>@usuario.Apellido</td>
-                <td>@usuario.Email</td>
-                <td>
-                    @if (usuario.EsAdministradorSistema)
-                    {
-                        <span class="badge bg-warning text-dark">Administrador de sistema</span>
-                    }
-                    @if (usuario.EsAdministradorProyecto)
-                    {
-                    <span class="badge bg-info text-dark ms-1">Administrador de proyecto</span>
-                    }
-                </td>
-                <td>
-                    @if (!usuario.EsAdministradorSistema)
-                    {
-                        <button class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-pencil"></i>
-                            <!-- falta que aparezca el icono de lapiz-->
-                            <!-- falta funcionalidad para  modificar el usuario-->
-                        </button>
-                    }
-                </td>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th></th>
             </tr>
+            </thead>
+            <tbody>
+            @foreach (Usuario usuario in GestorUsuarios.Usuarios.ObtenerTodos())
+            {
+                <tr>
+                    <td>@usuario.Nombre</td>
+                    <td>@usuario.Apellido</td>
+                    <td>@usuario.Email</td>
+                    <td>
+                        @if (usuario.EsAdministradorSistema)
+                        {
+                            <span class="badge bg-warning text-dark">Administrador de sistema</span>
+                        }
+                        @if (usuario.EsAdministradorProyecto)
+                        {
+                            <span class="badge bg-info text-dark ms-1">Administrador de proyecto</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditarUsuario(usuario.Id)">Editar</button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private bool mostrarFormCrear = false;
+    private Usuario usuarioOriginal;
+    private bool mostrarFormEditar = false;
+    private bool mostrarError = false;
+    private string errorMensaje;
+    private UsuarioDTO nuevoUsuario = new UsuarioDTO();
+    private UsuarioEditarDTO usuarioAEditar = new UsuarioEditarDTO();
+    private int idUsuarioEditando;
+    private bool mostrarErrorEditar = false;
+    private string errorMensajeEditar;
+    
+    private bool mostrarModalCambiarContrasena = false;
+    private string nuevaContrasenaManual = "";
+    
+    private string errorContrasenaModal;
+    private bool mostrarErrorContrasenaModal = false;
+
+    private void MostrarFormularioCrearUsuario()
+    {
+        mostrarFormCrear = true;
+        nuevoUsuario = new UsuarioDTO();
+    }
+
+    private void CancelarCrearUsuario()
+    {
+        mostrarFormCrear = false;
+        mostrarError = false;
+    }
+
+    private void CrearUsuario()
+    {
+        mostrarError = false;
+        errorMensaje = "";
+        
+        List<ValidationResult> errores = ValidarModelo(nuevoUsuario);
+        if (errores.Any())
+        {
+            errorMensaje = string.Join(" ", errores.Select(e => e.ErrorMessage));
+            mostrarError = true;
+            return;
         }
-        </tbody>
-    </table>
+
+        try
+        {
+            Usuario nuevo = GestorUsuarios.CrearUsuario(
+                nuevoUsuario.Nombre,
+                nuevoUsuario.Apellido,
+                nuevoUsuario.FechaNacimiento,
+                nuevoUsuario.Email,
+                nuevoUsuario.Contrasena);
+
+            GestorUsuarios.AgregarUsuario(UsuarioActual.UsuarioLogueado, nuevo);
+            mostrarFormCrear = false;
+            mostrarError = false;
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensaje = $"Error al crear usuario: {ex.Message}";
+            mostrarError = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = "Ocurrió un error inesperado al crear el usuario.";
+            mostrarError = true;
+        }
+    }
+    
+    private void OcultarError(ChangeEventArgs e)
+    {
+        mostrarError = false;
+    }
+    
+    private List<ValidationResult> ValidarModelo(object modelo)
+    {
+        List<ValidationResult> resultados = new List<ValidationResult>();
+        ValidationContext contexto = new ValidationContext(modelo, serviceProvider: null, items: null);
+        Validator.TryValidateObject(modelo, contexto, resultados, validateAllProperties: true);
+        if (modelo is UsuarioDTO usuario)
+        {
+            var edad = CalcularEdad(usuario.FechaNacimiento);
+            if (edad < 18 || edad > 100)
+            {
+                resultados.Add(new ValidationResult("La edad debe estar entre 18 y 100 años.", new[] { nameof(usuario.FechaNacimiento) }));
+            }
+        }
+        return resultados;
+    }
+    
+    private int CalcularEdad(DateTime fechaNacimiento)
+    {
+        DateTime hoy = DateTime.Today;
+        int edad = hoy.Year - fechaNacimiento.Year;
+        if (fechaNacimiento.Date > hoy.AddYears(-edad)) edad--;
+        return edad;
+    }
+
+    private void EditarUsuario(int idUsuario)
+    {
+        Usuario usuario = GestorUsuarios.Usuarios.ObtenerTodos().FirstOrDefault(u => u.Id == idUsuario);
+        
+        if (usuario != null)
+        {
+            usuarioAEditar = new UsuarioEditarDTO()
+            {
+                Id = usuario.Id,
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                FechaNacimiento = usuario.FechaNacimiento,
+                Email = usuario.Email,
+                EsAdministradorSistema = usuario.EsAdministradorSistema,
+                EsAdministradorProyecto = usuario.EsAdministradorProyecto
+                //contraseña no se como hacerla
+                
+            };
+            usuarioOriginal = usuario; 
+            idUsuarioEditando = usuario.Id;
+            mostrarFormEditar = true;
+        }
+    }
+    
+    private void OcultarErrorModalContrasena(ChangeEventArgs e)
+    {
+        mostrarErrorContrasenaModal = false;
+    }
+
+    private void GuardarCambiosUsuario()
+    {
+        try
+        {
+            if (usuarioAEditar.EsAdministradorProyecto && !usuarioOriginal.EsAdministradorProyecto)
+            {
+                GestorUsuarios.AsignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            }
+            else if (!usuarioAEditar.EsAdministradorProyecto && usuarioOriginal.EsAdministradorProyecto)
+            {
+                GestorUsuarios.DesasignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            }
+
+            if (usuarioAEditar.EsAdministradorSistema && !usuarioOriginal.EsAdministradorSistema)
+            {
+                GestorUsuarios.AgregarAdministradorSistema(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            }
+
+            mostrarFormEditar = false;
+            usuarioOriginal = null;
+            usuarioAEditar = null;
+            StateHasChanged();
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEditar = $"Error al editar usuario: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+    }
+
+    private void EliminarUsuario()
+    {
+        GestorUsuarios.EliminarUsuario(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+        mostrarFormEditar = false;
+    }
+
+    private void CancelarEditarUsuario()
+    {
+        mostrarFormEditar = false;
+        mostrarErrorEditar = false;
+    }
+    
+    private void ReiniciarContrasena()
+    {
+        try
+        {
+            GestorUsuarios.ReiniciarContrasena(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            mostrarErrorEditar = false;
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEditar = $"Error al reiniciar contraseña: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+    }
+    
+    private void GenerarContrasenaPorDefecto()
+    {
+        try
+        {
+            GestorUsuarios.AutogenerarContrasena(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            mostrarErrorEditar = false;
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEditar = $"Error al generar contraseña: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+    }
+    
+    private void MostrarModalCambiarContrasena()
+    {
+        nuevaContrasenaManual = "";
+        mostrarModalCambiarContrasena = true;
+    }
+
+    private void CancelarCambioContrasena()
+    {
+        mostrarModalCambiarContrasena = false;
+        nuevaContrasenaManual = "";
+    }
+    
+    private void ConfirmarCambioContrasena()
+    {
+        mostrarErrorEditar = false;
+        errorMensajeEditar = "";
+
+        if (!ContrasenaEsValida(nuevaContrasenaManual))
+        {
+            errorContrasenaModal = "La contraseña debe tener al menos 8 caracteres, una minúscula, una mayúscula, un número y un carácter especial.";
+            mostrarErrorContrasenaModal = true;
+            return;
+        }
+        try
+        { 
+            GestorUsuarios.ModificarContrasena(UsuarioActual.UsuarioLogueado, idUsuarioEditando, nuevaContrasenaManual);
+            mostrarModalCambiarContrasena = false;
+            nuevaContrasenaManual = "";
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEditar = $"Error al modificar contraseña: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+    }
+    
+    private bool ContrasenaEsValida(string contrasena)
+    {
+        if (string.IsNullOrWhiteSpace(contrasena)) return false;
+
+        return contrasena.Length >= 8
+               && contrasena.Any(char.IsLower)
+               && contrasena.Any(char.IsUpper)
+               && contrasena.Any(char.IsDigit)
+               && contrasena.Any(c => !char.IsLetterOrDigit(c));
+    }
+
+    public class UsuarioDTO
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El nombre no puede ser vacío.")]
+        public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "El apellido no puede ser vacío.")]
+        public string Apellido { get; set; }
+
+        [Required(ErrorMessage = "La fecha de nacimiento es obligatoria.")]
+        public DateTime FechaNacimiento { get; set; } = DateTime.Today;
+
+        [Required(ErrorMessage = "El email no puede ser vacío")]
+        [EmailAddress(ErrorMessage = "Formato de email inválido.")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "La contraseña no puede ser vacía.")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]).{8,}$",
+            ErrorMessage = "La contraseña debe tener al menos 8 caracteres, una minúscula, una mayúscula, un número y un carácter especial.")]
+        public string Contrasena { get; set; }
+
+        public bool EsAdministradorSistema { get; set; }
+        public bool EsAdministradorProyecto { get; set; }
+    }
+    
+    public class UsuarioEditarDTO
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public DateTime FechaNacimiento { get; set; }
+        public string Email { get; set; }
+
+        public bool EsAdministradorSistema { get; set; }
+        public bool EsAdministradorProyecto { get; set; }
+    }
 }

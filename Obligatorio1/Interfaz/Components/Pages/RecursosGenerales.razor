@@ -1,144 +1,124 @@
 @page "/RecursosGenerales"
 @rendermode InteractiveServer
+@inject ServiciosInterfaz.UsuarioActual UsuarioActual
 @inject GestorRecursos GestorRecursos
 @inject NavigationManager NavigationManager
 @using System.ComponentModel.DataAnnotations
 @using Dominio.Excepciones
 @using Dominio
-@using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
-@inject LogicaSesion Sesion
 
 
-@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+<h3>Recursos Generales</h3>
+
+@if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
 {
+    <button class="btn btn-primary mb-3" @onclick="MostrarFormularioCrearRecurso">Crear nuevo recurso</button>
+}
+@if (mostrarError)
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMensaje
+    </div>
+}
+@if (mostrarFormCrearRecurso)
+{
+    <EditForm Model="nuevoRecurso" OnValidSubmit="CrearRecurso">
+        <DataAnnotationsValidator />
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Nuevo Recurso</strong>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label>Nombre</label>
+                    <InputText class="form-control" @bind-Value="nuevoRecurso.Nombre" @oninput="OcultarError"/>
+                </div>
+                <div class="mb-3">
+                    <label>Tipo</label>
+                    <InputText class="form-control" @bind-Value="nuevoRecurso.Tipo" @oninput="OcultarError"/>
+                </div>
+                <div class="mb-3">
+                    <label>Descripción</label>
+                    <InputText class="form-control" @bind-Value="nuevoRecurso.Descripcion" @oninput="OcultarError"></InputText>
+                </div>
+                <button class="btn btn-success" @onclick="CrearRecurso">Guardar</button>
+                <button class="btn btn-secondary ms-2" @onclick="CancelarCrearRecurso">Cancelar</button>
+            </div>
+        </div>
+    </EditForm>
+}
+
+@if (mostrarErrorEditar)
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMensajeEditar
+    </div>
+}
+@if (mostrarFormEditarRecurso)
+{
+    <EditForm Model="recursoAEditar" OnValidSubmit="GuardarCambiosRecurso">
+        <DataAnnotationsValidator />
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Editar Recurso</strong>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label>Nombre</label>
+                    <InputText class="form-control" @bind-Value="recursoAEditar.Nombre" @oninput="OcultarErrorEditar" />
+                </div>
+                <div class="mb-3">
+                    <label>Tipo</label>
+                    <InputText class="form-control" @bind-Value="recursoAEditar.Tipo" @oninput="OcultarErrorEditar" />
+                </div>
+                <div class="mb-3">
+                    <label>Descripción</label>
+                    <InputText class="form-control" @bind-Value="recursoAEditar.Descripcion" @oninput="OcultarErrorEditar" />
+                </div>
+                <button class="btn btn-success" @onclick="GuardarCambiosRecurso">Guardar Cambios</button>
+                <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEdicionRecurso">Cancelar</button>
+            </div>
+        </div>
+    </EditForm>
+}
+
+
+@if (GestorRecursos.ObtenerRecursosGenerales().Count == 0)
+{
+    <p>No hay recursos disponibles.</p>
 }
 else
 {
-    <h3>Recursos Generales</h3>
-
-    @if (Sesion.EsAdminSistema())
-    {
-        <button class="btn btn-primary mb-3" @onclick="MostrarFormularioCrearRecurso">
-            <i class="bi bi-plus-circle"></i> Crear recurso
-        </button>
-    }
-
-    @if (mostrarError)
-    {
-        <div class="alert alert-danger" role="alert">
-            @errorMensaje
-        </div>
-    }
-
-    @if (mostrarFormCrearRecurso)
-    {
-        <EditForm Model="nuevoRecurso" OnValidSubmit="CrearRecurso">
-            <DataAnnotationsValidator/>
-            <div class="card mb-4">
-                <div class="card-header">
-                    <strong>Nuevo Recurso</strong>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label>Nombre</label>
-                        <InputText class="form-control" @bind-Value="nuevoRecurso.Nombre" @oninput="OcultarError"/>
-                    </div>
-                    <div class="mb-3">
-                        <label>Tipo</label>
-                        <InputText class="form-control" @bind-Value="nuevoRecurso.Tipo" @oninput="OcultarError"/>
-                    </div>
-                    <div class="mb-3">
-                        <label>Descripción</label>
-                        <InputText class="form-control" @bind-Value="nuevoRecurso.Descripcion" @oninput="OcultarError"></InputText>
-                    </div>
-                    <button class="btn btn-success" @onclick="CrearRecurso">Guardar</button>
-                    <button class="btn btn-secondary ms-2" @onclick="CancelarCrearRecurso">Cancelar</button>
-                </div>
-            </div>
-        </EditForm>
-    }
-
-    @if (mostrarErrorEditar)
-    {
-        <div class="alert alert-danger" role="alert">
-            @errorMensajeEditar
-        </div>
-    }
-
-    @if (mostrarFormEditarRecurso)
-    {
-        <EditForm Model="recursoAEditar" OnValidSubmit="GuardarCambiosRecurso">
-            <DataAnnotationsValidator/>
-            <div class="card mb-4">
-                <div class="card-header">
-                    <strong>Editar Recurso</strong>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label>Nombre</label>
-                        <InputText class="form-control" @bind-Value="recursoAEditar.Nombre" @oninput="OcultarErrorEditar"/>
-                    </div>
-                    <div class="mb-3">
-                        <label>Tipo</label>
-                        <InputText class="form-control" @bind-Value="recursoAEditar.Tipo" @oninput="OcultarErrorEditar"/>
-                    </div>
-                    <div class="mb-3">
-                        <label>Descripción</label>
-                        <InputText class="form-control" @bind-Value="recursoAEditar.Descripcion" @oninput="OcultarErrorEditar"/>
-                    </div>
-                    <button class="btn btn-success" @onclick="GuardarCambiosRecurso">Guardar Cambios</button>
-                    <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEdicionRecurso">Cancelar</button>
-                </div>
-            </div>
-        </EditForm>
-    }
-
-
-    @if (GestorRecursos.ObtenerRecursosGenerales().Count == 0)
-    {
-        <p>No hay recursos disponibles.</p>
-    }
-    else
-    {
-        <table class="table table-striped">
-            <thead>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            @if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
+            {
+                <th></th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosGenerales())
+        {
             <tr>
-                <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Descripción</th>
-                @if (Sesion.EsAdminSistema())
+                <td>@recurso.Nombre</td>
+                <td>@recurso.Tipo</td>
+                <td>@recurso.Descripcion</td>
+                @if (UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
                 {
-                    <th></th>
-                    <th></th>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EditarRecurso(recurso.Id)">Editar</button>
+                    </td>
                 }
             </tr>
-            </thead>
-            <tbody>
-            @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosGenerales())
-            {
-                <tr>
-                    <td>@recurso.Nombre</td>
-                    <td>@recurso.Tipo</td>
-                    <td>@recurso.Descripcion</td>
-                    @if (Sesion.EsAdminSistema())
-                    {
-                        <td>
-                            <button class="btn btn-sm btn-secondary" @onclick="() => EditarRecurso(recurso.Id)">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-secondary" @onclick="() => EliminarRecurso(recurso.Id)">
-                                <i class="bi bi-trash3"></i>
-                            </button>
-                        </td>
-                    }
-                </tr>
-            }
-            </tbody>
-        </table>
-    }
+        }
+        </tbody>
+    </table>
 }
 
 @code {
@@ -178,11 +158,10 @@ else
             mostrarError = true;
             return;
         }
-
         try
         {
             Recurso nuevo = new Recurso(nuevoRecurso.Nombre, nuevoRecurso.Tipo, nuevoRecurso.Descripcion);
-            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevo);
+            GestorRecursos.AgregarRecurso(UsuarioActual.UsuarioLogueado, nuevo);
             mostrarFormCrearRecurso = false;
             mostrarError = false;
         }
@@ -218,10 +197,10 @@ else
         {
             recursoAEditar = new RecursoDTO
             {
-                Id = recurso.Id,
-                Nombre = recurso.Nombre,
-                Tipo = recurso.Tipo,
-                Descripcion = recurso.Descripcion
+                    Id = recurso.Id,
+                    Nombre = recurso.Nombre,
+                    Tipo = recurso.Tipo,
+                    Descripcion = recurso.Descripcion
             };
             idRecursoAEditar = recurso.Id;
             mostrarFormEditarRecurso = true;
@@ -240,12 +219,11 @@ else
             mostrarErrorEditar = true;
             return;
         }
-
         try
         {
-            GestorRecursos.ModificarNombreRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Nombre);
-            GestorRecursos.ModificarTipoRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Tipo);
-            GestorRecursos.ModificarDescripcionRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Descripcion);
+            GestorRecursos.ModificarNombreRecurso(UsuarioActual.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Nombre);
+            GestorRecursos.ModificarTipoRecurso(UsuarioActual.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Tipo);
+            GestorRecursos.ModificarDescripcionRecurso(UsuarioActual.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Descripcion);
 
             mostrarFormEditarRecurso = false;
             recursoAEditar = null;
@@ -262,6 +240,8 @@ else
         }
     }
 
+
+
     private void CancelarEdicionRecurso()
     {
         mostrarFormEditarRecurso = false;
@@ -273,43 +253,19 @@ else
         mostrarErrorEditar = false;
     }
 
-    private void EliminarRecurso(int idRecurso)
-    {
-        GestorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
-    }
-
     public class RecursoDTO
     {
         public int Id { get; set; }
-        
+
         [Required(ErrorMessage = "El nombre es obligatorio.")]
         public string Nombre { get; set; }
-        
+
         [Required(ErrorMessage = "El tipo es obligatorio.")]
         public string Tipo { get; set; }
-        
+
         [Required(ErrorMessage = "La descripción es obligatoria.")]
         public string Descripcion { get; set; }
     }
-    
-    private bool sesionCargada = false;
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender && !sesionCargada)
-        {
-            bool haySesionActiva = await Sesion.HaySesionActiva();
 
-            if (!haySesionActiva)
-            {
-                NavigationManager.NavigateTo("/");
-            }
-            else
-            {
-                Sesion.ActualizarSesion();
-                sesionCargada = true;
-                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
-            }
-        }
-    }
+
 }
