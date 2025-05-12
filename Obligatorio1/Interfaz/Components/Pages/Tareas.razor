@@ -5,6 +5,8 @@
 @using Servicios.Gestores
 @inject GestorProyectos GestorProyectos
 @inject GestorTareas GestorTareas
+@inject GestorRecursos GestorRecursos
+@inject GestorUsuarios GestorUsuarios
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
 @rendermode InteractiveServer
@@ -144,7 +146,7 @@ else
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                            <div class="alert alert-info">@((MarkupString)mensaje)</div>
+                            <div class="alert alert-info">@((MarkupString)mensaje))</div>
                     }
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
@@ -220,7 +222,6 @@ else
         </div>
     </div>
 </div>
-
 
 <div class="modal fade @(mostrarVentanaEdicion ? "show d-block" : "")" tabindex="-1"
      style="background-color: rgba(0,0,0,0.5);">
@@ -359,6 +360,130 @@ else
     </div>
 </div>
 
+<div class="modal fade @(mostrarVentanaRecursos ? "show d-block" : "")" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gestionar Recursos</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaRecursos"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="mb-2">Agregar recurso</h6>
+                <EditForm Model="recursoAsignacionDto" OnValidSubmit="AgregarRecurso" OnInvalidSubmit="MostrarErroresValidacion">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="d-none" />
+                    @if (!string.IsNullOrEmpty(mensaje))
+                    {
+                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
+                    }
+                    <div class="row g-2 align-items-end mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Recurso necesario</label>
+                            <select class="form-select" @bind="recursoAsignacionDto.Id">
+                                <option disabled selected value="0">Seleccione un recurso</option>
+                                @foreach (var r in recursosProyecto)
+                                {
+                                    <option value="@r.Id">@r.ToString()</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success w-100" type="submit">
+                                <i class="bi bi-plus-circle"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </EditForm>
+
+                <h6 class="mb-2">Recursos asignados</h6>
+                @if (tareaActual is not null && tareaActual.RecursosNecesarios.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var recurso in tareaActual.RecursosNecesarios)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @recurso.ToString()
+                                <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarRecursoDeTarea(recurso.Id)">
+                                    <i class="bi bi-x-circle"></i> Quitar
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">No hay recursos asignados a esta tarea.</p>
+                }
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @onclick="CerrarVentanaRecursos">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade @(mostrarVentanaMiembros ? "show d-block" : "")" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gestionar Miembros</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaMiembros"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="mb-2">Agregar miembro</h6>
+                <EditForm Model="usuarioAsignacionDto" OnValidSubmit="AgregarMiembro" OnInvalidSubmit="MostrarErroresValidacion">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="d-none" />
+                    @if (!string.IsNullOrEmpty(mensaje))
+                    {
+                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
+                    }
+                    <div class="row g-2 align-items-end mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Nuevo miembro</label>
+                            <select class="form-select" @bind="usuarioAsignacionDto.Id">
+                                <option disabled selected value="0">Seleccione un usuario</option>
+                                @foreach (var u in usuariosDeProyecto)
+                                {
+                                    <option value="@u.Id">@u.ToString()</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success w-100" type="submit">
+                                <i class="bi bi-plus-circle"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </EditForm>
+
+                <h6 class="mb-2">Miembros de la tarea</h6>
+                @if (tareaActual is not null && tareaActual.UsuariosAsignados.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var miembro in tareaActual.UsuariosAsignados)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @miembro.ToString()
+                                <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarMiembroDeTarea(miembro.Id)">
+                                    <i class="bi bi-x-circle"></i> Quitar
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">Aún no hay miembros asignados a esta tarea.</p>
+                }
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @onclick="CerrarVentanaMiembros">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @code {
     [Parameter] public int id { get; set; }
@@ -371,13 +496,21 @@ else
     private bool mostrarVentanaRecursos = false;
     private bool mostrarVentanaMiembros = false;
     private string mensaje = String.Empty;
+    
     private TareaDTO tareaDTO = new TareaDTO();
     private TareaDTO tareaEdicion = new TareaDTO();
     private bool editoEnProceso = false;
     private bool editoCompletada = false;
+    
     private Tarea tareaActual;
     private DependenciaDTO dependenciaDTO = new DependenciaDTO();
     private List<Tarea> tareasDelProyecto = new List<Tarea>();
+    
+    private RecursoAsignacionDTO recursoAsignacionDto = new RecursoAsignacionDTO();
+    private List<Recurso> recursosProyecto = new List<Recurso>();
+    
+    private UsuarioAsignacionDTO usuarioAsignacionDto = new UsuarioAsignacionDTO();
+    private List<Usuario> usuariosDeProyecto = new List<Usuario>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -460,12 +593,18 @@ else
 
     private void MostrarVentanaRecursos(int tareaId)
     {
-        throw new NotImplementedException();
+        mostrarVentanaRecursos = true;
+        mensaje = String.Empty;
+        tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaId);
+        ActualizarRecursosDisponibles();
     }
 
     private void MostrarVentanaMiembros(int tareaId)
     {
-        throw new NotImplementedException();
+        mostrarVentanaMiembros = true;
+        mensaje = String.Empty;
+        tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaId);
+        ActualizarUsuariosProyecto();
     }
 
     private void CerrarVentanaCreacion()
@@ -515,7 +654,6 @@ else
             // actualizaciones
             tareaDTO = new TareaDTO();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
-            mostrarVentanaCreacion = false;
             StateHasChanged();
         }
         catch (Exception e)
@@ -537,7 +675,6 @@ else
             editoCompletada = false;
             editoEnProceso = false;
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
-            mostrarVentanaEdicionReducida = false;
             StateHasChanged();
         }
         catch (Exception e)
@@ -587,7 +724,6 @@ else
             editoCompletada = false;
             editoEnProceso = false;
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
-            mostrarVentanaEdicion = false;
             StateHasChanged();
         }
         catch (Exception e)
@@ -625,7 +761,6 @@ else
             // actualizaciones
             dependenciaDTO = new DependenciaDTO();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
-            mostrarVentanaEdicionReducida = false;
             StateHasChanged();
         }
         catch (Exception e)
@@ -642,7 +777,6 @@ else
             mensaje = "Dependencia eliminada con éxito.";
             // actualizaciones
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
-            mostrarVentanaEdicionReducida = false;
             StateHasChanged();
         }
         catch (Exception e)
@@ -650,18 +784,94 @@ else
             mensaje = e.Message;
         }
     }
+    
+    private void AgregarRecurso()
+    { 
+        try 
+        {
+            Recurso nuevoRecurso = GestorRecursos.ObtenerRecursoPorId(recursoAsignacionDto.Id);
+            GestorTareas.AgregarRecursoATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso);
+            mensaje = "Recurso agregado con éxito.";
+            // actualizaciones
+            recursoAsignacionDto = new RecursoAsignacionDTO();
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            ActualizarRecursosDisponibles();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        { 
+            mensaje = e.Message; 
+        }
+    }
 
-
-
-
-    public class DependenciaDTO
+    private void EliminarRecursoDeTarea(int idRecurso)
     {
-        [Required(ErrorMessage = "Seleccione una tarea previa.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Seleccione una tarea previa.")]
-        public int TareaPreviaId { get; set; }
+        try
+        {
+            Recurso recurso = GestorRecursos.ObtenerRecursoPorId(idRecurso);
+            GestorTareas.EliminarRecursoDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, recurso);
+            mensaje = "Recurso eliminado con éxito.";
+            // actualizaciones
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            ActualizarRecursosDisponibles();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
+        }
+    }
+    
+    private void AgregarMiembro()
+    {
+        try 
+        {
+            Usuario nuevoMiembro = GestorUsuarios.ObtenerUsuarioPorId(usuarioAsignacionDto.Id);
+            GestorTareas.AgregarMiembroATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoMiembro);
+            mensaje = "Miembro agregado con éxito.";
+            // actualizaciones
+            usuarioAsignacionDto = new UsuarioAsignacionDTO();
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            ActualizarUsuariosProyecto();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        { 
+            mensaje = e.Message; 
+        }
+    }
 
-        [Required(ErrorMessage = "Seleccione un tipo de dependencia.")]
-        [RegularExpression("^(SS|FS)$", ErrorMessage = "El tipo de dependencia debe ser 'SS' o 'FS'.")]
-        public string Tipo { get; set; }
+    private void EliminarMiembroDeTarea(int idUsuario)
+    {
+        try
+        {
+            Usuario miembro = GestorUsuarios.ObtenerUsuarioPorId(idUsuario);
+            GestorTareas.EliminarMiembroDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, miembro);
+            mensaje = "Usuario eliminado de la tarea con éxito.";
+            // actualizaciones
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            ActualizarUsuariosProyecto();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
+        }
+    }
+    
+    private void ActualizarRecursosDisponibles()
+    {
+        List<Recurso> recursosGenerales = GestorRecursos.ObtenerRecursosGenerales();
+        List<Recurso>  recursosExclusivos = GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id);
+        List<Recurso>  recursosYaAsignados = tareaActual.RecursosNecesarios;
+        List<Recurso> todosLosRecursos = recursosGenerales.Concat(recursosExclusivos).ToList();
+        recursosProyecto = todosLosRecursos.Where(r => !recursosYaAsignados.Any(asignado => asignado.Id == r.Id)).ToList();
+    }
+
+    private void ActualizarUsuariosProyecto()
+    {
+        List<Usuario> usuarios = proyecto.Miembros;
+        List<Usuario> miembrosDeLaTarea = tareaActual.UsuariosAsignados;
+        usuariosDeProyecto = usuarios.Where(u => !miembrosDeLaTarea.Any(asignado => asignado.Id == u.Id)).ToList();
     }
 }
