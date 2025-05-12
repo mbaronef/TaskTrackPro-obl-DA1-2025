@@ -43,7 +43,7 @@ else
             }
             else
             {
-                Sesion.ActualizarSesion();
+                await Sesion.ActualizarSesion();
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }

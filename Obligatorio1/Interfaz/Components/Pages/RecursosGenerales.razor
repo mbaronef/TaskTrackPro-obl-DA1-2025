@@ -1,14 +1,14 @@
 @page "/RecursosGenerales"
 @rendermode InteractiveServer
-@inject GestorRecursos GestorRecursos
-@inject NavigationManager NavigationManager
 @using System.ComponentModel.DataAnnotations
 @using Dominio.Excepciones
 @using Dominio
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
-@inject LogicaSesion Sesion
 @using DTOs
+@inject GestorRecursos GestorRecursos
+@inject NavigationManager NavigationManager
+@inject LogicaSesion Sesion
 
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
@@ -293,7 +293,7 @@ else
             }
             else
             {
-                Sesion.ActualizarSesion();
+                await Sesion.ActualizarSesion();
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }
