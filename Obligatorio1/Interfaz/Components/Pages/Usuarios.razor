@@ -35,11 +35,11 @@ else
                 <div class="card-body">
                     <div class="mb-3">
                         <label>Nombre</label>
-                        <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre"  @oninput="OcultarError" />
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre"  @oninput="OcultarError" placeholder="Ej: Juan"/>
                     </div>
                     <div class="mb-3">
                         <label>Apellido</label>
-                        <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido"  @oninput="OcultarError" />
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido"  @oninput="OcultarError" placeholder="Ej: Pérez"/>
                     </div>
                     <div class="mb-3">
                         <label>Fecha de nacimiento</label>
@@ -47,12 +47,12 @@ else
                     </div>
                     <div class="mb-3">
                         <label>Email</label>
-                        <InputText class="form-control" @bind-Value="nuevoUsuario.Email"  @oninput="OcultarError"/>
+                        <InputText class="form-control" @bind-Value="nuevoUsuario.Email"  @oninput="OcultarError" placeholder="Ej: juanperez2005@mail.com"/>
                     </div>
                     <div class="mb-3">
                         <label>Contraseña</label>
                         <div class="input-group">
-                            <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" @oninput="OcultarError" />
+                            <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" @oninput="OcultarError" placeholder="Ej: Contra$ena123"/>
                             <button type="button" class="btn btn-secondary" @onclick="GenerarContrasenaPorDefecto">
                                 Generar contraseña por defecto
                             </button>
