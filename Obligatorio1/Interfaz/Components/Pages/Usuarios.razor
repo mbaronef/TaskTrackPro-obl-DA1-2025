@@ -345,7 +345,7 @@ else
         mostrarErrorContrasenaModal = false;
     }
 
-    private void GuardarCambiosUsuario()
+    private async void GuardarCambiosUsuario()
     {
         try
         {
@@ -365,7 +365,7 @@ else
             
             if (Sesion.UsuarioLogueado.Id == idUsuarioEditando)
             {
-                Sesion.ActualizarSesion();
+                await Sesion.ActualizarSesion();
             }
 
             mostrarFormEditar = false;
@@ -499,7 +499,7 @@ else
             }
             else
             {
-                Sesion.ActualizarSesion();
+                await Sesion.ActualizarSesion();
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }
