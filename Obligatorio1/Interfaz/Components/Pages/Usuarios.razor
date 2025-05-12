@@ -59,7 +59,7 @@ else
                         </div>
                     </div>
                     <div>
-                        <button class="btn btn-success" type="submit">Crear</button>
+                        <button class="btn btn-success" @onclick="CrearUsuario">Crear</button>
                         <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarCrearUsuario">Cancelar</button>
                     </div>
                 </div>
@@ -75,20 +75,20 @@ else
         </div>
     }
 
-    @if (mostrarFormEditar)
+    @if (mostrarFormEditar && UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
     {
         <EditForm Model="usuarioAEditar" OnValidSubmit="GuardarCambiosUsuario">
-            <DataAnnotationsValidator />
+            <DataAnnotationsValidator/>
             <div class="card mb-4">
                 <div class="card-header"><strong>Editar Usuario</strong></div>
                 <div class="card-body">
                     <div class="mb-3">
                         <label>Nombre</label>
-                        <InputText class="form-control" @bind-Value="usuarioAEditar.Nombre" disabled />
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Nombre" disabled/>
                     </div>
                     <div class="mb-3">
                         <label>Apellido</label>
-                        <InputText class="form-control" @bind-Value="usuarioAEditar.Apellido" disabled />
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Apellido" disabled/>
                     </div>
                     <div class="mb-3">
                         <label>Fecha de nacimiento</label>
@@ -96,7 +96,7 @@ else
                     </div>
                     <div class="mb-3">
                         <label>Email</label>
-                        <InputText class="form-control" @bind-Value="usuarioAEditar.Email" disabled />
+                        <InputText class="form-control" @bind-Value="usuarioAEditar.Email" disabled/>
                     </div>
                     <div class="mb-3">
                         <label>Contraseña</label>
@@ -107,9 +107,10 @@ else
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label>Roles</label><br />
-                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorSistema" /> <label class="me-3">Administrador de sistema</label>
-                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto" /> <label>Administrador de proyecto</label>
+                        <label>Roles</label><br/>
+                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorSistema" disabled="@usuarioOriginal.EsAdministradorSistema" />
+                        <label class="me-3">Administrador de sistema</label>
+                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto"/> <label>Administrador de proyecto</label>
                     </div>
                     <div>
                         <button class="btn btn-success" @onclick="GuardarCambiosUsuario">Guardar cambios</button>
@@ -120,7 +121,7 @@ else
             </div>
         </EditForm>
     }
-    
+
     @if (mostrarModalCambiarContrasena)
     {
         <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
@@ -179,10 +180,7 @@ else
                         }
                     </td>
                     <td>
-                        @if (!usuario.EsAdministradorSistema)
-                        {
-                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditarUsuario(usuario.Id)">Editar</button>
-                        }
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditarUsuario(usuario.Id)">Editar</button>
                     </td>
                 </tr>
             }
@@ -327,6 +325,36 @@ else
             mostrarErrorEditar = true;
         }
     }
+    
+    private void GuardarCambiosAdmin()
+    {
+        try
+        {
+            if (usuarioAEditar.EsAdministradorProyecto && !usuarioOriginal.EsAdministradorProyecto)
+            {
+                GestorUsuarios.AsignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            }
+            else if (!usuarioAEditar.EsAdministradorProyecto && usuarioOriginal.EsAdministradorProyecto)
+            {
+                GestorUsuarios.DesasignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
+            }
+
+            mostrarFormEditar = false;
+            usuarioOriginal = null;
+            usuarioAEditar = null;
+            StateHasChanged();
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEditar = $"Error al editar usuario: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            mostrarErrorEditar = true;
+        }
+    }
 
     private void EliminarUsuario()
     {
@@ -415,20 +443,20 @@ else
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        [Required(ErrorMessage = "El nombre no puede ser vacío.")]
         public string Nombre { get; set; }
 
-        [Required(ErrorMessage = "El apellido es obligatorio.")]
+        [Required(ErrorMessage = "El apellido no puede ser vacío.")]
         public string Apellido { get; set; }
 
         [Required(ErrorMessage = "La fecha de nacimiento es obligatoria.")]
         public DateTime FechaNacimiento { get; set; } = DateTime.Today;
 
-        [Required(ErrorMessage = "El email es obligatorio.")]
+        [Required(ErrorMessage = "El email no puede ser vacío")]
         [EmailAddress(ErrorMessage = "Formato de email inválido.")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [Required(ErrorMessage = "La contraseña no puede ser vacía.")]
         public string Contrasena { get; set; }
 
         public bool EsAdministradorSistema { get; set; }
