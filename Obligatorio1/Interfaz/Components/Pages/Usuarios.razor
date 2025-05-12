@@ -334,36 +334,6 @@ else
             mostrarErrorEditar = true;
         }
     }
-    
-    private void GuardarCambiosAdmin()
-    {
-        try
-        {
-            if (usuarioAEditar.EsAdministradorProyecto && !usuarioOriginal.EsAdministradorProyecto)
-            {
-                GestorUsuarios.AsignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
-            }
-            else if (!usuarioAEditar.EsAdministradorProyecto && usuarioOriginal.EsAdministradorProyecto)
-            {
-                GestorUsuarios.DesasignarAdministradorProyecto(UsuarioActual.UsuarioLogueado, idUsuarioEditando);
-            }
-
-            mostrarFormEditar = false;
-            usuarioOriginal = null;
-            usuarioAEditar = null;
-            StateHasChanged();
-        }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al editar usuario: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
-        catch (Exception ex)
-        {
-            errorMensajeEditar = $"Error inesperado: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
-    }
 
     private void EliminarUsuario()
     {
