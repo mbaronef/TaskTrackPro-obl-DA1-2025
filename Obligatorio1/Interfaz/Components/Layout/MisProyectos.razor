@@ -1,3 +1,4 @@
+@using Dominio
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @inject LogicaSesion Sesion
@@ -8,7 +9,14 @@
 
 @if (Sesion.UsuarioLogueado is not null)
 {
-    var proyectos = GestorProyectos.ObtenerProyectosPorUsuario(Sesion.UsuarioLogueado.Id);
+    @if (Sesion.EsAdminSistema())
+    {
+        proyectos = GestorProyectos.Proyectos.ObtenerTodos();
+    }
+    else
+    {
+        proyectos = GestorProyectos.ObtenerProyectosPorUsuario(Sesion.UsuarioLogueado.Id);   
+    }
     foreach (var proyecto in proyectos)
     {
         <details class="mb-2">
@@ -30,6 +38,7 @@
 }
 
 @code {
+    private List<Proyecto> proyectos;
     private bool sesionCargada = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
