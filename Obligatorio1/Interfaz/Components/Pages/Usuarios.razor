@@ -273,7 +273,23 @@ else
         List<ValidationResult> resultados = new List<ValidationResult>();
         ValidationContext contexto = new ValidationContext(modelo, serviceProvider: null, items: null);
         Validator.TryValidateObject(modelo, contexto, resultados, validateAllProperties: true);
+        if (modelo is UsuarioDTO usuario)
+        {
+            var edad = CalcularEdad(usuario.FechaNacimiento);
+            if (edad < 18 || edad > 100)
+            {
+                resultados.Add(new ValidationResult("La edad debe estar entre 18 y 100 años.", new[] { nameof(usuario.FechaNacimiento) }));
+            }
+        }
         return resultados;
+    }
+    
+    private int CalcularEdad(DateTime fechaNacimiento)
+    {
+        DateTime hoy = DateTime.Today;
+        int edad = hoy.Year - fechaNacimiento.Year;
+        if (fechaNacimiento.Date > hoy.AddYears(-edad)) edad--;
+        return edad;
     }
 
     private void EditarUsuario(int idUsuario)
@@ -436,6 +452,8 @@ else
         public string Email { get; set; }
 
         [Required(ErrorMessage = "La contraseña no puede ser vacía.")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]).{8,}$",
+            ErrorMessage = "La contraseña debe tener al menos 8 caracteres, una minúscula, una mayúscula, un número y un carácter especial.")]
         public string Contrasena { get; set; }
 
         public bool EsAdministradorSistema { get; set; }
