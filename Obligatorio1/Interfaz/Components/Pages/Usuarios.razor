@@ -3,6 +3,7 @@
 @rendermode InteractiveServer
 @inject GestorUsuarios GestorUsuarios
 @using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
 @using Dominio
 @using Dominio.Excepciones
 @using Interfaz.ServiciosInterfaz
@@ -142,7 +143,12 @@ else
                     </div>
                     <div class="modal-body">
                         <label>Nueva contraseña:</label>
-                        <InputText class="form-control" @bind-Value="nuevaContrasenaManual" type="password" />
+                        <InputText class="form-control" @bind-Value="nuevaContrasenaManual" type="password" @oninput="OcultarErrorModalContrasena" />
+
+                        @if (mostrarErrorContrasenaModal)
+                        {
+                            <div class="text-danger mt-1">@errorContrasenaModal</div>
+                        }
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" @onclick="CancelarCambioContrasena">Cancelar</button>
@@ -212,6 +218,9 @@ else
     
     private bool mostrarModalCambiarContrasena = false;
     private string nuevaContrasenaManual = "";
+    
+    private string errorContrasenaModal;
+    private bool mostrarErrorContrasenaModal = false;
 
     private void MostrarFormularioCrearUsuario()
     {
@@ -315,6 +324,11 @@ else
             mostrarFormEditar = true;
         }
     }
+    
+    private void OcultarErrorModalContrasena(ChangeEventArgs e)
+    {
+        mostrarErrorContrasenaModal = false;
+    }
 
     private void GuardarCambiosUsuario()
     {
@@ -415,12 +429,20 @@ else
     
     private void ConfirmarCambioContrasena()
     {
+        mostrarErrorEditar = false;
+        errorMensajeEditar = "";
+
+        if (!ContrasenaEsValida(nuevaContrasenaManual))
+        {
+            errorContrasenaModal = "La contraseña debe tener al menos 8 caracteres, una minúscula, una mayúscula, un número y un carácter especial.";
+            mostrarErrorContrasenaModal = true;
+            return;
+        }
         try
         { 
             GestorUsuarios.ModificarContrasena(UsuarioActual.UsuarioLogueado, idUsuarioEditando, nuevaContrasenaManual);
             mostrarModalCambiarContrasena = false;
             nuevaContrasenaManual = "";
-            mostrarErrorEditar = false;
         }
         catch (ExcepcionDominio ex)
         {
@@ -432,6 +454,17 @@ else
             errorMensajeEditar = $"Error inesperado: {ex.Message}";
             mostrarErrorEditar = true;
         }
+    }
+    
+    private bool ContrasenaEsValida(string contrasena)
+    {
+        if (string.IsNullOrWhiteSpace(contrasena)) return false;
+
+        return contrasena.Length >= 8
+               && contrasena.Any(char.IsLower)
+               && contrasena.Any(char.IsUpper)
+               && contrasena.Any(char.IsDigit)
+               && contrasena.Any(c => !char.IsLetterOrDigit(c));
     }
 
     public class UsuarioDTO
