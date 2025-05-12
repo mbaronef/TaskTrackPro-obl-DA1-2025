@@ -190,7 +190,7 @@ public class GestorProyectos
             throw new ExcepcionServicios("El solicitante no es administrador de sistema.");
     }
 
-    private Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
+    public Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
         Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
         
