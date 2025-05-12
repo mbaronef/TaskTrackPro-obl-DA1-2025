@@ -12,7 +12,13 @@
     foreach (var proyecto in proyectos)
     {
         <details class="mb-2">
-            <summary>@proyecto.Nombre</summary>
+            <summary>
+                @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
+                {
+                    <i class="bi bi-star-fill text-white me-1" title="Administrador del proyecto"></i>
+                }
+                @proyecto.Nombre
+            </summary>
             <ul class="list-unstyled ms-3">
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link text-white">Gantt</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>

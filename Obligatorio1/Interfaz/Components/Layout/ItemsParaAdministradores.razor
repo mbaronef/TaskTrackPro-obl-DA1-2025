@@ -1,0 +1,39 @@
+@using Interfaz.ServiciosInterfaz
+@using Servicios.Gestores
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigation
+@inject GestorProyectos GestorProyectos
+@rendermode InteractiveServer
+
+
+@if (Sesion.UsuarioLogueado is not null)
+{
+    @if (Sesion.EsAdminSistema())
+    {
+        <NavLink href="/usuarios" class="nav-link text-white">Usuarios</NavLink>
+    }
+}
+
+@code {
+    private bool sesionCargada = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                Sesion.ActualizarSesion();
+                sesionCargada = true;
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+        }
+    }
+
+}

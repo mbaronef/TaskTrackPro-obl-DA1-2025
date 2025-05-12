@@ -1,8 +1,527 @@
 @page "/proyecto/{id:int}/tareas"
+@using System.ComponentModel.DataAnnotations
+@using Dominio
+@using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @inject GestorProyectos GestorProyectos
-<h3>Tareas</h3>
+@inject GestorTareas GestorTareas
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigator
+@rendermode InteractiveServer
+@using System.Linq
+
+@if (Sesion.UsuarioLogueado == null || !sesionCargada)
+{
+}
+else
+{
+    @if (proyecto == null)
+    {
+        <p>No se encontró el proyecto</p>
+    }
+    else
+    {
+        @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
+        {
+            <div class="text-center mb-3">
+                <button class="btn btn-dark text-white" @onclick="() => MostrarVentanaCreacion()"
+                        style="margin-bottom: 10px;">
+                    Crear tarea
+                </button>
+            </div>
+        }
+
+        @if (proyecto.Tareas.Count > 0)
+        {
+            @foreach (var tarea in proyecto.Tareas)
+            {
+                @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado) || tarea.EsMiembro(Sesion.UsuarioLogueado) || Sesion.EsAdminSistema())
+                {
+                    var collapseId = $"collapseTarea{tarea.Id}";
+
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="fw-bold fs-5">@tarea.Titulo</span>
+                            <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="collapse"
+                                    data-bs-target=@($"#{collapseId}")>
+                                Más información
+                            </button>
+                        </div>
+                        <div class="collapse" id=@collapseId>
+                            <div class="card-body">
+                                <p><strong>Estado:</strong> @tarea.Estado</p>
+                                @if (tarea.Dependencias.Count > 0)
+                                {
+                                    <p>
+                                        <strong>Depende
+                                            de:</strong> @string.Join(", ", tarea.Dependencias.Select(d => d.ToString()))
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p><strong>No tiene dependencias</strong></p>
+                                }
+                                @if (tarea.RecursosNecesarios.Count > 0)
+                                {
+                                    <p>
+                                        <strong>Recursos
+                                            necesarios:</strong> @string.Join(", ", tarea.RecursosNecesarios.Select(r => r.Nombre))
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p><strong>No tiene recursos necesarios</strong></p>
+                                }
+                                <p><strong>Duración:</strong> @tarea.DuracionEnDias día/s</p>
+                                <p><strong>Fecha de inicio:</strong> @tarea.FechaInicioMasTemprana.ToString("dd/MM/yyyy")
+                                </p>
+                                <p><strong>Fecha de fin:</strong> @tarea.FechaFinMasTemprana.ToString("dd/MM/yyyy")</p>
+                                @if (tarea.UsuariosAsignados.Count > 0)
+                                {
+                                    <p>
+                                        <strong>Miembros:</strong> @string.Join(", ", tarea.UsuariosAsignados.Select(u => u.ToString()))
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p><strong>Aún no hay miembros asignados</strong></p>
+                                }
+                            </div>
+                            @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada)
+                            {
+                                <div class="text-center mb-3">
+                                    <button class="btn btn-outline-secondary mx-2 btn-sm"
+                                            @onclick="() => MostrarVentanaEdicion(tarea.Id)">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                            }
+                            @if (tarea.EsMiembro(Sesion.UsuarioLogueado) && !proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada)
+                            {
+                                <div class="text-center mb-3">
+                                    <button class="btn btn-outline-secondary mx-2 btn-sm"
+                                            @onclick="() => MostrarVentanaEdicionReducida(tarea.Id)">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        }
+    }
+}
+
+<div class="modal fade @(mostrarVentanaCreacion ? "show d-block" : "")" tabindex="-1"
+     style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Tarea</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaCreacion"></button>
+            </div>
+            <EditForm Model="tareaDTO" OnValidSubmit="CrearTarea" OnInvalidSubmit="MostrarErroresValidacion">
+                <DataAnnotationsValidator/>
+                <ValidationSummary class="d-none"/>
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(mensaje))
+                    {
+                        <div class="alert alert-info mt-3">
+                            @mensaje
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título</label>
+                        <InputText id="titulo" class="form-control"
+                                   @bind-Value="tareaDTO.Titulo"
+                                   type="text"
+                                   placeholder="Ingrese el título de la tarea"
+                                   required/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <InputTextArea id="descripcion" class="form-control"
+                                       @bind-Value="tareaDTO.Descripcion"
+                                       placeholder="Ingrese una descripción de la tarea"
+                                       required/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="duracion" class="form-label">Duración en días</label>
+                        <InputNumber id="duracion" class="form-control"
+                                     @bind-Value="tareaDTO.DuracionEnDias"
+                                     min="1"
+                                     placeholder="Ingrese la duración en días"
+                                     required/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaInicio" class="form-label">Fecha de inicio</label>
+                        <InputDate id="fechaInicio" class="form-control"
+                                   @bind-Value="tareaDTO.FechaInicioMasTemprana"
+                                   required/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Crear tarea</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade @(mostrarVentanaEdicionReducida ? "show d-block" : "")" tabindex="-1"
+     style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Tarea</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaEdicionReducida"></button>
+            </div>
+            <EditForm Model="tareaEdicion" OnValidSubmit="EditarEstadoTarea" OnInvalidSubmit="MostrarErroresValidacion">
+                <DataAnnotationsValidator/>
+                <ValidationSummary class="d-none"/>
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(mensaje))
+                    {
+                        <div class="alert alert-info">@mensaje</div>
+                    }
+                    <div class="form-check mb-3">
+                        @if (tareaEdicion.Estado == EstadoTarea.Pendiente)
+                        {
+                            <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="editoEnProceso"/>
+                            <label for="enProceso" class="form-check-label">En proceso</label>
+                        }
+                        @if (tareaEdicion.Estado == EstadoTarea.EnProceso)
+                        {
+                            <InputCheckbox id="completada" class="form-check-input" @bind-Value="editoCompletada"/>
+                            <label for="completada" class="form-check-label">Completada</label>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Guardar cambio</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade @(mostrarVentanaEdicion ? "show d-block" : "")" tabindex="-1"
+     style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Tarea</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaEdicion"></button>
+            </div>
+            <EditForm Model="tareaEdicion" OnValidSubmit="GuardarCambiosTarea"
+                      OnInvalidSubmit="MostrarErroresValidacion">
+                <DataAnnotationsValidator/>
+                <ValidationSummary class="d-none"/>
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(mensaje))
+                    {
+                        <div class="alert alert-info">@mensaje</div>
+                    }
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título</label>
+                        <InputText id="titulo" class="form-control" @bind-Value="tareaEdicion.Titulo"/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <InputTextArea id="descripcion" class="form-control" @bind-Value="tareaEdicion.Descripcion"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="duracion" class="form-label">Duración en días</label>
+                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaEdicion.DuracionEnDias"
+                                     min="1"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fechaInicio" class="form-label">Fecha de inicio</label>
+                        <InputDate id="fechaInicio" class="form-control"
+                                   @bind-Value="tareaEdicion.FechaInicioMasTemprana"/>
+                    </div>
+                </div>
+                <div class="form-check mb-3">
+                    @if (tareaEdicion.Estado == EstadoTarea.Pendiente)
+                    {
+                        <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="editoEnProceso"/>
+                        <label for="enProceso" class="form-check-label">En proceso</label>
+                    }
+                    @if (tareaEdicion.Estado == EstadoTarea.EnProceso)
+                    {
+                        <InputCheckbox id="completada" class="form-check-input" @bind-Value="editoCompletada"/>
+                        <label for="completada" class="form-check-label">Completada</label>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Guardar cambios</button>
+                </div>
+            </EditForm>
+            <div class="text-center mb-3">
+                <button class="btn btn-outline-secondary mx-2 btn-sm" @onclick="() => EliminarTarea(tareaEdicion.Id)">
+                    <i class="bi bi-trash3"></i> Eliminar tarea
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @code {
-    
+    [Parameter] public int id { get; set; }
+    private Proyecto proyecto;
+    private bool sesionCargada = false;
+    private bool mostrarVentanaCreacion = false;
+    private bool mostrarVentanaEdicion = false;
+    private bool mostrarVentanaEdicionReducida = false;
+    private string mensaje = String.Empty;
+    private TareaDTO tareaDTO = new TareaDTO();
+    private TareaDTO tareaEdicion = new TareaDTO();
+    private bool editoEnProceso = false;
+    private bool editoCompletada = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigator.NavigateTo("/");
+            }
+            else
+            {
+                Sesion.ActualizarSesion();
+                proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                sesionCargada = true;
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+        }
+    }
+
+    private void MostrarVentanaCreacion()
+    {
+        mostrarVentanaCreacion = true;
+        mensaje = String.Empty;
+    }
+
+    private void MostrarVentanaEdicion(int tareaId)
+    {
+        mostrarVentanaEdicion = true;
+        mensaje = String.Empty;
+        Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaId);
+        if (tareaAEditar != null)
+        {
+            tareaEdicion = new TareaDTO
+            {
+                Id = tareaAEditar.Id,
+                Titulo = tareaAEditar.Titulo,
+                Descripcion = tareaAEditar.Descripcion,
+                DuracionEnDias = tareaAEditar.DuracionEnDias,
+                FechaInicioMasTemprana = tareaAEditar.FechaInicioMasTemprana,
+                Estado = tareaAEditar.Estado
+            };
+        }
+        else
+        {
+            mensaje = "Error al cargar la tarea.";
+        }
+    }
+
+    private void MostrarVentanaEdicionReducida(int tareaId)
+    {
+        mostrarVentanaEdicionReducida = true;
+        mensaje = String.Empty;
+        Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaId);
+        if (tareaAEditar != null)
+        {
+            tareaEdicion = new TareaDTO
+            {
+                Id = tareaAEditar.Id,
+                Estado = tareaAEditar.Estado,
+                Titulo = tareaAEditar.Titulo,
+                Descripcion = tareaAEditar.Descripcion,
+                DuracionEnDias = tareaAEditar.DuracionEnDias,
+                FechaInicioMasTemprana = tareaAEditar.FechaInicioMasTemprana
+            };
+        }
+        else
+        {
+            mensaje = "Error al cargar la tarea.";
+        }
+    }
+
+    private void CerrarVentanaCreacion()
+    {
+        mostrarVentanaCreacion = false;
+    }
+
+    private void CerrarVentanaEdicion()
+    {
+        mostrarVentanaEdicion = false;
+    }
+
+    private void CerrarVentanaEdicionReducida()
+    {
+        mostrarVentanaEdicionReducida = false;
+    }
+
+    private void MostrarErroresValidacion(EditContext editContext)
+    {
+        var errores = editContext.GetValidationMessages();
+        mensaje = string.Join("<br/>", errores);
+    }
+
+    private void CrearTarea(EditContext obj)
+    {
+        Tarea tarea = tareaDTO.ANuevaEntidad();
+        try
+        {
+            GestorTareas.AgregarTareaAlProyecto(id, Sesion.UsuarioLogueado, tarea);
+            mensaje = "Tarea creada con éxito.";
+            // actualizaciones
+            tareaDTO = new TareaDTO();
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            mostrarVentanaCreacion = false;
+            Sesion.ActualizarSesion();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
+        }
+    }
+
+    private void EditarEstadoTarea(EditContext obj)
+    {
+        Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaEdicion.Id);
+        EstadoTarea nuevoEstado = editoCompletada ? EstadoTarea.Completada : (editoEnProceso ? EstadoTarea.EnProceso : tareaAEditar.Estado);
+        try
+        {
+            GestorTareas.CambiarEstadoTarea(Sesion.UsuarioLogueado, tareaAEditar.Id, id, nuevoEstado);
+            mensaje = "Estado editado con éxito.";
+            // actualizaciones
+            tareaEdicion = new TareaDTO();
+            editoCompletada = false;
+            editoEnProceso = false;
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            mostrarVentanaEdicionReducida = false;
+            Sesion.ActualizarSesion();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
+        }
+    }
+
+
+    private void GuardarCambiosTarea(EditContext obj)
+    {
+        Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaEdicion.Id);
+        Usuario solicitante = Sesion.UsuarioLogueado;
+        try
+        {
+            GestorTareas.ModificarTituloTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.Titulo);
+            GestorTareas.ModificarDescripcionTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.Descripcion);
+            GestorTareas.ModificarDuracionTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.DuracionEnDias);
+            GestorTareas.ModificarFechaInicioTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.FechaInicioMasTemprana);
+            if (editoCompletada)
+            {
+                GestorTareas.CambiarEstadoTarea(solicitante, tareaAEditar.Id, id, EstadoTarea.Completada);
+            }
+            else if (editoEnProceso)
+            {
+                GestorTareas.CambiarEstadoTarea(solicitante, tareaAEditar.Id, id, EstadoTarea.EnProceso);
+            }
+            
+            
+            
+            // RECURSOS DEPENDENCIAS MIEMBROS
+
+            
+            
+            
+            mensaje = "Tarea editada con éxito.";
+            // actualizaciones
+            tareaEdicion = new TareaDTO();
+            editoCompletada = false;
+            editoEnProceso = false;
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            mostrarVentanaEdicion = false;
+            Sesion.ActualizarSesion();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
+        }
+    }
+
+    private void EliminarTarea(int tareaEdicionId)
+    {
+        try
+        {
+            GestorTareas.EliminarTareaDelProyecto(1, Sesion.UsuarioLogueado, tareaEdicionId);
+            mensaje = "Tarea eliminada con éxito.";
+            // actualizaciones
+            tareaEdicion = new TareaDTO();
+            editoCompletada = false;
+            editoEnProceso = false;
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            mostrarVentanaEdicion = false;
+            Sesion.ActualizarSesion();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
+        }
+    }
+
+    //MODIFICAR TAREA: ADMIN DE PROYECTO --> TODO. MIEMBRO --> SOLO ESTADO
+    //ELIMINAR TAREA: SOLO EL ADMIN DEL PROYECTO
+
+
+    public class TareaDTO
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "La tarea debe tener un título.")]
+        public string Titulo { get; set; }
+
+        [Required(ErrorMessage = "La tarea debe tener una descripción.")]
+        public string Descripcion { get; set; }
+
+        [Required(ErrorMessage = "La tarea debe tener una duración en días.")]
+        [Range(1, int.MaxValue, ErrorMessage = "La duración debe ser mayor que 0.")]
+        public int DuracionEnDias { get; set; }
+
+        [Required(ErrorMessage = "La tarea debe tener una fecha de inicio.")]
+        [CustomValidation(typeof(TareaDTO), nameof(ValidarFechaInicio))]
+        public DateTime FechaInicioMasTemprana { get; set; }
+
+        public EstadoTarea Estado { get; set; }
+
+        public Tarea ANuevaEntidad()
+        {
+            return new Tarea(Titulo, Descripcion, DuracionEnDias, FechaInicioMasTemprana);
+        }
+
+        public static ValidationResult ValidarFechaInicio(DateTime fecha, ValidationContext context)
+        {
+            if (fecha < DateTime.Today)
+            {
+                return new ValidationResult("La fecha de inicio debe ser hoy o en el futuro.");
+            }
+
+            return ValidationResult.Success;
+        }
+    }
+
 }

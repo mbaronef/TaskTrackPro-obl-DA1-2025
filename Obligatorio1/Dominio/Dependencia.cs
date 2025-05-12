@@ -46,4 +46,9 @@ public class Dependencia
     {
         return HashCode.Combine(Tipo, Tarea.Id);
     }
+
+    public override string ToString()
+    {
+        return $"{Tarea.Titulo} ({Tipo})";
+    }
 }
