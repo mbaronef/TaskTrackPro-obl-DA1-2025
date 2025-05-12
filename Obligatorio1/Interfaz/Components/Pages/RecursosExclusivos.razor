@@ -1,6 +1,15 @@
 @page "/proyecto/{id:int}/recursos_exclusivos"
-@using Servicios.Gestores
 @inject GestorProyectos GestorProyectos
+@rendermode InteractiveServer
+@inject ServiciosInterfaz.UsuarioActual UsuarioActual
+@inject GestorRecursos GestorRecursos
+@inject NavigationManager NavigationManager
+@using System.ComponentModel.DataAnnotations
+@using Dominio.Excepciones
+@using Dominio
+@using Servicios.Gestores
+@using DTOs
+
 
 @code {
     
