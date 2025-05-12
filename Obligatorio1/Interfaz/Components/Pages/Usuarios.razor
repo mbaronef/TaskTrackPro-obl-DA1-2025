@@ -9,6 +9,7 @@
 @using Servicios.Gestores
 @using DTOs
 @using Interfaz.ServiciosInterfaz
+@using Servicios.Utilidades
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
 
@@ -71,6 +72,13 @@ else
                                     Autogenerar contraseña
                                 </button>
                             </div>
+
+                            @if (!string.IsNullOrEmpty(nuevoUsuario.Contrasena))
+                            {
+                                <div class="alert alert-success mt-3">
+                                    La nueva contraseña generada es: <strong>@nuevoUsuario.Contrasena</strong>. Se aplicará al crear el usuario.
+                                </div>
+                            }
                         </div>
                         <div>
                             <button class="btn btn-success" @onclick="CrearUsuario">Crear</button>
@@ -121,6 +129,12 @@ else
                                     <button class="btn btn-secondary" type="button" @onclick="MostrarModalCambiarContrasena">Cambiar</button>
                                     <button class="btn btn-secondary" type="button" @onclick="ReiniciarContrasena">Reiniciar</button>
                                 </div>
+                                @if (!string.IsNullOrEmpty(usuarioAEditar.ContrasenaAutogenerada))
+                                {
+                                    <div class="alert alert-success mt-3">
+                                        La nueva contraseña generada es: <strong>@usuarioAEditar.ContrasenaAutogenerada</strong>. Se aplicará al guardar cambios.
+                                    </div>
+                                }
                             </div>
                         }
                         <div class="mb-3">
@@ -349,6 +363,11 @@ else
     {
         try
         {
+            if (!string.IsNullOrEmpty(usuarioAEditar.ContrasenaAutogenerada))
+            {
+                GestorUsuarios.ModificarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando, usuarioAEditar.ContrasenaAutogenerada);
+            }
+            
             if (usuarioAEditar.EsAdministradorProyecto && !usuarioOriginal.EsAdministradorProyecto)
             {
                 GestorUsuarios.AsignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
@@ -420,13 +439,16 @@ else
     {
         try
         {
-            GestorUsuarios.AutogenerarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando);
+            string nueva = UtilidadesContrasena.AutogenerarContrasenaValida();
+            if (mostrarFormCrear)
+            {
+                nuevoUsuario.Contrasena = nueva;
+            }
+            else if (mostrarFormEditar)
+            {
+                usuarioAEditar.ContrasenaAutogenerada = nueva;
+            }
             mostrarErrorEditar = false;
-        }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al generar contraseña: {ex.Message}";
-            mostrarErrorEditar = true;
         }
         catch (Exception ex)
         {

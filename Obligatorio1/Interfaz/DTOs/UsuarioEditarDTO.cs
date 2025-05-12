@@ -12,4 +12,7 @@ public class UsuarioEditarDTO
 
     public bool EsAdministradorSistema { get; set; }
     public bool EsAdministradorProyecto { get; set; }
+    
+    public string? ContrasenaAutogenerada { get; set; }
+
 }
