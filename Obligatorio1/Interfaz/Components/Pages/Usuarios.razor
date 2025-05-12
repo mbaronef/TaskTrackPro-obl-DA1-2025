@@ -98,23 +98,32 @@ else
                         <label>Email</label>
                         <InputText class="form-control" @bind-Value="usuarioAEditar.Email" disabled/>
                     </div>
-                    <div class="mb-3">
-                        <label>Contraseña</label>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-secondary" type="button" @onclick="GenerarContrasenaPorDefecto">Generar por defecto</button>
-                            <button class="btn btn-secondary" type="button" @onclick="MostrarModalCambiarContrasena">Cambiar</button>
-                            <button class="btn btn-secondary" type="button" @onclick="ReiniciarContrasena">Reiniciar</button>
-                        </div>
-                    </div>
+                    @if (!usuarioOriginal.EsAdministradorSistema)
+                    {
+                        <div class="mb-3">
+                            <label>Contraseña</label>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-secondary" type="button" @onclick="GenerarContrasenaPorDefecto">Generar por defecto</button>
+                                <button class="btn btn-secondary" type="button" @onclick="MostrarModalCambiarContrasena">Cambiar</button>
+                                <button class="btn btn-secondary" type="button" @onclick="ReiniciarContrasena">Reiniciar</button>
+                            </div>
+                        </div>                    
+                    }
                     <div class="mb-3">
                         <label>Roles</label><br/>
                         <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorSistema" disabled="@usuarioOriginal.EsAdministradorSistema" />
                         <label class="me-3">Administrador de sistema</label>
-                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto"/> <label>Administrador de proyecto</label>
+                        <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto" disabled="@usuarioOriginal.EstaAdministrandoUnProyecto" />
+                        <label class="me-3">Administrador de proyecto</label>
                     </div>
                     <div>
                         <button class="btn btn-success" @onclick="GuardarCambiosUsuario">Guardar cambios</button>
-                        <button class="btn btn-danger ms-2" type="button" @onclick="EliminarUsuario">Eliminar usuario</button>
+                        
+                        @if (!usuarioOriginal.EsAdministradorSistema)
+                        {
+                            <button class="btn btn-danger ms-2" type="button" @onclick="EliminarUsuario">Eliminar usuario</button>
+                        }
+                        
                         <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEditarUsuario">Cancelar</button>
                     </div>
                 </div>
