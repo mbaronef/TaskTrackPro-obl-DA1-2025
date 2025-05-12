@@ -10,6 +10,11 @@
 @using Servicios.Gestores
 
 <h3>USUARIOS:</h3>
+<!-- TODO:
+validar contraseñas autogeneradas que se generen bien y el resto de contraseñas, 
+que notifique o le aparezca al administrador (en una alterta verde) cual es la autogenerada cuando aprieta el boton 
+(hacer que autogeneradas tambien devuelva la contraseña (?))
+y checkear que funcione todo bien con el login -->
 
 @if (!UsuarioActual.UsuarioLogueado.EsAdministradorSistema)
 {
@@ -25,7 +30,6 @@ else
     {
         <div class="alert alert-danger" role="alert">@errorMensaje</div>
     }
-    <!--falta validar que los campos del nuevo usuario sean correctos segun las validaciones del back-->
     
     @if (mostrarFormCrear) 
     {
