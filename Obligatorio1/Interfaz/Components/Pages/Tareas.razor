@@ -9,6 +9,7 @@
 @inject NavigationManager Navigator
 @rendermode InteractiveServer
 @using System.Linq
+@using Interfaz.DTOs
 
 @if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
@@ -49,6 +50,7 @@ else
                         </div>
                         <div class="collapse" id=@collapseId>
                             <div class="card-body">
+                                <p><strong>Descripción:</strong> @tarea.Descripcion</p>
                                 <p><strong>Estado:</strong> @tarea.Estado</p>
                                 @if (tarea.Dependencias.Count > 0)
                                 {
@@ -89,10 +91,25 @@ else
                             </div>
                             @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada)
                             {
-                                <div class="text-center mb-3">
-                                    <button class="btn btn-outline-secondary mx-2 btn-sm"
+                                <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
+                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
                                             @onclick="() => MostrarVentanaEdicion(tarea.Id)">
-                                        <i class="bi bi-pencil"></i> Editar
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </button>
+                                    @if (proyecto.Tareas.Count > 1)
+                                    {
+                                        <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+                                                @onclick="() => MostrarVentanaDependencias(tarea.Id)">
+                                            <i class="bi bi-diagram-3"></i> Dependencias
+                                        </button>
+                                    }
+                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+                                            @onclick="() => MostrarVentanaRecursos(tarea.Id)">
+                                        <i class="bi bi-box-seam"></i> Recursos
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+                                            @onclick="() => MostrarVentanaMiembros(tarea.Id)">
+                                        <i class="bi bi-people"></i> Miembros
                                     </button>
                                 </div>
                             }
@@ -127,9 +144,7 @@ else
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                        <div class="alert alert-info mt-3">
-                            @mensaje
-                        </div>
+                            <div class="alert alert-info">@((MarkupString)mensaje)</div>
                     }
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
@@ -183,7 +198,7 @@ else
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                        <div class="alert alert-info">@mensaje</div>
+                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
                     }
                     <div class="form-check mb-3">
                         @if (tareaEdicion.Estado == EstadoTarea.Pendiente)
@@ -222,7 +237,8 @@ else
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                        <div class="alert alert-info">@mensaje</div>
+                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
+
                     }
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
@@ -270,6 +286,79 @@ else
     </div>
 </div>
 
+<div class="modal fade @(mostrarVentanaDependencias ? "show d-block" : "")" tabindex="-1"
+     style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gestionar Dependencias</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaDependencias"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Agregar dependencia -->
+                <h6 class="mb-2">Agregar dependencia</h6>
+                <EditForm Model="dependenciaDTO" OnValidSubmit="AgregarDependencia" OnInvalidSubmit="MostrarErroresValidacion">
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary class="d-none"/>
+                @if (!string.IsNullOrEmpty(mensaje))
+                {
+                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
+                }
+                <div class="row g-2 align-items-end mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Tarea previa</label>
+                        <select class="form-select" @bind="dependenciaDTO.TareaPreviaId">
+                            <option disabled selected value="0">Seleccione una tarea</option>
+                            @foreach (var t in tareasDelProyecto)
+                            {
+                                <option value="@t.Id">@t.Titulo</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-select" @bind="dependenciaDTO.Tipo">
+                            <option disabled selected value="">Seleccione un tipo de dependencia</option>
+                            <option value="FS">Fin a Inicio (FS)</option>
+                            <option value="SS">Inicio a Inicio (SS)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-success w-100" type="submit">
+                            <i class="bi bi-plus-circle"></i> Agregar
+                        </button>
+                    </div>
+                </div>
+                </EditForm>
+                <!-- Lista de dependencias actuales -->
+                <h6 class="mb-2">Dependencias existentes</h6>
+                @if (tareaActual is not null && tareaActual.Dependencias.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var dep in tareaActual.Dependencias)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @($"Tarea: {dep.Tarea.Titulo} - Tipo: {dep.Tipo}")
+                                <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarDependencia(dep.Tarea.Id)">
+                                    <i class="bi bi-x-circle"></i> Quitar
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">No hay dependencias agregadas.</p>
+                }
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @onclick="CerrarVentanaDependencias">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 
 @code {
     [Parameter] public int id { get; set; }
@@ -278,11 +367,17 @@ else
     private bool mostrarVentanaCreacion = false;
     private bool mostrarVentanaEdicion = false;
     private bool mostrarVentanaEdicionReducida = false;
+    private bool mostrarVentanaDependencias = false;
+    private bool mostrarVentanaRecursos = false;
+    private bool mostrarVentanaMiembros = false;
     private string mensaje = String.Empty;
     private TareaDTO tareaDTO = new TareaDTO();
     private TareaDTO tareaEdicion = new TareaDTO();
     private bool editoEnProceso = false;
     private bool editoCompletada = false;
+    private Tarea tareaActual;
+    private DependenciaDTO dependenciaDTO = new DependenciaDTO();
+    private List<Tarea> tareasDelProyecto = new List<Tarea>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -296,7 +391,7 @@ else
             }
             else
             {
-                Sesion.ActualizarSesion();
+                await Sesion.ActualizarSesion();
                 proyecto = GestorProyectos.ObtenerProyectoPorId(id);
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
@@ -356,6 +451,23 @@ else
         }
     }
 
+    private void MostrarVentanaDependencias(int tareaId)
+    {
+        tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaId);
+        tareasDelProyecto = proyecto.Tareas.Where(t => t.Id != tareaId).ToList();
+        mostrarVentanaDependencias = true;
+    }
+
+    private void MostrarVentanaRecursos(int tareaId)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void MostrarVentanaMiembros(int tareaId)
+    {
+        throw new NotImplementedException();
+    }
+
     private void CerrarVentanaCreacion()
     {
         mostrarVentanaCreacion = false;
@@ -371,10 +483,26 @@ else
         mostrarVentanaEdicionReducida = false;
     }
 
+    private void CerrarVentanaDependencias()
+    {
+        mostrarVentanaDependencias = false;
+    }
+
+    private void CerrarVentanaRecursos()
+    {
+        mostrarVentanaRecursos = false;
+    }
+
+    private void CerrarVentanaMiembros()
+    {
+        mostrarVentanaMiembros = false;
+    }
+
     private void MostrarErroresValidacion(EditContext editContext)
     {
-        var errores = editContext.GetValidationMessages();
-        mensaje = string.Join("<br/>", errores);
+        var errores = editContext.GetValidationMessages()
+            .Select(e => $"<li>{e}</li>");
+        mensaje = $"<ul>{string.Join("", errores)}</ul>";
     }
 
     private void CrearTarea(EditContext obj)
@@ -388,7 +516,6 @@ else
             tareaDTO = new TareaDTO();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
             mostrarVentanaCreacion = false;
-            Sesion.ActualizarSesion();
             StateHasChanged();
         }
         catch (Exception e)
@@ -411,7 +538,6 @@ else
             editoEnProceso = false;
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
             mostrarVentanaEdicionReducida = false;
-            Sesion.ActualizarSesion();
             StateHasChanged();
         }
         catch (Exception e)
@@ -420,17 +546,32 @@ else
         }
     }
 
-
     private void GuardarCambiosTarea(EditContext obj)
     {
         Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaEdicion.Id);
         Usuario solicitante = Sesion.UsuarioLogueado;
         try
         {
-            GestorTareas.ModificarTituloTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.Titulo);
-            GestorTareas.ModificarDescripcionTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.Descripcion);
-            GestorTareas.ModificarDuracionTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.DuracionEnDias);
-            GestorTareas.ModificarFechaInicioTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.FechaInicioMasTemprana);
+            if (!tareaAEditar.Titulo.Equals(tareaEdicion.Titulo))
+            {
+                GestorTareas.ModificarTituloTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.Titulo);
+            }
+
+            if (!tareaAEditar.Descripcion.Equals(tareaEdicion.Descripcion))
+            {
+                GestorTareas.ModificarDescripcionTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.Descripcion);
+            }
+
+            if (tareaAEditar.DuracionEnDias != tareaEdicion.DuracionEnDias)
+            {
+                GestorTareas.ModificarDuracionTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.DuracionEnDias);
+            }
+
+            if (!tareaAEditar.FechaInicioMasTemprana.Equals(tareaEdicion.FechaInicioMasTemprana))
+            {
+                GestorTareas.ModificarFechaInicioTarea(solicitante, tareaAEditar.Id, id, tareaEdicion.FechaInicioMasTemprana);
+            }
+
             if (editoCompletada)
             {
                 GestorTareas.CambiarEstadoTarea(solicitante, tareaAEditar.Id, id, EstadoTarea.Completada);
@@ -439,14 +580,7 @@ else
             {
                 GestorTareas.CambiarEstadoTarea(solicitante, tareaAEditar.Id, id, EstadoTarea.EnProceso);
             }
-            
-            
-            
-            // RECURSOS DEPENDENCIAS MIEMBROS
 
-            
-            
-            
             mensaje = "Tarea editada con éxito.";
             // actualizaciones
             tareaEdicion = new TareaDTO();
@@ -454,7 +588,6 @@ else
             editoEnProceso = false;
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
             mostrarVentanaEdicion = false;
-            Sesion.ActualizarSesion();
             StateHasChanged();
         }
         catch (Exception e)
@@ -475,7 +608,6 @@ else
             editoEnProceso = false;
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
             mostrarVentanaEdicion = false;
-            Sesion.ActualizarSesion();
             StateHasChanged();
         }
         catch (Exception e)
@@ -484,44 +616,52 @@ else
         }
     }
 
-    //MODIFICAR TAREA: ADMIN DE PROYECTO --> TODO. MIEMBRO --> SOLO ESTADO
-    //ELIMINAR TAREA: SOLO EL ADMIN DEL PROYECTO
-
-
-    public class TareaDTO
-    {
-        public int Id { get; set; }
-
-        [Required(ErrorMessage = "La tarea debe tener un título.")]
-        public string Titulo { get; set; }
-
-        [Required(ErrorMessage = "La tarea debe tener una descripción.")]
-        public string Descripcion { get; set; }
-
-        [Required(ErrorMessage = "La tarea debe tener una duración en días.")]
-        [Range(1, int.MaxValue, ErrorMessage = "La duración debe ser mayor que 0.")]
-        public int DuracionEnDias { get; set; }
-
-        [Required(ErrorMessage = "La tarea debe tener una fecha de inicio.")]
-        [CustomValidation(typeof(TareaDTO), nameof(ValidarFechaInicio))]
-        public DateTime FechaInicioMasTemprana { get; set; }
-
-        public EstadoTarea Estado { get; set; }
-
-        public Tarea ANuevaEntidad()
+    private void AgregarDependencia()
+    { 
+       try
         {
-            return new Tarea(Titulo, Descripcion, DuracionEnDias, FechaInicioMasTemprana);
+            GestorTareas.AgregarDependenciaATarea(Sesion.UsuarioLogueado, tareaActual.Id, dependenciaDTO.TareaPreviaId, id, dependenciaDTO.Tipo);
+            mensaje = "Dependencia agregada con éxito.";
+            // actualizaciones
+            dependenciaDTO = new DependenciaDTO();
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            mostrarVentanaEdicionReducida = false;
+            StateHasChanged();
         }
-
-        public static ValidationResult ValidarFechaInicio(DateTime fecha, ValidationContext context)
+        catch (Exception e)
         {
-            if (fecha < DateTime.Today)
-            {
-                return new ValidationResult("La fecha de inicio debe ser hoy o en el futuro.");
-            }
-
-            return ValidationResult.Success;
+            mensaje = e.Message;
+        }
+    }
+    
+    private void EliminarDependencia(int tareaDependienteId)
+    {
+        try
+        {
+            GestorTareas.EliminarDependenciaDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, tareaDependienteId, id);
+            mensaje = "Dependencia eliminada con éxito.";
+            // actualizaciones
+            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            mostrarVentanaEdicionReducida = false;
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
         }
     }
 
+
+
+
+    public class DependenciaDTO
+    {
+        [Required(ErrorMessage = "Seleccione una tarea previa.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Seleccione una tarea previa.")]
+        public int TareaPreviaId { get; set; }
+
+        [Required(ErrorMessage = "Seleccione un tipo de dependencia.")]
+        [RegularExpression("^(SS|FS)$", ErrorMessage = "El tipo de dependencia debe ser 'SS' o 'FS'.")]
+        public string Tipo { get; set; }
+    }
 }

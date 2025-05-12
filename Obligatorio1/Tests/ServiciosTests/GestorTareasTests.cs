@@ -497,10 +497,10 @@ public class GestorTareasTests
         Dependencia dependencia = new Dependencia("FS", tareaDependencia);
         Assert.IsTrue(tareaPrincipal.Dependencias.Contains(dependencia));
     }
-
+    
     [TestMethod]
     [ExpectedException(typeof(ExcepcionServicios))]
-    public void AgregarDependencia_TipoDependenciaEsNullLanzaExcepcion()
+    public void AgregarDependenciaCiclicaLanzaExcepcion()
     {
         Proyecto proyecto = CrearYAgregarProyecto(_admin);
         Tarea tarea1 = CrearTarea();
@@ -508,7 +508,9 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
-        _gestorTareas.AgregarDependenciaATarea(_admin, tarea1.Id, tarea2.Id, proyecto.Id, null);
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea2.Id, tarea1.Id, proyecto.Id, "FS");
+        
     }
 
     [TestMethod]

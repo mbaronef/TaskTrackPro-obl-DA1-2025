@@ -200,14 +200,14 @@
 
     private ModeloCambioContraseña modeloCambio = new ModeloCambioContraseña();
 
-    private void CambiarContrasena()
+    private async Task CambiarContrasena()
     {
         try
         {
             Usuario usuario = Sesion.UsuarioLogueado;
             GestorUsuarios.ModificarContrasena(usuario, usuario.Id, modeloCambio.NuevaContrasena);
             mensaje = "Contraseña cambiada con éxito.";
-            Sesion.ActualizarSesion();
+            await Sesion.ActualizarSesion();
             modeloCambio = new ModeloCambioContraseña(); // Limpiar el modelo
         }
         catch (Exception e)
@@ -222,14 +222,14 @@
         mensaje = string.Join("<br/>", errores);
     }
 
-    private void ReiniciarContrasena()
+    private async Task ReiniciarContrasena()
     {
         try
         {
             Usuario usuario = Sesion.UsuarioLogueado;
             GestorUsuarios.ReiniciarContrasena(usuario,usuario.Id);
             mensaje = "Contraseña reiniciada con éxito. Se ha enviado una notificación con la nueva contraseña.";
-            Sesion.ActualizarSesion();
+            await Sesion.ActualizarSesion();
         }
         catch (Exception e)
         {

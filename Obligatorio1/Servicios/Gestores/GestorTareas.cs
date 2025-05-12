@@ -108,16 +108,16 @@ public class GestorTareas
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         Tarea tareaDependencia = ObtenerTareaPorId(idProyecto, idTareaDependencia);
-
+        Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
+        tarea.AgregarDependencia(dependencia);
         try
         {
-            Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
-            tarea.AgregarDependencia(dependencia);
             CaminoCritico.CalcularCaminoCritico(proyecto);
         }
-        catch (ExcepcionDominio)
+        catch (ExcepcionServicios ex)
         {
-            throw new ExcepcionServicios("Error al agregar dependencia");
+            tarea.EliminarDependencia(dependencia.Tarea.Id);
+            throw new ExcepcionServicios(ex.Message);
         }
 
         Notificar(proyecto, $"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{proyecto.Nombre}' del tipo {tipoDependencia} con la tarea id {tareaDependencia.Id}.");
