@@ -27,9 +27,8 @@ else
         @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
         {
             <div class="text-center mb-3">
-                <button class="btn btn-dark text-white" @onclick="() => MostrarVentanaCreacion()"
-                        style="margin-bottom: 10px;">
-                    Crear tarea
+                <button class="btn btn-primary btn text-white d-flex align-items-center gap-2" @onclick="() => MostrarVentanaCreacion()">
+                    <i class="bi bi-plus-circle"></i> Crear tarea
                 </button>
             </div>
         }
@@ -45,8 +44,7 @@ else
                     <div class="card shadow-sm mb-3">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <span class="fw-bold fs-5">@tarea.Titulo</span>
-                            <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="collapse"
-                                    data-bs-target=@($"#{collapseId}")>
+                            <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target=@($"#{collapseId}")>
                                 Más información
                             </button>
                         </div>
@@ -56,10 +54,7 @@ else
                                 <p><strong>Estado:</strong> @tarea.Estado</p>
                                 @if (tarea.Dependencias.Count > 0)
                                 {
-                                    <p>
-                                        <strong>Depende
-                                            de:</strong> @string.Join(", ", tarea.Dependencias.Select(d => d.ToString()))
-                                    </p>
+                                    <p><strong>Depende de:</strong> @string.Join(", ", tarea.Dependencias.Select(d => d.ToString()))</p>
                                 }
                                 else
                                 {
@@ -67,24 +62,19 @@ else
                                 }
                                 @if (tarea.RecursosNecesarios.Count > 0)
                                 {
-                                    <p>
-                                        <strong>Recursos
-                                            necesarios:</strong> @string.Join(", ", tarea.RecursosNecesarios.Select(r => r.Nombre))
-                                    </p>
+                                    <p><strong>Recursos necesarios:</strong> @string.Join(", ", tarea.RecursosNecesarios.Select(r => r.Nombre))</p>
                                 }
                                 else
                                 {
                                     <p><strong>No tiene recursos necesarios</strong></p>
                                 }
                                 <p><strong>Duración:</strong> @tarea.DuracionEnDias día/s</p>
-                                <p><strong>Fecha de inicio:</strong> @tarea.FechaInicioMasTemprana.ToString("dd/MM/yyyy")
-                                </p>
+                                <p><strong>Fecha de inicio:</strong> @tarea.FechaInicioMasTemprana.ToString("dd/MM/yyyy")</p>
                                 <p><strong>Fecha de fin:</strong> @tarea.FechaFinMasTemprana.ToString("dd/MM/yyyy")</p>
+
                                 @if (tarea.UsuariosAsignados.Count > 0)
                                 {
-                                    <p>
-                                        <strong>Miembros:</strong> @string.Join(", ", tarea.UsuariosAsignados.Select(u => u.ToString()))
-                                    </p>
+                                    <p><strong>Miembros:</strong> @string.Join(", ", tarea.UsuariosAsignados.Select(u => u.ToString()))</p>
                                 }
                                 else
                                 {
@@ -94,88 +84,74 @@ else
                             @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
-                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
-                                            @onclick="() => MostrarVentanaEdicion(tarea.Id)">
+                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaEdicion(tarea.Id)">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
+
                                     @if (proyecto.Tareas.Count > 1)
                                     {
-                                        <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
-                                                @onclick="() => MostrarVentanaDependencias(tarea.Id)">
+                                        <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaDependencias(tarea.Id)">
                                             <i class="bi bi-diagram-3"></i> Dependencias
                                         </button>
                                     }
-                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
-                                            @onclick="() => MostrarVentanaRecursos(tarea.Id)">
+
+                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaRecursos(tarea.Id)">
                                         <i class="bi bi-box-seam"></i> Recursos
                                     </button>
-                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
-                                            @onclick="() => MostrarVentanaMiembros(tarea.Id)">
+
+                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaMiembros(tarea.Id)">
                                         <i class="bi bi-people"></i> Miembros
                                     </button>
                                 </div>
                             }
                             @if (tarea.EsMiembro(Sesion.UsuarioLogueado) && !proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada)
                             {
-                                <div class="text-center mb-3">
-                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
-                                            @onclick="() => MostrarVentanaEdicionReducida(tarea.Id)">
+                                <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
+                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaEdicionReducida(tarea.Id)">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
                                 </div>
                             }
                         </div>
-                    </div>
+                        </div>
                 }
             }
         }
     }
 }
 
-<div class="modal fade @(mostrarVentanaCreacion ? "show d-block" : "")" tabindex="-1"
-     style="background-color: rgba(0,0,0,0.5);">
+<div class="modal fade @(mostrarVentanaCreacion ? "show d-block" : "")" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content rounded-3 shadow-lg">
             <div class="modal-header">
                 <h5 class="modal-title">Crear Tarea</h5>
-                <button type="button" class="btn-close" @onclick="CerrarVentanaCreacion"></button>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaCreacion" aria-label="Close"></button>
             </div>
             <EditForm Model="tareaDTO" OnValidSubmit="CrearTarea" OnInvalidSubmit="MostrarErroresValidacion">
                 <DataAnnotationsValidator/>
-                <ValidationSummary class="d-none"/>
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                            <div class="alert alert-info">@((MarkupString)mensaje)</div>
+                        <div class="alert alert-danger d-flex align-items-center gap-2 text-center">
+                            <i class="bi bi-danger-circle"></i>
+                            @((MarkupString)mensaje) 
+                        </div>
                     }
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
-                        <InputText id="titulo" class="form-control"
-                                   @bind-Value="tareaDTO.Titulo"
-                                   type="text"
-                                   placeholder="Ingrese el título de la tarea"
-                                   required/>
+                        <InputText id="titulo" class="form-control" @bind-Value="tareaDTO.Titulo" type="text" placeholder="Ingrese el título de la tarea" required />
                     </div>
                     <div class="mb-3">
                         <label for="descripcion" class="form-label">Descripción</label>
-                        <InputTextArea id="descripcion" class="form-control"
-                                       @bind-Value="tareaDTO.Descripcion"
-                                       placeholder="Ingrese una descripción de la tarea"
-                                       required/>
+                        <InputTextArea id="descripcion" class="form-control" @bind-Value="tareaDTO.Descripcion" placeholder="Ingrese una descripción de la tarea" required />
                     </div>
                     <div class="mb-3">
                         <label for="duracion" class="form-label">Duración en días</label>
-                        <InputNumber id="duracion" class="form-control"
-                                     @bind-Value="tareaDTO.DuracionEnDias"
-                                     min="1"
-                                     placeholder="Ingrese la duración en días"
-                                     required/>
+                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaDTO.DuracionEnDias" min="1" placeholder="Ingrese la duración en días" required />
                     </div>
                     <div class="mb-3">
                         <label for="fechaInicio" class="form-label">Fecha de inicio</label>
-                        <InputDate id="fechaInicio" class="form-control"
-                                   @bind-Value="tareaDTO.FechaInicioMasTemprana"
-                                   required/>
+                        <InputDate id="fechaInicio" class="form-control" @bind-Value="tareaDTO.FechaInicioMasTemprana" required />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -186,10 +162,18 @@ else
     </div>
 </div>
 
+@if (!string.IsNullOrEmpty(mensaje) && mensaje.StartsWith("Tarea creada con éxito"))
+{
+    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top" style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
+        <i class="bi bi-check-circle"></i> @((MarkupString)mensaje)
+        <button type="button" class="btn-close ms-auto" aria-label="Close" @onclick="CerrarAlerta"></button>
+    </div>
+}
+
 <div class="modal fade @(mostrarVentanaEdicionReducida ? "show d-block" : "")" tabindex="-1"
      style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content rounded-3 shadow-lg">
             <div class="modal-header">
                 <h5 class="modal-title">Editar Tarea</h5>
                 <button type="button" class="btn-close" @onclick="CerrarVentanaEdicionReducida"></button>
@@ -200,21 +184,24 @@ else
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
+                        <div class="alert alert-danger d-flex align-items-center gap-2 text-center">
+                            <i class="bi bi-danger-circle"></i>
+                            @((MarkupString)mensaje)
+                        </div>
                     }
                     <div class="form-check mb-3">
                         @if (tareaActual.Estado == EstadoTarea.Pendiente)
                         {
                             <div class="form-check mb-2">
                                 <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="tareaEdicionEstado.EditoEnProceso" />
-                                <label for="enProceso" class="form-check-label">Marcar como En Proceso</label>
+                                <label for="enProceso" class="form-check-label">Marcar como 'En proceso'</label>
                             </div>
                         }
                         @if (tareaActual.Estado == EstadoTarea.EnProceso)
                         {
                             <div class="form-check mb-2">
                                 <InputCheckbox id="completada" class="form-check-input" @bind-Value="tareaEdicionEstado.EditoCompletada" />
-                                <label for="completada" class="form-check-label">Marcar como Completada</label>
+                                <label for="completada" class="form-check-label">Marcar como 'Completada'</label>
                             </div>
                         }
                     </div>
@@ -227,188 +214,247 @@ else
     </div>
 </div>
 
+@if (!string.IsNullOrEmpty(mensaje) && mensaje.StartsWith("Estado editado con éxito"))
+{
+    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top" style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
+        <i class="bi bi-check-circle"></i> @((MarkupString)mensaje)
+        <button type="button" class="btn-close ms-auto" aria-label="Close" @onclick="CerrarAlerta"></button>
+    </div>
+}
+
 <div class="modal fade @(mostrarVentanaEdicion ? "show d-block" : "")" tabindex="-1"
      style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content rounded-3 shadow-lg">
             <div class="modal-header">
-                <h5 class="modal-title">Editar Tarea</h5>
-                <button type="button" class="btn-close" @onclick="CerrarVentanaEdicion"></button>
+                <h5 class="modal-title fw-bold">Editar Tarea</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaEdicion" aria-label="Cerrar"></button>
             </div>
-            <EditForm Model="tareaEdicion" OnValidSubmit="GuardarCambiosTarea"
-                      OnInvalidSubmit="MostrarErroresValidacion">
-                <DataAnnotationsValidator/>
-                <ValidationSummary class="d-none"/>
+
+            <EditForm Model="tareaEdicion" OnValidSubmit="GuardarCambiosTarea" OnInvalidSubmit="MostrarErroresValidacion">
+                <DataAnnotationsValidator />
+
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
-
+                        <div class="alert alert-danger d-flex align-items-center gap-2 text-center">
+                            <i class="bi bi-danger-circle"></i>
+                            @((MarkupString)mensaje)
+                        </div>
                     }
+
                     <div class="mb-3">
-                        <label for="titulo" class="form-label">Título</label>
-                        <InputText id="titulo" class="form-control" @bind-Value="tareaEdicion.Titulo"/>
+                        <label for="titulo" class="form-label fw-semibold">Título</label>
+                        <InputText id="titulo" class="form-control" @bind-Value="tareaEdicion.Titulo" />
                     </div>
+
                     <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción</label>
-                        <InputTextArea id="descripcion" class="form-control" @bind-Value="tareaEdicion.Descripcion"/>
+                        <label for="descripcion" class="form-label fw-semibold">Descripción</label>
+                        <InputTextArea id="descripcion" class="form-control" @bind-Value="tareaEdicion.Descripcion" />
                     </div>
 
                     <div class="mb-3">
                         <label for="duracion" class="form-label">Duración en días</label>
-                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaEdicion.DuracionEnDias"
-                                     min="1"/>
+                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaEdicion.DuracionEnDias" />
+                        <ValidationMessage For="@(() => tareaEdicion.DuracionEnDias)" />
                     </div>
 
                     <div class="mb-3">
-                        <label for="fechaInicio" class="form-label">Fecha de inicio</label>
-                        <InputDate id="fechaInicio" class="form-control"
-                                   @bind-Value="tareaEdicion.FechaInicioMasTemprana"/>
+                        <label for="fechaInicio" class="form-label fw-semibold">Fecha de inicio</label>
+                        <InputDate id="fechaInicio" class="form-control" @bind-Value="tareaEdicion.FechaInicioMasTemprana" />
                     </div>
-                </div>
-                <div class="form-check mb-3">
-                    @if (tareaEdicion.Estado == EstadoTarea.Pendiente)
+
+                    @if (tareaEdicion.Estado == EstadoTarea.Pendiente || tareaEdicion.Estado == EstadoTarea.EnProceso)
                     {
-                        <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="editoEnProceso"/>
-                        <label for="enProceso" class="form-check-label">En proceso</label>
-                    }
-                    @if (tareaEdicion.Estado == EstadoTarea.EnProceso)
-                    {
-                        <InputCheckbox id="completada" class="form-check-input" @bind-Value="editoCompletada"/>
-                        <label for="completada" class="form-check-label">Completada</label>
+                        <fieldset class="border rounded p-3 mb-3">
+                            <legend class="float-none w-auto px-2 fs-6 text-muted">Cambiar estado</legend>
+                            @if (tareaEdicion.Estado == EstadoTarea.Pendiente)
+                            {
+                                <div class="form-check">
+                                    <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="editoEnProceso" />
+                                    <label for="enProceso" class="form-check-label">En proceso</label>
+                                </div>
+                            }
+                            @if (tareaEdicion.Estado == EstadoTarea.EnProceso)
+                            {
+                                <div class="form-check">
+                                    <InputCheckbox id="completada" class="form-check-input" @bind-Value="editoCompletada" />
+                                    <label for="completada" class="form-check-label">Completada</label>
+                                </div>
+                            }
+                        </fieldset>
                     }
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Guardar cambios</button>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Guardar cambios
+                    </button>
+                    <button class="btn btn-outline-danger" @onclick="() => EliminarTarea(tareaEdicion.Id)">
+                        <i class="bi bi-trash3"></i> Eliminar tarea
+                    </button>
                 </div>
             </EditForm>
-            <div class="text-center mb-3">
-                <button class="btn btn-outline-secondary mx-2 btn-sm" @onclick="() => EliminarTarea(tareaEdicion.Id)">
-                    <i class="bi bi-trash3"></i> Eliminar tarea
+        </div>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(mensaje) && mensaje.StartsWith("Tarea editada con éxito"))
+{
+    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top" style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
+        <i class="bi bi-check-circle"></i> @((MarkupString)mensaje)
+        <button type="button" class="btn-close ms-auto" aria-label="Close" @onclick="CerrarAlerta"></button>
+    </div>
+} 
+
+<div class="modal fade @(mostrarVentanaDependencias ? "show d-block" : "")" tabindex="-1"
+     style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content rounded-3 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Gestionar Dependencias</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaDependencias" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Mensaje -->
+                @if (!string.IsNullOrEmpty(mensaje))
+                {
+                    <div class="alert alert-info d-flex align-items-center gap-2 text-center justify-content-center">
+                        <i class="bi bi-info-circle-fill fs-5"></i>
+                        <span class="fw-semibold">@((MarkupString)mensaje)</span>
+                    </div>
+                }
+
+                <!-- Agregar dependencia -->
+                <EditForm Model="dependenciaDTO" OnValidSubmit="AgregarDependencia" OnInvalidSubmit="MostrarErroresValidacion">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="d-none" />
+
+                    <fieldset class="border rounded-3 p-3 mb-4">
+                        <legend class="float-none w-auto px-2 fs-6 text-muted mb-0">Agregar dependencia</legend>
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tarea previa</label>
+                                <select class="form-select" @bind="dependenciaDTO.TareaPreviaId">
+                                    <option disabled selected value="0">Seleccione una tarea</option>
+                                    @foreach (var t in tareasDelProyecto)
+                                    {
+                                        <option value="@t.Id">@t.Titulo</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Tipo de dependencia</label>
+                                <select class="form-select" @bind="dependenciaDTO.Tipo">
+                                    <option disabled selected value="">Seleccione un tipo</option>
+                                    <option value="FS">Fin a Inicio (FS)</option>
+                                    <option value="SS">Inicio a Inicio (SS)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2 text-end">
+                                <button class="btn btn-success w-100" type="submit">
+                                    <i class="bi bi-plus-circle me-1"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </EditForm>
+
+                <!-- Lista de dependencias actuales -->
+                <h6 class="fw-semibold mb-2">Dependencias actuales</h6>
+                @if (tareaActual is not null && tareaActual.Dependencias.Any())
+                {
+                    <ul class="list-group shadow-sm">
+                        @foreach (var dep in tareaActual.Dependencias)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    <strong>@dep.Tarea.Titulo</strong> — @dep.Tipo
+                                </span>
+                                <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarDependencia(dep.Tarea.Id)">
+                                    <i class="bi bi-trash3"></i> Quitar
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted fst-italic">No hay dependencias agregadas.</p>
+                }
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @onclick="CerrarVentanaDependencias">
+                    <i class="bi bi-x-lg"></i> Cerrar
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade @(mostrarVentanaDependencias ? "show d-block" : "")" tabindex="-1"
+
+<div class="modal fade @(mostrarVentanaRecursos ? "show d-block" : "")" tabindex="-1"
      style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content rounded-3 shadow-lg">
             <div class="modal-header">
-                <h5 class="modal-title">Gestionar Dependencias</h5>
-                <button type="button" class="btn-close" @onclick="CerrarVentanaDependencias"></button>
+                <h5 class="modal-title fw-bold">Gestionar Recursos</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaRecursos" aria-label="Cerrar"></button>
             </div>
+
             <div class="modal-body">
-                <!-- Agregar dependencia -->
-                <h6 class="mb-2">Agregar dependencia</h6>
-                <EditForm Model="dependenciaDTO" OnValidSubmit="AgregarDependencia" OnInvalidSubmit="MostrarErroresValidacion">
-                    <DataAnnotationsValidator/>
-                    <ValidationSummary class="d-none"/>
+                <!-- Mensaje -->
                 @if (!string.IsNullOrEmpty(mensaje))
                 {
-                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
-                }
-                <div class="row g-2 align-items-end mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label">Tarea previa</label>
-                        <select class="form-select" @bind="dependenciaDTO.TareaPreviaId">
-                            <option disabled selected value="0">Seleccione una tarea</option>
-                            @foreach (var t in tareasDelProyecto)
-                            {
-                                <option value="@t.Id">@t.Titulo</option>
-                            }
-                        </select>
+                    <div class="alert alert-info d-flex align-items-center gap-2 text-center justify-content-center">
+                        <i class="bi bi-info-circle-fill fs-5"></i>
+                        <span class="fw-semibold">@((MarkupString)mensaje)</span>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Tipo</label>
-                        <select class="form-select" @bind="dependenciaDTO.Tipo">
-                            <option disabled selected value="">Seleccione un tipo de dependencia</option>
-                            <option value="FS">Fin a Inicio (FS)</option>
-                            <option value="SS">Inicio a Inicio (SS)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-success w-100" type="submit">
-                            <i class="bi bi-plus-circle"></i> Agregar
-                        </button>
-                    </div>
-                </div>
-                </EditForm>
-                <!-- Lista de dependencias actuales -->
-                <h6 class="mb-2">Dependencias existentes</h6>
-                @if (tareaActual is not null && tareaActual.Dependencias.Any())
-                {
-                    <ul class="list-group">
-                        @foreach (var dep in tareaActual.Dependencias)
-                        {
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                @($"Tarea: {dep.Tarea.Titulo} - Tipo: {dep.Tipo}")
-                                <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarDependencia(dep.Tarea.Id)">
-                                    <i class="bi bi-x-circle"></i> Quitar
-                                </button>
-                            </li>
-                        }
-                    </ul>
                 }
-                else
-                {
-                    <p class="text-muted">No hay dependencias agregadas.</p>
-                }
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" @onclick="CerrarVentanaDependencias">Cerrar</button>
-            </div>
-        </div>
 
-    </div>
-</div>
-
-<div class="modal fade @(mostrarVentanaRecursos ? "show d-block" : "")" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Gestionar Recursos</h5>
-                <button type="button" class="btn-close" @onclick="CerrarVentanaRecursos"></button>
-            </div>
-            <div class="modal-body">
-                <h6 class="mb-2">Agregar recurso</h6>
+                <!-- Agregar recurso -->
                 <EditForm Model="recursoAsignacionDto" OnValidSubmit="AgregarRecurso" OnInvalidSubmit="MostrarErroresValidacion">
                     <DataAnnotationsValidator />
                     <ValidationSummary class="d-none" />
-                    @if (!string.IsNullOrEmpty(mensaje))
-                    {
-                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
-                    }
-                    <div class="row g-2 align-items-end mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label">Recurso necesario</label>
-                            <select class="form-select" @bind="recursoAsignacionDto.Id">
-                                <option disabled selected value="0">Seleccione un recurso</option>
-                                @foreach (var r in recursosProyecto)
-                                {
-                                    <option value="@r.Id">@r.ToString()</option>
-                                }
-                            </select>
+
+                    <fieldset class="border rounded-3 p-3 mb-4">
+                        <legend class="float-none w-auto px-2 fs-6 text-muted mb-0">Agregar recurso</legend>
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-9">
+                                <label class="form-label fw-semibold">Recurso necesario</label>
+                                <select class="form-select" @bind="recursoAsignacionDto.Id">
+                                    <option disabled selected value="0">Seleccione un recurso</option>
+                                    @foreach (var r in recursosProyecto)
+                                    {
+                                        <option value="@r.Id">@r.ToString()</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-success w-100" type="submit">
+                                    <i class="bi bi-plus-circle me-1"></i> Agregar
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-success w-100" type="submit">
-                                <i class="bi bi-plus-circle"></i> Agregar
-                            </button>
-                        </div>
-                    </div>
+                    </fieldset>
                 </EditForm>
 
-                <h6 class="mb-2">Recursos asignados</h6>
+                <!-- Lista de recursos asignados -->
+                <h6 class="fw-semibold mb-2">Recursos asignados</h6>
                 @if (tareaActual is not null && tareaActual.RecursosNecesarios.Any())
                 {
-                    <ul class="list-group">
+                    <ul class="list-group shadow-sm">
                         @foreach (var recurso in tareaActual.RecursosNecesarios)
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                @recurso.ToString()
+                                <span><i class="bi bi-box-seam me-1 text-primary"></i> @recurso.ToString()</span>
                                 <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarRecursoDeTarea(recurso.Id)">
-                                    <i class="bi bi-x-circle"></i> Quitar
+                                    <i class="bi bi-trash3"></i> Quitar
                                 </button>
                             </li>
                         }
@@ -416,61 +462,78 @@ else
                 }
                 else
                 {
-                    <p class="text-muted">No hay recursos asignados a esta tarea.</p>
+                    <p class="text-muted fst-italic">No hay recursos asignados a esta tarea.</p>
                 }
             </div>
+
             <div class="modal-footer">
-                <button class="btn btn-secondary" @onclick="CerrarVentanaRecursos">Cerrar</button>
+                <button class="btn btn-secondary" @onclick="CerrarVentanaRecursos">
+                    <i class="bi bi-x-lg"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade @(mostrarVentanaMiembros ? "show d-block" : "")" tabindex="-1">
+
+<div class="modal fade @(mostrarVentanaMiembros ? "show d-block" : "")" tabindex="-1"
+     style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content rounded-3 shadow-lg">
             <div class="modal-header">
-                <h5 class="modal-title">Gestionar Miembros</h5>
-                <button type="button" class="btn-close" @onclick="CerrarVentanaMiembros"></button>
+                <h5 class="modal-title fw-bold">Gestionar Miembros</h5>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaMiembros" aria-label="Cerrar"></button>
             </div>
+
             <div class="modal-body">
-                <h6 class="mb-2">Agregar miembro</h6>
+                <!-- Mensaje -->
+                @if (!string.IsNullOrEmpty(mensaje))
+                {
+                    <div class="alert alert-info d-flex align-items-center gap-2 text-center justify-content-center">
+                        <i class="bi bi-info-circle-fill fs-5"></i>
+                        <span class="fw-semibold">@((MarkupString)mensaje)</span>
+                    </div>
+                }
+
+                <!-- Agregar miembro -->
                 <EditForm Model="usuarioAsignacionDto" OnValidSubmit="AgregarMiembro" OnInvalidSubmit="MostrarErroresValidacion">
                     <DataAnnotationsValidator />
                     <ValidationSummary class="d-none" />
-                    @if (!string.IsNullOrEmpty(mensaje))
-                    {
-                        <div class="alert alert-info">@((MarkupString)mensaje)</div>
-                    }
-                    <div class="row g-2 align-items-end mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label">Nuevo miembro</label>
-                            <select class="form-select" @bind="usuarioAsignacionDto.Id">
-                                <option disabled selected value="0">Seleccione un usuario</option>
-                                @foreach (var u in usuariosDeProyecto)
-                                {
-                                    <option value="@u.Id">@u.ToString()</option>
-                                }
-                            </select>
+
+                    <fieldset class="border rounded-3 p-3 mb-4">
+                        <legend class="float-none w-auto px-2 fs-6 text-muted mb-0">Agregar miembro</legend>
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-9">
+                                <label class="form-label fw-semibold">Nuevo miembro</label>
+                                <select class="form-select" @bind="usuarioAsignacionDto.Id">
+                                    <option disabled selected value="0">Seleccione un usuario</option>
+                                    @foreach (var u in usuariosDeProyecto)
+                                    {
+                                        <option value="@u.Id">@u.ToString()</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-success w-100" type="submit">
+                                    <i class="bi bi-plus-circle me-1"></i> Agregar
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-success w-100" type="submit">
-                                <i class="bi bi-plus-circle"></i> Agregar
-                            </button>
-                        </div>
-                    </div>
+                    </fieldset>
                 </EditForm>
 
-                <h6 class="mb-2">Miembros de la tarea</h6>
+                <!-- Lista de miembros -->
+                <h6 class="fw-semibold mb-2">Miembros de la tarea</h6>
                 @if (tareaActual is not null && tareaActual.UsuariosAsignados.Any())
                 {
-                    <ul class="list-group">
+                    <ul class="list-group shadow-sm">
                         @foreach (var miembro in tareaActual.UsuariosAsignados)
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                @miembro.ToString()
+                                <span><i class="bi bi-person-circle me-1 text-primary"></i> @miembro.ToString()</span>
                                 <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarMiembroDeTarea(miembro.Id)">
-                                    <i class="bi bi-x-circle"></i> Quitar
+                                    <i class="bi bi-trash3"></i> Quitar
                                 </button>
                             </li>
                         }
@@ -478,15 +541,19 @@ else
                 }
                 else
                 {
-                    <p class="text-muted">Aún no hay miembros asignados a esta tarea.</p>
+                    <p class="text-muted fst-italic">Aún no hay miembros asignados a esta tarea.</p>
                 }
             </div>
+
             <div class="modal-footer">
-                <button class="btn btn-secondary" @onclick="CerrarVentanaMiembros">Cerrar</button>
+                <button class="btn btn-secondary" @onclick="CerrarVentanaMiembros">
+                    <i class="bi bi-x-lg"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
 </div>
+
 
 
 @code {
@@ -635,7 +702,8 @@ else
     {
         var errores = editContext.GetValidationMessages()
             .Select(e => $"<li>{e}</li>");
-        mensaje = $"<ul>{string.Join("", errores)}</ul>";
+        mensaje = $"<ul class='list-unstyled'>{string.Join("", errores)}</ul>";
+
     }
 
     private void CrearTarea(EditContext obj)
@@ -645,6 +713,7 @@ else
             Tarea tarea = tareaDTO.ANuevaEntidad();
             GestorTareas.AgregarTareaAlProyecto(id, Sesion.UsuarioLogueado, tarea);
             mensaje = "Tarea creada con éxito.";
+            mostrarVentanaCreacion = false;
             // actualizaciones
             tareaDTO = new TareaDTO();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
@@ -665,11 +734,11 @@ else
         {
             GestorTareas.CambiarEstadoTarea(Sesion.UsuarioLogueado, tareaActual.Id, id, nuevoEstado);
             mensaje = "Estado editado con éxito.";
+            mostrarVentanaEdicionReducida = false;
             // actualizaciones
             tareaEdicionEstado = new TareaCambioEstadoDTO();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
             StateHasChanged();
-            mostrarVentanaEdicionReducida = false;
         }
         catch (Exception e)
         {
@@ -711,8 +780,8 @@ else
             {
                 GestorTareas.CambiarEstadoTarea(solicitante, tareaAEditar.Id, id, EstadoTarea.EnProceso);
             }
-
             mensaje = "Tarea editada con éxito.";
+            mostrarVentanaEdicion = false;
             // actualizaciones
             tareaEdicion = new TareaDTO();
             editoCompletada = false;
@@ -731,13 +800,13 @@ else
         try
         {
             GestorTareas.EliminarTareaDelProyecto(1, Sesion.UsuarioLogueado, tareaEdicionId);
-            mensaje = "Tarea eliminada con éxito.";
+            mensaje = "Tarea eliminada con éxito";
+            mostrarVentanaEdicion = false;
             // actualizaciones
             tareaEdicion = new TareaDTO();
             editoCompletada = false;
             editoEnProceso = false;
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
-            mostrarVentanaEdicion = false;
             StateHasChanged();
         }
         catch (Exception e)
@@ -793,8 +862,15 @@ else
             StateHasChanged();
         }
         catch (Exception e)
-        { 
-            mensaje = e.Message; 
+        {
+            if (e.Message.Equals("Recurso no existente"))
+            {
+                mensaje = "Seleccione un recurso";
+            }
+            else
+            {
+                mensaje = e.Message;
+            }
         }
     }
 
@@ -849,7 +925,14 @@ else
         }
         catch (Exception e)
         {
-            mensaje = e.Message;
+            if (e.Message.Equals("El usuario no existe"))
+            {
+                mensaje = "Seleccione un usuario";
+            }
+            else
+            {
+                mensaje = e.Message;
+            }
         }
     }
     
@@ -867,5 +950,10 @@ else
         List<Usuario> usuarios = proyecto.Miembros;
         List<Usuario> miembrosDeLaTarea = tareaActual.UsuariosAsignados;
         usuariosDeProyecto = usuarios.Where(u => !miembrosDeLaTarea.Any(asignado => asignado.Id == u.Id)).ToList();
+    }
+    
+    private void CerrarAlerta()
+    {
+        mensaje = string.Empty;
     }
 }
