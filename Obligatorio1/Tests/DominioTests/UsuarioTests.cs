@@ -35,6 +35,7 @@ namespace Tests.DominioTests
             Assert.AreEqual(_fechaNacimientoValida, usuario.FechaNacimiento);
             Assert.AreEqual("unemail@gmail.com", usuario.Email);
             Assert.IsTrue(usuario.Autenticar("Contrase#a3"));
+            Assert.AreEqual(0, usuario.CantidadProyectosAsignados);
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
