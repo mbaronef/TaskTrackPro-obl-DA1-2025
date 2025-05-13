@@ -537,6 +537,8 @@ else
             else if (mostrarFormEditar)
             {
                 usuarioAEditar.ContrasenaAutogenerada = nueva;
+                mensajeExitoContrasenaModal = $"La nueva contraseña generada es: {nueva} . Se aplicará al guardar los cambios del usuario.";
+                mostrarExitoContrasenaModal = true;
             }
             mostrarErrorEditar = false;
         }
