@@ -1,9 +1,56 @@
 @page "/proyecto/{id:int}/diagrama_de_gantt"
+@using Dominio
+@using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
+@using Servicios.Utilidades
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
 @inject GestorProyectos GestorProyectos
+@inject NavigationManager NavigationManager
 
-<h3>DiagramaDeGantt</h3>
+    <h3>Diagrama de Gantt</h3>
+    <div id="ganttDiagrama"> </div>
+    <p style="margin-top: 1rem; font-style: italic; color: #555;">
+    Las tareas del camino crítico están resaltadas en rojo.
+    </p>
 
 @code {
-    
+    [Parameter] public int Id { get; set; }
+    private Proyecto proyecto;
+    private bool graficoDibujado = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                proyecto = GestorProyectos.ObtenerProyectoPorId(Id);
+            }
+            catch
+            {
+                NavigationManager.NavigateTo("/not-found");
+                return;
+            }
+            CaminoCritico.CalcularCaminoCritico(proyecto);
+            StateHasChanged(); // Asegurás que el div se renderice primero
+            return; // Esperás hasta el segundo render
+        }
+
+        if (proyecto != null && !graficoDibujado)
+        {
+            CaminoCritico.CalcularCaminoCritico(proyecto);
+            var tareas = proyecto.Tareas.Select(t => new
+            {
+                titulo = t.Titulo,
+                fechaInicio = t.FechaInicioMasTemprana.ToString("yyyy-MM-dd"),
+                fechaFin = t.FechaFinMasTemprana.ToString("yyyy-MM-dd"),
+                holgura = t.Holgura
+            }).ToList();
+
+            Console.WriteLine("Llamando a dibujarGanttConApex...");
+            await JSRuntime.InvokeVoidAsync("dibujarGanttConApex", "#ganttDiagrama", tareas);
+            graficoDibujado = true;
+        }
+    }
 }
