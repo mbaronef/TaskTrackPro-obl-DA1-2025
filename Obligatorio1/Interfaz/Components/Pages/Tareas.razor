@@ -32,7 +32,13 @@ else
                 </button>
             </div>
         }
-
+        @if (proyecto.Tareas.Count == 0 && (proyecto.EsAdministrador(Sesion.UsuarioLogueado)||Sesion.EsAdminSistema()))
+        {
+            <p>Aún no hay tareas en el proyecto.</p>
+        } else if (proyecto.Tareas.Count == 0 && proyecto.EsMiembro(Sesion.UsuarioLogueado.Id))
+        {
+            <p>Aún no tienes tareas asignadas</p>
+        }
         @if (proyecto.Tareas.Count > 0)
         {
             @foreach (var tarea in proyecto.Tareas)
