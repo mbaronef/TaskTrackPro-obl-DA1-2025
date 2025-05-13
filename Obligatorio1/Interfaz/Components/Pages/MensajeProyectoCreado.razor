@@ -1,0 +1,86 @@
+@page "/exito/proyecto/{id:int}/creado"
+@using Dominio
+@using Interfaz.ServiciosInterfaz
+@using Servicios.Gestores
+@rendermode InteractiveServer
+@inject GestorProyectos GestorProyectos
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigator
+
+@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+{
+}
+else
+{
+    <h3 class="text-center mt-4 text-success">
+        <i class="bi bi-check-circle-fill me-2"></i>¡Proyecto creado con éxito!
+    </h3>
+
+    @if (proyecto != null)
+    {
+        <div class="container mt-4">
+            <div class="card shadow-sm border-success">
+                <div class="card-body">
+                    <p>
+                        Has creado el proyecto <strong>@proyecto.Nombre</strong> correctamente.
+                    </p>
+                    <p>
+                        Ahora puedes administrarlo desde el menú lateral o acceder directamente a sus secciones principales:
+                    </p>
+                    <ul class="mt-3 list-unstyled">
+                        <li class="mb-2">
+                            <a href="@($"/proyecto/{proyecto.Id}/tareas")" class="btn btn-outline-success w-100 text-start">
+                                📋 Crear y gestionar tareas
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="btn btn-outline-success w-100 text-start">
+                                🛠️ Gestionar recursos exclusivos
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="@($"/proyecto/{proyecto.Id}/miembros")" class="btn btn-outline-success w-100 text-start">
+                                👥 Administrar miembros
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="@($"/proyecto/{proyecto.Id}/editar")" class="btn btn-outline-success w-100 text-start">
+                                ✏️ Editar información del proyecto o eliminarlo
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="text-danger text-center mt-5">No se pudo cargar la información del proyecto.</p>
+    }
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Proyecto proyecto;
+    private bool sesionCargada = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigator.NavigateTo("/");
+            }
+            else
+            {
+                await Sesion.ActualizarSesion();
+                proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                sesionCargada = true;
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+        }
+    }
+}

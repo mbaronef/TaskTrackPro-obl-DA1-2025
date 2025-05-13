@@ -1,6 +1,7 @@
 @page "/perfil"
 @using System.ComponentModel.DataAnnotations
 @using Dominio
+@using Interfaz.DTOs
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @inject LogicaSesion Sesion
@@ -133,6 +134,7 @@
     private bool mostrarVentanaEmergenteCambiar = false;
     private bool mostrarVentanaEmergenteReinciar = false;
     private string mensaje;
+    private ModeloCambioContraseña modeloCambio = new ModeloCambioContraseña();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -186,20 +188,6 @@
         mostrarVentanaEmergenteReinciar = false;
     }
     
-    
-    
-    
-    private class ModeloCambioContraseña
-    {
-        [Required(ErrorMessage = "La contraseña es obligatoria.")]
-        [RegularExpression(
-            @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$",
-            ErrorMessage = "La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.")]
-        public string NuevaContrasena { get; set; } = string.Empty;
-    }
-
-    private ModeloCambioContraseña modeloCambio = new ModeloCambioContraseña();
-
     private async Task CambiarContrasena()
     {
         try

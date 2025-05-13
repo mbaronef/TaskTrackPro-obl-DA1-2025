@@ -1,0 +1,104 @@
+@page "/crear-proyecto"
+@using System.ComponentModel.DataAnnotations
+@using Dominio
+@using Interfaz.DTOs
+@using Interfaz.ServiciosInterfaz
+@using Servicios.Gestores
+@rendermode InteractiveServer
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigation
+@inject GestorProyectos GestorProyectos
+
+@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+{
+}
+else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnProyecto)
+{
+    <h3 class="text-center mt-4">Crear Proyecto</h3>
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6">
+            @if (!string.IsNullOrWhiteSpace(mensaje))
+            {
+                <div class="alert alert-@tipoAlerta">@((MarkupString)mensaje)</div>
+            }
+            <EditForm Model="nuevoProyecto" OnValidSubmit="@CrearNuevoProyecto" OnInvalidSubmit="MostrarErroresValidacion">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="d-none" />
+                <div class="form-group mb-3">
+                    <label for="nombre">Nombre</label>
+                    <InputText id="nombre" class="form-control" @bind-Value="nuevoProyecto.Nombre" />
+                </div>
+                <div class="form-group mb-3">
+                    <label for="descripcion">Descripción</label>
+                    <InputTextArea id="descripcion" class="form-control" @bind-Value="nuevoProyecto.Descripcion" />
+                </div>
+                <div class="form-group mb-3">
+                    <label for="inicio">Fecha de Inicio</label>
+                    <InputDate id="inicio" class="form-control" @bind-Value="nuevoProyecto.FechaInicio" />
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success w-50">Crear Proyecto</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    private bool sesionCargada = false;
+    
+    private ProyectoDTO nuevoProyecto = new ProyectoDTO();
+    private string mensaje;
+    private string tipoAlerta;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                await Sesion.ActualizarSesion();
+                sesionCargada = true;
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+        }
+    }
+    
+    private async void CrearNuevoProyecto()
+    {
+        mensaje = String.Empty;
+        try
+        {
+            Usuario solicitante = Sesion.UsuarioLogueado;
+            Proyecto proyecto = nuevoProyecto.ANuevaEntidad(solicitante);
+            GestorProyectos.CrearProyecto(proyecto, solicitante);
+            mensaje = "Proyecto creado con éxito.";
+            tipoAlerta = "success";
+            // actualizaciones
+            nuevoProyecto = new ProyectoDTO();
+            await Sesion.ActualizarSesion();
+            StateHasChanged();
+            Navigation.NavigateTo($"/exito/proyecto/{proyecto.Id}/creado");
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
+            tipoAlerta = "danger";
+        }
+    }
+    
+    private void MostrarErroresValidacion(EditContext editContext)
+    {
+        var errores = editContext.GetValidationMessages()
+            .Select(e => $"<li>{e}</li>");
+        mensaje = $"<ul>{string.Join("", errores)}</ul>";
+        tipoAlerta = "danger";
+    }
+}

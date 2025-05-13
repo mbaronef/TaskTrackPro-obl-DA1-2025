@@ -146,7 +146,7 @@ else
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                            <div class="alert alert-info">@((MarkupString)mensaje))</div>
+                            <div class="alert alert-info">@((MarkupString)mensaje)</div>
                     }
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
@@ -640,9 +640,9 @@ else
 
     private void CrearTarea(EditContext obj)
     {
-        Tarea tarea = tareaDTO.ANuevaEntidad();
         try
         {
+            Tarea tarea = tareaDTO.ANuevaEntidad();
             GestorTareas.AgregarTareaAlProyecto(id, Sesion.UsuarioLogueado, tarea);
             mensaje = "Tarea creada con éxito.";
             // actualizaciones
@@ -867,12 +867,5 @@ else
         List<Usuario> usuarios = proyecto.Miembros;
         List<Usuario> miembrosDeLaTarea = tareaActual.UsuariosAsignados;
         usuariosDeProyecto = usuarios.Where(u => !miembrosDeLaTarea.Any(asignado => asignado.Id == u.Id)).ToList();
-    }
-    
-    
-    public class TareaCambioEstadoDTO
-    {
-        public bool EditoEnProceso { get; set; }
-        public bool EditoCompletada { get; set; }
     }
 }
