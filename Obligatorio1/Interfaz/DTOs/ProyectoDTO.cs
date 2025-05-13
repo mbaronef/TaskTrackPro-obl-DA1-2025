@@ -18,8 +18,7 @@ public class ProyectoDTO
 
     public Proyecto ANuevaEntidad(Usuario administrador)
     {
-        List<Usuario> miembros = new List<Usuario> { administrador };
-        return new Proyecto(Nombre, Descripcion, FechaInicio, administrador, miembros);
+        return new Proyecto(Nombre, Descripcion, FechaInicio, administrador, new List<Usuario>());
     }
         
     public static ValidationResult ValidarFechaInicio(DateTime fecha, ValidationContext context)

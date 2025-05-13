@@ -30,7 +30,7 @@ public class Proyecto
         Descripcion = descripcion;
         Tareas = new List<Tarea>();
         Administrador = administrador;
-        Miembros = new List<Usuario>();
+        Miembros = miembros;
         FechaInicio = fechaInicio;
         FechaFinMasTemprana = fechaInicio.AddDays(100000);
     }
