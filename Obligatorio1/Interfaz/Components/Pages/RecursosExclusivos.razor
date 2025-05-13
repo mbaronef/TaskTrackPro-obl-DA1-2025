@@ -6,6 +6,7 @@
 @using Servicios.Gestores
 @using DTOs
 @using Interfaz.ServiciosInterfaz
+@using Servicios.Excepciones
 @inject GestorProyectos GestorProyectos
 @inject GestorRecursos GestorRecursos
 @inject NavigationManager NavigationManager
@@ -21,7 +22,7 @@ else if (proyecto == null)
 }
 else
 {
-    <h3>Recursos Exclusivos del proyecto @proyecto.Nombre</h3>
+    <h3>Recursos Exclusivos del Proyecto @proyecto.Nombre</h3>
 
     @if (Sesion.UsuarioLogueado.Equals(proyecto.Administrador))
     {
@@ -101,7 +102,7 @@ else
     }
 
 
-    @if (GestorRecursos.ObtenerRecursosGenerales().Count == 0)
+    @if (GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id).Count == 0)
     {
         <p>No hay recursos disponibles.</p>
     }
@@ -113,27 +114,33 @@ else
                 <th>Nombre</th>
                 <th>Tipo</th>
                 <th>Descripción</th>
-                @if (Sesion.EsAdminSistema())
+                @if (Sesion.UsuarioLogueado.Equals(proyecto.Administrador) || Sesion.EsAdminSistema())
                 {
                     <th></th>
+                }
+                @if (Sesion.UsuarioLogueado.Equals(proyecto.Administrador))
+                {
                     <th></th>
                 }
             </tr>
             </thead>
             <tbody>
-            @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosGenerales())
+            @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id))
             {
                 <tr>
                     <td>@recurso.Nombre</td>
                     <td>@recurso.Tipo</td>
                     <td>@recurso.Descripcion</td>
-                    @if (Sesion.EsAdminSistema())
+                    @if (Sesion.EsAdminSistema() || Sesion.UsuarioLogueado.Equals(proyecto.Administrador))
                     {
                         <td>
                             <button class="btn btn-sm btn-secondary" @onclick="() => EditarRecurso(recurso.Id)">
                                 <i class="bi bi-pencil"></i>
                             </button>
                         </td>
+                    }
+                    @if (Sesion.UsuarioLogueado.Equals(proyecto.Administrador))
+                    {
                         <td>
                             <button class="btn btn-sm btn-secondary" @onclick="() => EliminarRecurso(recurso.Id)">
                                 <i class="bi bi-trash3"></i>
@@ -145,9 +152,6 @@ else
             </tbody>
         </table>
     }
-}
-    
-    
 }
 
 @code {
@@ -164,9 +168,11 @@ else
     private int idRecursoAEditar;
     private bool mostrarErrorEditar = false;
     private string errorMensajeEditar;
+    private bool esExclusivo = true;
 
-     private void MostrarFormularioCrearRecurso()
+    private void MostrarFormularioCrearRecurso()
     {
+        esExclusivo = true; 
         mostrarFormCrearRecurso = true;
         nuevoRecurso = new RecursoDTO();
     }
@@ -193,7 +199,7 @@ else
         try
         {
             Recurso nuevo = new Recurso(nuevoRecurso.Nombre, nuevoRecurso.Tipo, nuevoRecurso.Descripcion);
-            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevo);
+            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevo, esExclusivo);
             mostrarFormCrearRecurso = false;
             mostrarError = false;
         }
@@ -224,7 +230,7 @@ else
 
     private void EditarRecurso(int idRecurso)
     {
-        var recurso = GestorRecursos.ObtenerRecursosGenerales().FirstOrDefault(r => r.Id == idRecurso);
+        var recurso = GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id).FirstOrDefault(r => r.Id == idRecurso);
         if (recurso != null)
         {
             recursoAEditar = new RecursoDTO
@@ -288,7 +294,7 @@ else
     {
         GestorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
     }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !sesionCargada)
@@ -302,16 +308,18 @@ else
             else
             {
                 await Sesion.ActualizarSesion();
-                proyecto = GestorProyectos.ObtenerProyectoPorId(Id);
-
-                if (proyecto == null)
+                try
                 {
-                    NavigationManager.NavigateTo("/not-found"); 
+                    proyecto = GestorProyectos.ObtenerProyectoPorId(Id);
+                }
+                catch (ExcepcionServicios)
+                {
+                    NavigationManager.NavigateTo("/not-found");
                     return;
                 }
-
                 sesionCargada = true;
-                StateHasChanged(); 
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+                
             }
         }
     }

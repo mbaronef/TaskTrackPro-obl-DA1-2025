@@ -14,10 +14,10 @@ public class GestorRecursos
         _gestorProyectos = gestorProyectos;
     }
 
-    public void AgregarRecurso(Usuario solicitante, Recurso recurso)
+    public void AgregarRecurso(Usuario solicitante, Recurso recurso, bool esExclusivo)
     {
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
-        if (solicitante.EstaAdministrandoUnProyecto)
+        if (solicitante.EstaAdministrandoUnProyecto && esExclusivo)
         {
             AsociarProyectoQueAdministraARecurso(solicitante, recurso);
         }
@@ -92,7 +92,9 @@ public class GestorRecursos
     public List<Recurso> ObtenerRecursosExclusivos(int idProyecto)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        return Recursos.ObtenerTodos().Where(recurso => recurso.ProyectoAsociado.Equals(proyecto)).ToList();
+        return Recursos.ObtenerTodos()
+            .Where(recurso => recurso.ProyectoAsociado != null && recurso.ProyectoAsociado.Id == idProyecto).ToList();
+        //return Recursos.ObtenerTodos().Where(recurso => recurso.ProyectoAsociado.Equals(proyecto)).ToList();
     }
 
     private void VerificarPermisoAdminSistemaOAdminProyecto(Usuario usuario, string accion)

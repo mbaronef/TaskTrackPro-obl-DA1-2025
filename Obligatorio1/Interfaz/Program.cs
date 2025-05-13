@@ -11,20 +11,23 @@ string contrasena = UtilidadesContrasena.ValidarYEncriptarContrasena("Admin123$"
 Usuario usuario = (new Usuario("Juan", "Pérez", new DateTime(1990,1,1), "admin@gmail.com", contrasena));
 usuario.EsAdministradorProyecto = true;
 usuario.EsAdministradorSistema = true;
-
 builder.Services.AddSingleton(usuario);
 
 GestorUsuarios gestorUsuarios = new GestorUsuarios();
 builder.Services.AddSingleton(gestorUsuarios);
-
 gestorUsuarios.AgregarUsuario(usuario, usuario);
 
+Usuario usuarioSoloAdminProyecto = gestorUsuarios.CrearUsuario("Admin", "Proyecto", new DateTime(2000, 5, 20), "adminProyecto@gmail.com", "Contrasena123$");
+usuarioSoloAdminProyecto.EsAdministradorProyecto = true;
+gestorUsuarios.AgregarUsuario(usuario, usuarioSoloAdminProyecto);
+
 GestorProyectos gestorProyectos = new GestorProyectos();
-gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today.AddDays(1), usuario, new List<Usuario>()), usuario);
+gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today.AddDays(1), usuarioSoloAdminProyecto, new List<Usuario>()), usuarioSoloAdminProyecto);
 builder.Services.AddSingleton(gestorProyectos);
 
 GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);
-gestorRecursos.AgregarRecurso(usuario, new Recurso("Recurso", "tipo", "descripcion"));
+gestorRecursos.AgregarRecurso(usuarioSoloAdminProyecto, new Recurso("Recurso", "tipo", "descripcion"), true);
+gestorRecursos.AgregarRecurso(usuario, new Recurso("Recurso GENERAL", "tipo", "descripcion"), false);
 builder.Services.AddSingleton(gestorRecursos);
 
 
