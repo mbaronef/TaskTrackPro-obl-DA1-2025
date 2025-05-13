@@ -233,6 +233,7 @@ public class GestorUsuariosTests
     public void ErrorEliminarUsuarioMiembroDeProyecto()
     {
         Usuario admin = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
+        _gestorUsuarios.AgregarUsuario(_adminSistema, admin);
         admin.EsAdministradorProyecto = true;
         Proyecto proyecto = new Proyecto("Proyecto", "descripción",DateTime.Today.AddDays(1), admin, new List<Usuario>());
         _gestorUsuarios.EliminarUsuario(admin, admin.Id);
