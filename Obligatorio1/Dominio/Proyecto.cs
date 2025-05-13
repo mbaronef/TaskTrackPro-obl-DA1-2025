@@ -26,6 +26,7 @@ public class Proyecto
         ValidarAdministradorEsteEnMiembros(administrador, miembros);
         ValidarFechaInicioMayorAActual(fechaInicio);
         
+        
         Nombre = nombre;
         Descripcion = descripcion;
         Tareas = new List<Tarea>();
@@ -33,6 +34,7 @@ public class Proyecto
         Miembros = miembros;
         FechaInicio = fechaInicio;
         FechaFinMasTemprana = fechaInicio.AddDays(100000);
+        miembros.ForEach(usuario => usuario.CantidadProyectosAsignados++);
     }
     
     public void AgregarTarea(Tarea tarea)
@@ -58,6 +60,7 @@ public class Proyecto
         ValidarUsuarioNoSeaMiembro(usuario);
         
         Miembros.Add(usuario);
+        usuario.CantidadProyectosAsignados++;
     }
 
     public void EliminarMiembro(int idUsuario)
@@ -68,6 +71,7 @@ public class Proyecto
         ValidarQueUsuarioAEliminarNoSeaAdministrador(usuarioAEliminar);
         
         Miembros.Remove(usuarioAEliminar);
+        usuarioAEliminar.CantidadProyectosAsignados--;
     }
 
     public bool EsAdministrador(Usuario usuario)
