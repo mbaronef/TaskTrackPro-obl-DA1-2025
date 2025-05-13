@@ -139,19 +139,19 @@ else
                     }
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
-                        <InputText id="titulo" class="form-control" @bind-Value="tareaDTO.Titulo" type="text" placeholder="Ingrese el título de la tarea" required />
+                        <InputText id="titulo" class="form-control" @bind-Value="tareaDTO.Titulo" type="text" placeholder="Ingrese el título de la tarea" />
                     </div>
                     <div class="mb-3">
                         <label for="descripcion" class="form-label">Descripción</label>
-                        <InputTextArea id="descripcion" class="form-control" @bind-Value="tareaDTO.Descripcion" placeholder="Ingrese una descripción de la tarea" required />
+                        <InputTextArea id="descripcion" class="form-control" @bind-Value="tareaDTO.Descripcion" placeholder="Ingrese una descripción de la tarea" />
                     </div>
                     <div class="mb-3">
                         <label for="duracion" class="form-label">Duración en días</label>
-                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaDTO.DuracionEnDias" min="1" placeholder="Ingrese la duración en días" required />
+                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaDTO.DuracionEnDias" placeholder="Ingrese la duración en días" />
                     </div>
                     <div class="mb-3">
                         <label for="fechaInicio" class="form-label">Fecha de inicio</label>
-                        <InputDate id="fechaInicio" class="form-control" @bind-Value="tareaDTO.FechaInicioMasTemprana" required />
+                        <InputDate id="fechaInicio" class="form-control" @bind-Value="tareaDTO.FechaInicioMasTemprana" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -581,6 +581,8 @@ else
     private bool mostrarVentanaRecursos = false;
     private bool mostrarVentanaMiembros = false;
     private string mensaje = String.Empty;
+    private string errorDuracion = null;
+    private string errorFechaInicio = null;
     
     private TareaDTO tareaDTO = new TareaDTO();
     private TareaDTO tareaEdicion = new TareaDTO();
