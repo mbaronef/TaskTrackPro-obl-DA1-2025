@@ -19,12 +19,17 @@ builder.Services.AddSingleton(gestorUsuarios);
 
 gestorUsuarios.AgregarUsuario(usuario, usuario);
 
+Usuario usuarioSoloAdminProyecto = gestorUsuarios.CrearUsuario("Admin", "Proyecto", new DateTime(2000, 5, 20), "adminProyecto@gmail.com", "Contrasena123$");
+usuarioSoloAdminProyecto.EsAdministradorProyecto = true;
+gestorUsuarios.AgregarUsuario(usuario, usuarioSoloAdminProyecto);
+
 GestorProyectos gestorProyectos = new GestorProyectos();
 gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today.AddDays(1), usuario, new List<Usuario>{usuario}), usuario);
 builder.Services.AddSingleton(gestorProyectos);
 
 GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);
-gestorRecursos.AgregarRecurso(usuario, new Recurso("Recurso", "tipo", "descripcion"));
+// gestorRecursos.AgregarRecurso(usuarioSoloAdminProyecto, new Recurso("Recurso", "tipo", "descripcion"), true);
+gestorRecursos.AgregarRecurso(usuario, new Recurso("Recurso GENERAL", "tipo", "descripcion"), false);
 builder.Services.AddSingleton(gestorRecursos);
 
 GestorTareas gestorTareas = new GestorTareas(gestorProyectos);
@@ -32,8 +37,7 @@ Tarea tarea1 = new Tarea("Tarea 1","Descripcion 1", 2,DateTime.Today.AddDays(1))
 gestorTareas.AgregarTareaAlProyecto(1,usuario, tarea1);
 builder.Services.AddSingleton(gestorTareas);
 
-Usuario usuarioSinRol = gestorUsuarios.CrearUsuario("Sofía", "Martínez", new DateTime(2000, 5, 20), "sofia@gmail.com", "Contrasena123$"
-    );
+Usuario usuarioSinRol = gestorUsuarios.CrearUsuario("Sofía", "Martínez", new DateTime(2000, 5, 20), "sofia@gmail.com", "Contrasena123$");
 gestorUsuarios.AgregarUsuario(usuario, usuarioSinRol);
 gestorProyectos.AgregarMiembroAProyecto(1, usuario, usuarioSinRol);
 Tarea tarea2 = new Tarea("Tarea 2","Descripcion 2", 2,DateTime.Today.AddDays(2));

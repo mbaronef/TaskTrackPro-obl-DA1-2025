@@ -1,14 +1,14 @@
 @page "/RecursosGenerales"
 @rendermode InteractiveServer
-@inject GestorRecursos GestorRecursos
-@inject NavigationManager NavigationManager
 @using System.ComponentModel.DataAnnotations
 @using Dominio.Excepciones
 @using Dominio
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
-@inject LogicaSesion Sesion
 @using DTOs
+@inject GestorRecursos GestorRecursos
+@inject NavigationManager NavigationManager
+@inject LogicaSesion Sesion
 
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
@@ -152,11 +152,13 @@ else
     private int idRecursoAEditar;
     private bool mostrarErrorEditar = false;
     private string errorMensajeEditar;
-
+    private bool sesionCargada = false;
+    private bool esExclusivo = false;
 
 
     private void MostrarFormularioCrearRecurso()
     {
+        esExclusivo = false; 
         mostrarFormCrearRecurso = true;
         nuevoRecurso = new RecursoDTO();
     }
@@ -183,9 +185,10 @@ else
         try
         {
             Recurso nuevo = new Recurso(nuevoRecurso.Nombre, nuevoRecurso.Tipo, nuevoRecurso.Descripcion);
-            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevo);
+            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevo, esExclusivo);
             mostrarFormCrearRecurso = false;
             mostrarError = false;
+            StateHasChanged();
         }
         catch (ExcepcionDominio ex)
         {
@@ -250,6 +253,7 @@ else
 
             mostrarFormEditarRecurso = false;
             recursoAEditar = null;
+            StateHasChanged();
         }
         catch (ExcepcionDominio ex)
         {
@@ -279,8 +283,6 @@ else
         GestorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
     }
     
-    private bool sesionCargada = false;
-    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !sesionCargada)
@@ -296,6 +298,7 @@ else
                 await Sesion.ActualizarSesion();
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+                
             }
         }
     }

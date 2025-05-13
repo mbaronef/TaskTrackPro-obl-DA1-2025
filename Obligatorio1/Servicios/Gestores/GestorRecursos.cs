@@ -14,10 +14,10 @@ public class GestorRecursos
         _gestorProyectos = gestorProyectos;
     }
 
-    public void AgregarRecurso(Usuario solicitante, Recurso recurso)
+    public void AgregarRecurso(Usuario solicitante, Recurso recurso, bool esExclusivo)
     {
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
-        if (solicitante.EstaAdministrandoUnProyecto)
+        if (solicitante.EstaAdministrandoUnProyecto && esExclusivo)
         {
             AsociarProyectoQueAdministraARecurso(solicitante, recurso);
         }
@@ -39,10 +39,10 @@ public class GestorRecursos
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
         VerificarRecursoEnUso(recurso, "eliminar");
-        if (solicitante.EstaAdministrandoUnProyecto)
-        {
+        //if (solicitante.EstaAdministrandoUnProyecto)
+        //{
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
-        }
+        //}
         Recursos.Eliminar(recurso.Id);
         NotificarEliminacion(recurso);
     }
@@ -51,10 +51,10 @@ public class GestorRecursos
     {
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        if (solicitante.EstaAdministrandoUnProyecto)
-        {
+        //if (solicitante.EstaAdministrandoUnProyecto)
+        //{
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de");
-        }
+        //}
         string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
         NotificarModificacion(recurso, nombreAnterior);
@@ -64,10 +64,10 @@ public class GestorRecursos
     {
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el tipo de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        if (solicitante.EstaAdministrandoUnProyecto)
-        {
+        //if (solicitante.EstaAdministrandoUnProyecto)
+        //{
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
-        }
+        //}
         recurso.ModificarTipo(nuevoTipo);
         NotificarModificacion(recurso, recurso.Nombre);
     }
@@ -76,10 +76,10 @@ public class GestorRecursos
     {
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        if (solicitante.EstaAdministrandoUnProyecto)
-        {
+        //if (solicitante.EstaAdministrandoUnProyecto)
+        //{
             VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
-        }
+        //}
         recurso.ModificarDescripcion(nuevaDescripcion);
         NotificarModificacion(recurso, recurso.Nombre);
     }
@@ -92,7 +92,8 @@ public class GestorRecursos
     public List<Recurso> ObtenerRecursosExclusivos(int idProyecto)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        return Recursos.ObtenerTodos().Where(recurso => recurso.ProyectoAsociado.Equals(proyecto)).ToList();
+        return Recursos.ObtenerTodos()
+            .Where(recurso => recurso.ProyectoAsociado != null && recurso.ProyectoAsociado.Id == idProyecto).ToList();
     }
 
     private void VerificarPermisoAdminSistemaOAdminProyecto(Usuario usuario, string accion)
@@ -120,6 +121,15 @@ public class GestorRecursos
     private void VerificarRecursoExclusivoDelAdministradorProyecto(Usuario administradorProyecto, Recurso recurso,
         string accion)
     {
+        if (recurso.ProyectoAsociado == null)
+        {
+            // Es un recurso general
+            if (!administradorProyecto.EsAdministradorSistema)
+            {
+                throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion} recursos generales.");
+            }
+            return;
+        }
         Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
         if (!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
         {
