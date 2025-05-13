@@ -717,10 +717,26 @@ else
 
     private void MostrarErroresValidacion(EditContext editContext)
     {
-        var errores = editContext.GetValidationMessages()
-            .Select(e => $"<li>{e}</li>");
-        mensaje = $"<ul class='list-unstyled'>{string.Join("", errores)}</ul>";
+        var errores = new List<string>();
 
+        foreach (var error in editContext.GetValidationMessages())
+        {
+            if (error.Contains("must be a number"))
+            {
+                errores.Add("La duración debe ser un número válido.");
+            }
+            else if (error.Contains("must be a date"))
+            {
+                errores.Add("La fecha de inicio debe ser una fecha válida.");
+            }
+            else
+            {
+                errores.Add(error);
+            }
+        }
+
+        var erroresFormateados = errores.Select(e => $"<li>{e}</li>");
+        mensaje = $"<ul class='list-unstyled mb-0'>{string.Join("", erroresFormateados)}</ul>";
     }
 
     private void CrearTarea(EditContext obj)
