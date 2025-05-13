@@ -119,6 +119,8 @@ public class GestorProyectos
         VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         VerificarUsuarioMiembroDelProyecto(idMiembroAEliminar, proyecto);
+
+        VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idMiembroAEliminar);
         
         proyecto.EliminarMiembro(idMiembroAEliminar);
         
@@ -190,6 +192,14 @@ public class GestorProyectos
             throw new ExcepcionServicios("El solicitante no es administrador de sistema.");
     }
 
+    public void VerificarUsuarioNoTieneTareasAsignadas(int idProyecto, int idMiembroAEliminar)
+    {
+        Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
+        Usuario miembroAEliminar = ObtenerMiembro(idMiembroAEliminar, proyecto);
+        if (proyecto.Tareas.Any(tarea => tarea.EsMiembro(miembroAEliminar)))
+            throw new ExcepcionServicios("El usuario tiene tareas asignadas");
+    }
+    
     public Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
         Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
