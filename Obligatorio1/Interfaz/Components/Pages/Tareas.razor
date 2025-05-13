@@ -922,7 +922,14 @@ else
         }
         catch (Exception e)
         { 
-            mensaje = e.Message; 
+            if (e.Message.Equals("El usuario no existe"))
+            {
+                mensaje = "Seleccione un usuario";
+            }
+            else
+            {
+                mensaje = e.Message;
+            }
         }
     }
 
