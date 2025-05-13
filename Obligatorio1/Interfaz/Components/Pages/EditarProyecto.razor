@@ -44,7 +44,18 @@ else
                 </div>
             </EditForm>
             <div class="text-center mt-3">
-                <button class="btn btn-outline-danger w-50" @onclick="EliminarProyecto">Eliminar Proyecto</button>
+                @if (!confirmarEliminacion)
+                {
+                    <button class="btn btn-outline-danger w-50" @onclick="() => confirmarEliminacion = true">Eliminar Proyecto</button>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <p class="mb-2">¿Estás seguro de que deseas eliminar este proyecto?</p>
+                        <button class="btn btn-danger me-2" @onclick="EliminarProyecto">Sí, eliminar</button>
+                        <button class="btn btn-secondary" @onclick="() => confirmarEliminacion = false">Cancelar</button>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -59,6 +70,8 @@ else
     private ProyectoDTO proyectoDTO = new ProyectoDTO();
     private string mensaje;
     private string tipoAlerta;
+    
+    bool confirmarEliminacion = false;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
