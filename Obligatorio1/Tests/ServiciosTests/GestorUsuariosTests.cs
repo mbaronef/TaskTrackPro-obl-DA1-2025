@@ -228,6 +228,16 @@ public class GestorUsuariosTests
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
 
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void ErrorEliminarUsuarioMiembroDeProyecto()
+    {
+        Usuario admin = CrearUsuario("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
+        admin.EsAdministradorProyecto = true;
+        Proyecto proyecto = new Proyecto("Proyecto", "descripción",DateTime.Today.AddDays(1), admin, new List<Usuario>());
+        _gestorUsuarios.EliminarUsuario(admin, admin.Id);
+    }
+
     [TestMethod]
     public void AdminSistemaReiniciaLaContraseñaDeUnUsuarioCorrectamente()
     {
