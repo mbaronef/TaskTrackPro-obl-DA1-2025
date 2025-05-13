@@ -1,9 +1,102 @@
 @page "/proyecto/{id:int}/diagrama_de_gantt"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using Dominio.Excepciones
+@using Dominio
 @using Servicios.Gestores
+@using DTOs
+@using Interfaz.ServiciosInterfaz
+@using Servicios.Excepciones
 @inject GestorProyectos GestorProyectos
+@inject NavigationManager NavigationManager
+@inject LogicaSesion Sesion
+@inject IJSRuntime JSRuntime
 
-<h3>DiagramaDeGantt</h3>
+
+
+@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+{
+}
+else
+{
+    <h3>Diagrama De Gantt</h3>
+
+    <div id="gantt" style="overflow-x: scroll;"></div>
+
+}
 
 @code {
-    
+
+    [Parameter] public int Id { get; set; }
+    private bool sesionCargada = false;
+    private Proyecto proyecto;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                NavigationManager.NavigateTo("/");
+                return;
+            }
+
+            await Sesion.ActualizarSesion();
+
+            try
+            {
+                proyecto = GestorProyectos.ObtenerProyectoPorId(Id);
+            }
+            catch (ExcepcionServicios)
+            {
+                NavigationManager.NavigateTo("/not-found");
+                return;
+            }
+
+            sesionCargada = true;
+            StateHasChanged();
+
+            if (firstRender)
+            {
+                var tareas = new List<TareaGanttDTO>
+                {
+                    new TareaGanttDTO()
+                    {
+                        id = "T1",
+                        name = "Tarea 1",
+                        start = "2025-05-01",
+                        end = "2025-05-05",
+                        progress = 100,
+                        dependencies = ""
+                    },
+                    new TareaGanttDTO()
+                    {
+                        id = "T2",
+                        name = "Tarea 2",
+                        start = "2025-05-06",
+                        end = "2025-05-10",
+                        progress = 0,
+                        dependencies = "T1"
+                    }
+                };
+
+                // Luego de cargar sesión y proyecto, mostramos el Gantt
+                /*var tareas = proyecto.Tareas.Select(t => new TareaGanttDTO
+                {
+                    id = t.Id.ToString(),
+                    name = t.Titulo,
+                    start = t.FechaInicioMasTemprana.ToString("yyyy-MM-dd"),
+                    end = t.FechaFinMasTemprana.ToString("yyyy-MM-dd"),
+                    progress = t.Estado == EstadoTarea.Completada ? 100 : 0,
+                    dependencies = string.Join(",", t.Dependencias.Select(d => d.Tarea.Id.ToString()))
+                }).ToList();*/
+
+                await JSRuntime.InvokeVoidAsync("dibujarGantt", tareas);
+            }
+        }
+    }
+
 }
