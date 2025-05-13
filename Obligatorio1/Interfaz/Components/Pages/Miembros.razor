@@ -19,6 +19,29 @@ else if (!Sesion.UsuarioLogueado.EsAdministradorSistema && (GestorProyectos.Obte
 else
 {
     <h3>Miembros</h3>
+    
+    @if (mostrarMensajeExitoCambioAdmin)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            El administrador del proyecto fue actualizado correctamente.
+            <button type="button" class="btn-close" @onclick="() => mostrarMensajeExitoCambioAdmin = false"></button>
+        </div>
+    }
+    @if (mostrarMensajeExitoAgregar)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            El miembro fue agregado exitosamente.
+            <button type="button" class="btn-close" @onclick="() => mostrarMensajeExitoAgregar = false"></button>
+        </div>
+    }
+    @if (mostrarMensajeExitoEliminar)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            El miembro fue eliminado correctamente.
+            <button type="button" class="btn-close" @onclick="() => mostrarMensajeExitoEliminar = false"></button>
+        </div>
+    }
+    
     <table class="table">
         <thead>
         <tr>
@@ -87,7 +110,7 @@ else
                         </select>
                         @if (mostrarErrorAgregar)
                         {
-                            <div class="text-danger mt-2">Debe seleccionar un miembro.</div>
+                            <div class="alert alert-danger mt-2">Debe seleccionar un miembro.</div>
                         }
                     </div>
                     <div class="modal-footer">
@@ -147,7 +170,7 @@ else
                         </select>
                         @if (mostrarErrorCambioAdmin)
                         {
-                            <div class="text-danger mt-2">@errorMensajeCambioAdmin</div>
+                            <div class="alert alert-danger mt-2">@errorMensajeCambioAdmin</div>
                         }
                     </div>
 
@@ -181,7 +204,12 @@ else
 
     private bool sesionCargada = false;
     private bool esAdminProyecto = false;
+    
+    private bool mostrarMensajeExitoCambioAdmin = false;
+    private bool mostrarMensajeExitoAgregar = false;
+    private bool mostrarMensajeExitoEliminar = false;
 
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !sesionCargada)
@@ -241,6 +269,7 @@ else
         GestorProyectos.AgregarMiembroAProyecto(id, Sesion.UsuarioLogueado, nuevo);
         usuariosNoMiembros.Remove(nuevo);
         mostrarModalAgregar = false;
+        mostrarMensajeExitoAgregar = true;
     }
 
     private void ConfirmarEliminar(Usuario usuario)
@@ -260,6 +289,7 @@ else
         miembros.Remove(miembroAEliminar);
         usuariosNoMiembros.Add(miembroAEliminar);
         mostrarModalEliminar = false;
+        mostrarMensajeExitoEliminar = true;
     }
     
     private void MostrarModalCambioAdmin()
@@ -292,6 +322,7 @@ else
             proyecto.Administrador = miembros.First(u => u.Id == idNuevoAdmin.Value);
             esAdminProyecto = proyecto.Administrador.Id == Sesion.UsuarioLogueado.Id;
             mostrarModalCambioAdmin = false;
+            mostrarMensajeExitoCambioAdmin = true;
         }
         catch (ExcepcionServicios ex)
         {
