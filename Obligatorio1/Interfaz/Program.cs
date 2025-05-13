@@ -33,16 +33,16 @@ gestorRecursos.AgregarRecurso(usuario, new Recurso("Recurso GENERAL", "tipo", "d
 builder.Services.AddSingleton(gestorRecursos);
 
 GestorTareas gestorTareas = new GestorTareas(gestorProyectos);
-Tarea tarea1 = new Tarea("Tarea 1","Descripcion 1", 2,DateTime.Today.AddDays(1));
-gestorTareas.AgregarTareaAlProyecto(1,usuario, tarea1);
+//Tarea tarea1 = new Tarea("Tarea 1","Descripcion 1", 2,DateTime.Today.AddDays(1));
+//gestorTareas.AgregarTareaAlProyecto(1,usuario, tarea1);
 builder.Services.AddSingleton(gestorTareas);
 
 Usuario usuarioSinRol = gestorUsuarios.CrearUsuario("Sofía", "Martínez", new DateTime(2000, 5, 20), "sofia@gmail.com", "Contrasena123$");
 gestorUsuarios.AgregarUsuario(usuario, usuarioSinRol);
 gestorProyectos.AgregarMiembroAProyecto(1, usuario, usuarioSinRol);
-Tarea tarea2 = new Tarea("Tarea 2","Descripcion 2", 2,DateTime.Today.AddDays(2));
-gestorTareas.AgregarTareaAlProyecto(1,usuario, tarea2);
-gestorTareas.AgregarMiembroATarea(usuario, tarea2.Id, 1, usuarioSinRol);
+//Tarea tarea2 = new Tarea("Tarea 2","Descripcion 2", 2,DateTime.Today.AddDays(2));
+//gestorTareas.AgregarTareaAlProyecto(1,usuario, tarea2);
+//gestorTareas.AgregarMiembroATarea(usuario, tarea2.Id, 1, usuarioSinRol);
 
 // Add services to the container.
 builder.Services.AddBlazoredLocalStorage();
