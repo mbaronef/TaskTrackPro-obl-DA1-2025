@@ -1,0 +1,151 @@
+@page "/proyecto/{id:int}/editar"
+@using Dominio
+@using Interfaz.DTOs
+@using Interfaz.ServiciosInterfaz
+@using Servicios.Gestores
+@inject GestorProyectos GestorProyectos
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigator
+@rendermode InteractiveServer
+
+@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+{
+}
+else if (!proyecto.EsAdministrador(Sesion.UsuarioLogueado))
+{
+    <p class="text-danger text-center mt-5">No tienes permisos para editar este proyecto.</p>
+}
+else
+{
+    <h3 class="text-center mt-4 text-primary-emphasis">Editar Proyecto</h3>
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6">
+            @if (!string.IsNullOrWhiteSpace(mensaje))
+            {
+                <div class="alert alert-@tipoAlerta">@((MarkupString)mensaje)</div>
+            }
+            <EditForm Model="proyectoDTO" OnValidSubmit="@EditarDatosProyecto" OnInvalidSubmit="MostrarErroresValidacion">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="d-none" />
+                <div class="form-group mb-3">
+                    <label for="nombre">Nombre</label>
+                    <InputText id="nombre" class="form-control" @bind-Value="proyectoDTO.Nombre" />
+                </div>
+                <div class="form-group mb-3">
+                    <label for="descripcion">Descripción</label>
+                    <InputTextArea id="descripcion" class="form-control" @bind-Value="proyectoDTO.Descripcion" />
+                </div>
+                <div class="form-group mb-3">
+                    <label for="inicio">Fecha de Inicio</label>
+                    <InputDate id="inicio" class="form-control" @bind-Value="proyectoDTO.FechaInicio" />
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary w-50">Guardar Cambios</button>
+                </div>
+            </EditForm>
+            <div class="text-center mt-3">
+                @if (!confirmarEliminacion)
+                {
+                    <button class="btn btn-outline-danger w-50" @onclick="() => confirmarEliminacion = true">Eliminar Proyecto</button>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <p class="mb-2">¿Estás seguro de que deseas eliminar este proyecto?</p>
+                        <button class="btn btn-danger me-2" @onclick="EliminarProyecto">Sí, eliminar</button>
+                        <button class="btn btn-secondary" @onclick="() => confirmarEliminacion = false">Cancelar</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool sesionCargada = false;
+    
+    [Parameter] public int id { get; set; }
+    private Proyecto proyecto;
+    
+    private ProyectoDTO proyectoDTO = new ProyectoDTO();
+    private string mensaje;
+    private string tipoAlerta;
+    
+    bool confirmarEliminacion = false;
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigator.NavigateTo("/");
+            }
+            else
+            {
+                await Sesion.ActualizarSesion();
+                sesionCargada = true;
+                proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+        }
+    }
+    
+    private async void EditarDatosProyecto()
+    {
+        mensaje = string.Empty;
+        try
+        {
+            Usuario solicitante = Sesion.UsuarioLogueado;
+            if (!proyectoDTO.Nombre.Equals(proyecto.Nombre))
+            {
+                GestorProyectos.ModificarNombreDelProyecto(id, proyectoDTO.Nombre, solicitante);
+            }
+            if (!proyectoDTO.Descripcion.Equals(proyecto.Descripcion))
+            {
+                GestorProyectos.ModificarDescripcionDelProyecto(id, proyectoDTO.Descripcion, solicitante);
+            }
+            if (!proyectoDTO.FechaInicio.Equals(proyecto.FechaInicio))
+            {
+                GestorProyectos.ModificarFechaDeInicioDelProyecto(id, proyectoDTO.FechaInicio, solicitante);
+            }
+            tipoAlerta = "success";
+            mensaje = "Cambios guardados correctamente.";
+            await Sesion.ActualizarSesion();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
+            tipoAlerta = "danger";
+        }
+    }
+
+    private async void EliminarProyecto()
+    {
+        mensaje = string.Empty;
+        try
+        {
+            Usuario solicitante = Sesion.UsuarioLogueado;
+            GestorProyectos.EliminarProyecto(id, solicitante);
+            await Sesion.ActualizarSesion();
+            StateHasChanged();
+            Navigator.NavigateTo("/exito/proyecto/eliminado");
+        }
+        catch (Exception e)
+        {
+            mensaje = e.Message;
+            tipoAlerta = "danger";
+        }
+    }
+
+    private void MostrarErroresValidacion(EditContext editContext)
+    {
+        var errores = editContext.GetValidationMessages()
+            .Select(e => $"<li>{e}</li>");
+        mensaje = $"<ul>{string.Join("", errores)}</ul>";
+        tipoAlerta = "danger";
+    }
+}

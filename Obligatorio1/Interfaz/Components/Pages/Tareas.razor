@@ -118,9 +118,9 @@ else
                             @if (tarea.EsMiembro(Sesion.UsuarioLogueado) && !proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada)
                             {
                                 <div class="text-center mb-3">
-                                    <button class="btn btn-outline-secondary mx-2 btn-sm"
+                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
                                             @onclick="() => MostrarVentanaEdicionReducida(tarea.Id)">
-                                        <i class="bi bi-pencil"></i> Editar
+                                        <i class="bi bi-pencil-square"></i> Editar
                                     </button>
                                 </div>
                             }
@@ -146,7 +146,7 @@ else
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                            <div class="alert alert-info">@((MarkupString)mensaje))</div>
+                            <div class="alert alert-info">@((MarkupString)mensaje)</div>
                     }
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
@@ -194,7 +194,7 @@ else
                 <h5 class="modal-title">Editar Tarea</h5>
                 <button type="button" class="btn-close" @onclick="CerrarVentanaEdicionReducida"></button>
             </div>
-            <EditForm Model="tareaEdicion" OnValidSubmit="EditarEstadoTarea" OnInvalidSubmit="MostrarErroresValidacion">
+            <EditForm Model="tareaEdicionEstado" OnValidSubmit="EditarEstadoTarea" OnInvalidSubmit="MostrarErroresValidacion">
                 <DataAnnotationsValidator/>
                 <ValidationSummary class="d-none"/>
                 <div class="modal-body">
@@ -203,15 +203,19 @@ else
                         <div class="alert alert-info">@((MarkupString)mensaje)</div>
                     }
                     <div class="form-check mb-3">
-                        @if (tareaEdicion.Estado == EstadoTarea.Pendiente)
+                        @if (tareaActual.Estado == EstadoTarea.Pendiente)
                         {
-                            <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="editoEnProceso"/>
-                            <label for="enProceso" class="form-check-label">En proceso</label>
+                            <div class="form-check mb-2">
+                                <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="tareaEdicionEstado.EditoEnProceso" />
+                                <label for="enProceso" class="form-check-label">Marcar como En Proceso</label>
+                            </div>
                         }
-                        @if (tareaEdicion.Estado == EstadoTarea.EnProceso)
+                        @if (tareaActual.Estado == EstadoTarea.EnProceso)
                         {
-                            <InputCheckbox id="completada" class="form-check-input" @bind-Value="editoCompletada"/>
-                            <label for="completada" class="form-check-label">Completada</label>
+                            <div class="form-check mb-2">
+                                <InputCheckbox id="completada" class="form-check-input" @bind-Value="tareaEdicionEstado.EditoCompletada" />
+                                <label for="completada" class="form-check-label">Marcar como Completada</label>
+                            </div>
                         }
                     </div>
                 </div>
@@ -499,10 +503,12 @@ else
     
     private TareaDTO tareaDTO = new TareaDTO();
     private TareaDTO tareaEdicion = new TareaDTO();
-    private bool editoEnProceso = false;
     private bool editoCompletada = false;
+    private bool editoEnProceso = false;
     
-    private Tarea tareaActual;
+    private TareaCambioEstadoDTO tareaEdicionEstado = new TareaCambioEstadoDTO();
+    
+    private Tarea tareaActual = new Tarea();
     private DependenciaDTO dependenciaDTO = new DependenciaDTO();
     private List<Tarea> tareasDelProyecto = new List<Tarea>();
     
@@ -565,20 +571,8 @@ else
     {
         mostrarVentanaEdicionReducida = true;
         mensaje = String.Empty;
-        Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaId);
-        if (tareaAEditar != null)
-        {
-            tareaEdicion = new TareaDTO
-            {
-                Id = tareaAEditar.Id,
-                Estado = tareaAEditar.Estado,
-                Titulo = tareaAEditar.Titulo,
-                Descripcion = tareaAEditar.Descripcion,
-                DuracionEnDias = tareaAEditar.DuracionEnDias,
-                FechaInicioMasTemprana = tareaAEditar.FechaInicioMasTemprana
-            };
-        }
-        else
+        tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaId);
+        if (tareaActual is null)
         {
             mensaje = "Error al cargar la tarea.";
         }
@@ -646,9 +640,9 @@ else
 
     private void CrearTarea(EditContext obj)
     {
-        Tarea tarea = tareaDTO.ANuevaEntidad();
         try
         {
+            Tarea tarea = tareaDTO.ANuevaEntidad();
             GestorTareas.AgregarTareaAlProyecto(id, Sesion.UsuarioLogueado, tarea);
             mensaje = "Tarea creada con éxito.";
             // actualizaciones
@@ -664,18 +658,18 @@ else
 
     private void EditarEstadoTarea(EditContext obj)
     {
-        Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaEdicion.Id);
-        EstadoTarea nuevoEstado = editoCompletada ? EstadoTarea.Completada : (editoEnProceso ? EstadoTarea.EnProceso : tareaAEditar.Estado);
+        EstadoTarea nuevoEstado = tareaEdicionEstado.EditoCompletada
+            ? EstadoTarea.Completada
+            : (tareaEdicionEstado.EditoEnProceso ? EstadoTarea.EnProceso : tareaActual.Estado);
         try
         {
-            GestorTareas.CambiarEstadoTarea(Sesion.UsuarioLogueado, tareaAEditar.Id, id, nuevoEstado);
+            GestorTareas.CambiarEstadoTarea(Sesion.UsuarioLogueado, tareaActual.Id, id, nuevoEstado);
             mensaje = "Estado editado con éxito.";
             // actualizaciones
-            tareaEdicion = new TareaDTO();
-            editoCompletada = false;
-            editoEnProceso = false;
+            tareaEdicionEstado = new TareaCambioEstadoDTO();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
             StateHasChanged();
+            mostrarVentanaEdicionReducida = false;
         }
         catch (Exception e)
         {

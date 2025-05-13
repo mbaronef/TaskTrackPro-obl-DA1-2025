@@ -29,7 +29,6 @@ public class Proyecto
         Nombre = nombre;
         Descripcion = descripcion;
         Tareas = new List<Tarea>();
-        FechaInicio = fechaInicio;
         Administrador = administrador;
         Miembros = miembros;
         FechaInicio = fechaInicio;

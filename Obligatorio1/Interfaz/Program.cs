@@ -20,7 +20,7 @@ builder.Services.AddSingleton(gestorUsuarios);
 gestorUsuarios.AgregarUsuario(usuario, usuario);
 
 GestorProyectos gestorProyectos = new GestorProyectos();
-gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today.AddDays(1), usuario, new List<Usuario>()), usuario);
+gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today.AddDays(1), usuario, new List<Usuario>{usuario}), usuario);
 builder.Services.AddSingleton(gestorProyectos);
 
 GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);

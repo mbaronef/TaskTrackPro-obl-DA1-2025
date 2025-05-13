@@ -8,6 +8,7 @@ namespace Interfaz.ServiciosInterfaz;
 
 public class LogicaSesion
 {
+        public event Action? SesionModificada; // para modificar el main layout (estructura principal) según permisos si se modifica al usuario logueado
         public Usuario? UsuarioLogueado { get; private set; }
         private const string CURRENT_USER = "current_user";
     
@@ -64,6 +65,7 @@ public class LogicaSesion
             {
                 UsuarioLogueado = _gestorUsuarios.ObtenerUsuarioPorId(UsuarioLogueado.Id);
                 await _localStorage.SetItemAsync(CURRENT_USER, UsuarioLogueado);
+                SesionModificada?.Invoke();
             }
         }
 }

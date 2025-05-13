@@ -4,6 +4,7 @@
 @inject NavigationManager Navigation
 @inject GestorProyectos GestorProyectos
 @rendermode InteractiveServer
+@implements IDisposable
 
 
 @if (Sesion.UsuarioLogueado is not null)
@@ -11,6 +12,10 @@
     @if (Sesion.EsAdminSistema())
     {
         <NavLink href="/usuarios" class="nav-link text-white">Usuarios</NavLink>
+    }
+    @if (Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnProyecto)
+    {
+        <NavLink href="/crear-proyecto" class="nav-link text-white">Crear proyecto</NavLink>
     }
 }
 
@@ -35,5 +40,19 @@
             }
         }
     }
+    
+    protected override void OnInitialized()
+    {
+        Sesion.SesionModificada += RefrescarLayout;
+    }
 
+    private void RefrescarLayout()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Sesion.SesionModificada -= RefrescarLayout;
+    }
 }

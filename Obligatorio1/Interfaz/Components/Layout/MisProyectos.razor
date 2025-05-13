@@ -5,6 +5,7 @@
 @inject NavigationManager Navigation
 @inject GestorProyectos GestorProyectos
 @rendermode InteractiveServer
+@implements IDisposable
 
 
 @if (Sesion.UsuarioLogueado is not null)
@@ -32,6 +33,10 @@
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white">Recursos</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros</NavLink></li>
+                @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
+                {
+                    <li><NavLink href="@($"/proyecto/{proyecto.Id}/editar")" class="nav-link text-white">Editar Proyecto</NavLink></li>
+                }
             </ul>
         </details>
     }
@@ -58,6 +63,21 @@
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }
         }
+    }
+    
+    protected override void OnInitialized()
+    {
+        Sesion.SesionModificada += RefrescarLayout;
+    }
+
+    private void RefrescarLayout()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Sesion.SesionModificada -= RefrescarLayout;
     }
 
 }

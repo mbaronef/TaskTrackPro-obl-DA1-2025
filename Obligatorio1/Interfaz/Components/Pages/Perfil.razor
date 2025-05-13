@@ -1,6 +1,7 @@
 @page "/perfil"
 @using System.ComponentModel.DataAnnotations
 @using Dominio
+@using Interfaz.DTOs
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @inject LogicaSesion Sesion
@@ -10,29 +11,27 @@
 
 @if (Sesion.UsuarioLogueado is not null)
 {
-    <div class="card shadow-sm border-0 mb-4" style="max-width: 700px;"> 
+    <div class="card shadow border-0 mb-5 mx-auto" style="max-width: 700px;">
         <div class="card-body">
-            <h3 class="card-title mb-4">
-                <h3 class="d-flex align-items-center">
-                    <i class="bi bi-person-circle fs-1 me-4"></i>
-                    Perfil de Usuario
-                </h3>
-            </h3>
+            <div class="mb-4 border-bottom pb-3 d-flex align-items-center">
+                <i class="bi bi-person-circle fs-1 text-black me-3"></i>
+                <h4 class="mb-0 text-primary-emphasis">Perfil de Usuario</h4>
+            </div>
 
             <dl class="row">
-                <dt class="col-sm-4">Nombre</dt>
-                <dd class="col-sm-8">@Sesion.UsuarioLogueado?.Nombre</dd>
+                <dt class="col-sm-4 text-muted">Nombre</dt>
+                <dd class="col-sm-8 fw-semibold">@Sesion.UsuarioLogueado?.Nombre</dd>
 
-                <dt class="col-sm-4">Apellido</dt>
-                <dd class="col-sm-8">@Sesion.UsuarioLogueado?.Apellido</dd>
+                <dt class="col-sm-4 text-muted">Apellido</dt>
+                <dd class="col-sm-8 fw-semibold">@Sesion.UsuarioLogueado?.Apellido</dd>
 
-                <dt class="col-sm-4">Fecha de nacimiento</dt>
-                <dd class="col-sm-8">@Sesion.UsuarioLogueado?.FechaNacimiento.ToShortDateString()</dd>
+                <dt class="col-sm-4 text-muted">Fecha de nacimiento</dt>
+                <dd class="col-sm-8 fw-semibold">@Sesion.UsuarioLogueado?.FechaNacimiento.ToShortDateString()</dd>
 
-                <dt class="col-sm-4">Email</dt>
-                <dd class="col-sm-8">@Sesion.UsuarioLogueado?.Email</dd>
+                <dt class="col-sm-4 text-muted">Email</dt>
+                <dd class="col-sm-8 fw-semibold">@Sesion.UsuarioLogueado?.Email</dd>
 
-                <dt class="col-sm-4">Roles</dt>
+                <dt class="col-sm-4 text-muted">Roles</dt>
                 <dd class="col-sm-8">
                     @if (Sesion.EsAdminSistema())
                     {
@@ -40,88 +39,94 @@
                     }
                     @if (Sesion.EsAdminProyecto())
                     {
-                        <span class="badge bg-info me-1">Administrador de proyecto</span>
+                        <span class="badge bg-info text-dark me-1">Administrador de proyecto</span>
                     }
                     @if (!Sesion.EsAdminSistema() && !Sesion.EsAdminProyecto())
                     {
                         <span class="text-muted">Sin rol administrativo</span>
                     }
                 </dd>
-                
-                <dd class="col-sm-8 mt-4">
-                    <div class="d-flex justify-content-center gap-3">
-                        <button class="btn btn-dark text-white px-4 py-2" style="font-size: 14px; width: 200px;" @onclick="MostrarVentanaEmergenteCambiar">
-                            Cambiar contraseña
-                        </button>
-                        <button class="btn btn-dark text-white px-4 py-2" style="font-size: 14px; width: 200px;" @onclick="MostrarVentanaEmergenteReinciar">
-                            Reiniciar contraseña
-                        </button>
-                    </div>
-                </dd>
             </dl>
 
-            <div class="mt-4 d-flex justify-content-between">
+            <div class="mt-4 d-flex justify-content-center gap-3">
+                <button class="btn btn-outline-dark px-4 py-2 d-flex align-items-center gap-2" style="min-width: 200px;" @onclick="MostrarVentanaEmergenteCambiar">
+                    <i class="bi bi-shield-lock"></i> Cambiar contraseña
+                </button>
+                <button class="btn btn-outline-dark px-4 py-2 d-flex align-items-center gap-2" style="min-width: 200px;" @onclick="MostrarVentanaEmergenteReinciar">
+                    <i class="bi bi-arrow-repeat"></i> Reiniciar contraseña
+                </button>
+            </div>
+
+            <div class="mt-5 d-flex justify-content-between">
                 <button class="btn btn-outline-secondary" @onclick="IrAInicio">⬅ Atrás</button>
                 <button class="btn btn-outline-danger" @onclick="CerrarSesion">Cerrar sesión</button>
             </div>
         </div>
     </div>
-
-
-
 }
-
-
-
 <!-- Ventana emergente (modal) para cambiar contraseña -->
-<div class="modal fade @(mostrarVentanaEmergenteCambiar ? "show d-block" : "")" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div class="modal fade @(mostrarVentanaEmergenteCambiar ? "show d-block" : "")"  tabindex="-1"
+     style="background-color: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-dark text-white"> 
                 <h5 class="modal-title">Cambiar Contraseña</h5>
-                <button type="button" class="btn-close" @onclick="CerrarVentanaEmergenteCambiar"></button>
+                <button type="button" class="btn-close btn-close-white" @onclick="CerrarVentanaEmergenteCambiar"></button>
             </div>
+
             <EditForm Model="modeloCambio" OnValidSubmit="CambiarContrasena" OnInvalidSubmit="MostrarErroresValidacion">
                 <DataAnnotationsValidator />
                 <ValidationSummary class="d-none" />
+
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                        <div class="alert alert-info mt-3">
-                            @mensaje
-                        </div>
+                        <div class="alert alert-info mt-2">@mensaje</div>
                     }
-                    <label for="nuevaContrasena" class="form-label">Nueva Contraseña</label>
-                    <InputText id="nuevaContrasena" class="form-control"
-                               @bind-Value="modeloCambio.NuevaContrasena"
-                               type="password"
-                               placeholder="Ingrese su nueva contraseña"/>
+
+                    <div class="mb-3 position-relative">
+                        <label for="nuevaContrasena" class="form-label">Nueva Contraseña</label>
+                        <InputText id="nuevaContrasena"
+                                   class="form-control pe-5"
+                                   @bind-Value="modeloCambio.NuevaContrasena"
+                                   type="password"
+                                   placeholder="Ingrese su nueva contraseña" />
+                    </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarVentanaEmergenteCambiar">Cancelar</button>
                 </div>
             </EditForm>
         </div>
     </div>
 </div>
 
+
 <!-- Ventana emergente (modal) para reiniciar contraseña -->
-<div class="modal fade @(mostrarVentanaEmergenteReinciar ? "show d-block" : "")" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+<div class="modal fade @(mostrarVentanaEmergenteReinciar ? "show d-block" : "")" tabindex="-1"
+     style="background-color: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-dark text-white">
                 <h5 class="modal-title">Reiniciar Contraseña</h5>
-                <button type="button" class="btn-close" @onclick="CerrarVentanaEmergenteReinciar"></button>
+                <button type="button" class="btn-close btn-close-white" @onclick="CerrarVentanaEmergenteReinciar"></button>
             </div>
-                <div class="modal-body">
-                    @if (!string.IsNullOrEmpty(mensaje))
-                    {
-                        <div class="alert alert-info mt-3">
-                            @mensaje
-                        </div>
-                    }
-                    <button class="btn btn-primary" @onclick="ReiniciarContrasena">Reiniciar Contraseña</button>
+
+            <div class="modal-body">
+                @if (!string.IsNullOrEmpty(mensaje))
+                {
+                    <div class="alert alert-info mt-2">@mensaje</div>
+                }
+
+                <p class="mb-4">¿Está seguro que desea reiniciar su contraseña? Se le enviará una notificación con la nueva contraseña.</p>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-secondary" @onclick="CerrarVentanaEmergenteReinciar">Cancelar</button>
+                    <button class="btn btn-primary" @onclick="ReiniciarContrasena">Confirmar Reinicio</button>
                 </div>
+            </div>
         </div>
     </div>
 </div>
@@ -133,7 +138,8 @@
     private bool mostrarVentanaEmergenteCambiar = false;
     private bool mostrarVentanaEmergenteReinciar = false;
     private string mensaje;
-
+    private ModeloCambioContraseña modeloCambio = new ModeloCambioContraseña();
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !sesionCargada)
@@ -186,20 +192,6 @@
         mostrarVentanaEmergenteReinciar = false;
     }
     
-    
-    
-    
-    private class ModeloCambioContraseña
-    {
-        [Required(ErrorMessage = "La contraseña es obligatoria.")]
-        [RegularExpression(
-            @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$",
-            ErrorMessage = "La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.")]
-        public string NuevaContrasena { get; set; } = string.Empty;
-    }
-
-    private ModeloCambioContraseña modeloCambio = new ModeloCambioContraseña();
-
     private async Task CambiarContrasena()
     {
         try
@@ -215,13 +207,7 @@
             mensaje = $"Error: {e.Message}";
         }
     }
-
-    private void MostrarErroresValidacion(EditContext editContext)
-    {
-        var errores = editContext.GetValidationMessages();
-        mensaje = string.Join("<br/>", errores);
-    }
-
+    
     private async Task ReiniciarContrasena()
     {
         try
@@ -236,5 +222,10 @@
             mensaje = $"Error: {e.Message}";
         }
     }
-
+    
+    private void MostrarErroresValidacion(EditContext editContext)
+    {
+        var errores = editContext.GetValidationMessages();
+        mensaje = string.Join("<br/>", errores);
+    }
 }
