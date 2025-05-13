@@ -579,6 +579,23 @@ namespace Tests.ServiciosTests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ExcepcionServicios))]
+        public void EliminarMiembroConTareaAsignada_LanzaExcepcion()
+        {
+            Proyecto proyecto = CrearProyectoCon(_admin);
+            proyecto.AsignarMiembro(_usuarioNoAdmin);
+            
+            Tarea tarea = CrearTarea(1);
+            tarea.AsignarUsuario(_usuarioNoAdmin);
+            
+            proyecto.AgregarTarea(tarea);
+            
+            _gestor.CrearProyecto(proyecto, _admin);
+            
+            _gestor.EliminarMiembroDelProyecto(proyecto.Id, _admin, _usuarioNoAdmin.Id);
+        }
+
+        [TestMethod]
         public void EliminarMiembroDelProyecto_EliminaMiembroOK()
         {
             Proyecto proyecto = CrearProyectoCon(_admin, new() { _usuarioNoAdmin });
