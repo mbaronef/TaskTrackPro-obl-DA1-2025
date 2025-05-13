@@ -9,7 +9,14 @@ namespace Tests.DominioTests;
 public class TareaTests
 {
     private DateTime _fechaInicio = new DateTime(2500, 9, 1);
-    
+
+    [TestMethod]
+    public void ConstructorSinParametrosCreaTareaCorrectamente()
+    {
+        Tarea tarea = new Tarea();
+        Assert.IsNotNull(tarea);
+    }
+
     [TestMethod]
     public void ConstructorConParametrosAsignadosCorrectamente()
     {

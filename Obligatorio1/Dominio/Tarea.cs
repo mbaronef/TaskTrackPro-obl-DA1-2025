@@ -16,7 +16,14 @@ public class Tarea
     public List<Usuario> UsuariosAsignados { get; }
     public List<Recurso> RecursosNecesarios { get; }
     public List<Dependencia> Dependencias { get; }
-    
+
+    public Tarea()
+    {
+        UsuariosAsignados = new List<Usuario>();
+        RecursosNecesarios = new List<Recurso>();
+        Dependencias = new List<Dependencia>();
+    }
+
     public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime unaFechaInicioMasTemprana)
     {
         ValidarStringNoVacioNiNull(unTitulo, "El título de la tarea no puede estar vacío o ser nulo.");
