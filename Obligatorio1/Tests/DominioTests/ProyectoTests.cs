@@ -38,6 +38,7 @@ public class ProyectoTests
         Assert.AreEqual(_miembros, _proyecto.Miembros);
         Assert.AreEqual(fechaInicio, _proyecto.FechaInicio);
         Assert.AreEqual(fechaInicio.AddDays(100000), _proyecto.FechaFinMasTemprana);
+        Assert.AreEqual(_admin.CantidadProyectosAsignados, 1);
     }
 
     [TestMethod]
@@ -223,11 +224,12 @@ public class ProyectoTests
     {
         _proyecto = CrearProyectoCon(_admin);
 
-        Usuario nuevoMiembro = CrearMiembro(2);
+        Usuario nuevoMiembro = CrearMiembro(10);
 
         _proyecto.AsignarMiembro(nuevoMiembro);
 
         Assert.IsTrue(_proyecto.Miembros.Contains(nuevoMiembro));
+        Assert.AreEqual(1, nuevoMiembro.CantidadProyectosAsignados);
     }
 
     [TestMethod]
@@ -261,6 +263,7 @@ public class ProyectoTests
 
         Assert.IsFalse(_proyecto.Miembros.Any(u => u.Id == 2));
         Assert.AreEqual(1, _proyecto.Miembros.Count);
+        Assert.AreEqual(0, miembro.CantidadProyectosAsignados);
     }
 
 
@@ -641,7 +644,7 @@ public class ProyectoTests
 
     private Usuario CrearMiembro(int id)
     {
-        Usuario miembro = new Usuario("Juan", "Perez", new DateTime(1999, 2, 2), "unemail@gmail.com", "Contrase#a3");
+        Usuario miembro = new Usuario("Mateo", "Perez", new DateTime(1999, 2, 2), "unemail@gmail.com", "Contrase#a3");
         miembro.Id = id; // Se hardcodea pero en realidad lo gestiona el repo de usuarios
         return miembro;
     }
