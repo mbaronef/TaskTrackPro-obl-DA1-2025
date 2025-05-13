@@ -14,7 +14,7 @@ public class Usuario
     public string Apellido { get; set; }
     public DateTime FechaNacimiento { get; set; }
     public string Email { get; set; }
-    public List<Notificacion> Notificaciones { get; private set; } = new List<Notificacion>();
+    public List<Notificacion> Notificaciones { get; private set; }
     public bool EsAdministradorSistema { get; set; } = false;
 
     public bool EsAdministradorProyecto { get; set; } = false;
@@ -24,7 +24,8 @@ public class Usuario
     public int CantidadProyectosAsignados { get; set; } = 0;
 
     public Usuario()
-    {
+    { 
+        Notificaciones = new List<Notificacion>();
     }
 
     public Usuario(string nombre, string apellido, DateTime fechaNacimiento, string email, string contrasenaEncriptada)
@@ -39,6 +40,7 @@ public class Usuario
         FechaNacimiento = fechaNacimiento;
         Email = email;
         _contrasenaEncriptada = contrasenaEncriptada;
+        Notificaciones = new List<Notificacion>();
     }
 
     public void EstablecerContrasenaEncriptada(string contrasenaEncriptada)

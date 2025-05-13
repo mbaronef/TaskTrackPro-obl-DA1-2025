@@ -176,6 +176,7 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(_adminSistema, recurso, false);
 
         Usuario adminProyecto = CrearAdministradorProyecto();
+        adminProyecto.EstaAdministrandoUnProyecto = true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
         
         _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
     }
@@ -259,6 +260,19 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(_adminSistema, recurso, false);
         _gestorRecursos.ModificarNombreRecurso(usuario, recurso.Id, "Nuevo nombre");
     }
+    
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void AdminProyectoNoPuedeModificarNombreDeRecursoNoExclusivo()
+    {
+        Recurso recurso = CrearRecurso();
+        _gestorRecursos.AgregarRecurso(_adminSistema, recurso, false);
+
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        adminProyecto.EstaAdministrandoUnProyecto = true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
+        
+        _gestorRecursos.ModificarNombreRecurso(adminProyecto, recurso.Id, "otro nombre");
+    }
 
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
@@ -330,6 +344,20 @@ public class GestorRecursosTests
         
         _gestorRecursos.ModificarTipoRecurso(otroAdminProyecto, recurso.Id, "Nuevo tipo");
     }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void AdminProyectoNoPuedeModificarTipoDeRecursoNoExclusivo()
+    {
+        Recurso recurso = CrearRecurso();
+        _gestorRecursos.AgregarRecurso(_adminSistema, recurso, false);
+
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        adminProyecto.EstaAdministrandoUnProyecto =
+            true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
+
+        _gestorRecursos.ModificarTipoRecurso(adminProyecto, recurso.Id, "otro tipo");
+    }
     
     [TestMethod]
     public void AdminSistemaModificaDescripcionDeRecursoOk()
@@ -380,6 +408,19 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso, true);
         
         _gestorRecursos.ModificarDescripcionRecurso(otroAdminProyecto, recurso.Id, "Nueva descripción");
+    }
+    
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void AdminProyectoNoPuedeModificarDescripcionDeRecursoNoExclusivo()
+    {
+        Recurso recurso = CrearRecurso();
+        _gestorRecursos.AgregarRecurso(_adminSistema, recurso, false);
+
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        adminProyecto.EstaAdministrandoUnProyecto = true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
+        
+        _gestorRecursos.ModificarNombreRecurso(adminProyecto, recurso.Id, "otra descripción");
     }
     
     [TestMethod]

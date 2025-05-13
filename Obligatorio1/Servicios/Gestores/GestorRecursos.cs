@@ -39,10 +39,7 @@ public class GestorRecursos
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
         VerificarRecursoEnUso(recurso, "eliminar");
-        //if (solicitante.EstaAdministrandoUnProyecto)
-        //{
-            VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
-        //}
+        VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         Recursos.Eliminar(recurso.Id);
         NotificarEliminacion(recurso);
     }
@@ -51,10 +48,7 @@ public class GestorRecursos
     {
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        //if (solicitante.EstaAdministrandoUnProyecto)
-        //{
-            VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de");
-        //}
+        VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de");
         string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
         NotificarModificacion(recurso, nombreAnterior);
@@ -64,10 +58,7 @@ public class GestorRecursos
     {
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el tipo de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        //if (solicitante.EstaAdministrandoUnProyecto)
-        //{
-            VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
-        //}
+        VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
         recurso.ModificarTipo(nuevoTipo);
         NotificarModificacion(recurso, recurso.Nombre);
     }
@@ -76,10 +67,7 @@ public class GestorRecursos
     {
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        //if (solicitante.EstaAdministrandoUnProyecto)
-        //{
-            VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
-        //}
+        VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
         recurso.ModificarDescripcion(nuevaDescripcion);
         NotificarModificacion(recurso, recurso.Nombre);
     }
