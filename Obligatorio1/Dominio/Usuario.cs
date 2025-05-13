@@ -21,6 +21,8 @@ public class Usuario
     
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
 
+    public int CantidadProyectosAsignados { get; set; } = 0;
+
     public Usuario()
     {
     }
