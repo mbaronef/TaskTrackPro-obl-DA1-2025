@@ -255,12 +255,10 @@ else
 
                     <div class="mb-3">
                         <label for="duracion" class="form-label">Duración en días</label>
-                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaEdicion.DuracionEnDias" />
-                        <ValidationMessage For="@(() => tareaEdicion.DuracionEnDias)" />
+                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaEdicion.DuracionEnDias" placeholder="Ingrese la duración en días" />
                     </div>
-
                     <div class="mb-3">
-                        <label for="fechaInicio" class="form-label fw-semibold">Fecha de inicio</label>
+                        <label for="fechaInicio" class="form-label">Fecha de inicio</label>
                         <InputDate id="fechaInicio" class="form-control" @bind-Value="tareaEdicion.FechaInicioMasTemprana" />
                     </div>
 
@@ -738,7 +736,7 @@ else
         var erroresFormateados = errores.Select(e => $"<li>{e}</li>");
         mensaje = $"<ul class='list-unstyled mb-0'>{string.Join("", erroresFormateados)}</ul>";
     }
-
+    
     private void CrearTarea(EditContext obj)
     {
         try

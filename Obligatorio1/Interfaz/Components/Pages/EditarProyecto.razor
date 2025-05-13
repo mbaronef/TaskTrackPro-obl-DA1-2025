@@ -88,6 +88,12 @@ else
                 await Sesion.ActualizarSesion();
                 sesionCargada = true;
                 proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                proyectoDTO = new ProyectoDTO
+                {
+                    Nombre = proyecto.Nombre,
+                    Descripcion = proyecto.Descripcion,
+                    FechaInicio = proyecto.FechaInicio
+                };
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }
         }
