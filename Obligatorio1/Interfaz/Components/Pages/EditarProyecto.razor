@@ -119,7 +119,7 @@ else
             GestorProyectos.EliminarProyecto(id, solicitante);
             await Sesion.ActualizarSesion();
             StateHasChanged();
-            Navigator.NavigateTo("/exito/proyecto/{id:int}/eliminado");
+            Navigator.NavigateTo("/exito/proyecto/eliminado");
         }
         catch (Exception e)
         {
