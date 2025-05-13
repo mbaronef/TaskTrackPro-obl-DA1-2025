@@ -127,9 +127,9 @@ else
                             <div class="mb-3">
                                 <label>Contraseña</label>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-secondary" type="button" @onclick="AutogenerarContrasena">Autogenerar</button>
+                                    <button class="btn btn-secondary" type="button" @onclick="MostrarModalAutogenerar">Autogenerar</button>
                                     <button class="btn btn-secondary" type="button" @onclick="MostrarModalCambiarContrasena">Cambiar</button>
-                                    <button class="btn btn-secondary" type="button" @onclick="ReiniciarContrasena">Reiniciar</button>
+                                    <button class="btn btn-secondary" type="button" @onclick="MostrarModalReiniciar">Reiniciar</button>
                                 </div>
 
                                 @if (mostrarExitoContrasenaModal && !string.IsNullOrEmpty(mensajeExitoContrasenaModal))
@@ -268,6 +268,81 @@ else
     </div>
 }
 
+@if (mostrarModalEliminarUsuario)
+{
+    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar eliminación</h5>
+                    <button class="btn-close" @onclick="CancelarEliminarUsuario"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        ¿Está seguro que desea eliminar al usuario
+                        <strong>@usuarioAEditar.Nombre @usuarioAEditar.Apellido</strong>
+                        (@usuarioAEditar.Email)?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" @onclick="ConfirmarEliminarUsuario">Eliminar</button>
+                    <button class="btn btn-secondary" @onclick="CancelarEliminarUsuario">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (mostrarModalAutogenerar)
+{
+    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar autogenerar contraseña</h5>
+                    <button class="btn-close" @onclick="CancelarConfirmacion"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        ¿Está seguro que desea eliminar al usuario
+                        <strong>@usuarioAEditar.Nombre @usuarioAEditar.Apellido</strong>
+                        (@usuarioAEditar.Email)?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" @onclick="ConfirmarAutogenerar">Confirmar</button>
+                    <button class="btn btn-secondary" @onclick="CancelarConfirmacion">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (mostrarModalReiniciar)
+{
+    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar reinicio de contraseña</h5>
+                    <button class="btn-close" @onclick="CancelarConfirmacion"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        ¿Está seguro que desea eliminar al usuario
+                        <strong>@usuarioAEditar.Nombre @usuarioAEditar.Apellido</strong>
+                        (@usuarioAEditar.Email)?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" @onclick="ConfirmarReiniciar">Confirmar</button>
+                    <button class="btn btn-secondary" @onclick="CancelarConfirmacion">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private bool mostrarFormCrear = false;
     
@@ -294,6 +369,9 @@ else
     private string mensajeExitoContrasenaModal = "";
     
     private bool mostrarModalEliminarUsuario = false;
+    
+    private bool mostrarModalAutogenerar = false;
+    private bool mostrarModalReiniciar = false;
     
     private bool sesionCargada = false;
 
@@ -604,6 +682,36 @@ else
                && contrasena.Any(char.IsUpper)
                && contrasena.Any(char.IsDigit)
                && contrasena.Any(c => !char.IsLetterOrDigit(c));
+    }
+    
+    private void MostrarModalAutogenerar()
+    {
+        mostrarModalAutogenerar = true;
+        mostrarExitoContrasenaModal = false;
+    }
+    
+    private void MostrarModalReiniciar()
+    {
+        mostrarModalReiniciar = true;
+        mostrarExitoContrasenaModal = false;
+    }
+    
+    private void CancelarConfirmacion()
+    {
+        mostrarModalAutogenerar = false;
+        mostrarModalReiniciar = false;
+    }
+
+    private void ConfirmarAutogenerar()
+    {
+        AutogenerarContrasena();
+        mostrarModalAutogenerar = false;
+    }
+
+    private void ConfirmarReiniciar()
+    {
+        ReiniciarContrasena();
+        mostrarModalReiniciar = false;
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
