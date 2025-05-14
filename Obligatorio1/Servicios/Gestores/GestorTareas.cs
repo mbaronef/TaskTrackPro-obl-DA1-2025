@@ -19,6 +19,8 @@ public class GestorTareas
     {
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
+        ValidarTareaIniciaDespuesDelProyecto(proyecto, nuevaTarea);
+
         _cantidadTareas++;
         nuevaTarea.Id = _cantidadTareas;
         
@@ -215,5 +217,13 @@ public class GestorTareas
     private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
     {
         proyecto.Tareas.ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
+    }
+    
+    private void ValidarTareaIniciaDespuesDelProyecto(Proyecto proyecto, Tarea nuevaTarea)
+    {
+        if (nuevaTarea.FechaInicioMasTemprana < proyecto.FechaInicio)
+        {
+            throw new ExcepcionServicios("La fecha de inicio de la tarea no puede ser anterior a la fecha de inicio del proyecto.");
+        }
     }
 }
