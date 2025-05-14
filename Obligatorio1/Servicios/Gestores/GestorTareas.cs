@@ -32,6 +32,10 @@ public class GestorTareas
     public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idTareaAEliminar)
     {
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        if (proyecto.Tareas.Any(tarea => tarea.EsSucesoraDe(idTareaAEliminar)))
+        {
+            throw new ExcepcionServicios("No se puede eliminar la tarea porque tiene tareas sucesoras.");
+        }
         proyecto.EliminarTarea(idTareaAEliminar);
 
         CaminoCritico.CalcularCaminoCritico(proyecto);
