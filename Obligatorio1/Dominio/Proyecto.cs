@@ -154,25 +154,33 @@ public class Proyecto
     private void ValidarLargoDescripción(string descripcion)
     {
         if (descripcion.Length > MaximoCaracteresDescripcion)
+        {
             throw new ExcepcionDominio($"La descripción no puede superar los {MaximoCaracteresDescripcion} caracteres");
+        }
     }
-    
+
     private void ValidarTextoObligatorio(string valor, string mensajeError)
     {
         if (string.IsNullOrWhiteSpace(valor))
+        {
             throw new ExcepcionDominio(mensajeError);
+        }
     }
-    
+
     private void ValidarNoNulo(object objeto, string mensajeError)
     {
         if (objeto is null)
+        {
             throw new ExcepcionDominio(mensajeError);
+        }
     }
 
     private void ValidarTareaNoDuplicada(Tarea tarea)
     {
-        if(Tareas.Contains(tarea))
+        if (Tareas.Contains(tarea))
+        {
             throw new ExcepcionDominio("La tarea ya fue agregada al proyecto.");
+        }
     }
 
     private void ValidarUsuarioEnMiembros(int idUsuario)
@@ -184,7 +192,9 @@ public class Proyecto
     private void ValidarQueUsuarioAEliminarNoSeaAdministrador(Usuario usuario)
     {
         if (EsAdministrador(usuario))
+        {
             throw new ExcepcionDominio("No se puede eliminar al administrador actual. Asigne un nuevo administrador antes.");
+        }
     }
 
     private void ValidarAdministradorEsteEnMiembros(Usuario administrador, List<Usuario> miembros)
@@ -198,37 +208,52 @@ public class Proyecto
     private void ValidarUsuarioNoSeaMiembro(Usuario usuario)
     {
         if (Miembros.Contains(usuario))
+        {
             throw new ExcepcionDominio("El miembro ya pertenece al proyecto.");
+        }
     }
 
     private void ValidarFechaInicioMayorAActual(DateTime fecha)
     {
         if (fecha < DateTime.Today)
+        {
             throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
+        }
     }
-    
+
     private void ValidarFechaInicioNoPosteriorAFechaInicioDeTareas(DateTime nuevaFecha)
     {
         if (Tareas.Any(t => nuevaFecha > t.FechaInicioMasTemprana))
+        {
             throw new ExcepcionDominio("La fecha de inicio no puede ser posterior a la de alguna tarea.");
+        }
     }
-    
+
     private void ValidarFechaFinMayorAInicio(DateTime fecha)
     {
         if (fecha < FechaInicio)
-            throw new ExcepcionDominio("La fecha de fin más temprana no puede ser anterior a la fecha de inicio del proyecto.");
+        {
+            throw new ExcepcionDominio(
+                "La fecha de fin más temprana no puede ser anterior a la fecha de inicio del proyecto.");
+        }
     }
-    
+
     private void ValidarFechaFinNoMenorALaDeLasTareas(DateTime fecha)
     {
         if (Tareas.Any(tarea => tarea.FechaFinMasTemprana > DateTime.MinValue && fecha < tarea.FechaFinMasTemprana))
-            throw new ExcepcionDominio("La fecha de fin más temprana no puede ser menor que la fecha de fin de una tarea.");
+        {
+            throw new ExcepcionDominio(
+                "La fecha de fin más temprana no puede ser menor que la fecha de fin de una tarea.");
+        }
     }
-    
+
     private void ValidarFechaInicioMenorAFechaFinMasTemprana(DateTime inicio, DateTime fin)
     {
         if (inicio > fin)
+        {
             throw new ExcepcionDominio("La fecha de inicio no puede ser mayor que la fecha de fin más temprana.");
+        }
+
         if (inicio == fin)
         {
             throw new ExcepcionDominio("La fecha de inicio no puede ser la misma que la fecha de fin más temprana.");

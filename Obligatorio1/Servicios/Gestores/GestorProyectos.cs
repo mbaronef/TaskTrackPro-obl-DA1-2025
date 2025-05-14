@@ -135,9 +135,11 @@ public class GestorProyectos
     public Proyecto ObtenerProyectoDelAdministrador(int idAdministrador)
     {
         Proyecto proyecto = Proyectos.ObtenerTodos().FirstOrDefault(p => p.Administrador.Id == idAdministrador);
-        
+
         if (proyecto == null)
+        {
             throw new ExcepcionServicios("No se encontró un proyecto administrado por ese usuario.");
+        }
 
         return proyecto;
     }
@@ -147,29 +149,36 @@ public class GestorProyectos
         Proyecto proyecto = Proyectos.ObtenerPorId(id);
         
         if(proyecto is null)
+        {
             throw new ExcepcionServicios("El proyecto no existe.");
-        
+        }
         return proyecto;
     }
 
     public void VerificarUsuarioEsAdminProyectoDeEseProyecto(Proyecto proyecto, Usuario usuario)
     {
         if (!proyecto.EsAdministrador(usuario))
+        {
             throw new ExcepcionServicios("Solo el administrador del proyecto puede realizar esta acción.");
+        } 
     }
-    
+
     public void VerificarUsuarioTengaPermisosDeAdminProyecto(Usuario solicitante, String tipoUsuario)
     {
-        if(!solicitante.EsAdministradorProyecto)
+        if (!solicitante.EsAdministradorProyecto)
+        {
             throw new ExcepcionServicios($"El {tipoUsuario} no tiene los permisos de administrador de proyecto.");
+        }
     }
-    
+
     public void VerificarUsuarioMiembroDelProyecto(int idUsuario, Proyecto proyecto)
     {
         Usuario usuario = ObtenerMiembro(idUsuario, proyecto);
-        
+
         if (usuario is null)
+        {
             throw new ExcepcionServicios("El usuario no es miembro del proyecto.");
+        }
     }
 
     private void VerificarNombreNoRepetido(string nuevoNombre)
@@ -177,33 +186,40 @@ public class GestorProyectos
         bool existeOtro = Proyectos.ObtenerTodos().Any(proyecto => proyecto.Nombre == nuevoNombre);
 
         if (existeOtro)
+        {
             throw new ExcepcionServicios($"Ya existe un proyecto con el nombre '{nuevoNombre}'.");
+        }
     }
 
     private void VerificarUsuarioNoAdministraOtroProyecto(Usuario usuario)
     {
         if (usuario.EstaAdministrandoUnProyecto)
+        {
             throw new ExcepcionServicios("El usuario ya está administrando un proyecto.");
+        }
     }
 
     private void VerificarUsuarioEsAdminSistema(Usuario usuario)
     {
         if (!usuario.EsAdministradorSistema)
+        {
             throw new ExcepcionServicios("El solicitante no es administrador de sistema.");
+        }
     }
 
     public void VerificarUsuarioNoTieneTareasAsignadas(int idProyecto, int idMiembroAEliminar)
     {
-        Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         Usuario miembroAEliminar = ObtenerMiembro(idMiembroAEliminar, proyecto);
         if (proyecto.Tareas.Any(tarea => tarea.EsMiembro(miembroAEliminar)))
+        {
             throw new ExcepcionServicios("El usuario tiene tareas asignadas");
+        }
     }
-    
+
     public Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
         Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
-        
         return miembro;
     }
 }

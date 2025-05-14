@@ -42,7 +42,7 @@ public class GestorUsuarios
         {
             throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar usuarios");
         }
-        VerificarUsuarioNoEsMiembroDeProyectos(usuario);
+        VerificarUsuarioNoEsMiembroDeNingunProyecto(usuario);
         Usuarios.Eliminar(usuario.Id);
         string mensajeNotificacion = $"Se eliminó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
@@ -144,7 +144,7 @@ public class GestorUsuarios
         }
     }
 
-    public void VerificarUsuarioNoEsMiembroDeProyectos(Usuario usuario)
+    public void VerificarUsuarioNoEsMiembroDeNingunProyecto(Usuario usuario)
     {
         if(usuario.CantidadProyectosAsignados > 0)
         {
