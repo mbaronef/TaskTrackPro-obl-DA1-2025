@@ -83,11 +83,13 @@ else
     <div class="d-flex gap-2 mt-3">
         @if (esAdminProyecto)
         {
-            <button class="btn btn-secondary" @onclick="MostrarModalAgregar">Agregar nuevo miembro</button>
+            <button class="btn btn-primary" @onclick="MostrarModalAgregar">
+                <i class="bi bi-plus-circle"></i> Agregar nuevo miembro
+            </button>
         }   
         @if (Sesion.UsuarioLogueado.EsAdministradorSistema)
         {
-            <button class="btn btn-secondary mt-2" @onclick="MostrarModalCambioAdmin">Cambiar administrador de proyecto</button>
+            <button class="btn btn-secondary" @onclick="MostrarModalCambioAdmin">Cambiar administrador de proyecto</button>
         }
     </div>
     
@@ -114,7 +116,9 @@ else
                         }
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success" @onclick="AgregarMiembro">Agregar miembro</button>
+                        <button class="btn btn-success" @onclick="AgregarMiembro">
+                            <i class="bi bi-plus-circle"></i> Agregar miembro
+                        </button>
                         <button class="btn btn-secondary" @onclick="CerrarModalAgregar">Cancelar</button>
                     </div>
                 </div>

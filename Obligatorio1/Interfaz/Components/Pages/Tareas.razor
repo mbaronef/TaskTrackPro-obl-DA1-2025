@@ -24,6 +24,7 @@ else
     }
     else
     {
+        <h3>Tareas</h3>
         @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
         {
             <div class="text-center mb-3">
@@ -162,7 +163,9 @@ else
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Crear tarea</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Crear
+                    </button>
                 </div>
             </EditForm>
         </div>
