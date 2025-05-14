@@ -20,7 +20,7 @@
 }
 else
 {
-    <h3>USUARIOS:</h3>
+    <h3>Usuarios:</h3>
 
     @if (!Sesion.UsuarioLogueado.EsAdministradorSistema)
     {
@@ -36,7 +36,10 @@ else
             </div>
         }
         <div class="d-flex justify-content-end mb-3">
-            <button class="btn btn-dark" @onclick="MostrarFormularioCrearUsuario">Crear nuevo usuario</button>
+            <button class="btn btn-dark" @onclick="MostrarFormularioCrearUsuario">
+                <i class="bi bi-plus-circle"></i>
+                Crear usuario
+            </button>
         </div>
 
         @if (mostrarError)
@@ -234,7 +237,9 @@ else
                             }
                         </td>
                         <td>
-                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditarUsuario(usuario.Id)">Editar</button>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditarUsuario(usuario.Id)">
+                                <i class="bi bi-pencil"></i>
+                            </button>
                         </td>
                     </tr>
                 }

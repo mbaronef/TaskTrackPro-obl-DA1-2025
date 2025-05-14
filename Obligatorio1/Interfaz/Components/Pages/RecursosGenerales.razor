@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using Dominio.Excepciones
+@using Servicios.Excepciones
 @using Dominio
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
@@ -95,6 +96,12 @@ else
         </EditForm>
     }
 
+    @if (mostrarErrorEliminar)
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMensajeEliminar
+        </div>
+    }
 
     @if (GestorRecursos.ObtenerRecursosGenerales().Count == 0)
     {
@@ -154,6 +161,8 @@ else
     private string errorMensajeEditar;
     private bool sesionCargada = false;
     private bool esExclusivo = false;
+    private bool mostrarErrorEliminar = false;
+    private string errorMensajeEliminar;
 
 
     private void MostrarFormularioCrearRecurso()
@@ -195,14 +204,14 @@ else
             errorMensaje = $"Error al crear recurso: {ex.Message}";
             mostrarError = true;
         }
-        catch (Exception ex)
+        catch (ExcepcionServicios ex)
         {
             errorMensaje = "Ocurrió un error inesperado al crear el recurso.";
             mostrarError = true;
         }
     }
 
-    private void OcultarError(ChangeEventArgs e)
+    private void OcultarError()
     {
         mostrarError = false;
     }
@@ -260,7 +269,7 @@ else
             errorMensajeEditar = $"Error al editar recurso: {ex.Message}";
             mostrarErrorEditar = true;
         }
-        catch (Exception)
+        catch (ExcepcionServicios)
         {
             errorMensajeEditar = "Ocurrió un error inesperado al editar el recurso.";
             mostrarErrorEditar = true;
@@ -273,15 +282,47 @@ else
         mostrarErrorEditar = false;
     }
 
-    private void OcultarErrorEditar(ChangeEventArgs e)
+    private void OcultarErrorEditar()
     {
         mostrarErrorEditar = false;
     }
-
-    private void EliminarRecurso(int idRecurso)
+    
+    private async void EliminarRecurso(int idRecurso)
     {
-        GestorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
+        try
+        {
+            mostrarErrorEliminar = false;
+            GestorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
+
+            if (mostrarFormEditarRecurso && recursoAEditar != null && recursoAEditar.Id == idRecurso)
+            {
+                mostrarFormEditarRecurso = false;
+                recursoAEditar = null;
+            }
+        }
+        catch (ExcepcionDominio ex)
+        {
+            errorMensajeEliminar = $"No se puede eliminar el recurso: {ex.Message}";
+            mostrarErrorEliminar = true;
+            StateHasChanged();
+            await OcultarErrorEliminarAutomaticamente();
+        }
+        catch (ExcepcionServicios ex)
+        {
+            errorMensajeEliminar = "El recurso está en uso, por lo tanto no se puede eliminar.";
+            mostrarErrorEliminar = true;
+            StateHasChanged();
+            await OcultarErrorEliminarAutomaticamente();
+        }
     }
+
+    private async Task OcultarErrorEliminarAutomaticamente()
+    {
+        await Task.Delay(5000);
+        mostrarErrorEliminar = false;
+        StateHasChanged();
+    }
+
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
