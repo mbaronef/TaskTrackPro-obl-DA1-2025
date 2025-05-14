@@ -7,11 +7,19 @@
 @inject GestorProyectos GestorProyectos
 @inject NavigationManager NavigationManager
 
-    <h3>Diagrama de Gantt</h3>
+
+<h3>Diagrama de Gantt</h3>
+@if (!GestorProyectos.ObtenerProyectoPorId(Id).Tareas.Any())
+{
+    <p>Aún no se han asignado tareas al proyecto. El diagrama se actualizará cuando se añadan tareas.</p>
+}
+else
+{
     <div id="ganttDiagrama"> </div>
     <p style="margin-top: 1rem; font-style: italic; color: #555;">
-    Las tareas del camino crítico están resaltadas en rojo.
+        Las tareas del camino crítico están resaltadas en rojo.
     </p>
+}
 
 @code {
     [Parameter] public int Id { get; set; }
@@ -43,11 +51,10 @@
             {
                 titulo = t.Titulo,
                 fechaInicio = t.FechaInicioMasTemprana.ToString("yyyy-MM-dd"),
-                fechaFin = t.FechaFinMasTemprana.AddDays(1).ToString("yyyy-MM-dd"), // le añadimos un día para representar que la tarea se completa hasta el final del día
+                fechaFin = t.FechaFinMasTemprana.AddDays(1).ToString("yyyy-MM-dd"), // añadimos un día para representar que la tarea se completa hasta el final del día
                 holgura = t.Holgura
             }).ToList();
 
-            Console.WriteLine("Llamando a dibujarGanttConApex...");
             await JSRuntime.InvokeVoidAsync("dibujarGanttConApex", "#ganttDiagrama", tareas);
             graficoDibujado = true;
         }
