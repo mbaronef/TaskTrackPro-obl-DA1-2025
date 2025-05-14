@@ -34,6 +34,9 @@ public class GestorTareas
     public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idTareaAEliminar)
     {
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        
+        ValidarTareaNoTieneSucesora(proyecto, idTareaAEliminar);
+
         proyecto.EliminarTarea(idTareaAEliminar);
 
         CaminoCritico.CalcularCaminoCritico(proyecto);
@@ -219,6 +222,14 @@ public class GestorTareas
         proyecto.Tareas.ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
     }
     
+    private void ValidarTareaNoTieneSucesora(Proyecto proyecto, int idTarea)
+    {
+        if (proyecto.Tareas.Any(tarea => tarea.EsSucesoraDe(idTarea)))
+        {
+            throw new ExcepcionServicios("No se puede eliminar la tarea porque tiene tareas sucesoras.");
+        }
+    }
+
     private void ValidarTareaIniciaDespuesDelProyecto(Proyecto proyecto, Tarea nuevaTarea)
     {
         if (nuevaTarea.FechaInicioMasTemprana < proyecto.FechaInicio)
