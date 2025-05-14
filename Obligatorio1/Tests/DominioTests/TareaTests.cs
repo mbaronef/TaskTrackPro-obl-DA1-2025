@@ -218,7 +218,17 @@ public class TareaTests
         bool resultado = tarea.EsMiembro(usuarioNoAsignado);
         Assert.IsFalse(resultado);
     }
-    
+
+    [TestMethod]
+    public void EsSucesoraDe_DevuelveTrueSiLaTareaTieneDependencias()
+    {
+        Tarea tarea = CrearTareaValida();
+        Dependencia dependencia = CrearDependenciaValida();
+        tarea.AgregarDependencia(dependencia);
+        bool resultado = tarea.EsSucesoraDe(dependencia.Tarea.Id);
+        Assert.IsTrue(resultado);
+    }
+
     [TestMethod]
     public void FechaDeEjecucionInicializadaConMinValuePorDefecto()
     { 
