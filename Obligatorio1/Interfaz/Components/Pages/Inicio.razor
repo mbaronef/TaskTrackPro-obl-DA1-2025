@@ -13,13 +13,13 @@ else
 {
     <div class="container mt-5">
         <div class="text-center mb-4">
-            <h1 class="display-4 text-dark">Bienvenido, @Sesion.UsuarioLogueado.Nombre @Sesion.UsuarioLogueado.Apellido a <strong class="text-dark">TaskTrackPro</strong></h1>
-            <h3 class="lead text-muted">Tu solución integral para la gestión de proyectos.</h3>
+            <h1 class="display-4 titulo-bienvenida">Bienvenido, @Sesion.UsuarioLogueado.Nombre @Sesion.UsuarioLogueado.Apellido a <strong class="text-dark">TaskTrackPro</strong></h1>
+            <h3 class="lead subtitulo">Tu solución integral para la gestión de proyectos.</h3>
         </div>
 
-        <hr class="my-4" />
+        <hr class="my-4 separador" />
 
-        <div class="text-muted">
+        <div class="descripcion">
             <p class="mb-4">
                 <strong>TaskTrackPro</strong> es una aplicación web diseñada para facilitar la organización, seguimiento y planificación de proyectos en equipo. Permite crear y administrar proyectos, asignar tareas con dependencias, establecer fechas clave y calcular automáticamente el camino crítico para optimizar la duración del proyecto.
             </p>
@@ -33,6 +33,43 @@ else
             </p>
         </div>
     </div>
+    
+    /*<style>
+    body {
+        background-color: #f5f1ed;
+    }
+
+    .titulo-bienvenida {
+        color: #252323;
+    }
+
+    .subtitulo {
+        color: #70798c;
+    }
+
+    .separador {
+        border-top: 2px solid #dad2bc;
+        width: 60%;
+        margin: auto;
+    }
+
+    .descripcion {
+        background-color: #dad2bc;
+        border-radius: 1rem;
+        padding: 2rem;
+        color: #252323;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    strong {
+        color: #a99985;
+    }
+
+    p {
+        font-size: 1.1rem;
+    }
+</style>*/
+    
 }
 
 @code {
