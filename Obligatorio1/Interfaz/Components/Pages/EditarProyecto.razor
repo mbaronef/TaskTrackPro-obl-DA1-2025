@@ -20,9 +20,11 @@ else
     <h3 class="text-center mt-4 text-primary-emphasis">Editar Proyecto</h3>
     <div class="row justify-content-center mt-3">
         <div class="col-md-6">
-            @if (!string.IsNullOrWhiteSpace(mensaje))
+            @if (!string.IsNullOrEmpty(mensaje))
             {
-                <div class="alert alert-@tipoAlerta">@((MarkupString)mensaje)</div>
+                <div class="alert alert-@tipoAlerta d-flex align-items-center gap-2 text-center justify-content-center">
+                    <span class="fw-semibold">@((MarkupString)mensaje)</span>
+                </div>
             }
             <EditForm Model="proyectoDTO" OnValidSubmit="@EditarDatosProyecto" OnInvalidSubmit="MostrarErroresValidacion">
                 <DataAnnotationsValidator />
