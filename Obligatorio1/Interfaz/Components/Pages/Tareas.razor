@@ -111,7 +111,7 @@ else
                                     </button>
                                 </div>
                             }
-                            @if (tarea.EsMiembro(Sesion.UsuarioLogueado) && !proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada)
+                            @if (tarea.EsMiembro(Sesion.UsuarioLogueado) && !proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada && tarea.Estado != EstadoTarea.Bloqueada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
                                     <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaEdicionReducida(tarea.Id)">
