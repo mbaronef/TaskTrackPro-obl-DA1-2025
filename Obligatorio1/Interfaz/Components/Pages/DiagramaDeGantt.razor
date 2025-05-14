@@ -1,6 +1,5 @@
 @page "/proyecto/{id:int}/diagrama_de_gantt"
 @using Dominio
-@using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @using Servicios.Utilidades
 @rendermode InteractiveServer
@@ -29,12 +28,12 @@
             }
             catch
             {
-                NavigationManager.NavigateTo("/not-found");
+                NavigationManager.NavigateTo("/Error");
                 return;
             }
             CaminoCritico.CalcularCaminoCritico(proyecto);
-            StateHasChanged(); // Asegurás que el div se renderice primero
-            return; // Esperás hasta el segundo render
+            StateHasChanged(); // Asegurar que el div se renderice primero
+            return; // Esperar hasta el segundo render
         }
 
         if (proyecto != null && !graficoDibujado)
@@ -44,7 +43,7 @@
             {
                 titulo = t.Titulo,
                 fechaInicio = t.FechaInicioMasTemprana.ToString("yyyy-MM-dd"),
-                fechaFin = t.FechaFinMasTemprana.ToString("yyyy-MM-dd"),
+                fechaFin = t.FechaFinMasTemprana.AddDays(1).ToString("yyyy-MM-dd"), // le añadimos un día para representar que la tarea se completa hasta el final del día
                 holgura = t.Holgura
             }).ToList();
 

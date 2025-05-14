@@ -24,7 +24,7 @@ usuarioSoloAdminProyecto.EsAdministradorProyecto = true;
 gestorUsuarios.AgregarUsuario(usuario, usuarioSoloAdminProyecto);
 
 GestorProyectos gestorProyectos = new GestorProyectos();
-gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today.AddDays(1), usuario, new List<Usuario>{usuario}), usuario);
+gestorProyectos.CrearProyecto(new Proyecto("Proyecto A", "Descripcion", DateTime.Today, usuario, new List<Usuario>{usuario}), usuario);
 builder.Services.AddSingleton(gestorProyectos);
 
 GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);

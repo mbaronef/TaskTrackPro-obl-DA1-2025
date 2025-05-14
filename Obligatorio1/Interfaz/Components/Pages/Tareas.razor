@@ -743,7 +743,7 @@ else
         mensaje = $"<ul class='list-unstyled mb-0'>{string.Join("", erroresFormateados)}</ul>";
     }
     
-    private void CrearTarea(EditContext obj)
+    private void CrearTarea()
     {
         try
         {
@@ -762,7 +762,7 @@ else
         }
     }
 
-    private void EditarEstadoTarea(EditContext obj)
+    private void EditarEstadoTarea()
     {
         EstadoTarea nuevoEstado = tareaEdicionEstado.EditoCompletada
             ? EstadoTarea.Completada
@@ -783,7 +783,7 @@ else
         }
     }
 
-    private void GuardarCambiosTarea(EditContext obj)
+    private void GuardarCambiosTarea()
     {
         Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaEdicion.Id);
         Usuario solicitante = Sesion.UsuarioLogueado;
