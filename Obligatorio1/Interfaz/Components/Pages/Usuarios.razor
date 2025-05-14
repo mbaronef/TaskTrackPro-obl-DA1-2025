@@ -274,31 +274,6 @@ else
     </div>
 }
 
-@if (mostrarModalEliminarUsuario)
-{
-    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmar eliminación</h5>
-                    <button class="btn-close" @onclick="CancelarEliminarUsuario"></button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        ¿Está seguro que desea eliminar al usuario
-                        <strong>@usuarioAEditar.Nombre @usuarioAEditar.Apellido</strong>
-                        (@usuarioAEditar.Email)?
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-danger" @onclick="ConfirmarEliminarUsuario">Eliminar</button>
-                    <button class="btn btn-secondary" @onclick="CancelarEliminarUsuario">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
 @if (mostrarModalAutogenerar)
 {
     <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
@@ -310,9 +285,7 @@ else
                 </div>
                 <div class="modal-body">
                     <p>
-                        ¿Está seguro que desea eliminar al usuario
-                        <strong>@usuarioAEditar.Nombre @usuarioAEditar.Apellido</strong>
-                        (@usuarioAEditar.Email)?
+                        ¿Está seguro que desea autogenerar una nueva contraseña?
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -335,9 +308,7 @@ else
                 </div>
                 <div class="modal-body">
                     <p>
-                        ¿Está seguro que desea eliminar al usuario
-                        <strong>@usuarioAEditar.Nombre @usuarioAEditar.Apellido</strong>
-                        (@usuarioAEditar.Email)?
+                        ¿Está seguro que desea reiniciar la contraseña?
                     </p>
                 </div>
                 <div class="modal-footer">
