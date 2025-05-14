@@ -228,6 +228,31 @@ public class TareaTests
         bool resultado = tarea.EsSucesoraDe(dependencia.Tarea.Id);
         Assert.IsTrue(resultado);
     }
+    
+    [TestMethod]
+    public void EsSucesoraDe_DevuelveFalseSiLaTareaDependeDeOtraTarea()
+    {
+        Dependencia dependencia = CrearDependenciaValida();
+        Tarea tarea = CrearTareaValida();
+        Tarea otraTarea = CrearTareaValida();
+        tarea.Id = 2; //se hardcodean ids por simplicidad de tests. Los maneja el gestor
+        otraTarea.Id = 3;
+        tarea.AgregarDependencia(dependencia);
+        
+        bool resultado = tarea.EsSucesoraDe(otraTarea.Id);
+        Assert.IsFalse(resultado);
+    }
+
+    [TestMethod]
+    public void EsSucesoraDe_DevuelveFalseSiNoTieneDependencias()
+    {
+        Tarea tarea = CrearTareaValida();
+        Dependencia dependencia = CrearDependenciaValida();
+        tarea.AgregarDependencia(dependencia);
+        tarea.EliminarDependencia(dependencia.Tarea.Id);
+        bool resultado = tarea.EsSucesoraDe(dependencia.Tarea.Id);
+        Assert.IsFalse(resultado);
+    }
 
     [TestMethod]
     public void FechaDeEjecucionInicializadaConMinValuePorDefecto()
