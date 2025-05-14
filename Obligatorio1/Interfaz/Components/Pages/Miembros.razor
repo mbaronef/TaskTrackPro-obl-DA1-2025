@@ -19,31 +19,33 @@ else if (!Sesion.UsuarioLogueado.EsAdministradorSistema && (GestorProyectos.Obte
 else
 {
     <h3>Miembros</h3>
-    
+
     @if (mostrarMensajeExitoCambioAdmin)
     {
-        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <div class="alert alert-success alert-dismissible fade show mt-3 shadow-sm border-0" role="alert">
             El administrador del proyecto fue actualizado correctamente.
             <button type="button" class="btn-close" @onclick="() => mostrarMensajeExitoCambioAdmin = false"></button>
         </div>
     }
+
     @if (mostrarMensajeExitoAgregar)
     {
-        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <div class="alert alert-success alert-dismissible fade show mt-3 shadow-sm border-0" role="alert">
             El miembro fue agregado exitosamente.
             <button type="button" class="btn-close" @onclick="() => mostrarMensajeExitoAgregar = false"></button>
         </div>
     }
+
     @if (mostrarMensajeExitoEliminar)
     {
-        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <div class="alert alert-success alert-dismissible fade show mt-3 shadow-sm border-0" role="alert">
             El miembro fue eliminado correctamente.
             <button type="button" class="btn-close" @onclick="() => mostrarMensajeExitoEliminar = false"></button>
         </div>
     }
-    
-    <table class="table">
-        <thead>
+
+    <table class="table table-hover border shadow-sm mt-3" style="background-color: #F5F1ED; border-color: #F5F1ED">
+        <thead class="table-light" style="background-color: #252323;">
         <tr>
             <th>Nombre</th>
             <th>Apellido</th>
@@ -80,23 +82,29 @@ else
         }
         </tbody>
     </table>
+
     <div class="d-flex gap-2 mt-3">
         @if (esAdminProyecto)
         {
-            <button class="btn btn-secondary" @onclick="MostrarModalAgregar">Agregar nuevo miembro</button>
-        }   
+            <button class="btn text-white" style="background-color: #A99985;" @onclick="MostrarModalAgregar">
+                Agregar nuevo miembro
+            </button>
+        }
         @if (Sesion.UsuarioLogueado.EsAdministradorSistema)
         {
-            <button class="btn btn-secondary mt-2" @onclick="MostrarModalCambioAdmin">Cambiar administrador de proyecto</button>
+            <button class="btn text-white" style="background-color: #A99985;" @onclick="MostrarModalCambioAdmin">
+                Cambiar administrador de proyecto
+            </button>
         }
     </div>
-    
+
+    @* Modal agregar miembro *@
     @if (mostrarModalAgregar)
     {
         <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
             <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content shadow">
+                    <div class="modal-header" style="background-color: #DAD2BC;">
                         <h5 class="modal-title">Nuevo miembro:</h5>
                         <button class="btn-close" @onclick="CerrarModalAgregar"></button>
                     </div>
@@ -114,20 +122,21 @@ else
                         }
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success" @onclick="AgregarMiembro">Agregar miembro</button>
+                        <button class="btn text-white" style="background-color: #A99985;" @onclick="AgregarMiembro">Agregar miembro</button>
                         <button class="btn btn-secondary" @onclick="CerrarModalAgregar">Cancelar</button>
                     </div>
                 </div>
             </div>
         </div>
     }
-    
+
+    @* Modal eliminar miembro *@
     @if (mostrarModalEliminar)
     {
         <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
             <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content shadow">
+                    <div class="modal-header" style="background-color: #A99985;">
                         <h5 class="modal-title">Confirmar eliminación</h5>
                         <button class="btn-close" @onclick="CancelarEliminar"></button>
                     </div>
@@ -150,12 +159,13 @@ else
             </div>
         </div>
     }
-    
+
+    @* Modal cambiar admin *@
     @if (mostrarModalCambioAdmin)
     {
         <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
             <div class="modal-dialog">
-                <div class="modal-content p-4">
+                <div class="modal-content p-4 shadow">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="modal-title">Administrador</h5>
                         <button class="btn-close" @onclick="CerrarModalCambioAdmin"></button>
@@ -179,14 +189,14 @@ else
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <button class="btn btn-success" @onclick="CambiarAdministrador">Guardar cambios</button>
+                        <button class="btn text-white" style="background-color: #A99985;" @onclick="CambiarAdministrador">Guardar cambios</button>
                     </div>
                 </div>
             </div>
         </div>
     }
-
 }
+
 
 @code {
     [Parameter] public int id { get; set; }

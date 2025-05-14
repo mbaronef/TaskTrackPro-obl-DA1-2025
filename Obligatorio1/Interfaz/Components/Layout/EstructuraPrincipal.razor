@@ -5,39 +5,106 @@
 @inject ServiciosInterfaz.LogicaSesion Sesion
 
 
-<div class="d-flex">
+<div class="layout-container d-flex">
 
     <!-- menu -->
-    <div class="bg-custom-sidebar text-white p-3" style="width: 250px; min-height: 100vh;">
-        <h4 class="text-white">TaskTrackPro</h4>
+    <div class="sidebar p-3">
+        <h4 class="titulo-sidebar">TaskTrackPro</h4>
         <hr/>
-        <NavLink class="nav-link text-white" href="/inicio">Inicio</NavLink>
+        <NavLink class="nav-link link-sidebar" href="/inicio">Inicio</NavLink>
 
         <div class="mt-3">
-            <p class="fw-bold">Proyectos</p>
+            <p class="fw-bold subtitulo-sidebar">Proyectos</p>
             <MisProyectos />
         </div>
 
         <hr/>
-        <NavLink href="/recursosGenerales" class="nav-link text-white">Recursos Generales</NavLink>
+        <NavLink href="/recursosGenerales" class="nav-link link-sidebar">Recursos Generales</NavLink>
         <ItemsParaAdministradores />
-        <NavLink href="/notificaciones" class="nav-link text-white">Notificaciones</NavLink>
+        <NavLink href="/notificaciones" class="nav-link link-sidebar">Notificaciones</NavLink>
     </div>
 
     <div class="flex-grow-1">
-        <div class="d-flex justify-content-end p-2 border-bottom bg-light">
+        <div class="topbar">
             <PerfilUsuario />
         </div>
 
-        <div class="p-4">
+        <div class="contenido">
             @Body
         </div>
     </div>
 </div>
 
 <style>
-    .bg-custom-sidebar {
-        background-color: #252323;
+    .sidebar {
+        width: 250px;
+        min-width: 250px;
+        max-width: 250px;
+        background-color: #252323; /* Color de fondo de la barra lateral */
+        color: #f5f1ed;
+        flex-shrink: 0; /* Evita que se reduzca de tamaño */
+        position: fixed; /* Fija la barra lateral en la pantalla */
+        height: 100vh; /* Altura completa */
+        overflow-y: auto;
+    }
+
+    .titulo-sidebar {
+        color: #f5f1ed;
+    }
+
+    .subtitulo-sidebar {
+        color: #dad2bc;
+    }
+
+    .link-sidebar {
+        color: #f5f1ed;
+        margin-bottom: 0.5rem;
+        transition: background-color 0.2s ease-in-out;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+    }
+
+    .link-sidebar:hover,
+    .link-sidebar.active {
+        background-color: #70798c;
+        color: #f5f1ed;
+        text-decoration: none;
+    }
+
+    .topbar {
+        background-color: #f5f1ed;
+        border-bottom: 2px solid #dad2bc;
+        padding: 0.5rem 1rem;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .contenido {
+        padding: 2rem;
+        background-color: #fff;
+        min-height: 100vh;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .flex-grow-1 {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin-left: 250px;
+        overflow-y: auto;
+    }
+
+    .layout-container {
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+    }
+    
+    html, body {
+        height: 100%;
+        margin: 0;
     }
 </style>
 

@@ -7,20 +7,23 @@
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
 
-@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+@if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
 else
 {
-    <h3 class="text-center mt-4 text-success">
+    <h3 class="exito-heading">
         <i class="bi bi-check-circle-fill me-2"></i>¡Proyecto creado con éxito!
     </h3>
 
     @if (proyecto != null)
     {
-        <div class="container mt-4">
-            <div class="card shadow-sm border-success">
-                <div class="card-body">
+        <div class="container proyecto-exito-container">
+            <div class="card card-exito">
+                <div class="card-header card-header-exito">
+                    <h3 class="mb-0">Información del Proyecto</h3>
+                </div>
+                <div class="card-body card-body-exito">
                     <p>
                         Has creado el proyecto <strong>@proyecto.Nombre</strong> correctamente.
                     </p>
@@ -28,24 +31,24 @@ else
                         Ahora puedes administrarlo desde el menú lateral o acceder directamente a sus secciones principales:
                     </p>
                     <ul class="mt-3 list-unstyled">
-                        <li class="mb-2">
-                            <a href="@($"/proyecto/{proyecto.Id}/tareas")" class="btn btn-outline-success w-100 text-start">
-                                📋 Crear y gestionar tareas
+                        <li class="exito-list-item">
+                            <a href="@($"/proyecto/{proyecto.Id}/tareas")" class="btn exito-btn w-100 text-start">
+                                <i class="bi bi-clipboard-check me-2"></i>Crear y gestionar tareas
                             </a>
                         </li>
-                        <li class="mb-2">
-                            <a href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="btn btn-outline-success w-100 text-start">
-                                🛠️ Gestionar recursos exclusivos
+                        <li class="exito-list-item">
+                            <a href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="btn exito-btn w-100 text-start">
+                                <i class="bi bi-tools me-2"></i>Gestionar recursos exclusivos
                             </a>
                         </li>
-                        <li class="mb-2">
-                            <a href="@($"/proyecto/{proyecto.Id}/miembros")" class="btn btn-outline-success w-100 text-start">
-                                👥 Administrar miembros
+                        <li class="exito-list-item">
+                            <a href="@($"/proyecto/{proyecto.Id}/miembros")" class="btn exito-btn w-100 text-start">
+                                <i class="bi bi-person-lines-fill me-2"></i>Administrar miembros
                             </a>
                         </li>
-                        <li class="mb-2">
-                            <a href="@($"/proyecto/{proyecto.Id}/editar")" class="btn btn-outline-success w-100 text-start">
-                                ✏️ Editar información del proyecto o eliminarlo
+                        <li class="exito-list-item">
+                            <a href="@($"/proyecto/{proyecto.Id}/editar")" class="btn exito-btn w-100 text-start">
+                                <i class="bi bi-pencil-square me-2"></i>Editar información del proyecto o eliminarlo
                             </a>
                         </li>
                     </ul>
@@ -55,9 +58,68 @@ else
     }
     else
     {
-        <p class="text-danger text-center mt-5">No se pudo cargar la información del proyecto.</p>
+        <p class="alert alert-danger">No se pudo cargar la información del proyecto.</p>
     }
 }
+
+<style>
+    .proyecto-exito-container {
+        margin-top: 3rem;
+    }
+
+    .card-exito {
+        border: 1px solid #A99985; /* Borde cálido */
+        border-radius: 0.75rem;
+        background-color: #F5F1ED; /* Fondo claro */
+    }
+
+    .card-header-exito {
+        background-color: #252323; /* Fondo oscuro */
+        color: #F5F1ED; /* Texto blanco */
+        text-align: center;
+        padding: 1rem;
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
+    }
+
+    .card-body-exito {
+        background-color: #DAD2BC; /* Gris claro */
+        color: #333;
+        padding: 2rem;
+        border-bottom-left-radius: 0.75rem;
+        border-bottom-right-radius: 0.75rem;
+    }
+
+    .exito-heading {
+        color: #28a745; /* Verde éxito */
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .exito-btn {
+        background-color: transparent;
+        color: #252323;
+        border: 2px solid #252323;
+        border-radius: 0.5rem;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .exito-btn:hover {
+        background-color: #252323;
+        color: #fff;
+    }
+
+    .exito-list-item {
+        margin-bottom: 1rem;
+    }
+
+    .alert-danger {
+        text-align: center;
+        color: #dc3545;
+        font-weight: 600;
+    }
+</style>
 
 @code {
     [Parameter] public int id { get; set; }

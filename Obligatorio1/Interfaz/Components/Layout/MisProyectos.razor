@@ -20,8 +20,8 @@
     }
     foreach (var proyecto in proyectos)
     {
-        <details class="mb-2">
-            <summary>
+        <details class="mb-2 proyecto-details">
+            <summary class="proyecto-summary">
                 @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
                 {
                     <i class="bi bi-star-fill text-white me-1" title="Administrador del proyecto"></i>
@@ -29,19 +29,56 @@
                 @proyecto.Nombre
             </summary>
             <ul class="list-unstyled ms-3">
-                <li><NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link text-white">Gantt</NavLink></li>
-                <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
-                <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white text-nowrap">Recursos Exclusivos</NavLink></li>
-                <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros</NavLink></li>
+                <li><NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link link-sidebar">Gantt</NavLink></li>
+                <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link link-sidebar">Tareas</NavLink></li>
+                <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link link-sidebar text-nowrap">Recursos Exclusivos</NavLink></li>
+                <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link link-sidebar">Miembros</NavLink></li>
                 @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
                 {
-                    <li><NavLink href="@($"/proyecto/{proyecto.Id}/editar")" class="nav-link text-white">Editar</NavLink></li>
+                    <li><NavLink href="@($"/proyecto/{proyecto.Id}/editar")" class="nav-link link-sidebar">Editar</NavLink></li>
                 }
-                <li><NavLink href="@($"/informacion/proyecto/{proyecto.Id}")" class="nav-link text-white">Información</NavLink></li>
+                <li><NavLink href="@($"/informacion/proyecto/{proyecto.Id}")" class="nav-link link-sidebar">Información</NavLink></li>
             </ul>
         </details>
     }
 }
+
+<style>
+    .proyecto-details {
+        color: #f5f1ed;
+        background-color: transparent;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .proyecto-summary {
+        cursor: pointer;
+        color: #f5f1ed;
+        font-weight: 500;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .proyecto-summary:hover {
+        background-color: #70798c;
+    }
+
+    .link-sidebar {
+        color: #f5f1ed;
+        margin-bottom: 0.25rem;
+        transition: background-color 0.2s ease-in-out;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+    }
+
+    .link-sidebar:hover,
+    .link-sidebar.active {
+        background-color: #70798c;
+        color: #f5f1ed;
+        text-decoration: none;
+    }
+</style>
 
 @code {
     private List<Proyecto> proyectos;

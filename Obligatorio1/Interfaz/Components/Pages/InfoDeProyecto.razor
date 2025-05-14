@@ -16,36 +16,78 @@ else if (proyecto is null)
 }
 else if(proyecto.EsMiembro(Sesion.UsuarioLogueado.Id) || Sesion.EsAdminSistema())
 {
-    <div class="container mt-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-header text-white text-center" style="background-color: #343a40;">
+    <div class="container info-proyecto-container">
+        <div class="card card-proyecto">
+            <div class="card-header card-header-proyecto">
                 <h3 class="mb-0">Información del Proyecto</h3>
             </div>
-            <div class="card-body" style="background-color: #f4f4f4; color: #333;">
-                <div class="row mb-3">
-                    <div class="col-md-4"><strong><i class="bi bi-folder-fill"></i> Nombre:</strong></div>
-                    <div class="col-md-8">@proyecto.Nombre</div>
+            <div class="card-body card-body-proyecto">
+                <div class="row info-row">
+                    <div class="col-md-4 info-label"><strong><i class="bi bi-folder-fill"></i> Nombre:</strong></div>
+                    <div class="col-md-8 info-dato">@proyecto.Nombre</div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-4"><strong><i class="bi bi-pencil-square"></i> Descripción:</strong></div>
-                    <div class="col-md-8">@proyecto.Descripcion</div>
+                    <div class="col-md-4 info-label"><strong><i class="bi bi-pencil-square"></i> Descripción:</strong></div>
+                    <div class="col-md-8 info-dato">@proyecto.Descripcion</div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-4"><strong><i class="bi bi-person-circle"></i> Administrador:</strong></div>
-                    <div class="col-md-8">@proyecto.Administrador.ToString()</div>
+                    <div class="col-md-4 info-label"><strong><i class="bi bi-person-circle"></i> Administrador:</strong></div>
+                    <div class="col-md-8 info-dato">@proyecto.Administrador.ToString()</div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-4"><strong><i class="bi bi-calendar-event"></i> Fecha de Inicio:</strong></div>
-                    <div class="col-md-8">@proyecto.FechaInicio.ToShortDateString()</div>
+                    <div class="col-md-4 info-label"><strong><i class="bi bi-calendar-event"></i> Fecha de Inicio:</strong></div>
+                    <div class="col-md-8 info-dato">@proyecto.FechaInicio.ToShortDateString()</div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-4"><strong><i class="bi bi-calendar-check"></i> Fecha de Fin Estimada:</strong></div>
-                    <div class="col-md-8">@proyecto.FechaFinMasTemprana.ToShortDateString()</div>
+                    <div class="col-md-4 info-label"><strong><i class="bi bi-calendar-check"></i> Fecha de Fin Estimada:</strong></div>
+                    <div class="col-md-8 info-dato">@proyecto.FechaFinMasTemprana.ToShortDateString()</div>
                 </div>
             </div>
         </div>
     </div>
 }
+
+<style>
+    .info-proyecto-container {
+        margin-top: 2rem;
+    }
+
+    .card-proyecto {
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #F5F1ED; /* Color de fondo claro */
+        border-radius: 0.75rem;
+    }
+
+    .card-header-proyecto {
+        background-color: #252323; /* Fondo oscuro */
+        color: white;
+        text-align: center;
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
+        padding: 1rem 1.5rem;
+    }
+
+    .card-body-proyecto {
+        background-color: #DAD2BC;
+        color: #333;
+        padding: 2rem;
+        border-bottom-left-radius: 0.75rem;
+        border-bottom-right-radius: 0.75rem;
+    }
+
+    .info-label {
+        color: #252323;
+    }
+
+    .info-dato {
+        color: #252323;
+    }
+
+    .info-row {
+        margin-bottom: 1.2rem;
+    }
+</style>
 
 @code {
     [Parameter] public int id { get; set; }

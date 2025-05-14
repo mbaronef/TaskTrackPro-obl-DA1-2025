@@ -17,12 +17,12 @@
 }
 else
 {
-    <h3>Recursos Generales</h3>
+    <h3 class="mb-4" style="color: #252323;">Recursos Generales</h3>
 
     @if (Sesion.EsAdminSistema())
     {
-        <button class="btn btn-primary mb-3" @onclick="MostrarFormularioCrearRecurso">
-            <i class="bi bi-plus-circle"></i> Crear recurso
+        <button class="btn mb-3" style="background-color: #A99985; color: white;" @onclick="MostrarFormularioCrearRecurso">
+            <i class="bi bi-plus-circle me-1"></i> Crear recurso
         </button>
     }
 
@@ -36,26 +36,26 @@ else
     @if (mostrarFormCrearRecurso)
     {
         <EditForm Model="nuevoRecurso" OnValidSubmit="CrearRecurso">
-            <DataAnnotationsValidator/>
-            <div class="card mb-4">
-                <div class="card-header">
+            <DataAnnotationsValidator />
+            <div class="card mb-4" style="background-color: #F5F1ED; border: 1px solid #DAD2BC;">
+                <div class="card-header" style="background-color: #DAD2BC; color: #252323;">
                     <strong>Nuevo Recurso</strong>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label>Nombre</label>
-                        <InputText class="form-control" @bind-Value="nuevoRecurso.Nombre" @oninput="OcultarError"/>
+                        <label style="color: #252323;">Nombre</label>
+                        <InputText class="form-control" @bind-Value="nuevoRecurso.Nombre" @oninput="OcultarError" />
                     </div>
                     <div class="mb-3">
-                        <label>Tipo</label>
-                        <InputText class="form-control" @bind-Value="nuevoRecurso.Tipo" @oninput="OcultarError"/>
+                        <label style="color: #252323;">Tipo</label>
+                        <InputText class="form-control" @bind-Value="nuevoRecurso.Tipo" @oninput="OcultarError" />
                     </div>
                     <div class="mb-3">
-                        <label>Descripción</label>
-                        <InputText class="form-control" @bind-Value="nuevoRecurso.Descripcion" @oninput="OcultarError"></InputText>
+                        <label style="color: #252323;">Descripción</label>
+                        <InputText class="form-control" @bind-Value="nuevoRecurso.Descripcion" @oninput="OcultarError" />
                     </div>
-                    <button class="btn btn-success" @onclick="CrearRecurso">Guardar</button>
-                    <button class="btn btn-secondary ms-2" @onclick="CancelarCrearRecurso">Cancelar</button>
+                    <button class="btn" style="background-color: #A99985; color: white;" @onclick="CrearRecurso">Guardar</button>
+                    <button class="btn ms-2" style="background-color: #70798C; color: white;" @onclick="CancelarCrearRecurso">Cancelar</button>
                 </div>
             </div>
         </EditForm>
@@ -71,26 +71,26 @@ else
     @if (mostrarFormEditarRecurso)
     {
         <EditForm Model="recursoAEditar" OnValidSubmit="GuardarCambiosRecurso">
-            <DataAnnotationsValidator/>
-            <div class="card mb-4">
-                <div class="card-header">
+            <DataAnnotationsValidator />
+            <div class="card mb-4" style="background-color: #F5F1ED; border: 1px solid #DAD2BC;">
+                <div class="card-header" style="background-color: #DAD2BC; color: #252323;">
                     <strong>Editar Recurso</strong>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label>Nombre</label>
-                        <InputText class="form-control" @bind-Value="recursoAEditar.Nombre" @oninput="OcultarErrorEditar"/>
+                        <label style="color: #252323;">Nombre</label>
+                        <InputText class="form-control" @bind-Value="recursoAEditar.Nombre" @oninput="OcultarErrorEditar" />
                     </div>
                     <div class="mb-3">
-                        <label>Tipo</label>
-                        <InputText class="form-control" @bind-Value="recursoAEditar.Tipo" @oninput="OcultarErrorEditar"/>
+                        <label style="color: #252323;">Tipo</label>
+                        <InputText class="form-control" @bind-Value="recursoAEditar.Tipo" @oninput="OcultarErrorEditar" />
                     </div>
                     <div class="mb-3">
-                        <label>Descripción</label>
-                        <InputText class="form-control" @bind-Value="recursoAEditar.Descripcion" @oninput="OcultarErrorEditar"/>
+                        <label style="color: #252323;">Descripción</label>
+                        <InputText class="form-control" @bind-Value="recursoAEditar.Descripcion" @oninput="OcultarErrorEditar" />
                     </div>
-                    <button class="btn btn-success" @onclick="GuardarCambiosRecurso">Guardar Cambios</button>
-                    <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEdicionRecurso">Cancelar</button>
+                    <button class="btn" style="background-color: #A99985; color: white;" @onclick="GuardarCambiosRecurso">Guardar Cambios</button>
+                    <button class="btn ms-2" style="background-color: #70798C; color: white;" type="button" @onclick="CancelarEdicionRecurso">Cancelar</button>
                 </div>
             </div>
         </EditForm>
@@ -105,49 +105,51 @@ else
 
     @if (GestorRecursos.ObtenerRecursosGenerales().Count == 0)
     {
-        <p>No hay recursos disponibles.</p>
+        <p style="color: #70798C;">No hay recursos disponibles.</p>
     }
     else
     {
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Descripción</th>
-                @if (Sesion.EsAdminSistema())
-                {
-                    <th></th>
-                    <th></th>
-                }
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosGenerales())
-            {
+        <table class="table table-striped" style="background-color: #F5F1ED;">
+            <thead style="background-color: #DAD2BC; color: #252323;">
                 <tr>
-                    <td>@recurso.Nombre</td>
-                    <td>@recurso.Tipo</td>
-                    <td>@recurso.Descripcion</td>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
                     @if (Sesion.EsAdminSistema())
                     {
-                        <td>
-                            <button class="btn btn-sm btn-secondary" @onclick="() => EditarRecurso(recurso.Id)">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-secondary" @onclick="() => EliminarRecurso(recurso.Id)">
-                                <i class="bi bi-trash3"></i>
-                            </button>
-                        </td>
+                        <th></th>
+                        <th></th>
                     }
                 </tr>
-            }
+            </thead>
+            <tbody>
+                @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosGenerales())
+                {
+                    <tr>
+                        <td>@recurso.Nombre</td>
+                        <td>@recurso.Tipo</td>
+                        <td>@recurso.Descripcion</td>
+                        @if (Sesion.EsAdminSistema())
+                        {
+                            <td>
+                                <button class="btn btn-sm" style="background-color: #70798C; color: white;" @onclick="() => EditarRecurso(recurso.Id)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" style="background-color: #A99985; color: white;" @onclick="() => EliminarRecurso(recurso.Id)">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </td>
+                        }
+                    </tr>
+                }
             </tbody>
         </table>
     }
 }
+
+
 
 @code {
     private bool mostrarFormCrearRecurso = false;
