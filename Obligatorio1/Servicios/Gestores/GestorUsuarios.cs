@@ -15,7 +15,7 @@ public class GestorUsuarios
     public GestorUsuarios()
     {
         AdministradorInicial = CrearUsuario("Admin", "Admin", new DateTime(1999, 01, 01), "admin@sistema.com", _contrasenaPorDefecto);
-        AdministradorInicial.EsAdministradorSistema = true; // primer administrador (con id 0)
+        AdministradorInicial.EsAdministradorSistema = true; 
         Usuarios.Agregar(AdministradorInicial);
     }
     
@@ -138,7 +138,7 @@ public class GestorUsuarios
     
     private void ValidarUsuarioNoEsPrimerAdmin(int id)
     {
-        if (id == 0)
+        if (id == AdministradorInicial.Id)
         {
             throw new ExcepcionServicios("No se puede eliminar al primer administrador del sistema");
         }
