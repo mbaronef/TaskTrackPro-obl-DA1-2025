@@ -32,6 +32,10 @@ public class GestorProyectos
         
         solicitante.EstaAdministrandoUnProyecto = false;
         Proyectos.Eliminar(proyecto.Id);
+        foreach (Usuario miembro in proyecto.Miembros)
+        {
+            miembro.CantidadProyectosAsignados--;
+        }
 
         proyecto.NotificarMiembros($"Se eliminó el proyecto '{proyecto.Nombre}'.");
     }

@@ -136,7 +136,7 @@ public class GestorUsuarios
         }
     }
     
-    private void ValidarUsuarioNoEsPrimerAdmin(int id)
+    public void ValidarUsuarioNoEsPrimerAdmin(int id)
     {
         if (id == AdministradorInicial.Id)
         {
