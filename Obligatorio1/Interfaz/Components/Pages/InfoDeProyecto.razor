@@ -1,0 +1,75 @@
+@page "/informacion/proyecto/{id:int}"
+@using Dominio
+@using Interfaz.ServiciosInterfaz
+@using Servicios.Gestores
+@rendermode InteractiveServer
+@inject GestorProyectos GestorProyectos
+@inject LogicaSesion Sesion
+@inject NavigationManager Navigator
+
+@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+{
+}
+else if (proyecto is null)
+{
+    <p>No se encontró el proyecto</p>
+}
+else if(proyecto.EsMiembro(Sesion.UsuarioLogueado.Id) || Sesion.EsAdminSistema())
+{
+    <div class="container mt-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header text-white text-center" style="background-color: #343a40;">
+                <h3 class="mb-0">Información del Proyecto</h3>
+            </div>
+            <div class="card-body" style="background-color: #f4f4f4; color: #333;">
+                <div class="row mb-3">
+                    <div class="col-md-4"><strong><i class="bi bi-folder-fill"></i> Nombre:</strong></div>
+                    <div class="col-md-8">@proyecto.Nombre</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4"><strong><i class="bi bi-pencil-square"></i> Descripción:</strong></div>
+                    <div class="col-md-8">@proyecto.Descripcion</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4"><strong><i class="bi bi-person-circle"></i> Administrador:</strong></div>
+                    <div class="col-md-8">@proyecto.Administrador.ToString()</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4"><strong><i class="bi bi-calendar-event"></i> Fecha de Inicio:</strong></div>
+                    <div class="col-md-8">@proyecto.FechaInicio.ToShortDateString()</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4"><strong><i class="bi bi-calendar-check"></i> Fecha de Fin Estimada:</strong></div>
+                    <div class="col-md-8">@proyecto.FechaFinMasTemprana.ToShortDateString()</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private Proyecto proyecto;
+    private bool sesionCargada = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !sesionCargada)
+        {
+            bool haySesionActiva = await Sesion.HaySesionActiva();
+
+            if (!haySesionActiva)
+            {
+                Navigator.NavigateTo("/");
+            }
+            else
+            {
+                await Sesion.ActualizarSesion();
+                proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                sesionCargada = true;
+                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+            }
+        }
+    }
+
+}
