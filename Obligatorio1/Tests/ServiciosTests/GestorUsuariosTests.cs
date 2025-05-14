@@ -93,7 +93,7 @@ public class GestorUsuariosTests
     [TestMethod]
     public void GestorNoEliminaPrimerAdministradorSistema()
     {
-        _gestorUsuarios.EliminarUsuario(_adminSistema,0);
+        _gestorUsuarios.EliminarUsuario(_adminSistema,1);
     }
 
     [ExpectedException(typeof(ExcepcionServicios))]
@@ -550,6 +550,13 @@ public class GestorUsuariosTests
         
         Assert.AreEqual(1, usuariosNoEnLista.Count); 
         Assert.AreEqual(usuario3, usuariosNoEnLista.ElementAt(0));
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void ValidarQueUnUsuarioNoEsPrimerAdminLanzaExcepcionConElPrimerAdmin()
+    {
+        _gestorUsuarios.ValidarUsuarioNoEsPrimerAdmin(_adminSistema.Id);
     }
 }
 
