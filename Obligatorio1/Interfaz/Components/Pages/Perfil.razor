@@ -3,6 +3,7 @@
 @using Dominio
 @using Interfaz.DTOs
 @using Interfaz.ServiciosInterfaz
+@using Servicios.Excepciones
 @using Servicios.Gestores
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
@@ -13,9 +14,15 @@
 {
     <div class="card shadow border-0 mb-5 mx-auto" style="max-width: 700px;">
         <div class="card-body">
-            <div class="mb-4 border-bottom pb-3 d-flex align-items-center">
+            <div class="mb-4 border-bottom pb-3 d-flex align-items-center position-relative">
                 <i class="bi bi-person-circle fs-1 text-black me-3"></i>
                 <h4 class="mb-0 text-primary-emphasis">Perfil de Usuario</h4>
+            </div>
+
+            <div class="position-absolute top-0 end-0 mt-3 me-3">
+                <button class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" @onclick="MostrarModalEliminar">
+                    <i class="bi bi-trash"></i> Eliminar usuario
+                </button>
             </div>
 
             <dl class="row">
@@ -131,6 +138,32 @@
     </div>
 </div>
 
+@if (mostrarModalEliminar)
+{
+    <div class="modal fade show d-block" tabindex="-1"
+         style="background-color: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirmar eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CancelarEliminarUsuario"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro que desea eliminar su cuenta? Esta acción no se puede deshacer.</p>
+                    @if (!string.IsNullOrEmpty(errorEliminar))
+                    {
+                        <div class="alert alert-danger mt-2">@errorEliminar</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" @onclick="ConfirmarEliminarUsuario">Eliminar</button>
+                    <button class="btn btn-secondary" @onclick="CancelarEliminarUsuario">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 
 
 @code {
@@ -139,6 +172,8 @@
     private bool mostrarVentanaEmergenteReinciar = false;
     private string mensaje;
     private ModeloCambioContraseña modeloCambio = new ModeloCambioContraseña();
+    private bool mostrarModalEliminar = false;
+    private string errorEliminar = "";
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -220,6 +255,49 @@
         catch (Exception e)
         {
             mensaje = $"Error: {e.Message}";
+        }
+    }
+    
+    private void MostrarModalEliminar()
+    {
+        mostrarModalEliminar = true;
+        errorEliminar = "";
+    }
+
+    private void CancelarEliminarUsuario()
+    {
+        mostrarModalEliminar = false;
+        errorEliminar = "";
+    }
+
+    private async Task ConfirmarEliminarUsuario()
+    {
+        try
+        {
+            try
+            {
+                GestorUsuarios.VerificarUsuarioNoEsMiembroDeNingunProyecto(Sesion.UsuarioLogueado);
+            }
+            catch (ExcepcionServicios ex)
+            {
+                errorEliminar = "No se puede eliminar al usuario, es miembro de proyectos. Para eliminarlo debe eliminarlo previamente de los proyectos que tiene asignados.";
+                return;
+            }
+            try
+            {
+                GestorUsuarios.ValidarUsuarioNoEsPrimerAdmin(Sesion.UsuarioLogueado.Id);
+            }
+            catch (ExcepcionServicios ex)
+            {
+                errorEliminar = "No se puede eliminar al usuario, es el primer administrador.";
+                return;
+            }
+            GestorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, Sesion.UsuarioLogueado.Id);
+            await CerrarSesion();
+        }
+        catch (Exception)
+        {
+            errorEliminar = "Ocurrió un error inesperado al intentar eliminar el usuario.";
         }
     }
     

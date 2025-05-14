@@ -137,6 +137,10 @@ else
                             <strong>@miembroAEliminar?.Nombre @miembroAEliminar?.Apellido</strong>
                             (@miembroAEliminar?.Email)?
                         </p>
+                        @if (mostrarErrorEliminarMiembro)
+                        {
+                            <div class="alert alert-danger mt-2">@errorEliminarMiembro</div>
+                        }
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-danger" @onclick="EliminarMiembro">Eliminar</button>
@@ -208,6 +212,9 @@ else
     private bool mostrarMensajeExitoCambioAdmin = false;
     private bool mostrarMensajeExitoAgregar = false;
     private bool mostrarMensajeExitoEliminar = false;
+    
+    private string errorEliminarMiembro = "";
+    private bool mostrarErrorEliminarMiembro = false;
 
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -275,21 +282,38 @@ else
     private void ConfirmarEliminar(Usuario usuario)
     {
         miembroAEliminar = usuario;
+        mostrarErrorEliminarMiembro = false;
+        errorEliminarMiembro = "";
         mostrarModalEliminar = true;
     }
 
     private void CancelarEliminar()
     {
         mostrarModalEliminar = false;
+        mostrarErrorEliminarMiembro = false;
+        errorEliminarMiembro = "";
     }
 
     private void EliminarMiembro()
     {
-        GestorProyectos.EliminarMiembroDelProyecto(id, Sesion.UsuarioLogueado, miembroAEliminar.Id);
-        miembros.Remove(miembroAEliminar);
-        usuariosNoMiembros.Add(miembroAEliminar);
-        mostrarModalEliminar = false;
-        mostrarMensajeExitoEliminar = true;
+        try
+        {
+            mostrarErrorEliminarMiembro = false;
+            errorEliminarMiembro = "";
+
+            GestorProyectos.VerificarUsuarioNoTieneTareasAsignadas(id, miembroAEliminar.Id);
+
+            GestorProyectos.EliminarMiembroDelProyecto(id, Sesion.UsuarioLogueado, miembroAEliminar.Id);
+            miembros.Remove(miembroAEliminar);
+            usuariosNoMiembros.Add(miembroAEliminar);
+            mostrarModalEliminar = false;
+            mostrarMensajeExitoEliminar = true;
+        }
+        catch (ExcepcionServicios ex)
+        {
+            errorEliminarMiembro = "No se puede eliminar al miembro del proyecto, tiene tareas asignadas. Para eliminarlo debe eliminarlo previamente de las tareas que tiene asignadas.";
+            mostrarErrorEliminarMiembro = true;
+        }
     }
     
     private void MostrarModalCambioAdmin()

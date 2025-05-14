@@ -31,12 +31,13 @@
             <ul class="list-unstyled ms-3">
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link text-white">Gantt</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
-                <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white">Recursos Exclusivos</NavLink></li>
+                <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white text-nowrap">Recursos Exclusivos</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros</NavLink></li>
                 @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
                 {
-                    <li><NavLink href="@($"/proyecto/{proyecto.Id}/editar")" class="nav-link text-white">Editar Proyecto</NavLink></li>
+                    <li><NavLink href="@($"/proyecto/{proyecto.Id}/editar")" class="nav-link text-white">Editar</NavLink></li>
                 }
+                <li><NavLink href="@($"/informacion/proyecto/{proyecto.Id}")" class="nav-link text-white">Información</NavLink></li>
             </ul>
         </details>
     }

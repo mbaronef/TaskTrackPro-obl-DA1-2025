@@ -36,8 +36,8 @@ public class GestorRecursos
 
     public void EliminarRecurso(Usuario solicitante, int idRecurso)
     {
-        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
         VerificarRecursoEnUso(recurso, "eliminar");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         Recursos.Eliminar(recurso.Id);
@@ -46,9 +46,9 @@ public class GestorRecursos
 
     public void ModificarNombreRecurso(Usuario solicitante, int idRecurso, string nuevoNombre)
     {
-        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
-        VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de");
+        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
+        VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de"); 
         string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
         NotificarModificacion(recurso, nombreAnterior);
@@ -56,8 +56,8 @@ public class GestorRecursos
 
     public void ModificarTipoRecurso(Usuario solicitante, int idRecurso, string nuevoTipo)
     {
-        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el tipo de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        VerificarPermisoAdminSistemaOAdminProyecto(solicitante,"modificar el tipo de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
         recurso.ModificarTipo(nuevoTipo);
         NotificarModificacion(recurso, recurso.Nombre);
@@ -65,8 +65,8 @@ public class GestorRecursos
 
     public void ModificarDescripcionRecurso(Usuario solicitante, int idRecurso, string nuevaDescripcion)
     {
-        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
         Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
         recurso.ModificarDescripcion(nuevaDescripcion);
         NotificarModificacion(recurso, recurso.Nombre);
@@ -91,6 +91,15 @@ public class GestorRecursos
             throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
         }
     }
+    
+    private void VerificarPermisoAdminProyectoParaCrearProyecto(Usuario usuario)
+    {
+        if (!usuario.EsAdministradorProyecto)
+        {
+            throw new ExcepcionServicios("Solo el admin de un proyecto puede crear proyectos");
+        }
+    }
+
 
     private void AsociarProyectoQueAdministraARecurso(Usuario administradorProyecto, Recurso recurso)
     {
@@ -109,15 +118,16 @@ public class GestorRecursos
     private void VerificarRecursoExclusivoDelAdministradorProyecto(Usuario administradorProyecto, Recurso recurso,
         string accion)
     {
-        if (recurso.ProyectoAsociado == null)
+        if (administradorProyecto.EsAdministradorSistema)
         {
-            // Es un recurso general
-            if (!administradorProyecto.EsAdministradorSistema)
-            {
-                throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion} recursos generales.");
-            }
             return;
         }
+
+        if (recurso.ProyectoAsociado == null)
+        {
+            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion} recursos generales.");
+        }
+
         Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
         if (!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
         {
