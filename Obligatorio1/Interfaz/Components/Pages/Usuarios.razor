@@ -565,7 +565,7 @@ else
         }
         catch (ExcepcionServicios ex)
         {
-            errorMensajeEditar = ex.Message;
+            errorMensajeEditar = "No se puede eliminar al usuario, es miembro de proyectos. Para eliminarlo debe eliminarlo previamente de los proyectos que tiene asignados.";
             mostrarErrorEditar = true;
         }
         catch (Exception ex)
