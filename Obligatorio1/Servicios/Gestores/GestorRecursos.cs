@@ -91,15 +91,6 @@ public class GestorRecursos
             throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
         }
     }
-    
-    private void VerificarPermisoAdminProyectoParaCrearProyecto(Usuario usuario)
-    {
-        if (!usuario.EsAdministradorProyecto)
-        {
-            throw new ExcepcionServicios("Solo el admin de un proyecto puede crear proyectos");
-        }
-    }
-
 
     private void AsociarProyectoQueAdministraARecurso(Usuario administradorProyecto, Recurso recurso)
     {

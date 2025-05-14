@@ -249,7 +249,6 @@ else
                             <span class="fw-semibold">@((MarkupString)mensaje)</span>
                         </div>
                     }
-
                     <div class="mb-3">
                         <label for="titulo" class="form-label fw-semibold">Título</label>
                         <InputText id="titulo" class="form-control" @bind-Value="tareaEdicion.Titulo"/>
@@ -307,10 +306,10 @@ else
                             <div class="alert alert-warning p-2 mb-2">
                                 <p class="mb-2">¿Estás seguro de que deseas eliminar esta tarea?</p>
                                 <div class="d-flex justify-content-center gap-2">
-                                    <button class="btn btn-danger" @onclick="() => EliminarTarea(tareaEdicion.Id)">
+                                    <button type="button" class="btn btn-danger" @onclick="() => EliminarTarea(tareaEdicion.Id)">
                                         Sí, eliminar
                                     </button>
-                                    <button class="btn btn-secondary" @onclick="() => confirmarEliminacionTarea = false">
+                                    <button type="button" class="btn btn-secondary" @onclick="() => confirmarEliminacionTarea = false">
                                         Cancelar
                                     </button>
                                 </div>
@@ -720,6 +719,7 @@ else
     private void CerrarVentanaEdicion()
     {
         mostrarVentanaEdicion = false;
+        confirmarEliminacionTarea = false;
     }
 
     private void CerrarVentanaEdicionReducida()
