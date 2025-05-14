@@ -180,6 +180,20 @@ public class GestorTareasTests
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ExcepcionServicios))]
+    public void EliminarTareaDelProyecto_LanzaExcepcionSiOtrasTareasDependenDeElla()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        Tarea tarea = CrearTarea();
+        Tarea tareaSucesora = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaSucesora);
+        tareaSucesora.AgregarDependencia(new Dependencia("FS", tarea));
+        
+        _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _admin, tarea.Id);
+    }
+
+    [TestMethod]
     public void EliminarTareaDelProyecto_EliminaTareaOK()
     {
         Proyecto proyecto = CrearYAgregarProyecto(_admin);
