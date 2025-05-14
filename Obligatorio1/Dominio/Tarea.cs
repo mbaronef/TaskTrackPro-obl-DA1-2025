@@ -165,7 +165,12 @@ public class Tarea
     {
         return UsuariosAsignados.Contains(usuario);
     }
-    
+
+    public bool EsSucesoraDe(int idTarea)
+    {
+        return Dependencias.Any(d => d.Tarea.Id == idTarea);
+    }
+
     private void CalcularFechaFinMasTemprana()
     {
         FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias - 1);
