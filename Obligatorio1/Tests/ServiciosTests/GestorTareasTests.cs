@@ -116,6 +116,18 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, otroAdmin, tarea);
     }
 
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void AgregarTareaAlProyecto_LanzaExcepcionSiLaTareaIniciaAntesDelProyecto()
+    {
+        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        Tarea tarea = CrearTarea();
+        tarea.ModificarFechaInicioMasTemprana(proyecto.FechaInicio.AddDays(-1));
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+    }
+    
+    
     [TestMethod]
     public void AgregarTareaAlProyecto_AgregaTareaConIdOK()
     {
