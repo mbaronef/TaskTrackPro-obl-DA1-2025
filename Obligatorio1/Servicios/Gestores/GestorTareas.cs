@@ -204,7 +204,7 @@ public class GestorTareas
 
     private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
     {
-        Tarea tarea = ObtenerTareaPorId(idTarea, idProyecto);
+        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         if (!tarea.RecursosNecesarios.Contains(recurso))
             throw new ExcepcionServicios("El recurso no está asignado a la tarea.");
     }
