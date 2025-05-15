@@ -98,8 +98,9 @@ else
 
         @if (mostrarErrorEditar)
         {
-            <div class="alert alert-danger" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 @errorMensajeEditar
+                <button type="button" class="btn-close" data-bs-dismiss="alert" @onclick="() => mostrarErrorEditar = false" aria-label="Cerrar"></button>
             </div>
         }
 
