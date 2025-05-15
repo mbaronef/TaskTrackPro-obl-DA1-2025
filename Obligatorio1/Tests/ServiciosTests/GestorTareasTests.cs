@@ -739,7 +739,7 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
 
-        string mensajeEsperado = $"Se cambió el miembro {_noAdmin.ToString()} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        string mensajeEsperado = $"Se agregó el miembro {_noAdmin.ToString()} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
         Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
         
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
@@ -810,7 +810,7 @@ public class GestorTareasTests
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
         _gestorTareas.EliminarMiembroDeTarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
 
-        string mensajeEsperado = $"Se cambió el miembro {_noAdmin.ToString()} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        string mensajeEsperado = $"Se eliminó el miembro {_noAdmin.ToString()} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
         Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
         
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
@@ -867,7 +867,7 @@ public class GestorTareasTests
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
         _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
 
-        string mensajeEsperado = $"Se cambió el recurso {recurso.Nombre} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        string mensajeEsperado = $"Se agregó el recurso {recurso.Nombre} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
         Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
         
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
@@ -941,7 +941,7 @@ public class GestorTareasTests
         _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
         _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
 
-        string mensajeEsperado = $"Se cambió el recurso {recurso.Nombre} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        string mensajeEsperado = $"Se eliminó el recurso {recurso.Nombre} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
         Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
         
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
