@@ -14,7 +14,7 @@ public class UsuarioDTO
     public string Apellido { get; set; }
 
     [Required(ErrorMessage = "La fecha de nacimiento es obligatoria.")]
-    public DateTime FechaNacimiento { get; set; } = DateTime.Today;
+    public DateTime FechaNacimiento { get; set; }
 
     [Required(ErrorMessage = "El email no puede ser vacío")]
     [EmailAddress(ErrorMessage = "Formato de email inválido.")]
