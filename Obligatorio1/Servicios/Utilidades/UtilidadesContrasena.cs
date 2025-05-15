@@ -85,26 +85,26 @@ public static class UtilidadesContrasena
         }
     } 
     
-    private static int GenerarNumeroAleatorio(int min, int max, RandomNumberGenerator rng)
+    private static int GenerarNumeroAleatorio(int min, int max, RandomNumberGenerator generadorDeNumerosAleatorio)
     {
         byte[] buffer = new byte[sizeof(uint)]; // uint: entero de 32 bits sin signo. En el buffer se almacena un número aleatorio.
-        rng.GetBytes(buffer); // llena el buffer con números aleatorios
+        generadorDeNumerosAleatorio.GetBytes(buffer); // llena el buffer con números aleatorios
         uint numero = BitConverter.ToUInt32(buffer, 0); // se convierte el buffer en número de tipo uint
         // asegurar que el número esté en el rango
         int rango = max - min + 1;
         return (int)(numero % rango) + min;
     } 
-    private static char GenerarCaracterAleatorio(string caracteres, RandomNumberGenerator rng)
+    private static char GenerarCaracterAleatorio(string caracteres, RandomNumberGenerator generadorDeNumerosAleatorio)
     {
-        int indice = GenerarNumeroAleatorio(0, caracteres.Length - 1, rng);
+        int indice = GenerarNumeroAleatorio(0, caracteres.Length - 1, generadorDeNumerosAleatorio);
         return caracteres[indice];
     } 
-    private static string MezclarCaracteres(string input, RandomNumberGenerator rng)
+    private static string MezclarCaracteres(string input, RandomNumberGenerator generadorDeNumerosAleatorio)
     {
         char[] array = input.ToCharArray(); // Convierte la cadena en un array de caracteres para poder recorrerla char a char
         for (int i = array.Length - 1; i > 0; i--)
         { //shuffle
-            int j = GenerarNumeroAleatorio(0, i, rng);
+            int j = GenerarNumeroAleatorio(0, i, generadorDeNumerosAleatorio);
             (array[i], array[j]) = (array[j], array[i]);
         }
         return new string(array); // Convierte el array de nuevo a una cadena

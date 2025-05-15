@@ -5,14 +5,14 @@ namespace Dominio;
 public class Tarea
 {
     public int Id {get; set;}
-    public string Titulo { get; set; }
-    public string Descripcion { get; set; }
-    public int DuracionEnDias { get; set; }
+    public string Titulo { get; private set; }
+    public string Descripcion { get; private set; }
+    public int DuracionEnDias { get; private set; }
     public DateTime FechaInicioMasTemprana { get; private set; }
     public DateTime FechaFinMasTemprana { get; private set; }
     public DateTime FechaDeEjecucion { get; private set; } = DateTime.MinValue;
     public EstadoTarea Estado { get; private set; } = EstadoTarea.Pendiente;
-    public float Holgura {get; set;}
+    public int Holgura {get; set;}
     public List<Usuario> UsuariosAsignados { get; }
     public List<Recurso> RecursosNecesarios { get; }
     public List<Dependencia> Dependencias { get; }
@@ -24,16 +24,16 @@ public class Tarea
         Dependencias = new List<Dependencia>();
     }
 
-    public Tarea(string unTitulo, string unDescripcion, int unaDuracionEnDias,  DateTime unaFechaInicioMasTemprana)
+    public Tarea(string titulo, string descripcion, int duracionEnDias,  DateTime fechaInicioMasTemprana)
     {
-        ValidarStringNoVacioNiNull(unTitulo, "El título de la tarea no puede estar vacío o ser nulo.");
-        ValidarIntNoNegativoNiCero(unaDuracionEnDias, "La duración no puede ser un número negativo.");
-        ValidarStringNoVacioNiNull(unDescripcion, "La descripción no puede estar vacía ni nula.");
-        ValidarFechaInicio(unaFechaInicioMasTemprana);
-        Titulo = unTitulo;
-        Descripcion = unDescripcion;
-        DuracionEnDias = unaDuracionEnDias;
-        FechaInicioMasTemprana  = unaFechaInicioMasTemprana;
+        ValidarStringNoVacioNiNull(titulo, "El título de la tarea no puede estar vacío o ser nulo.");
+        ValidarIntNoNegativoNiCero(duracionEnDias, "La duración no puede ser un número negativo.");
+        ValidarStringNoVacioNiNull(descripcion, "La descripción no puede estar vacía ni nula.");
+        ValidarFechaInicio(fechaInicioMasTemprana);
+        Titulo = titulo;
+        Descripcion = descripcion;
+        DuracionEnDias = duracionEnDias;
+        FechaInicioMasTemprana  = fechaInicioMasTemprana;
         Estado = EstadoTarea.Pendiente;
         UsuariosAsignados = new List<Usuario>();
         RecursosNecesarios = new List<Recurso>();
@@ -56,7 +56,7 @@ public class Tarea
         }
         else if (nuevoEstado == EstadoTarea.Completada)
         {
-            LiberaRecursos();
+            LiberarRecursos();
             FechaDeEjecucion = DateTime.Today;
             FechaFinMasTemprana = DateTime.Today;
             DuracionEnDias = (int)(FechaFinMasTemprana - FechaInicioMasTemprana).TotalDays + 1;
@@ -71,7 +71,7 @@ public class Tarea
     }
     public void EliminarUsuario(int idUsuario)
     {
-        ListaEsNullLanzaExcepcion();
+        VerificarMiembrosNoVacia();
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsuario);
         ValidarObjetoNoNull(usuarioAEliminar,"El usuario no está asignado a la tarea.");
         UsuariosAsignados.Remove(usuarioAEliminar);
@@ -113,10 +113,10 @@ public class Tarea
         Titulo = tituloNuevo;
     }
     
-    public void ModificarDescripcion(string nuevaDesc)
+    public void ModificarDescripcion(string nuevaDescripcion)
     {
-        ValidarStringNoVacioNiNull(nuevaDesc,"La descripción no puede estar vacía");
-        Descripcion = nuevaDesc;
+        ValidarStringNoVacioNiNull(nuevaDescripcion,"La descripción no puede estar vacía");
+        Descripcion = nuevaDescripcion;
     }
     
     public void ModificarDuracion(int nuevaDuracion)
@@ -188,7 +188,7 @@ public class Tarea
             throw new ExcepcionDominio("La duración no puede ser cero o negativa.");
     }
     
-    private void ListaEsNullLanzaExcepcion()
+    private void VerificarMiembrosNoVacia()
     {
         if (!UsuariosAsignados.Any())
         {
@@ -303,7 +303,7 @@ public class Tarea
         return Dependencias.FirstOrDefault(d =>d.Tarea.Id  == id);
     }
 
-    private void LiberaRecursos()
+    private void LiberarRecursos()
     {
         foreach (var recurso in RecursosNecesarios)
         {

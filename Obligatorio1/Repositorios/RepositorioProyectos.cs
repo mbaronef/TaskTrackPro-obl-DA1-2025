@@ -3,7 +3,7 @@ using Repositorios.Interfaces;
 
 namespace Repositorios;
 
-public class RepositorioProyectos : IRepositorioProyectos
+public class RepositorioProyectos : IRepositorio<Proyecto>
 {
     private List<Proyecto> _proyectos;
     private static int _cantidadProyectos;
@@ -32,59 +32,5 @@ public class RepositorioProyectos : IRepositorioProyectos
     public List<Proyecto> ObtenerTodos()
     {
         return _proyectos;
-    }
-
-    public void ModificarNombre(int idProyecto, string nombre)
-    {
-        Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.ModificarNombre(nombre);
-    }
-
-    public void ModificarDescripcion(int idProyecto, string descripcion)
-    {
-        Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.ModificarDescripcion(descripcion);
-    }
-
-    public void ModificarFechaInicio(int idProyecto, DateTime fechaInicio)
-    {
-        Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.ModificarFechaInicio(fechaInicio);
-    }
-
-    public void ModificarFechaFinMasTemprana(int idProyecto, DateTime fechaFinMasTemprana)
-    {
-        Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.ModificarFechaFinMasTemprana(fechaFinMasTemprana);
-    }
-
-    public void ModificarAdministrador(int idProyecto, Usuario administrador)
-    {
-        Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.AsignarNuevoAdministrador(administrador);
-    }
-
-    public void AgregarTarea(int idProyecto, Tarea tarea)
-    {
-        Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.AgregarTarea(tarea);
-    }
-
-    public void EliminarTarea(int idProyecto, int idTarea)
-    {
-        Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.EliminarTarea(idTarea);
-    }
-
-    public void AgregarMiembro(int idProyecto, Usuario miembro)
-    {
-        Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.AsignarMiembro(miembro);
-    }
-
-    public void EliminarMiembro(int idProyecto, int idMiembro)
-    {
-        Proyecto proyecto = ObtenerPorId(idProyecto);
-        proyecto.EliminarMiembro(idMiembro);
     }
 }

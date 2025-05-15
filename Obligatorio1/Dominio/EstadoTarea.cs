@@ -2,8 +2,8 @@ namespace Dominio;
 
 public enum EstadoTarea
 {
+    Bloqueada,
     Pendiente,
     EnProceso,
-    Bloqueada,
     Completada
 }

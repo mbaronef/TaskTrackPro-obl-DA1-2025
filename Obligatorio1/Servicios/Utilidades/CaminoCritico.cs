@@ -7,7 +7,7 @@ public static class CaminoCritico
 { 
     public static void CalcularCaminoCritico(Proyecto proyecto)
     {
-        if (ProyectoTieneTareas(proyecto))
+        if (proyecto.TieneTareas())
         {
             List<Tarea> tareas = proyecto.Tareas;
             List<Tarea> tareasOrdenTopologico = OrdenarTopologicamente(tareas);
@@ -151,10 +151,5 @@ public static class CaminoCritico
                     : sucesora.FechaInicioMasTemprana))
             .ToList();
         return posiblesLimites.Min();
-    }
-    
-    private static bool ProyectoTieneTareas(Proyecto proyecto)
-    {
-        return proyecto.Tareas.Any();
     }
 }

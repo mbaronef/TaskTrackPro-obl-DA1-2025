@@ -5,8 +5,12 @@ namespace Repositorios;
 
 public class RepositorioUsuarios : IRepositorioUsuarios
 {
-    private List<Usuario> _usuarios = new List<Usuario>();
+    private List<Usuario> _usuarios;
     private static int _cantidadUsuarios;
+
+    public RepositorioUsuarios() {
+        _usuarios = new List<Usuario>();
+    }
 
     public void Agregar(Usuario objeto)
     {
@@ -33,12 +37,6 @@ public class RepositorioUsuarios : IRepositorioUsuarios
     public Usuario ObtenerUsuarioPorEmail(string email)
     {
         return _usuarios.Find(usuario => usuario.Email == email);
-    }
-
-    public void ActualizarContrasena(int idUsuario, string contrasenaEncriptada)
-    {
-        Usuario usuario = ObtenerPorId(idUsuario);
-        usuario.EstablecerContrasenaEncriptada(contrasenaEncriptada);
     }
 }
     

@@ -8,7 +8,7 @@ namespace Servicios.Gestores;
 public class GestorProyectos
 {
     public RepositorioProyectos Proyectos { get; } = new RepositorioProyectos();
-    
+
     public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
     {
         VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
@@ -167,7 +167,7 @@ public class GestorProyectos
         } 
     }
 
-    public void VerificarUsuarioTengaPermisosDeAdminProyecto(Usuario solicitante, String tipoUsuario)
+    public void VerificarUsuarioTengaPermisosDeAdminProyecto(Usuario solicitante, string tipoUsuario)
     {
         if (!solicitante.EsAdministradorProyecto)
         {
@@ -183,6 +183,26 @@ public class GestorProyectos
         {
             throw new ExcepcionServicios("El usuario no es miembro del proyecto.");
         }
+    }
+    
+    public void VerificarUsuarioNoTieneTareasAsignadas(int idProyecto, int idMiembroAEliminar)
+    {
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
+        Usuario miembroAEliminar = ObtenerMiembro(idMiembroAEliminar, proyecto);
+        if (proyecto.Tareas.Any(tarea => tarea.EsMiembro(miembroAEliminar)))
+        {
+            throw new ExcepcionServicios("El usuario tiene tareas asignadas");
+        }
+    }
+
+    public Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
+    {
+        Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
+        return miembro;
+    }
+    public void NotificarAdministradoresDeProyectos(List<Proyecto> proyectos, string mensaje)
+    {
+        proyectos.ForEach(proyecto => proyecto.NotificarAdministrador(mensaje));
     }
 
     private void VerificarNombreNoRepetido(string nuevoNombre)
@@ -209,21 +229,5 @@ public class GestorProyectos
         {
             throw new ExcepcionServicios("El solicitante no es administrador de sistema.");
         }
-    }
-
-    public void VerificarUsuarioNoTieneTareasAsignadas(int idProyecto, int idMiembroAEliminar)
-    {
-        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
-        Usuario miembroAEliminar = ObtenerMiembro(idMiembroAEliminar, proyecto);
-        if (proyecto.Tareas.Any(tarea => tarea.EsMiembro(miembroAEliminar)))
-        {
-            throw new ExcepcionServicios("El usuario tiene tareas asignadas");
-        }
-    }
-
-    public Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
-    {
-        Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
-        return miembro;
     }
 }
