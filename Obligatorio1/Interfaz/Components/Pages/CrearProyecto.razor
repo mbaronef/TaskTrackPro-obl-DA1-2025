@@ -18,9 +18,11 @@ else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnP
 
     <div class="row justify-content-center mt-3">
         <div class="col-md-6">
-            @if (!string.IsNullOrWhiteSpace(mensaje))
-            {
-                <div class="alert alert-@tipoAlerta">@((MarkupString)mensaje)</div>
+            @if (!string.IsNullOrEmpty(mensaje))
+            { 
+                <div class="alert alert-@tipoAlerta d-flex align-items-center gap-2 text-center justify-content-center">
+                    <span class="fw-semibold">@((MarkupString)mensaje)</span>
+                </div>
             }
             <EditForm Model="nuevoProyecto" OnValidSubmit="@CrearNuevoProyecto" OnInvalidSubmit="MostrarErroresValidacion">
                 <DataAnnotationsValidator />
@@ -96,9 +98,22 @@ else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnP
     
     private void MostrarErroresValidacion(EditContext editContext)
     {
-        var errores = editContext.GetValidationMessages()
-            .Select(e => $"<li>{e}</li>");
-        mensaje = $"<ul>{string.Join("", errores)}</ul>";
+        var errores = new List<string>();
+
+        foreach (var error in editContext.GetValidationMessages())
+        {
+            if (error.Contains("must be a date"))
+            {
+                errores.Add("La fecha de inicio debe ser una fecha válida.");
+            }
+            else
+            {
+                errores.Add(error);
+            }
+        }
+
+        var erroresFormateados = errores.Select(e => $"<li>{e}</li>");
+        mensaje = $"<ul class='list-unstyled mb-0'>{string.Join("", erroresFormateados)}</ul>";
         tipoAlerta = "danger";
     }
 }

@@ -25,7 +25,7 @@ public class ProyectoDTO
     {
         if (fecha < DateTime.Today)
         {
-            return new ValidationResult("La fecha de inicio debe ser hoy o en el futuro.");
+            return new ValidationResult("La fecha de inicio debe ser la actual o posterior.");
         }
 
         return ValidationResult.Success;

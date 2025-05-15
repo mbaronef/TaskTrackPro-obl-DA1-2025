@@ -98,8 +98,9 @@ else
 
         @if (mostrarErrorEditar)
         {
-            <div class="alert alert-danger" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 @errorMensajeEditar
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
 
@@ -528,7 +529,7 @@ else
         }
     }
 
-    private void EliminarUsuario()
+    private async void EliminarUsuario()
     {
         try
         {

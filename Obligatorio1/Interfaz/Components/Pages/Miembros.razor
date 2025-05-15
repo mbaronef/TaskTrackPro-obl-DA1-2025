@@ -332,7 +332,7 @@ else
         mostrarModalCambioAdmin = false;
     }
 
-    private void CambiarAdministrador()
+    private async void CambiarAdministrador()
     {
         mostrarErrorCambioAdmin = false;
         errorMensajeCambioAdmin = "";
@@ -348,6 +348,8 @@ else
         {
             GestorProyectos.CambiarAdministradorDeProyecto(Sesion.UsuarioLogueado, id, idNuevoAdmin.Value);
             proyecto.Administrador = miembros.First(u => u.Id == idNuevoAdmin.Value);
+            await Sesion.ActualizarSesion();
+            StateHasChanged();
             esAdminProyecto = proyecto.Administrador.Id == Sesion.UsuarioLogueado.Id;
             mostrarModalCambioAdmin = false;
             mostrarMensajeExitoCambioAdmin = true;

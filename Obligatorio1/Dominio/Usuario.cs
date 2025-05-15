@@ -11,9 +11,9 @@ public class Usuario
 
     public int Id { get; set; }
     public string Nombre { get; set; }
-    public string Apellido { get; private set; }
-    public DateTime FechaNacimiento { get; private set; }
-    public string Email { get; private set; }
+    public string Apellido { get; set; }
+    public DateTime FechaNacimiento { get; set; }
+    public string Email { get; set; }
     public List<Notificacion> Notificaciones { get; private set; }
     public bool EsAdministradorSistema { get; set; } = false;
 
