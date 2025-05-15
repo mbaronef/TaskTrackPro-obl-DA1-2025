@@ -144,7 +144,7 @@ public class GestorTareas
         
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.AsignarUsuario(nuevoMiembro);
-        NotificarCambio($"miembro {nuevoMiembro.ToString()}", idTarea, idProyecto);
+        NotificarAgregar($"miembro {nuevoMiembro.ToString()}", idTarea, idProyecto);
     }
 
     public void EliminarMiembroDeTarea(Usuario solicitante, int idTarea, int idProyecto, Usuario miembro)
@@ -154,7 +154,7 @@ public class GestorTareas
         
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.EliminarUsuario(miembro.Id);
-        NotificarCambio($"miembro {miembro.ToString()}", idTarea, idProyecto);
+        NotificarEliminar($"miembro {miembro.ToString()}", idTarea, idProyecto);
     }
     
     public void AgregarRecursoATarea(Usuario solicitante, int idTarea, int idProyecto, Recurso nuevoRecurso)
@@ -163,7 +163,7 @@ public class GestorTareas
         
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.AgregarRecurso(nuevoRecurso);
-        NotificarCambio($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
+        NotificarAgregar($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
     }
 
     public void EliminarRecursoDeTarea(Usuario solicitante, int idTarea, int idProyecto, Recurso recurso)
@@ -173,7 +173,7 @@ public class GestorTareas
         
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.EliminarRecurso(recurso.Id);
-        NotificarCambio($"recurso {recurso.Nombre}", idTarea, idProyecto);
+        NotificarEliminar($"recurso {recurso.Nombre}", idTarea, idProyecto);
     }
     
     private Proyecto ObtenerProyectoValidandoAdmin(int idProyecto, Usuario solicitante)
@@ -195,7 +195,19 @@ public class GestorTareas
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
         proyecto.NotificarMiembros($"Se cambió el {campo} de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
+
+    private void NotificarEliminar(string campo, int idTarea, int idProyecto)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+        proyecto.NotificarMiembros($"Se eliminó el {campo} de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
+    }
     
+    private void NotificarAgregar(string campo, int idTarea, int idProyecto)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+        proyecto.NotificarMiembros($"Se agregó el {campo} de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
+    }
+
     private void VerificarEstadoEditablePorUsuario(EstadoTarea estado)
     {
         if (estado != EstadoTarea.EnProceso && estado != EstadoTarea.Completada)
