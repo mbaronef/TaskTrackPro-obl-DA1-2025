@@ -122,7 +122,7 @@ public class GestorTareas
         catch (ExcepcionServicios ex)
         {
             tarea.EliminarDependencia(dependencia.Tarea.Id);
-            throw new ExcepcionServicios(ex.Message);
+            throw new ExcepcionServicios("No se puede  agregar la dependencia de la tarea ya que se generarían dependencias cíclicas.");
         }
 
         proyecto.NotificarMiembros($"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{proyecto.Nombre}' del tipo {tipoDependencia} con la tarea id {tareaDependencia.Id}.");
