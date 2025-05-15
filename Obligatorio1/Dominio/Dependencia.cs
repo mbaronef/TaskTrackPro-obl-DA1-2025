@@ -7,13 +7,13 @@ public class Dependencia
     public string Tipo { get; private set; }
     public Tarea Tarea { get; private set; }
 
-    public Dependencia(string unTipo, Tarea unaTarea)
+    public Dependencia(string tipo, Tarea tarea)
     {
-        ValidarNoVacio(unTipo,"No se puede ingresar un tipo vacío.");
-        ValidarTipoValido(unTipo, "El tipo de dependencia debe ser 'FF' o 'FS'.");
-        ValidarTareaNoNula(unaTarea, "Una tarea no puede ser nula.");
-        this.Tipo = unTipo;
-        this.Tarea = unaTarea;
+        ValidarNoVacio(tipo,"No se puede ingresar un tipo vacío.");
+        ValidarTipoValido(tipo, "El tipo de dependencia debe ser 'FF' o 'FS'.");
+        ValidarTareaNoNula(tarea, "Una tarea no puede ser nula.");
+        Tipo = tipo;
+        Tarea = tarea;
     }
     private void ValidarNoVacio(string valor, string mensajeError)
     {

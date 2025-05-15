@@ -36,13 +36,13 @@ public class GestorUsuarios
 
     public void EliminarUsuario(Usuario solicitante, int id)
     {
-        ValidarUsuarioNoEsPrimerAdmin(id);
+        ValidarUsuarioNoEsAdministradorInicial(id);
         Usuario usuario = ObtenerUsuarioPorId(id);
         if (!solicitante.EsAdministradorSistema && !solicitante.Equals(usuario))
         {
             throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar usuarios");
         }
-        VerificarUsuarioNoEsMiembroDeNingunProyecto(usuario);
+        VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         Usuarios.Eliminar(usuario.Id);
         string mensajeNotificacion = $"Se eliminó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
@@ -127,24 +127,16 @@ public class GestorUsuarios
     {
         return Usuarios.ObtenerTodos().Except(usuarios).ToList();
     }
-
-    private void VerificarPermisoAdministradorSistema(Usuario usuario, string accion)
-    {
-        if (!usuario.EsAdministradorSistema)
-        {
-            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
-        }
-    }
     
-    public void ValidarUsuarioNoEsPrimerAdmin(int id)
+    public void ValidarUsuarioNoEsAdministradorInicial(int idUsuario)
     {
-        if (id == AdministradorInicial.Id)
+        if (idUsuario == AdministradorInicial.Id)
         {
             throw new ExcepcionServicios("No se puede eliminar al primer administrador del sistema");
         }
     }
 
-    public void VerificarUsuarioNoEsMiembroDeNingunProyecto(Usuario usuario)
+    public void VerificarUsuarioNoEsMiembroDeProyecto(Usuario usuario)
     {
         if(usuario.CantidadProyectosAsignados > 0)
         {
@@ -152,6 +144,13 @@ public class GestorUsuarios
         }
     }
     
+    private void VerificarPermisoAdministradorSistema(Usuario usuario, string accion)
+    {
+        if (!usuario.EsAdministradorSistema)
+        {
+            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
+        }
+    }
     private void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(Usuario usuario)
     {
         if (usuario.EstaAdministrandoUnProyecto)

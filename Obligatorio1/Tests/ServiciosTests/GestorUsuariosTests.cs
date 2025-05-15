@@ -556,7 +556,7 @@ public class GestorUsuariosTests
     [TestMethod]
     public void ValidarQueUnUsuarioNoEsPrimerAdminLanzaExcepcionConElPrimerAdmin()
     {
-        _gestorUsuarios.ValidarUsuarioNoEsPrimerAdmin(_adminSistema.Id);
+        _gestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(_adminSistema.Id);
     }
 }
 

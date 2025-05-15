@@ -276,7 +276,7 @@
         {
             try
             {
-                GestorUsuarios.VerificarUsuarioNoEsMiembroDeNingunProyecto(Sesion.UsuarioLogueado);
+                GestorUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(Sesion.UsuarioLogueado);
             }
             catch (ExcepcionServicios ex)
             {
@@ -285,7 +285,7 @@
             }
             try
             {
-                GestorUsuarios.ValidarUsuarioNoEsPrimerAdmin(Sesion.UsuarioLogueado.Id);
+                GestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(Sesion.UsuarioLogueado.Id);
             }
             catch (ExcepcionServicios ex)
             {

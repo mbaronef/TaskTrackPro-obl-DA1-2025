@@ -4,7 +4,7 @@ namespace Dominio;
 
 public class Proyecto
 {
-    private const int MaximoCaracteresDescripcion = 400;
+    private static int _maximoCaracteresDescripcion = 400;
     public int Id { get; set; }
     public string Nombre { get; set; }
     public string Descripcion { get; set; }
@@ -23,15 +23,15 @@ public class Proyecto
         ValidarNoNulo(administrador, "El proyecto debe tener un administrador.");
         ValidarNoNulo(miembros,"La lista de miembros no puede ser null.");
         ValidarLargoDescripción(descripcion);
-        ValidarAdministradorEsteEnMiembros(administrador, miembros);
         ValidarFechaInicioMayorAActual(fechaInicio);
         
+        Miembros = miembros;
+        ValidarAdministradorEsteEnMiembros(administrador);
         
         Nombre = nombre;
         Descripcion = descripcion;
         Tareas = new List<Tarea>();
         Administrador = administrador;
-        Miembros = miembros;
         FechaInicio = fechaInicio;
         FechaFinMasTemprana = fechaInicio.AddDays(100000);
         miembros.ForEach(usuario => usuario.CantidadProyectosAsignados++);
@@ -140,7 +140,10 @@ public class Proyecto
     {
         return Miembros.Any(u => u.Id == idUsuario);
     }
-    
+    public bool TieneTareas()
+    {
+        return Tareas.Any();
+    }
     private Tarea BuscarTareaPorId(int id)
     {
         return Tareas.FirstOrDefault(t => t.Id == id);
@@ -153,9 +156,9 @@ public class Proyecto
 
     private void ValidarLargoDescripción(string descripcion)
     {
-        if (descripcion.Length > MaximoCaracteresDescripcion)
+        if (descripcion.Length > _maximoCaracteresDescripcion)
         {
-            throw new ExcepcionDominio($"La descripción no puede superar los {MaximoCaracteresDescripcion} caracteres");
+            throw new ExcepcionDominio($"La descripción no puede superar los {_maximoCaracteresDescripcion} caracteres");
         }
     }
 
@@ -197,11 +200,11 @@ public class Proyecto
         }
     }
 
-    private void ValidarAdministradorEsteEnMiembros(Usuario administrador, List<Usuario> miembros)
+    private void ValidarAdministradorEsteEnMiembros(Usuario administrador)
     {
-        if (!miembros.Contains(administrador))
+        if (!Miembros.Contains(administrador))
         {
-            miembros.Add(administrador);
+            Miembros.Add(administrador);
         }
     }
 

@@ -532,7 +532,7 @@ else
     {
         try
         {
-            GestorUsuarios.VerificarUsuarioNoEsMiembroDeNingunProyecto(usuarioOriginal);
+            GestorUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(usuarioOriginal);
             GestorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, idUsuarioEditando);
 
             mostrarFormEditar = false;

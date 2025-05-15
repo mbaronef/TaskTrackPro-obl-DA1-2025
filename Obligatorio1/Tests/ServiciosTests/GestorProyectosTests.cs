@@ -674,5 +674,21 @@ namespace Tests.ServiciosTests
             _gestor.ObtenerProyectoDelAdministrador(_admin.Id);
         }
 
+        [TestMethod]
+        public void NotificarAdministradoresDeProyectos_NotificaAdministradores()
+        {
+            Proyecto proyecto1 = CrearProyectoCon(_admin);
+            Usuario otroAdmin = CrearAdminProyecto(3);
+            Proyecto proyecto2 = CrearProyectoCon(otroAdmin);
+            
+            List<Proyecto> proyectos = new List<Proyecto> { proyecto1, proyecto2 };
+            _gestor.NotificarAdministradoresDeProyectos(proyectos, "notificación");
+
+            Notificacion ultimaNotificacionAdmin = _admin.Notificaciones.Last();
+            Notificacion ultimaNotificacionOtroAdmin = otroAdmin.Notificaciones.Last();
+            Assert.AreEqual("notificación", ultimaNotificacionAdmin.Mensaje);
+            Assert.AreEqual("notificación", ultimaNotificacionOtroAdmin.Mensaje);
+        }
+
     }
 }
