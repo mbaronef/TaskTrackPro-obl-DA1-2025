@@ -18,22 +18,21 @@ public static class MensajesErrorDominio
     public const string TareaYaAgregada = "La tarea ya fue agregada al proyecto.";
     public const string NoPuedeEliminarAdmin = "No se puede eliminar al administrador actual. Asigne un nuevo administrador antes.";
     public const string MiembroYaEnProyecto = "El miembro ya pertenece al proyecto.";
-    public const string FechaInicioMenorAHoy = "La fecha de inicio no puede ser anterior a hoy.";
-    public const string FechaInicioMayorQueTareas = "La fecha de inicio no puede ser posterior a la de alguna tarea.";
-    public const string FechaFinMenorQueInicio = "La fecha de fin más temprana no puede ser anterior a la fecha de inicio del proyecto.";
-    public const string FechaFinMenorQueTareas = "La fecha de fin más temprana no puede ser menor que la fecha de fin de una tarea.";
-    public const string FechaInicioMayorQueFin = "La fecha de inicio no puede ser mayor que la fecha de fin más temprana.";
-    public const string FechaInicioIgualFin = "La fecha de inicio no puede ser la misma que la fecha de fin más temprana.";
+    public const string FechaInicioProyectoMenorAHoy = "La fecha de inicio no puede ser anterior a hoy.";
+    public const string FechaInicioProyectoMayorQueTareas = "La fecha de inicio no puede ser posterior a la de alguna tarea.";
+    public const string FechaFinProyectoMenorQueInicio = "La fecha de fin más temprana no puede ser anterior a la fecha de inicio del proyecto.";
+    public const string FechaFinProyectoMenorQueTareas = "La fecha de fin más temprana no puede ser menor que la fecha de fin de una tarea.";
+    public const string FechaInicioProyectoMayorQueFin = "La fecha de inicio no puede ser mayor que la fecha de fin más temprana.";
+    public const string FechaInicioProyectoIgualFin = "La fecha de inicio no puede ser la misma que la fecha de fin más temprana.";
     public const string NombreProyectoVacio = "El nombre del proyecto no puede estar vacío o null.";
-    public const string DescripcionProyectoVacia = "La descripción del proyecto no puede estar vacía o null.";
+    public const string DescripcionVacia = "La descripción no puede estar vacía o null.";
     public const string ProyectoSinAdministrador = "El proyecto debe tener un administrador.";
-    public const string MiembrosNull = "La lista de miembros no puede ser null.";
+    public const string MiembrosProyectoNull = "La lista de miembros no puede ser null.";
     public const string TareaNull = "No se puede agregar una tarea null.";
-    public const string TareaNoPertenece = "La tarea no pertenece al proyecto.";
+    public const string TareaNoPerteneceAlProyecto = "La tarea no pertenece al proyecto.";
     public const string MiembroNull = "No se puede agregar un miembro null.";
-    public const string UsuarioNoEsMiembro = "El usuario no es miembro del proyecto.";
-
-
+    public const string UsuarioNoEsMiembroDelProyecto = "El usuario no es miembro del proyecto.";
+    
 
     // Recurso
     public const string RecursoYaEsExclusivo = "El recurso ya es exclusivo de otro proyecto.";
@@ -44,20 +43,18 @@ public static class MensajesErrorDominio
 
     // Tarea
     public const string FechaTareaInvalida = "La fecha no puede ser anterior a hoy.";
-    public const string DuracionTareaInvalida = "La duración no puede ser cero o negativa.";
+    public const string DuracionTareaInvalida = "La duración de la tarea debe ser mayor a cero días.";
     public const string UsuariosAsignadosVacio = "La lista de usuarios asignados está vacía o no está inicializada.";
     public const string FechaInicioInvalida = "La fecha de inicio debe ser igual o posterior a la fecha de hoy.";
-    public const string EstadoInvalido_Pendiente = "No se puede cambiar una tarea finalizada a pendiente.";
-    public const string EstadoInvalido_Proceso = "No se puede cambiar una tarea finalizada a en proceso.";
-    public const string EstadoInvalido_Bloqueada = "No se puede cambiar una tarea finalizada a bloqueada.";
-    public const string EstadoInvalido_ProcesoAPendiente = "No se puede cambiar una tarea en proceso a pendiente.";
-    public const string EstadoInvalido_PendienteACompletada = "No se puede cambiar una tarea pendiente a completada.";
-    public const string EstadoInvalido_BloqueadaACompletada = "No se puede cambiar una tarea bloqueada a completada.";
+    
+    public static string TransicionEstadoInvalidaDesdeHacia(EstadoTarea desde, EstadoTarea hacia)
+        => $"No se puede cambiar una tarea de estado {desde} a estado {hacia}.";
+
+    
     public const string UsuarioYaAgregado = "El usuario ya fue agregado a la tarea.";
     public const string RecursoYaAgregado = "El recurso ya fue agregado.";
     public const string DependenciaYaAgregada = "La dependencia ya fue agregada.";
     public const string TituloTareaVacio = "El título de la tarea no puede estar vacío o ser nulo.";
-    public const string DescripcionTareaVacia = "La descripción de la tarea no puede ser vacía o nula";
     public const string UsuarioNullEnAsignacion = "No se puede asignar una tarea a un usuario null.";
     public const string UsuarioNoAsignado = "El usuario no está asignado a la tarea.";
     public const string RecursoNullEnTarea = "No se puede agregar un recurso null.";

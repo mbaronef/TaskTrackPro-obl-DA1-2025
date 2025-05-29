@@ -19,9 +19,9 @@ public class Proyecto
     public Proyecto(string nombre, string descripcion,DateTime fechaInicio, Usuario administrador, List<Usuario> miembros) 
     {
         ValidarTextoObligatorio(nombre, MensajesErrorDominio.NombreProyectoVacio);
-        ValidarTextoObligatorio(descripcion, MensajesErrorDominio.DescripcionProyectoVacia);
+        ValidarTextoObligatorio(descripcion, MensajesErrorDominio.DescripcionVacia);
         ValidarNoNulo(administrador, MensajesErrorDominio.ProyectoSinAdministrador);
-        ValidarNoNulo(miembros, MensajesErrorDominio.MiembrosNull);
+        ValidarNoNulo(miembros, MensajesErrorDominio.MiembrosProyectoNull);
         ValidarLargoDescripción(descripcion);
         ValidarFechaInicioMayorAActual(fechaInicio);
         
@@ -49,7 +49,7 @@ public class Proyecto
     {
         Tarea tareaAEliminar = BuscarTareaPorId(idTarea);
 
-        ValidarNoNulo(tareaAEliminar, MensajesErrorDominio.TareaNoPertenece);
+        ValidarNoNulo(tareaAEliminar, MensajesErrorDominio.TareaNoPerteneceAlProyecto);
 
         Tareas.Remove(tareaAEliminar);
     }
@@ -67,7 +67,7 @@ public class Proyecto
     {
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsuario);
         
-        ValidarNoNulo(usuarioAEliminar, MensajesErrorDominio.UsuarioNoEsMiembro);
+        ValidarNoNulo(usuarioAEliminar, MensajesErrorDominio.UsuarioNoEsMiembroDelProyecto);
         ValidarQueUsuarioAEliminarNoSeaAdministrador(usuarioAEliminar);
         
         Miembros.Remove(usuarioAEliminar);
@@ -105,7 +105,7 @@ public class Proyecto
 
     public void ModificarDescripcion(string nuevaDescripcion)
     {
-        ValidarTextoObligatorio(nuevaDescripcion,MensajesErrorDominio.DescripcionProyectoVacia);
+        ValidarTextoObligatorio(nuevaDescripcion,MensajesErrorDominio.DescripcionVacia);
         ValidarLargoDescripción(nuevaDescripcion);
         
         Descripcion = nuevaDescripcion;
@@ -189,7 +189,7 @@ public class Proyecto
     private void ValidarUsuarioEnMiembros(int idUsuario)
     {
         Usuario usuario = BuscarUsuarioPorId(idUsuario);
-        ValidarNoNulo(usuario, MensajesErrorDominio.UsuarioNoEsMiembro);
+        ValidarNoNulo(usuario, MensajesErrorDominio.UsuarioNoEsMiembroDelProyecto);
     }
 
     private void ValidarQueUsuarioAEliminarNoSeaAdministrador(Usuario usuario)
@@ -220,7 +220,7 @@ public class Proyecto
     {
         if (fecha < DateTime.Today)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioMenorAHoy);
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoMenorAHoy);
         }
     }
 
@@ -228,7 +228,7 @@ public class Proyecto
     {
         if (Tareas.Any(t => nuevaFecha > t.FechaInicioMasTemprana))
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioMayorQueTareas);
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoMayorQueTareas);
         }
     }
 
@@ -236,7 +236,7 @@ public class Proyecto
     {
         if (fecha < FechaInicio)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.FechaFinMenorQueInicio);
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaFinProyectoMenorQueInicio);
         }
     }
 
@@ -244,7 +244,7 @@ public class Proyecto
     {
         if (Tareas.Any(tarea => tarea.FechaFinMasTemprana > DateTime.MinValue && fecha < tarea.FechaFinMasTemprana))
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.FechaFinMenorQueTareas);
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaFinProyectoMenorQueTareas);
         }
     }
 
@@ -252,12 +252,12 @@ public class Proyecto
     {
         if (inicio > fin)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioMayorQueFin);
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoMayorQueFin);
         }
 
         if (inicio == fin)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioIgualFin);
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoIgualFin);
 
         }
     }

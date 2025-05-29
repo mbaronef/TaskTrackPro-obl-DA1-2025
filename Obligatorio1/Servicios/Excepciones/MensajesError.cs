@@ -31,8 +31,7 @@ public static class MensajesError
     
     public const string TareaConSucesoras = "No se puede eliminar la tarea porque tiene tareas sucesoras.";
     public const string TareaNoExistente = "La tarea no existe.";
-    public const string GeneraCiclos =
-        "No se puede  agregar la dependencia de la tarea ya que se generarían dependencias cíclicas.";
+    public const string GeneraCiclos = "No se puede  agregar la dependencia de la tarea ya que se generarían dependencias cíclicas.";
     public const string EstadoNoEditable = "No se puede cambiar manualmente a un estado distinto de 'En Proceso' o 'Completada'.";
     public const string RecursoNoAsignado = "El recurso no está asignado a la tarea.";
     public const string FechaInicioTarea = "La fecha de inicio de la tarea no puede ser anterior a la fecha de inicio del proyecto.";

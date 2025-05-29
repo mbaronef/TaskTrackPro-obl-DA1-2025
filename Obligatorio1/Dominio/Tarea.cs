@@ -28,7 +28,7 @@ public class Tarea
     {
         ValidarStringNoVacioNiNull(titulo, MensajesErrorDominio.TituloTareaVacio);
         ValidarIntNoNegativoNiCero(duracionEnDias, MensajesErrorDominio.DuracionTareaInvalida);
-        ValidarStringNoVacioNiNull(descripcion, MensajesErrorDominio.DescripcionTareaVacia);
+        ValidarStringNoVacioNiNull(descripcion, MensajesErrorDominio.DescripcionVacia);
         ValidarFechaInicio(fechaInicioMasTemprana);
         Titulo = titulo;
         Descripcion = descripcion;
@@ -115,7 +115,7 @@ public class Tarea
     
     public void ModificarDescripcion(string nuevaDescripcion)
     {
-        ValidarStringNoVacioNiNull(nuevaDescripcion, MensajesErrorDominio.DescripcionTareaVacia);
+        ValidarStringNoVacioNiNull(nuevaDescripcion, MensajesErrorDominio.DescripcionVacia);
         Descripcion = nuevaDescripcion;
     }
     
@@ -226,7 +226,7 @@ public class Tarea
     {
         if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Pendiente)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.EstadoInvalido_Pendiente);
+            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
         }
     }
     
@@ -234,7 +234,7 @@ public class Tarea
     {
         if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.EnProceso)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.EstadoInvalido_Proceso);
+            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
         }
     }
     
@@ -242,7 +242,7 @@ public class Tarea
     {
         if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Bloqueada)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.EstadoInvalido_Bloqueada);
+            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
         }
     }
     
@@ -250,7 +250,7 @@ public class Tarea
     {
         if (Estado == EstadoTarea.EnProceso && nuevoEstado == EstadoTarea.Pendiente)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.EstadoInvalido_ProcesoAPendiente);
+            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
         }
     }
     
@@ -258,7 +258,7 @@ public class Tarea
     {
         if (Estado == EstadoTarea.Pendiente && nuevoEstado == EstadoTarea.Completada)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.EstadoInvalido_PendienteACompletada);
+            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
         }
     }
     
@@ -266,7 +266,7 @@ public class Tarea
     {
         if (Estado == EstadoTarea.Bloqueada && nuevoEstado == EstadoTarea.Completada)
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.EstadoInvalido_BloqueadaACompletada);
+            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
         }
     }
     
