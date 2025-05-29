@@ -11,11 +11,13 @@ public class ProyectoTests
     private GestorUsuarios _gestorUsuarios;
     private Usuario _admin;
     private List<Usuario> _miembros;
+    private MockNotificador _notificador;
 
     [TestInitialize]
     public void AntesDeCadaTest()
     {
-        _gestorUsuarios = new GestorUsuarios();
+        _notificador = new MockNotificador();
+        _gestorUsuarios = new GestorUsuarios(_notificador);
         Usuario adminSistema = _gestorUsuarios.AdministradorInicial;
         _admin = CrearAdmin(1);
         _gestorUsuarios.AgregarUsuario(adminSistema, _admin);

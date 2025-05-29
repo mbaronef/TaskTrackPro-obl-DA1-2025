@@ -11,9 +11,10 @@ public class GestorRecursos
     private GestorProyectos _gestorProyectos;
     private readonly INotificador _notificador;
 
-    public GestorRecursos(GestorProyectos gestorProyectos)
+    public GestorRecursos(GestorProyectos gestorProyectos, INotificador notificador)
     {
         _gestorProyectos = gestorProyectos;
+        _notificador = notificador;
     }
 
     public void AgregarRecurso(Usuario solicitante, Recurso recurso, bool esExclusivo)

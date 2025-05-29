@@ -9,9 +9,9 @@ using Servicios.Utilidades;
 var builder = WebApplication.CreateBuilder(args);
 
 Notificador _notificador = new Notificador();
-GestorUsuarios gestorUsuarios = new GestorUsuarios();
+GestorUsuarios gestorUsuarios = new GestorUsuarios(_notificador);
 GestorProyectos gestorProyectos = new GestorProyectos(_notificador);
-GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);
+GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos, _notificador);
 GestorTareas gestorTareas = new GestorTareas(gestorProyectos, _notificador);
 
 // Add services to the container.

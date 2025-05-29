@@ -9,6 +9,7 @@ namespace Tests.DominioTests;
 public class TareaTests
 {
     private DateTime _fechaInicio = new DateTime(2500, 9, 1);
+    private MockNotificador _notificador;
 
     [TestMethod]
     public void ConstructorSinParametrosCreaTareaCorrectamente()
@@ -457,7 +458,7 @@ public class TareaTests
     [TestMethod]
     public void DarListaAsignados_DevuelveListaDeUsuariosAsignados()
     {
-        GestorUsuarios gestor = new GestorUsuarios();
+        GestorUsuarios gestor = new GestorUsuarios(_notificador);
         Usuario admin = gestor.AdministradorInicial;
         Usuario usuario1 = CrearUsuarioValido();
         Usuario usuario2 = new Usuario("Juana", "Pereza", new DateTime(1996, 2, 2), "juana@test.com", "TaskTrackPro@2025");

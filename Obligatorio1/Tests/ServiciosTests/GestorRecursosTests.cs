@@ -21,7 +21,7 @@ public class GestorRecursosTests
         typeof(RepositorioRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         _mockNotificador = new MockNotificador();
        _gestorProyectos = new GestorProyectos(_mockNotificador);
-        _gestorRecursos = new GestorRecursos(_gestorProyectos);
+        _gestorRecursos = new GestorRecursos(_gestorProyectos, _mockNotificador);
         _adminSistema = CrearAdministradorSistema();
     }
 

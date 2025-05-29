@@ -10,6 +10,7 @@ namespace Tests.DominioTests
     public class UsuarioTests
     {
         private DateTime _fechaNacimientoValida = new DateTime(2000, 9, 1);
+        private MockNotificador _notificador = new MockNotificador();
 
         private Usuario CrearUsuarioValido()
         {
@@ -218,7 +219,7 @@ namespace Tests.DominioTests
         [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
-            GestorUsuarios gestor = new GestorUsuarios();
+            GestorUsuarios gestor = new GestorUsuarios(_notificador);
             Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(adminSistema,usuario1);
@@ -230,7 +231,7 @@ namespace Tests.DominioTests
         [TestMethod]
         public void EqualsRetornaFalseSiLosIdsNoSonIguales()
         {
-            GestorUsuarios gestor = new GestorUsuarios();
+            GestorUsuarios gestor = new GestorUsuarios(_notificador);
             Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
             gestor.AgregarUsuario(adminSistema, usuario1);

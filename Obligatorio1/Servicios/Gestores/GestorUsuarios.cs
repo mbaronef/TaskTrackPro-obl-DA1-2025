@@ -1,6 +1,7 @@
 using Dominio;
 using Repositorios;
 using Servicios.Excepciones;
+using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
@@ -11,9 +12,13 @@ public class GestorUsuarios
     
     public Usuario AdministradorInicial { get; private set; }
     public RepositorioUsuarios Usuarios { get; } = new RepositorioUsuarios();
+    
+    private readonly INotificador _notificador;
 
-    public GestorUsuarios()
+
+    public GestorUsuarios(INotificador notificador)
     {
+        _notificador = notificador;
         AdministradorInicial = CrearUsuario("Admin", "Admin", new DateTime(1999, 01, 01), "admin@sistema.com", _contrasenaPorDefecto);
         AdministradorInicial.EsAdministradorSistema = true; 
         Usuarios.Agregar(AdministradorInicial);
@@ -227,6 +232,6 @@ public class GestorUsuarios
     
     private void Notificar(Usuario usuario, string mensajeNotificacion)
     {
-        usuario.RecibirNotificacion(mensajeNotificacion);
+        _notificador.NotificarUno(usuario, mensajeNotificacion);
     }
 }
