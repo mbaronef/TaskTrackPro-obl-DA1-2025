@@ -43,12 +43,7 @@ public class Tarea
     
     public void CambiarEstado(EstadoTarea nuevoEstado)
     {
-        EstadoCompletadaAPendiente(nuevoEstado);
-        EstadoCompletadaAEnProceso(nuevoEstado);
-        EstadoCompletadaABloqueada(nuevoEstado);
-        EstadoEnProcesoAPendiente(nuevoEstado);
-        EstadoPendienteACompletada(nuevoEstado);
-        EstadoBloqueadaACompletada(nuevoEstado);
+        ValidarTransicionInvalida(Estado, nuevoEstado);
         Estado = nuevoEstado;
         if (nuevoEstado == EstadoTarea.EnProceso)
         {
@@ -221,52 +216,17 @@ public class Tarea
         if (objeto is null)
             throw new ExcepcionDominio(mensajeError);
     }
-
-    private void EstadoCompletadaAPendiente(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Pendiente)
-        {
-            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
-        }
-    }
     
-    private void EstadoCompletadaAEnProceso(EstadoTarea nuevoEstado)
+    private void ValidarTransicionInvalida(EstadoTarea actual, EstadoTarea nuevo)
     {
-        if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.EnProceso)
+        if ((actual == EstadoTarea.Completada && nuevo == EstadoTarea.Pendiente) ||
+            (actual == EstadoTarea.Completada && nuevo == EstadoTarea.EnProceso) ||
+            (actual == EstadoTarea.Completada && nuevo == EstadoTarea.Bloqueada) ||
+            (actual == EstadoTarea.EnProceso && nuevo == EstadoTarea.Pendiente) ||
+            (actual == EstadoTarea.Pendiente && nuevo == EstadoTarea.Completada) ||
+            (actual == EstadoTarea.Bloqueada && nuevo == EstadoTarea.Completada))
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
-        }
-    }
-    
-    private void EstadoCompletadaABloqueada(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Bloqueada)
-        {
-            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
-        }
-    }
-    
-    private void EstadoEnProcesoAPendiente(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.EnProceso && nuevoEstado == EstadoTarea.Pendiente)
-        {
-            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
-        }
-    }
-    
-    private void EstadoPendienteACompletada(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.Pendiente && nuevoEstado == EstadoTarea.Completada)
-        {
-            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
-        }
-    }
-    
-    private void EstadoBloqueadaACompletada(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.Bloqueada && nuevoEstado == EstadoTarea.Completada)
-        {
-            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(Estado, nuevoEstado));
+            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(actual, nuevo));
         }
     }
     
