@@ -43,7 +43,7 @@ public class Recurso
     {
         if (ProyectoAsociado != null)
         {
-            throw new ExcepcionDominio("El recurso ya es exclusivo de otro proyecto");
+            throw new ExcepcionDominio(MensajesErrorDominio.RecursoYaEsExclusivo);
         }
         ProyectoAsociado = proyecto;
     }
@@ -55,7 +55,7 @@ public class Recurso
     public void DecrementarCantidadDeTareasUsandolo()
     {
         if (CantidadDeTareasUsandolo <= 0)
-            throw new ExcepcionDominio("La cantidad de tareas usando este recurso no puede ser menor a cero.");
+            throw new ExcepcionDominio(MensajesErrorDominio.CantidadTareasRecursoNegativa);
 
         CantidadDeTareasUsandolo--;
     }
@@ -74,7 +74,7 @@ public class Recurso
     {
         if (string.IsNullOrWhiteSpace(texto))
         {
-            throw new ExcepcionDominio($"El atributo {nombreAtributo} no puede ser vacío");
+            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, nombreAtributo));
         }
     }
     

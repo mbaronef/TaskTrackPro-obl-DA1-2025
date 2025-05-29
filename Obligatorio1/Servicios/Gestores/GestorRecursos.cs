@@ -29,7 +29,7 @@ public class GestorRecursos
         Recurso recurso = Recursos.ObtenerPorId(idRecurso);
         if (recurso == null)
         {
-            throw new ExcepcionServicios("Recurso no existente");
+            throw new ExcepcionRecurso(MensajesError.RecursoNoEncontrado);
         }
         return recurso;
     }
@@ -88,7 +88,7 @@ public class GestorRecursos
     {
         if (!usuario.EsAdministradorSistema && !usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara(accion));
         }
     }
 
@@ -102,7 +102,7 @@ public class GestorRecursos
     {
         if (recurso.SeEstaUsando())
         {
-            throw new ExcepcionServicios($"No se puede {accion} un recurso que está en uso");
+            throw new ExcepcionRecurso(MensajesError.RecursoEnUso); 
         }
     }
     
@@ -116,14 +116,13 @@ public class GestorRecursos
 
         if (recurso.ProyectoAsociado == null)
         {
-            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion} recursos generales.");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara($"{accion} recursos generales."));
         }
 
         Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
         if (!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
         {
-            throw new ExcepcionServicios(
-                $"No tiene los permisos necesarios para {accion} recursos que no son exclusivos de su proyecto");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara( $"{accion} recursos que no son exclusivos de su proyecto"));
         }
     }
 

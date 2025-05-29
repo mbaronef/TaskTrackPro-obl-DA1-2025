@@ -59,7 +59,7 @@ public static class CaminoCritico
         
         if (tareasOrdenadas.Count != tareas.Count)
         { // Validación: si hay ciclo, no se procesaron todas
-            throw new ExcepcionServicios("El grafo de tareas tiene dependencias cíclicas.");
+            throw new ExcepcionServicios(MensajesError.GrafoConCiclos);
         }
         
         return tareasOrdenadas;

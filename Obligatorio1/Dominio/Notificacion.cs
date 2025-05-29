@@ -17,7 +17,7 @@ public class Notificacion
     public Notificacion(string mensaje)
     {
         if (string.IsNullOrWhiteSpace(mensaje))
-            throw new ExcepcionDominio("El mensaje de la notificación no puede estar vacío o null.");
+            throw new ExcepcionDominio(MensajesErrorDominio.MensajeNotificacionVacio);
 
         Mensaje = mensaje;
         Fecha = DateTime.Today;

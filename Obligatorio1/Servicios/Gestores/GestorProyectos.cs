@@ -142,7 +142,7 @@ public class GestorProyectos
 
         if (proyecto == null)
         {
-            throw new ExcepcionServicios("No se encontró un proyecto administrado por ese usuario.");
+            throw new ExcepcionProyecto(MensajesError.UsuarioNoAdministraProyectos);
         }
 
         return proyecto;
@@ -154,7 +154,7 @@ public class GestorProyectos
         
         if(proyecto is null)
         {
-            throw new ExcepcionServicios("El proyecto no existe.");
+            throw new ExcepcionPermisos(MensajesError.ProyectoNoEncontrado);
         }
         return proyecto;
     }
@@ -163,7 +163,7 @@ public class GestorProyectos
     {
         if (!proyecto.EsAdministrador(usuario))
         {
-            throw new ExcepcionServicios("Solo el administrador del proyecto puede realizar esta acción.");
+            throw new ExcepcionPermisos(MensajesError.NoEsAdminDelProyecto);
         } 
     }
 
@@ -171,7 +171,7 @@ public class GestorProyectos
     {
         if (!solicitante.EsAdministradorProyecto)
         {
-            throw new ExcepcionServicios($"El {tipoUsuario} no tiene los permisos de administrador de proyecto.");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPorTipo(tipoUsuario));
         }
     }
 
@@ -181,7 +181,7 @@ public class GestorProyectos
 
         if (usuario is null)
         {
-            throw new ExcepcionServicios("El usuario no es miembro del proyecto.");
+            throw new ExcepcionProyecto(MensajesError.UsuarioNoMiembroDelProyecto);
         }
     }
     
@@ -191,7 +191,7 @@ public class GestorProyectos
         Usuario miembroAEliminar = ObtenerMiembro(idMiembroAEliminar, proyecto);
         if (proyecto.Tareas.Any(tarea => tarea.EsMiembro(miembroAEliminar)))
         {
-            throw new ExcepcionServicios("El usuario tiene tareas asignadas");
+            throw new ExcepcionProyecto(MensajesError.UsuarioConTareas);
         }
     }
 
@@ -211,7 +211,7 @@ public class GestorProyectos
 
         if (existeOtro)
         {
-            throw new ExcepcionServicios($"Ya existe un proyecto con el nombre '{nuevoNombre}'.");
+            throw new ExcepcionProyecto(MensajesError.NombreRepetido);
         }
     }
 
@@ -219,7 +219,7 @@ public class GestorProyectos
     {
         if (usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionServicios("El usuario ya está administrando un proyecto.");
+            throw new ExcepcionPermisos(MensajesError.UsuarioAdministrandoProyecto);
         }
     }
 
@@ -227,7 +227,7 @@ public class GestorProyectos
     {
         if (!usuario.EsAdministradorSistema)
         {
-            throw new ExcepcionServicios("El solicitante no es administrador de sistema.");
+            throw new ExcepcionPermisos(MensajesError.UsuarioNoAdminSistema);
         }
     }
 }
