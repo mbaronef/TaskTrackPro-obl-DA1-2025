@@ -8,11 +8,11 @@ using Servicios.Utilidades;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Notificador notificador = new Notificador();
+Notificador _notificador = new Notificador();
 GestorUsuarios gestorUsuarios = new GestorUsuarios();
-GestorProyectos gestorProyectos = new GestorProyectos(notificador);
+GestorProyectos gestorProyectos = new GestorProyectos(_notificador);
 GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);
-GestorTareas gestorTareas = new GestorTareas(gestorProyectos);
+GestorTareas gestorTareas = new GestorTareas(gestorProyectos, _notificador);
 
 // Add services to the container.
 builder.Services.AddSingleton(gestorUsuarios);

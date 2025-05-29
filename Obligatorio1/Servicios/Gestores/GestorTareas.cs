@@ -12,9 +12,10 @@ public class GestorTareas
     private static int _cantidadTareas;
     private readonly INotificador _notificador;
 
-    public GestorTareas(GestorProyectos gestorProyectos)
+    public GestorTareas(GestorProyectos gestorProyectos, INotificador notificador)
     {
         _gestorProyectos = gestorProyectos;
+        _notificador = notificador;
     }
     
     public void AgregarTareaAlProyecto(int idProyecto, Usuario solicitante, Tarea nuevaTarea)
