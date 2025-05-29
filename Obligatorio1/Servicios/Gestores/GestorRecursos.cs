@@ -1,6 +1,7 @@
 using Dominio;
 using Repositorios;
 using Servicios.Excepciones;
+using Servicios.Notificaciones;
 
 namespace Servicios.Gestores;
 
@@ -8,6 +9,7 @@ public class GestorRecursos
 {
     public RepositorioRecursos Recursos { get; } = new RepositorioRecursos();
     private GestorProyectos _gestorProyectos;
+    private readonly INotificador _notificador;
 
     public GestorRecursos(GestorProyectos gestorProyectos)
     {
@@ -132,7 +134,7 @@ public class GestorRecursos
         string mensaje = $"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}";
         if (recurso.EsExclusivo())
         {
-            recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
+            _notificador.NotificarUno(recurso.ProyectoAsociado.Administrador, mensaje);
         }
         else
         { // decidimos que si el recurso no es exclusivo, se notifica a todos los admins de todos los proyectos.
@@ -146,7 +148,7 @@ public class GestorRecursos
             $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: {recurso.ToString()}";
         if (recurso.EsExclusivo())
         {
-            recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
+            _notificador.NotificarUno(recurso.ProyectoAsociado.Administrador, mensaje);
         }
         else
         { 

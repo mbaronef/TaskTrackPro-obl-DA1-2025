@@ -1,6 +1,7 @@
 ﻿using Dominio;
 using Dominio.Excepciones;
 using Servicios.Excepciones;
+using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
@@ -9,6 +10,7 @@ public class GestorTareas
 {
     private GestorProyectos _gestorProyectos;
     private static int _cantidadTareas;
+    private readonly INotificador _notificador;
 
     public GestorTareas(GestorProyectos gestorProyectos)
     {
@@ -27,8 +29,7 @@ public class GestorTareas
         proyecto.AgregarTarea(nuevaTarea);
 
         CaminoCritico.CalcularCaminoCritico(proyecto);
-
-        proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, $"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
     }
 
     public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idTareaAEliminar)
@@ -41,7 +42,7 @@ public class GestorTareas
 
         CaminoCritico.CalcularCaminoCritico(proyecto);
 
-        proyecto.NotificarMiembros($"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, $"Se eliminó la tarea (id {idTareaAEliminar}) del proyecto '{proyecto.Nombre}'.");
     }
     
     public Tarea ObtenerTareaPorId(int idProyecto, int idTarea)
@@ -99,8 +100,7 @@ public class GestorTareas
         tarea.CambiarEstado(nuevoEstado);
         
         CaminoCritico.CalcularCaminoCritico(proyecto);
-        
-        proyecto.NotificarMiembros($"Se cambió el estado de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}' a {nuevoEstado}.");
+        _notificador.NotificarMuchos(proyecto.Miembros, $"Se cambió el estado de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}' a {nuevoEstado}.");
 
         if (nuevoEstado == EstadoTarea.Completada)
         {
@@ -124,8 +124,7 @@ public class GestorTareas
             tarea.EliminarDependencia(dependencia.Tarea.Id);
             throw new ExcepcionServicios("No se puede  agregar la dependencia de la tarea ya que se generarían dependencias cíclicas.");
         }
-
-        proyecto.NotificarMiembros($"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{proyecto.Nombre}' del tipo {tipoDependencia} con la tarea id {tareaDependencia.Id}.");
+        _notificador.NotificarMuchos(proyecto.Miembros, $"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{proyecto.Nombre}' del tipo {tipoDependencia} con la tarea id {tareaDependencia.Id}.");
     }
 
     public void EliminarDependenciaDeTarea(Usuario solicitante, int idTarea, int idTareaDependencia, int idProyecto)
@@ -134,7 +133,7 @@ public class GestorTareas
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.EliminarDependencia(idTareaDependencia);
         CaminoCritico.CalcularCaminoCritico(proyecto);
-        proyecto.NotificarMiembros($"Se eliminó la dependencia de la tarea id {idTareaDependencia} con la tarea id {idTarea} del proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, $"Se eliminó la dependencia de la tarea id {idTareaDependencia} con la tarea id {idTarea} del proyecto '{proyecto.Nombre}'.");
     }
 
     public void AgregarMiembroATarea(Usuario solicitante, int idTarea, int idProyecto, Usuario nuevoMiembro)
@@ -193,19 +192,19 @@ public class GestorTareas
     private void NotificarCambio(string campo, int idTarea, int idProyecto)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        proyecto.NotificarMiembros($"Se cambió el {campo} de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, $"Se cambió el {campo} de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
 
     private void NotificarEliminar(string campo, int idTarea, int idProyecto)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        proyecto.NotificarMiembros($"Se eliminó el {campo} de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros,$"Se eliminó el {campo} de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
     
     private void NotificarAgregar(string campo, int idTarea, int idProyecto)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        proyecto.NotificarMiembros($"Se agregó el {campo} de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros,$"Se agregó el {campo} de la tarea (id {idTarea}) del proyecto '{proyecto.Nombre}'.");
     }
 
     private void VerificarEstadoEditablePorUsuario(EstadoTarea estado)

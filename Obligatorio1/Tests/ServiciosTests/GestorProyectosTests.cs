@@ -14,11 +14,13 @@ namespace Tests.ServiciosTests
         private Usuario _usuarioNoAdmin;
         private Usuario _adminSistema;
         private Proyecto _proyecto;
+        private MockNotificador _mockNotificador;
 
         [TestInitialize]
         public void Inicializar()
         {
-            _gestor = new GestorProyectos();
+            _mockNotificador = new MockNotificador();
+            _gestor = new GestorProyectos(_mockNotificador);
             _admin = CrearAdminProyecto(1);
             _adminSistema = CrearAdminSistema(2);
             _usuarioNoAdmin = CrearMiembro(3);

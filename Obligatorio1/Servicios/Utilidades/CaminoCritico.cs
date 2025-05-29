@@ -1,10 +1,12 @@
 using Dominio;
 using Servicios.Excepciones;
+using Servicios.Notificaciones;
 
 namespace Servicios.Utilidades;
 
 public static class CaminoCritico
 { 
+    private static readonly INotificador _notificador; 
     public static void CalcularCaminoCritico(Proyecto proyecto)
     {
         if (proyecto.TieneTareas())
@@ -25,7 +27,7 @@ public static class CaminoCritico
             }
 
             proyecto.FechaFinMasTemprana = tareas.Max(t => t.FechaFinMasTemprana);
-            proyecto.NotificarMiembros(
+            _notificador.NotificarMuchos(proyecto.Miembros,
                 $"Se cambió la fecha de fin más temprana del proyecto '{proyecto.Nombre}' a '{proyecto.FechaFinMasTemprana:dd/MM/yyyy}'.");
 
             Dictionary<Tarea, List<Tarea>> sucesoras = ObtenerSucesorasPorTarea(tareas);

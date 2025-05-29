@@ -12,14 +12,15 @@ public class GestorRecursosTests
     private GestorRecursos _gestorRecursos;
     private GestorProyectos _gestorProyectos;
     private Usuario _adminSistema;
+    private MockNotificador _mockNotificador;
 
     [TestInitialize]
     public void SetUp()
     {
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(RepositorioRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-
-       _gestorProyectos = new GestorProyectos();
+        _mockNotificador = new MockNotificador();
+       _gestorProyectos = new GestorProyectos(_mockNotificador);
         _gestorRecursos = new GestorRecursos(_gestorProyectos);
         _adminSistema = CrearAdministradorSistema();
     }
