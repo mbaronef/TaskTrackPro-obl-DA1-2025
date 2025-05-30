@@ -87,7 +87,7 @@ public class GestorRecursosTests
         Assert.AreEqual(recurso2, _gestorRecursos.Recursos.ObtenerTodos().ElementAt(1));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNiProyectoNoAgregaRecurso()
     {
@@ -120,7 +120,7 @@ public class GestorRecursosTests
         Assert.AreEqual(recurso2, _gestorRecursos.ObtenerRecursoPorId(2));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionRecurso))]
     [TestMethod]
     public void GestorNoObtieneRecursoConIdInexistente()
     {
@@ -136,7 +136,7 @@ public class GestorRecursosTests
         Assert.AreEqual(0, _gestorRecursos.Recursos.ObtenerTodos().Count());
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionRecurso))]
     [TestMethod]
     public void NoSeEliminaRecursoSiEstaEnUso()
     {
@@ -146,7 +146,7 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(_adminSistema, recurso.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoEliminaRecursos()
     {
@@ -168,7 +168,7 @@ public class GestorRecursosTests
         Assert.AreEqual(0, _gestorRecursos.Recursos.ObtenerTodos().Count());
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeEliminarRecursoNoExclusivo()
     {
@@ -181,7 +181,7 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(adminProyecto, recurso.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeEliminarRecursosExclusivosDeOtrosProyectos()
     {
@@ -251,7 +251,7 @@ public class GestorRecursosTests
         Assert.AreEqual("Nuevo nombre", recurso.Nombre);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoPuedeModificarNombre()
     {
@@ -261,7 +261,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarNombreRecurso(usuario, recurso.Id, "Nuevo nombre");
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarNombreDeRecursoNoExclusivo()
     {
@@ -274,7 +274,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarNombreRecurso(adminProyecto, recurso.Id, "otro nombre");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarNombreDeRecursosNoExclusivosDeSuProyecto()
     {
@@ -316,7 +316,7 @@ public class GestorRecursosTests
         Assert.AreEqual("Nuevo tipo", recurso.Tipo);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoPuedeModificarTipo()
     {
@@ -326,7 +326,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarTipoRecurso(usuario, recurso.Id, "Nuevo tipo");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarTipoDeRecursosNoExclusivosDeSuProyecto()
     {
@@ -345,7 +345,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarTipoRecurso(otroAdminProyecto, recurso.Id, "Nuevo tipo");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarTipoDeRecursoNoExclusivo()
     {
@@ -381,7 +381,7 @@ public class GestorRecursosTests
         Assert.AreEqual("Nueva descripción", recurso.Descripcion);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoPuedeModificarDescripcion()
     {
@@ -391,7 +391,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarDescripcionRecurso(usuario, recurso.Id, "Nueva descripción");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarDescripciónDeRecursosNoExclusivosDeSuProyecto()
     {
@@ -410,7 +410,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarDescripcionRecurso(otroAdminProyecto, recurso.Id, "Nueva descripción");
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarDescripcionDeRecursoNoExclusivo()
     {
