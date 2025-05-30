@@ -47,5 +47,16 @@ public static class MensajesNotificacion
         $"Se agregó el {campo} de la tarea (id {idTarea}) del proyecto '{nombreProyecto}'.";
     public static string CampoTareaEliminado(string campo, int idTarea, string nombreProyecto) =>
         $"Se eliminó el {campo} de la tarea (id {idTarea}) del proyecto '{nombreProyecto}'.";
+    
+    
+    public static string ContrasenaReiniciada(string contrasena) =>
+        $"Se reinició su contraseña. La nueva contraseña es {contrasena}";
+    public static string ContrasenaModificada(string nuevaContrasena) =>
+        $"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}";
+    public static string UsuarioCreado(string nombre, string apellido) =>
+        $"Se creó un nuevo usuario: {nombre} {apellido}";
+    public static string UsuarioEliminado(string nombre, string apellido) =>
+        $"Se eliminó un nuevo usuario. Nombre: {nombre}, Apellido: {apellido}";
+    
 
 }
