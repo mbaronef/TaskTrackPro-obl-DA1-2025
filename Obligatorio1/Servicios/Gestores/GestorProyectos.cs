@@ -28,7 +28,7 @@ public class GestorProyectos
 
         solicitante.EstaAdministrandoUnProyecto = true;
 
-        _notificador.NotificarMuchos(proyecto.Miembros, $"Se creó el proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.ProyectoCreado(proyecto.Nombre));
     }
 
     public void EliminarProyecto(int idProyecto, Usuario solicitante)
@@ -44,7 +44,7 @@ public class GestorProyectos
             miembro.CantidadProyectosAsignados--;
         }
 
-        _notificador.NotificarMuchos(proyecto.Miembros, $"Se eliminó el proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.ProyectoEliminado(proyecto.Nombre));
     }
 
     public void ModificarNombreDelProyecto(int idProyecto, string nuevoNombre, Usuario solicitante)
@@ -59,7 +59,7 @@ public class GestorProyectos
 
         proyecto.ModificarNombre(nuevoNombre);
 
-        _notificador.NotificarMuchos(proyecto.Miembros, $"Se cambió el nombre del proyecto '{nombreAnterior}' a '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.NombreProyectoModificado(nombreAnterior, proyecto.Nombre));
     }
 
     public void ModificarDescripcionDelProyecto(int idProyecto, string descripcion, Usuario solicitante)
@@ -70,7 +70,7 @@ public class GestorProyectos
         
         proyecto.ModificarDescripcion(descripcion);
 
-        _notificador.NotificarMuchos(proyecto.Miembros, $"Se cambió la descripción del proyecto '{proyecto.Nombre}' a '{proyecto.Descripcion}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.DescripcionProyectoModificada(proyecto.Nombre, proyecto.Descripcion));
     }
 
     public void ModificarFechaDeInicioDelProyecto(int idProyecto, DateTime nuevaFecha, Usuario solicitante)
@@ -83,7 +83,7 @@ public class GestorProyectos
         
         CaminoCritico.CalcularCaminoCritico(proyecto);
 
-        _notificador.NotificarMuchos(proyecto.Miembros, $"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.FechaInicioProyectoModificada(proyecto.Nombre, nuevaFecha));
     }
 
     public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdmin)
@@ -104,7 +104,7 @@ public class GestorProyectos
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoUnProyecto = true;
         
-        _notificador.NotificarMuchos(proyecto.Miembros, $"Se cambió el administrador del proyecto '{proyecto.Nombre}'. El nuevo administrador es '{nuevoAdmin}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.AdministradorProyectoModificado(proyecto.Nombre, nuevoAdmin.ToString()));
     }
 
     public void AgregarMiembroAProyecto(int idProyecto, Usuario solicitante, Usuario nuevoMiembro)
@@ -117,7 +117,7 @@ public class GestorProyectos
         
         proyecto.AsignarMiembro(nuevoMiembro);
 
-        _notificador.NotificarMuchos(proyecto.Miembros, $"Se agregó a un nuevo miembro (id {nuevoMiembro.Id}) al proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.MiembroAgregado(proyecto.Nombre, nuevoMiembro.Id));
 
     }
     
@@ -135,7 +135,7 @@ public class GestorProyectos
         
         proyecto.EliminarMiembro(idMiembroAEliminar);
         
-        _notificador.NotificarMuchos(proyecto.Miembros, $"Se eliminó a el miembro (id {idMiembroAEliminar}) del proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.MiembroEliminado(proyecto.Nombre, idMiembroAEliminar));
     }
 
     public List<Proyecto> ObtenerProyectosPorUsuario(int idUsuario)

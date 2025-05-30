@@ -27,9 +27,7 @@ public static class CaminoCritico
             }
 
             proyecto.FechaFinMasTemprana = tareas.Max(t => t.FechaFinMasTemprana);
-            _notificador.NotificarMuchos(proyecto.Miembros,
-                $"Se cambió la fecha de fin más temprana del proyecto '{proyecto.Nombre}' a '{proyecto.FechaFinMasTemprana:dd/MM/yyyy}'.");
-
+            _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.FechaFinMasTempranaActualizada(proyecto.Nombre, proyecto.FechaFinMasTemprana));
             Dictionary<Tarea, List<Tarea>> sucesoras = ObtenerSucesorasPorTarea(tareas);
             CalcularHolguras(tareasOrdenTopologico, sucesoras, proyecto);
         }
