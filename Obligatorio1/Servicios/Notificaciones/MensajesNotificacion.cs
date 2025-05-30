@@ -1,3 +1,5 @@
+using Dominio;
+
 namespace Servicios.Notificaciones;
 
 public static class MensajesNotificacion
@@ -27,5 +29,23 @@ public static class MensajesNotificacion
         $"Se eliminó el recurso {nombre} de tipo {tipo} - {descripcion}";
     public static string RecursoModificado(string nombreAnterior, string nuevosValores) =>
         $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: {nuevosValores}";
+    
+    
+    public static string TareaAgregada(int idTarea, string nombreProyecto) =>
+        $"Se agregó la tarea (id {idTarea}) al proyecto '{nombreProyecto}'.";
+    public static string TareaEliminada(int idTarea, string nombreProyecto) =>
+        $"Se eliminó la tarea (id {idTarea}) del proyecto '{nombreProyecto}'.";
+    public static string CampoTareaModificado(string campo, int idTarea, string nombreProyecto) =>
+        $"Se cambió el {campo} de la tarea (id {idTarea}) del proyecto '{nombreProyecto}'.";
+    public static string EstadoTareaModificado(int idTarea, string nombreProyecto, EstadoTarea nuevoEstado) =>
+        $"Se cambió el estado de la tarea (id {idTarea}) del proyecto '{nombreProyecto}' a {nuevoEstado}.";
+    public static string DependenciaAgregada(int idTarea, string nombreProyecto, string tipo, int idDependencia) =>
+        $"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{nombreProyecto}' del tipo {tipo} con la tarea id {idDependencia}.";
+    public static string DependenciaEliminada(int id1, int id2, string nombreProyecto) =>
+        $"Se eliminó la dependencia de la tarea id {id1} con la tarea id {id2} del proyecto '{nombreProyecto}'.";
+    public static string CampoTareaAgregado(string campo, int idTarea, string nombreProyecto) =>
+        $"Se agregó el {campo} de la tarea (id {idTarea}) del proyecto '{nombreProyecto}'.";
+    public static string CampoTareaEliminado(string campo, int idTarea, string nombreProyecto) =>
+        $"Se eliminó el {campo} de la tarea (id {idTarea}) del proyecto '{nombreProyecto}'.";
 
 }
