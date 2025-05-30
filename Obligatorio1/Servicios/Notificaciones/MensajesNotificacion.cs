@@ -21,5 +21,11 @@ public static class MensajesNotificacion
         $"Se agregó a un nuevo miembro (id {idMiembro}) al proyecto '{nombreProyecto}'.";
     public static string MiembroEliminado(string nombreProyecto, int idMiembro) =>
         $"Se eliminó al miembro (id {idMiembro}) del proyecto '{nombreProyecto}'.";
+    
+    
+    public static string RecursoEliminado(string nombre, string tipo, string descripcion) =>
+        $"Se eliminó el recurso {nombre} de tipo {tipo} - {descripcion}";
+    public static string RecursoModificado(string nombreAnterior, string nuevosValores) =>
+        $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: {nuevosValores}";
 
 }
