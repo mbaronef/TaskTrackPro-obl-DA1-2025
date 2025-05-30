@@ -6,7 +6,7 @@ namespace Servicios.Utilidades;
 
 public static class CaminoCritico
 { 
-    private static readonly INotificador _notificador; 
+    private static readonly INotificador _notificador = new Notificador();
     public static void CalcularCaminoCritico(Proyecto proyecto)
     {
         if (proyecto.TieneTareas())

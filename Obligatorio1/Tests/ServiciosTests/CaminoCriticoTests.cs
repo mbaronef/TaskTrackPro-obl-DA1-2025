@@ -14,6 +14,7 @@ public class CaminoCriticoTests
     private Tarea _tarea3;
     private Tarea _tarea4;
     private DateTime _fechaHoy = DateTime.Today;
+    private MockNotificador _mockNotificador;
 
     [TestInitialize]
     public void SetUp()
