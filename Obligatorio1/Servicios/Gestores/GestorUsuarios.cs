@@ -27,7 +27,7 @@ public class GestorUsuarios
 
     public void AgregarUsuario(Usuario solicitante, Usuario usuario)
     {
-        VerificarPermisoAdministradorSistema(solicitante, "crear usuarios");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "crear usuarios");
         Usuarios.Agregar(usuario);
         string mensajeNotificacion =
             $"Se creó un nuevo usuario: {usuario.Nombre} {usuario.Apellido}";
@@ -42,7 +42,7 @@ public class GestorUsuarios
         {
             throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar usuarios");
         }
-        VerificarUsuarioNoEsMiembroDeProyecto(usuario);
+        PermisosUsuariosServicio.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         Usuarios.Eliminar(usuario.Id);
         string mensajeNotificacion = $"Se eliminó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
@@ -60,31 +60,31 @@ public class GestorUsuarios
 
     public void AgregarAdministradorSistema(Usuario solicitante, int idUsuario)
     {
-        VerificarPermisoAdministradorSistema(solicitante, "asignar un administrador de sistema");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "asignar un administrador de sistema");
         Usuario usuario = ObtenerUsuarioPorId(idUsuario);
         usuario.EsAdministradorSistema = true;
     }
 
     public void AsignarAdministradorProyecto(Usuario solicitante, int idUsuario)
     {
-        VerificarPermisoAdministradorSistema(solicitante, "asignar administradores de proyecto");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "asignar administradores de proyecto");
         Usuario nuevoAdministradorProyecto = ObtenerUsuarioPorId(idUsuario);
         nuevoAdministradorProyecto.EsAdministradorProyecto = true;
     }
 
     public void DesasignarAdministradorProyecto(Usuario solicitante, int idUsuario)
     {
-        VerificarPermisoAdministradorSistema(solicitante, "desasignar administradores de proyecto");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "desasignar administradores de proyecto");
         Usuario administradorProyecto = ObtenerUsuarioPorId(idUsuario);
-        VerificarUsuarioADesasignarSeaAdminProyecto(administradorProyecto);
-        VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(administradorProyecto);
+        PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(administradorProyecto, "solicitante");
+        PermisosUsuariosServicio.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(administradorProyecto);
         administradorProyecto.EsAdministradorProyecto = false;
     }
 
     public void ReiniciarContrasena(Usuario solicitante, int idUsuarioObjetivo)
     {
         Usuario usuarioObjetivo = ObtenerUsuarioPorId(idUsuarioObjetivo);
-        VerificarUsuarioPuedaReiniciarContrasena(solicitante, usuarioObjetivo);
+        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "El usuario no tiene los permisos para reiniciar la contraseña.");
 
         string contrasenaPorDefectoEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
         usuarioObjetivo.EstablecerContrasenaEncriptada(contrasenaPorDefectoEncriptada);
@@ -94,7 +94,7 @@ public class GestorUsuarios
 
     public void AutogenerarContrasena(Usuario solicitante, int idUsuarioObjetivo)
     {
-        VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
+        PermisosUsuariosServicio.VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
         string nuevaContrasena = UtilidadesContrasena.AutogenerarContrasenaValida();
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         
@@ -107,7 +107,7 @@ public class GestorUsuarios
     public void ModificarContrasena(Usuario solicitante, int idUsuarioObjetivo, string nuevaContrasena)
     {
         Usuario usuarioObjetivo = ObtenerUsuarioPorId(idUsuarioObjetivo);
-        VerificarSolicitantePuedaModificarContrasena(solicitante, usuarioObjetivo);
+        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "El usuario no tiene permisos para modificar la contraseña.");
         
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
@@ -141,38 +141,6 @@ public class GestorUsuarios
         if(usuario.CantidadProyectosAsignados > 0)
         {
             throw new ExcepcionServicios("No puede eliminar un usuario que es miembro de un proyecto.");
-        }
-    }
-    
-    private void VerificarPermisoAdministradorSistema(Usuario usuario, string accion)
-    {
-        if (!usuario.EsAdministradorSistema)
-        {
-            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
-        }
-    }
-    private void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(Usuario usuario)
-    {
-        if (usuario.EstaAdministrandoUnProyecto)
-        {
-            throw new ExcepcionServicios("No se puede quitar permisos de proyecto a un usuario que tiene un proyecto a su cargo.");
-        }
-    }
-
-    private void VerificarUsuarioADesasignarSeaAdminProyecto(Usuario usuario)
-    {
-        if (!usuario.EsAdministradorProyecto)
-        {
-            throw new ExcepcionServicios("El usuario a desasignar no es administrador de proyectos.");
-        }
-        
-    }
-    
-    private void VerificarSolicitantePuedaAutogenerarContrasena(Usuario solicitante)
-    {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para autogenerar la contraseña del usuario");
         }
     }
     

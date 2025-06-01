@@ -92,7 +92,7 @@ public class GestorTareas
     public void CambiarEstadoTarea(Usuario solicitante, int idTarea, int idProyecto, EstadoTarea nuevoEstado)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        _gestorProyectos.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
+        PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
         
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
@@ -140,7 +140,7 @@ public class GestorTareas
     public void AgregarMiembroATarea(Usuario solicitante, int idTarea, int idProyecto, Usuario nuevoMiembro)
     {
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        _gestorProyectos.VerificarUsuarioMiembroDelProyecto(nuevoMiembro.Id, proyecto);
+        PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(nuevoMiembro.Id, proyecto);
         
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.AsignarUsuario(nuevoMiembro);
@@ -150,7 +150,7 @@ public class GestorTareas
     public void EliminarMiembroDeTarea(Usuario solicitante, int idTarea, int idProyecto, Usuario miembro)
     {
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        _gestorProyectos.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
+        PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
         
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.EliminarUsuario(miembro.Id);
@@ -179,8 +179,8 @@ public class GestorTareas
     private Proyecto ObtenerProyectoValidandoAdmin(int idProyecto, Usuario solicitante)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        _gestorProyectos.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
-        _gestorProyectos.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
+        PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         return proyecto;
     }
 
