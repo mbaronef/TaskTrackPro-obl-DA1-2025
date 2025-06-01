@@ -1,9 +1,7 @@
 @page "/crear-proyecto"
-@using System.ComponentModel.DataAnnotations
-@using Dominio
-@using Interfaz.DTOs
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
+@using DTOs
 @rendermode InteractiveServer
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
@@ -78,16 +76,16 @@ else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnP
         mensaje = String.Empty;
         try
         {
-            Usuario solicitante = Sesion.UsuarioLogueado;
-            Proyecto proyecto = nuevoProyecto.ANuevaEntidad(solicitante);
-            GestorProyectos.CrearProyecto(proyecto, solicitante);
+            UsuarioDTO solicitante = Sesion.UsuarioLogueado;
+            GestorProyectos.CrearProyecto(nuevoProyecto, solicitante);
             mensaje = "Proyecto creado con éxito.";
             tipoAlerta = "success";
+            int idProyectoCreado = nuevoProyecto.Id;
             // actualizaciones
             nuevoProyecto = new ProyectoDTO();
             await Sesion.ActualizarSesion();
             StateHasChanged();
-            Navigation.NavigateTo($"/exito/proyecto/{proyecto.Id}/creado");
+            Navigation.NavigateTo($"/exito/proyecto/{idProyectoCreado}/creado");
         }
         catch (Exception e)
         {

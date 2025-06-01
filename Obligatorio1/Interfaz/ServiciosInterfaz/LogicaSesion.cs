@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using Dominio;
 using Dominio.Excepciones;
+using DTOs;
 using Servicios.Excepciones;
 using Servicios.Gestores;
 
@@ -9,7 +10,7 @@ namespace Interfaz.ServiciosInterfaz;
 public class LogicaSesion
 {
         public event Action? SesionModificada; // para modificar el main layout (estructura principal) según permisos si se modifica al usuario logueado
-        public Usuario? UsuarioLogueado { get; private set; }
+        public UsuarioDTO? UsuarioLogueado { get; private set; }
         private const string CURRENT_USER = "current_user";
     
         private readonly ILocalStorageService _localStorage;
@@ -24,7 +25,7 @@ public class LogicaSesion
         public async Task<bool> Login(string email, string contraseña)
         {
             try{
-                Usuario usuarioLogueado = _gestorUsuarios.LogIn(email, contraseña);
+                UsuarioDTO usuarioLogueado = _gestorUsuarios.LogIn(email, contraseña);
                 UsuarioLogueado = usuarioLogueado;
                 await _localStorage.SetItemAsync(CURRENT_USER, usuarioLogueado);
                 return true;
@@ -37,7 +38,7 @@ public class LogicaSesion
 
         public async Task<bool> HaySesionActiva()
         {
-            Usuario? usuario = await _localStorage.GetItemAsync<Usuario>(CURRENT_USER);
+            UsuarioDTO? usuario = await _localStorage.GetItemAsync<UsuarioDTO>(CURRENT_USER);
             UsuarioLogueado = usuario;
 
             return usuario is not null;

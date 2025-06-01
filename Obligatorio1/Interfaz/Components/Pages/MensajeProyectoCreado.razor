@@ -1,5 +1,5 @@
 @page "/exito/proyecto/{id:int}/creado"
-@using Dominio
+@using DTOs
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @rendermode InteractiveServer
@@ -61,7 +61,7 @@ else
 
 @code {
     [Parameter] public int id { get; set; }
-    private Proyecto proyecto;
+    private ProyectoDTO proyecto;
     private bool sesionCargada = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

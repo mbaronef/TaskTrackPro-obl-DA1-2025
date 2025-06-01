@@ -1,6 +1,4 @@
 @page "/proyecto/{id:int}/tareas"
-@using System.ComponentModel.DataAnnotations
-@using Dominio
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @inject GestorProyectos GestorProyectos
@@ -11,7 +9,7 @@
 @inject NavigationManager Navigator
 @rendermode InteractiveServer
 @using System.Linq
-@using Interfaz.DTOs
+@using DTOs
 
 @if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
@@ -25,7 +23,7 @@ else
     else
     {
         <h3>Tareas</h3>
-        @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
+        @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
         {
             <div class="text-center mb-3">
                 <button class="btn btn-primary btn text-white d-flex align-items-center gap-2" @onclick="() => MostrarVentanaCreacion()">
@@ -33,10 +31,10 @@ else
                 </button>
             </div>
         }
-        @if (proyecto.Tareas.Count == 0 && (proyecto.EsAdministrador(Sesion.UsuarioLogueado)||Sesion.EsAdminSistema()))
+        @if (proyecto.Tareas.Count == 0 && (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id)||Sesion.EsAdminSistema()))
         {
             <p>Aún no hay tareas en el proyecto.</p>
-        } else if (proyecto.Tareas.Count == 0 && proyecto.EsMiembro(Sesion.UsuarioLogueado.Id))
+        } else if (proyecto.Tareas.Count == 0 && GestorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, proyecto.Id))
         {
             <p>Aún no tienes tareas asignadas</p>
         }
@@ -44,7 +42,7 @@ else
         {
             @foreach (var tarea in proyecto.Tareas)
             {
-                @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado) || tarea.EsMiembro(Sesion.UsuarioLogueado) || Sesion.EsAdminSistema())
+                @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || GestorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id)|| Sesion.EsAdminSistema())
                 {
                     var collapseId = $"collapseTarea{tarea.Id}";
 
@@ -89,7 +87,7 @@ else
                                     <p><strong>Aún no hay miembros asignados</strong></p>
                                 }
                             </div>
-                            @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada)
+                            @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
                                     <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaEdicion(tarea.Id)">
@@ -112,7 +110,7 @@ else
                                     </button>
                                 </div>
                             }
-                            @if (tarea.EsMiembro(Sesion.UsuarioLogueado) && !proyecto.EsAdministrador(Sesion.UsuarioLogueado) && tarea.Estado != EstadoTarea.Completada && tarea.Estado != EstadoTarea.Bloqueada)
+                            @if (GestorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id) && !GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada && tarea.Estado != EstadoTareaDTO.Bloqueada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
                                     <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaEdicionReducida(tarea.Id)">
@@ -200,14 +198,14 @@ else
                         </div>
                     }
                     <div class="form-check mb-3">
-                        @if (tareaActual.Estado == EstadoTarea.Pendiente)
+                        @if (tareaActual.Estado == EstadoTareaDTO.Pendiente)
                         {
                             <div class="form-check mb-2">
                                 <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="tareaEdicionEstado.EditoEnProceso" />
                                 <label for="enProceso" class="form-check-label">Marcar como 'En proceso'</label>
                             </div>
                         }
-                        @if (tareaActual.Estado == EstadoTarea.EnProceso)
+                        @if (tareaActual.Estado == EstadoTareaDTO.EnProceso)
                         {
                             <div class="form-check mb-2">
                                 <InputCheckbox id="completada" class="form-check-input" @bind-Value="tareaEdicionEstado.EditoCompletada" />
@@ -271,18 +269,18 @@ else
                         <InputDate id="fechaInicio" class="form-control" @bind-Value="tareaEdicion.FechaInicioMasTemprana"/>
                     </div>
 
-                    @if (tareaEdicion.Estado == EstadoTarea.Pendiente || tareaEdicion.Estado == EstadoTarea.EnProceso)
+                    @if (tareaEdicion.Estado == EstadoTareaDTO.Pendiente || tareaEdicion.Estado == EstadoTareaDTO.EnProceso)
                     {
                         <fieldset class="border rounded p-3 mb-3">
                             <legend class="float-none w-auto px-2 fs-6 text-muted">Cambiar estado</legend>
-                            @if (tareaEdicion.Estado == EstadoTarea.Pendiente)
+                            @if (tareaEdicion.Estado == EstadoTareaDTO.Pendiente)
                             {
                                 <div class="form-check">
                                     <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="editoEnProceso"/>
                                     <label for="enProceso" class="form-check-label">En proceso</label>
                                 </div>
                             }
-                            @if (tareaEdicion.Estado == EstadoTarea.EnProceso)
+                            @if (tareaEdicion.Estado == EstadoTareaDTO.EnProceso)
                             {
                                 <div class="form-check">
                                     <InputCheckbox id="completada" class="form-check-input" @bind-Value="editoCompletada"/>
@@ -408,15 +406,15 @@ else
                             <li class="list-group-item d-flex flex-column">
                                 <div class="d-flex justify-content-between align-items-center">
             <span>
-                <strong>@dep.Tarea.Titulo</strong> — @dep.Tipo
+                <strong>@dep.TareaPrevia.Titulo</strong> — @dep.Tipo
             </span>
                                     <button class="btn btn-outline-danger btn-sm"
-                                            @onclick="() => PedirConfirmacion(dep.Tarea.Id)">
+                                            @onclick="() => PedirConfirmacion(dep.TareaPreviaId)">
                                         <i class="bi bi-trash3"></i> Quitar
                                     </button>
                                 </div>
 
-                                @if (dependenciaAConfirmar == dep.Tarea.Id)
+                                @if (dependenciaAConfirmar == dep.TareaPreviaId)
                                 {
                                     <div class="alert alert-warning mt-2 mb-0 p-2 d-flex justify-content-between align-items-center">
                                         <span>¿Estás seguro de que querés eliminar esta dependencia?</span>
@@ -607,7 +605,7 @@ else
 
 @code {
     [Parameter] public int id { get; set; }
-    private Proyecto proyecto;
+    private ProyectoDTO proyecto;
     private bool sesionCargada = false;
     private bool mostrarVentanaCreacion = false;
     private bool mostrarVentanaEdicion = false;
@@ -624,19 +622,19 @@ else
     private bool editoCompletada = false;
     private bool editoEnProceso = false;
 
-    private TareaCambioEstadoDTO tareaEdicionEstado = new TareaCambioEstadoDTO();
+    private TareaCambioEstadoDto tareaEdicionEstado = new TareaCambioEstadoDto();
     bool confirmarEliminacionTarea = false;
 
-    private Tarea tareaActual = new Tarea();
+    private TareaDTO tareaActual = new TareaDTO();
     private DependenciaDTO dependenciaDTO = new DependenciaDTO();
-    private List<Tarea> tareasDelProyecto = new List<Tarea>();
+    private List<TareaDTO> tareasDelProyecto = new List<TareaDTO>();
     private int? dependenciaAConfirmar = null;
 
     private RecursoAsignacionDTO recursoAsignacionDto = new RecursoAsignacionDTO();
-    private List<Recurso> recursosProyecto = new List<Recurso>();
+    private List<RecursoDTO> recursosProyecto = new List<RecursoDTO>();
 
     private UsuarioAsignacionDTO usuarioAsignacionDto = new UsuarioAsignacionDTO();
-    private List<Usuario> usuariosDeProyecto = new List<Usuario>();
+    private List<UsuarioListarDTO> usuariosDeProyecto = new List<UsuarioListarDTO>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -668,7 +666,7 @@ else
     {
         mostrarVentanaEdicion = true;
         mensaje = String.Empty;
-        Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaId);
+        TareaDTO tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaId);
         if (tareaAEditar != null)
         {
             tareaEdicion = new TareaDTO
@@ -781,8 +779,7 @@ else
     {
         try
         {
-            Tarea tarea = tareaDTO.ANuevaEntidad();
-            GestorTareas.AgregarTareaAlProyecto(id, Sesion.UsuarioLogueado, tarea);
+            GestorTareas.AgregarTareaAlProyecto(id, Sesion.UsuarioLogueado, tareaDTO);
             mensaje = "Tarea creada con éxito.";
             mostrarVentanaCreacion = false;
             // actualizaciones
@@ -798,16 +795,16 @@ else
 
     private void EditarEstadoTarea()
     {
-        EstadoTarea nuevoEstado = tareaEdicionEstado.EditoCompletada
-            ? EstadoTarea.Completada
-            : (tareaEdicionEstado.EditoEnProceso ? EstadoTarea.EnProceso : tareaActual.Estado);
+        EstadoTareaDTO nuevoEstado = tareaEdicionEstado.EditoCompletada
+            ? EstadoTareaDTO.Completada
+            : (tareaEdicionEstado.EditoEnProceso ? EstadoTareaDTO.EnProceso : tareaActual.Estado);
         try
         {
             GestorTareas.CambiarEstadoTarea(Sesion.UsuarioLogueado, tareaActual.Id, id, nuevoEstado);
             mensaje = "Estado editado con éxito.";
             mostrarVentanaEdicionReducida = false;
             // actualizaciones
-            tareaEdicionEstado = new TareaCambioEstadoDTO();
+            tareaEdicionEstado = new TareaCambioEstadoDto();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
             StateHasChanged();
         }
@@ -819,8 +816,8 @@ else
 
     private void GuardarCambiosTarea()
     {
-        Tarea tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaEdicion.Id);
-        Usuario solicitante = Sesion.UsuarioLogueado;
+        TareaDTO tareaAEditar = GestorTareas.ObtenerTareaPorId(id, tareaEdicion.Id);
+        UsuarioDTO solicitante = Sesion.UsuarioLogueado;
         try
         {
             if (!tareaAEditar.Titulo.Equals(tareaEdicion.Titulo))
@@ -845,11 +842,11 @@ else
 
             if (editoCompletada)
             {
-                GestorTareas.CambiarEstadoTarea(solicitante, tareaAEditar.Id, id, EstadoTarea.Completada);
+                GestorTareas.CambiarEstadoTarea(solicitante, tareaAEditar.Id, id, EstadoTareaDTO.Completada);
             }
             else if (editoEnProceso)
             {
-                GestorTareas.CambiarEstadoTarea(solicitante, tareaAEditar.Id, id, EstadoTarea.EnProceso);
+                GestorTareas.CambiarEstadoTarea(solicitante, tareaAEditar.Id, id, EstadoTareaDTO.EnProceso);
             }
 
             mensaje = "Tarea editada con éxito.";
@@ -925,7 +922,7 @@ else
     {
         try
         {
-            Recurso nuevoRecurso = GestorRecursos.ObtenerRecursoPorId(recursoAsignacionDto.Id);
+            RecursoDTO nuevoRecurso = GestorRecursos.ObtenerRecursoPorId(recursoAsignacionDto.Id);
             GestorTareas.AgregarRecursoATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso);
             mensaje = "Recurso agregado con éxito.";
             // actualizaciones
@@ -951,7 +948,7 @@ else
     {
         try
         {
-            Recurso recurso = GestorRecursos.ObtenerRecursoPorId(idRecurso);
+            RecursoDTO recurso = GestorRecursos.ObtenerRecursoPorId(idRecurso);
             GestorTareas.EliminarRecursoDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, recurso);
             mensaje = "Recurso eliminado con éxito.";
             // actualizaciones
@@ -969,7 +966,7 @@ else
     {
         try
         {
-            Usuario nuevoMiembro = GestorUsuarios.ObtenerUsuarioPorId(usuarioAsignacionDto.Id);
+            UsuarioDTO nuevoMiembro = GestorUsuarios.ObtenerUsuarioPorId(usuarioAsignacionDto.Id);
             GestorTareas.AgregarMiembroATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoMiembro);
             mensaje = "Miembro agregado con éxito.";
             // actualizaciones
@@ -995,7 +992,7 @@ else
     {
         try
         {
-            Usuario miembro = GestorUsuarios.ObtenerUsuarioPorId(idUsuario);
+            UsuarioDTO miembro = GestorUsuarios.ObtenerUsuarioPorId(idUsuario);
             GestorTareas.EliminarMiembroDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, miembro);
             mensaje = "Usuario eliminado de la tarea con éxito.";
             // actualizaciones
@@ -1018,17 +1015,17 @@ else
 
     private void ActualizarRecursosDisponibles()
     {
-        List<Recurso> recursosGenerales = GestorRecursos.ObtenerRecursosGenerales();
-        List<Recurso> recursosExclusivos = GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id);
-        List<Recurso> recursosYaAsignados = tareaActual.RecursosNecesarios;
-        List<Recurso> todosLosRecursos = recursosGenerales.Concat(recursosExclusivos).ToList();
+        List<RecursoDTO> recursosGenerales = GestorRecursos.ObtenerRecursosGenerales();
+        List<RecursoDTO> recursosExclusivos = GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id);
+        List<RecursoDTO> recursosYaAsignados = tareaActual.RecursosNecesarios;
+        List<RecursoDTO> todosLosRecursos = recursosGenerales.Concat(recursosExclusivos).ToList();
         recursosProyecto = todosLosRecursos.Where(r => !recursosYaAsignados.Any(asignado => asignado.Id == r.Id)).ToList();
     }
 
     private void ActualizarUsuariosProyecto()
     {
-        List<Usuario> usuarios = proyecto.Miembros;
-        List<Usuario> miembrosDeLaTarea = tareaActual.UsuariosAsignados;
+        List<UsuarioListarDTO> usuarios = proyecto.Miembros;
+        List<UsuarioListarDTO> miembrosDeLaTarea = tareaActual.UsuariosAsignados;
         usuariosDeProyecto = usuarios.Where(u => !miembrosDeLaTarea.Any(asignado => asignado.Id == u.Id)).ToList();
     }
 
@@ -1037,7 +1034,7 @@ else
         mensaje = string.Empty;
     }
 
-    private string FormatearEstado(EstadoTarea estado)
+    private string FormatearEstado(EstadoTareaDTO estado)
     {
         // Inserta espacios antes de mayúsculas internas
         return System.Text.RegularExpressions.Regex.Replace(estado.ToString(), "(\\B[A-Z])", " $1");

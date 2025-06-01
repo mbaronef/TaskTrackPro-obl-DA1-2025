@@ -1,52 +1,61 @@
 using Dominio;
+using DTOs;
 using Repositorios;
+using Repositorios.Interfaces;
 using Servicios.Excepciones;
 
 namespace Servicios.Gestores;
 
 public class GestorRecursos
 {
-    public RepositorioRecursos Recursos { get; } = new RepositorioRecursos();
+    private IRepositorio<Recurso> _repositorioRecursos;
     private GestorProyectos _gestorProyectos;
+    private IRepositorioUsuarios _repositorioUsuarios;
 
-    public GestorRecursos(GestorProyectos gestorProyectos)
+    public GestorRecursos(
+        IRepositorio<Recurso> repositorioRecursos,
+        GestorProyectos gestorProyectos,
+        IRepositorioUsuarios repositorioUsuarios)
     {
+        _repositorioRecursos = repositorioRecursos;
         _gestorProyectos = gestorProyectos;
+        _repositorioUsuarios = repositorioUsuarios;
     }
-
-    public void AgregarRecurso(Usuario solicitante, Recurso recurso, bool esExclusivo)
+    public void AgregarRecurso(UsuarioDTO solicitanteDTO, RecursoDTO recursoDTO, bool esExclusivo)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recurso = recursoDTO.AEntidad();
+        
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
         if (solicitante.EstaAdministrandoUnProyecto && esExclusivo)
         {
             AsociarProyectoQueAdministraARecurso(solicitante, recurso);
         }
-        Recursos.Agregar(recurso);
+        _repositorioRecursos.Agregar(recurso);
+        recursoDTO.Id = recurso.Id;
     }
 
-    public Recurso ObtenerRecursoPorId(int idRecurso)
+    public RecursoDTO ObtenerRecursoPorId(int idRecurso)
     {
-        Recurso recurso = Recursos.ObtenerPorId(idRecurso);
-        if (recurso == null)
-        {
-            throw new ExcepcionServicios("Recurso no existente");
-        }
-        return recurso;
+        Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
+        return RecursoDTO.DesdeEntidad(recurso);
     }
 
-    public void EliminarRecurso(Usuario solicitante, int idRecurso)
+    public void EliminarRecurso(UsuarioDTO solicitanteDTO, int idRecurso)
     {
-        Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
         VerificarRecursoEnUso(recurso, "eliminar");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
-        Recursos.Eliminar(recurso.Id);
+        _repositorioRecursos.Eliminar(recurso.Id);
         NotificarEliminacion(recurso);
     }
 
-    public void ModificarNombreRecurso(Usuario solicitante, int idRecurso, string nuevoNombre)
+    public void ModificarNombreRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoNombre)
     {
-        Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de"); 
         string nombreAnterior = recurso.Nombre;
@@ -54,36 +63,53 @@ public class GestorRecursos
         NotificarModificacion(recurso, nombreAnterior);
     }
 
-    public void ModificarTipoRecurso(Usuario solicitante, int idRecurso, string nuevoTipo)
+    public void ModificarTipoRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoTipo)
     {
-        Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante,"modificar el tipo de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
         recurso.ModificarTipo(nuevoTipo);
         NotificarModificacion(recurso, recurso.Nombre);
     }
 
-    public void ModificarDescripcionRecurso(Usuario solicitante, int idRecurso, string nuevaDescripcion)
+    public void ModificarDescripcionRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevaDescripcion)
     {
-        Recurso recurso = ObtenerRecursoPorId(idRecurso);
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
         recurso.ModificarDescripcion(nuevaDescripcion);
         NotificarModificacion(recurso, recurso.Nombre);
     }
 
-    public List<Recurso> ObtenerRecursosGenerales()
+    public List<RecursoDTO> ObtenerRecursosGenerales()
     {
-        return Recursos.ObtenerTodos().Where(recurso => !recurso.EsExclusivo()).ToList();
+        List<Recurso> recursosGenerales = _repositorioRecursos.ObtenerTodos().Where(recurso => !recurso.EsExclusivo()).ToList();
+        return recursosGenerales.Select(RecursoDTO.DesdeEntidad).ToList();
     }
     
-    public List<Recurso> ObtenerRecursosExclusivos(int idProyecto)
+    public List<RecursoDTO> ObtenerRecursosExclusivos(int idProyecto)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        return Recursos.ObtenerTodos()
-            .Where(recurso => recurso.ProyectoAsociado != null && recurso.ProyectoAsociado.Id == idProyecto).ToList();
+        List<RecursoDTO> todosLosRecursos = _repositorioRecursos.ObtenerTodos().Select(RecursoDTO.DesdeEntidad).ToList();
+        return todosLosRecursos.Where(recurso => recurso.ProyectoAsociado != null && recurso.ProyectoAsociado.Id == idProyecto).ToList();
     }
 
+    public RecursoDTO ObtenerRecursoExclusivoPorId(int idProyecto, int idRecurso)
+    {
+        List<RecursoDTO> recursosExclusivos = ObtenerRecursosExclusivos(idProyecto);
+        return recursosExclusivos.FirstOrDefault(recurso => recurso.Id == idRecurso);
+    }
+
+    private Recurso ObtenerRecursoDominioPorId(int idRecurso)
+    {
+        Recurso recurso = _repositorioRecursos.ObtenerPorId(idRecurso);
+        if (recurso == null)
+        {
+            throw new ExcepcionServicios("Recurso no existente");
+        }
+        return recurso;
+    }
     private void VerificarPermisoAdminSistemaOAdminProyecto(Usuario usuario, string accion)
     {
         if (!usuario.EsAdministradorSistema && !usuario.EstaAdministrandoUnProyecto)
@@ -136,7 +162,7 @@ public class GestorRecursos
         }
         else
         { // decidimos que si el recurso no es exclusivo, se notifica a todos los admins de todos los proyectos.
-            _gestorProyectos.NotificarAdministradoresDeProyectos(_gestorProyectos.Proyectos.ObtenerTodos(), mensaje);
+            _gestorProyectos.NotificarAdministradoresDeProyectos(_gestorProyectos.ObtenerTodos(), mensaje);
         }
     }
 
@@ -155,12 +181,22 @@ public class GestorRecursos
     }
     private void NotificarAdministradoresDeProyectosQueUsanRecurso(Recurso recurso, string mensaje)
     {
-        List<Proyecto> proyectosQueUsanElRecurso = _gestorProyectos.Proyectos.ObtenerTodos()
+        List<Proyecto> proyectosQueUsanElRecurso = _gestorProyectos.ObtenerTodos()
             .Where(proyecto => RecursosNecesariosPorProyecto(proyecto).Contains(recurso)).ToList();
         _gestorProyectos.NotificarAdministradoresDeProyectos(proyectosQueUsanElRecurso, mensaje);
     }
     private List<Recurso> RecursosNecesariosPorProyecto(Proyecto proyecto)
     {
         return proyecto.Tareas.SelectMany(tarea => tarea.RecursosNecesarios).Distinct().ToList();
+    }
+    
+    private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
+    {
+        var usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
+        if (usuario == null)
+        {
+            throw new ExcepcionServicios($"Usuario no encontrado.");
+        }
+        return usuario;
     }
 }

@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Dominio;
 
-namespace Interfaz.DTOs;
-public class ProyectoDTO
+namespace DTOs;
 
+public class ProyectoEdicionDTO
 {
     [Required(ErrorMessage = "El nombre es obligatorio")]
     public string Nombre { get; set; }
@@ -13,14 +13,9 @@ public class ProyectoDTO
     public string Descripcion { get; set; }
 
     [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
-    [CustomValidation(typeof(ProyectoDTO), nameof(ValidarFechaInicio))]
+    [CustomValidation(typeof(ProyectoEdicionDTO), nameof(ValidarFechaInicio))]
     public DateTime FechaInicio { get; set; } = DateTime.Today;
-
-    public Proyecto ANuevaEntidad(Usuario administrador)
-    {
-        return new Proyecto(Nombre, Descripcion, FechaInicio, administrador, new List<Usuario>());
-    }
-        
+    
     public static ValidationResult ValidarFechaInicio(DateTime fecha, ValidationContext context)
     {
         if (fecha < DateTime.Today)
@@ -29,5 +24,15 @@ public class ProyectoDTO
         }
 
         return ValidationResult.Success;
+    }
+    
+    public static ProyectoEdicionDTO DesdeEntidad(Proyecto proyecto)
+    {
+        return new ProyectoEdicionDTO()
+        {
+            Nombre = proyecto.Nombre,
+            Descripcion = proyecto.Descripcion,
+            FechaInicio = proyecto.FechaInicio
+        };
     }
 }

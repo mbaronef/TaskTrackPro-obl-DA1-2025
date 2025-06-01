@@ -1,6 +1,8 @@
 @page "/notificaciones"
-@using Dominio
+@using DTOs
 @using Interfaz.ServiciosInterfaz
+@using Servicios.Gestores
+@inject GestorUsuarios GestorUsuarios;
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
 @rendermode InteractiveServer
@@ -19,7 +21,7 @@ else
     else
     {
         <div class="container mt-3">
-            @foreach (Notificacion notificacion in Sesion.UsuarioLogueado.Notificaciones
+            @foreach (NotificacionDTO notificacion in Sesion.UsuarioLogueado.Notificaciones
                      .OrderByDescending(n => n.Fecha).ToList())
             {
                 <div class="card shadow-sm mb-3">
@@ -64,7 +66,7 @@ else
 
     private void EliminarNotificacion(int id)
     {
-        Sesion.UsuarioLogueado.BorrarNotificacion(id);
+        GestorUsuarios.BorrarNotificacion(Sesion.UsuarioLogueado.Id, id);
         StateHasChanged(); // Re-renderiza para actualizar la lista
     }
 }

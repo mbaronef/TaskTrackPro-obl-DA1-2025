@@ -1,4 +1,4 @@
-@using Dominio
+@using DTOs
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @inject LogicaSesion Sesion
@@ -12,7 +12,7 @@
 {
     @if (Sesion.EsAdminSistema())
     {
-        proyectos = GestorProyectos.Proyectos.ObtenerTodos();
+        proyectos = GestorProyectos.ObtenerTodosDTO();
     }
     else
     {
@@ -22,7 +22,7 @@
     {
         <details class="mb-2">
             <summary>
-                @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
+                @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
                 {
                     <i class="bi bi-star-fill text-white me-1" title="Administrador del proyecto"></i>
                 }
@@ -33,7 +33,7 @@
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white text-nowrap">Recursos Exclusivos</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros</NavLink></li>
-                @if (proyecto.EsAdministrador(Sesion.UsuarioLogueado))
+                @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
                 {
                     <li><NavLink href="@($"/proyecto/{proyecto.Id}/editar")" class="nav-link text-white">Editar</NavLink></li>
                 }
@@ -44,7 +44,7 @@
 }
 
 @code {
-    private List<Proyecto> proyectos;
+    private List<ProyectoDTO> proyectos;
     private bool sesionCargada = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

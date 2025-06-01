@@ -1,9 +1,7 @@
 @page "/RecursosGenerales"
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
-@using Dominio.Excepciones
 @using Servicios.Excepciones
-@using Dominio
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @using DTOs
@@ -123,7 +121,7 @@ else
             </tr>
             </thead>
             <tbody>
-            @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosGenerales())
+            @foreach (RecursoDTO recurso in GestorRecursos.ObtenerRecursosGenerales())
             {
                 <tr>
                     <td>@recurso.Nombre</td>
@@ -193,20 +191,19 @@ else
 
         try
         {
-            Recurso nuevo = new Recurso(nuevoRecurso.Nombre, nuevoRecurso.Tipo, nuevoRecurso.Descripcion);
-            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevo, esExclusivo);
+            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevoRecurso, esExclusivo);
             mostrarFormCrearRecurso = false;
             mostrarError = false;
             StateHasChanged();
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensaje = $"Error al crear recurso: {ex.Message}";
-            mostrarError = true;
-        }
         catch (ExcepcionServicios ex)
         {
             errorMensaje = "Ocurrió un error inesperado al crear el recurso.";
+            mostrarError = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = $"Error al crear recurso: {ex.Message}";
             mostrarError = true;
         }
     }
@@ -264,14 +261,14 @@ else
             recursoAEditar = null;
             StateHasChanged();
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al editar recurso: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
         catch (ExcepcionServicios)
         {
             errorMensajeEditar = "Ocurrió un error inesperado al editar el recurso.";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error al editar recurso: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }
@@ -300,16 +297,16 @@ else
                 recursoAEditar = null;
             }
         }
-        catch (ExcepcionDominio ex)
+        catch (ExcepcionServicios ex)
         {
-            errorMensajeEliminar = $"No se puede eliminar el recurso: {ex.Message}";
+            errorMensajeEliminar = "El recurso está en uso, por lo tanto no se puede eliminar.";
             mostrarErrorEliminar = true;
             StateHasChanged();
             await OcultarErrorEliminarAutomaticamente();
         }
-        catch (ExcepcionServicios ex)
+        catch (Exception ex)
         {
-            errorMensajeEliminar = "El recurso está en uso, por lo tanto no se puede eliminar.";
+            errorMensajeEliminar = $"No se puede eliminar el recurso: {ex.Message}";
             mostrarErrorEliminar = true;
             StateHasChanged();
             await OcultarErrorEliminarAutomaticamente();

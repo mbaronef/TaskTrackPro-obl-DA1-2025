@@ -1,8 +1,6 @@
 @page "/proyecto/{id:int}/recursos_exclusivos"
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
-@using Dominio.Excepciones
-@using Dominio
 @using Servicios.Gestores
 @using DTOs
 @using Interfaz.ServiciosInterfaz
@@ -24,7 +22,7 @@ else
 {
     <h3>Recursos Exclusivos</h3>
 
-    @if (Sesion.UsuarioLogueado.Equals(proyecto.Administrador))
+    @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
     {
         <button class="btn btn-primary mb-3" @onclick="MostrarFormularioCrearRecurso">
             <i class="bi bi-plus-circle"></i> Crear recurso exclusivo
@@ -131,7 +129,7 @@ else
             </tr>
             </thead>
             <tbody>
-            @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id))
+            @foreach (RecursoDTO recurso in GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id))
             {
                 <tr>
                     <td>@recurso.Nombre</td>
@@ -161,7 +159,7 @@ else
 
     [Parameter] public int Id { get; set; }
     private bool sesionCargada = false;
-    private Proyecto proyecto;
+    private ProyectoDTO proyecto;
     private bool mostrarFormCrearRecurso = false;
     private bool mostrarError = false;
     private string errorMensaje;
@@ -203,19 +201,17 @@ else
 
         try
         {
-            Recurso nuevo = new Recurso(nuevoRecurso.Nombre, nuevoRecurso.Tipo, nuevoRecurso.Descripcion);
-            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevo, esExclusivo);
+            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevoRecurso, esExclusivo);
             mostrarFormCrearRecurso = false;
             mostrarError = false;
-        }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensaje = $"Error al crear recurso: {ex.Message}";
-            mostrarError = true;
         }
         catch (ExcepcionServicios ex)
         {
             errorMensaje = "Ocurrió un error inesperado al crear el recurso.";
+            mostrarError = true;
+        } catch (Exception ex)
+        {
+            errorMensaje = $"Error al crear recurso: {ex.Message}";
             mostrarError = true;
         }
     }
@@ -235,17 +231,9 @@ else
 
     private void EditarRecurso(int idRecurso)
     {
-        var recurso = GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id).FirstOrDefault(r => r.Id == idRecurso);
-        if (recurso != null)
+        recursoAEditar = GestorRecursos.ObtenerRecursoExclusivoPorId(proyecto.Id, idRecurso);
+        if (recursoAEditar != null)
         {
-            recursoAEditar = new RecursoDTO
-            {
-                Id = recurso.Id,
-                Nombre = recurso.Nombre,
-                Tipo = recurso.Tipo,
-                Descripcion = recurso.Descripcion
-            };
-            idRecursoAEditar = recurso.Id;
             mostrarFormEditarRecurso = true;
         }
     }
@@ -272,14 +260,14 @@ else
             mostrarFormEditarRecurso = false;
             recursoAEditar = null;
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al editar recurso: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
         catch (ExcepcionServicios)
         {
             errorMensajeEditar = "Ocurrió un error inesperado al editar el recurso.";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error al editar recurso: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }
@@ -308,16 +296,16 @@ else
                 recursoAEditar = null;
             }
         }
-        catch (ExcepcionDominio ex)
+        catch (ExcepcionServicios ex)
         {
-            errorMensajeEliminar = $"No se puede eliminar el recurso: {ex.Message}";
+            errorMensajeEliminar = "El recurso está en uso, por lo tanto no se puede eliminar.";
             mostrarErrorEliminar = true;
             StateHasChanged();
             await OcultarErrorEliminarAutomaticamente();
         }
-        catch (ExcepcionServicios ex)
+        catch (Exception ex)
         {
-            errorMensajeEliminar = "El recurso está en uso, por lo tanto no se puede eliminar.";
+            errorMensajeEliminar = $"No se puede eliminar el recurso: {ex.Message}";
             mostrarErrorEliminar = true;
             StateHasChanged();
             await OcultarErrorEliminarAutomaticamente();
@@ -331,8 +319,6 @@ else
         StateHasChanged();
     }
     
-    
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !sesionCargada)
@@ -352,7 +338,7 @@ else
                 }
                 catch (ExcepcionServicios)
                 {
-                    NavigationManager.NavigateTo("/not-found");
+                    NavigationManager.NavigateTo("/Error");
                     return;
                 }
                 sesionCargada = true;
@@ -361,5 +347,4 @@ else
             }
         }
     }
-
 }

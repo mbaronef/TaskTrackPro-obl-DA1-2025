@@ -2,13 +2,10 @@
 @rendermode InteractiveServer
 @inject GestorUsuarios GestorUsuarios
 @using System.ComponentModel.DataAnnotations
-@using System.Text.RegularExpressions
-@using Dominio
 @using Dominio.Excepciones
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @using DTOs
-@using Interfaz.ServiciosInterfaz
 @using Servicios.Excepciones
 @using Servicios.Utilidades
 @inject LogicaSesion Sesion
@@ -22,7 +19,7 @@ else
 {
     <h3>Usuarios:</h3>
 
-    @if (!Sesion.UsuarioLogueado.EsAdministradorSistema)
+    @if (!Sesion.EsAdminSistema())
     {
         <p class="text-danger">Acceso denegado. Solo disponible para administradores del sistema.</p>
     }
@@ -204,7 +201,7 @@ else
 
 
 
-        @if (GestorUsuarios.Usuarios.ObtenerTodos().Count == 0)
+        @if (GestorUsuarios.ObtenerTodos().Count == 0)
         {
             <p>No hay usuarios.</p>
         }
@@ -221,7 +218,7 @@ else
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (Usuario usuario in GestorUsuarios.Usuarios.ObtenerTodos())
+                @foreach (UsuarioListarDTO usuario in GestorUsuarios.ObtenerTodos())
                 {
                     <tr>
                         <td>@usuario.Nombre</td>
@@ -327,7 +324,7 @@ else
     private bool mostrarExito = false;
     private string mensajeExito = "";
     
-    private Usuario usuarioOriginal;
+    private UsuarioDTO usuarioOriginal;
     private bool mostrarFormEditar = false;
     private bool mostrarError = false;
     private string errorMensaje;
@@ -389,15 +386,8 @@ else
 
         try
         {
-            Usuario nuevo = GestorUsuarios.CrearUsuario(
-                nuevoUsuario.Nombre,
-                nuevoUsuario.Apellido,
-                nuevoUsuario.FechaNacimiento,
-                nuevoUsuario.Email,
-                nuevoUsuario.Contrasena);
-
-            GestorUsuarios.AgregarUsuario(Sesion.UsuarioLogueado, nuevo);
-            mensajeExito = $"Usuario creado exitosamente: {nuevo.Nombre} {nuevo.Apellido} ({nuevo.Email})";
+            GestorUsuarios.CrearYAgregarUsuario(Sesion.UsuarioLogueado, nuevoUsuario);
+            mensajeExito = $"Usuario creado exitosamente: {nuevoUsuario.Nombre} {nuevoUsuario.Apellido} ({nuevoUsuario.Email})";
             mostrarExito = true;
             mostrarFormCrear = false;
             mostrarError = false;
@@ -445,7 +435,7 @@ else
 
     private void EditarUsuario(int idUsuario)
     {
-        Usuario usuario = GestorUsuarios.Usuarios.ObtenerTodos().FirstOrDefault(u => u.Id == idUsuario);
+        UsuarioDTO usuario = GestorUsuarios.ObtenerUsuarioPorId(idUsuario);
         
         if (usuario != null)
         {
@@ -533,7 +523,6 @@ else
     {
         try
         {
-            GestorUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(usuarioOriginal);
             GestorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, idUsuarioEditando);
 
             mostrarFormEditar = false;
