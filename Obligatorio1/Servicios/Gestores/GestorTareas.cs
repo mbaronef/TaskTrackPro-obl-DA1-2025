@@ -209,7 +209,6 @@ public class GestorTareas
         Usuario usuario = ObtenerUsuarioPorDTO(usuarioDTO); 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         return tarea.EsMiembro(usuario);
-        //return tarea.UsuariosAsignados.Any(u => u.Id == usuarioDTO.Id);
     }
     
     public Tarea ObtenerTareaDominioPorId(int idProyecto, int idTarea)
