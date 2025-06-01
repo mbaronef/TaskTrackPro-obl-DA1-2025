@@ -1,18 +1,29 @@
 using Blazored.LocalStorage;
 using Dominio;
+using DTOs;
 using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
+using Repositorios;
+using Repositorios.Interfaces;
 using Servicios.Gestores;
 using Servicios.Utilidades;
 
 var builder = WebApplication.CreateBuilder(args);
 
-GestorUsuarios gestorUsuarios = new GestorUsuarios();
-GestorProyectos gestorProyectos = new GestorProyectos();
-GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);
-GestorTareas gestorTareas = new GestorTareas(gestorProyectos);
+IRepositorioUsuarios repositorioUsuarios = new RepositorioUsuarios();
+IRepositorio<Proyecto> repositorioProyectos = new RepositorioProyectos();
+IRepositorio<Recurso> repositorioRecursos = new RepositorioRecursos();
+
+GestorUsuarios gestorUsuarios = new GestorUsuarios(repositorioUsuarios);
+GestorProyectos gestorProyectos = new GestorProyectos(repositorioUsuarios, repositorioProyectos);
+GestorRecursos gestorRecursos = new GestorRecursos(repositorioRecursos, gestorProyectos, repositorioUsuarios);
+GestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuarios);
 
 // Add services to the container.
+builder.Services.AddSingleton(repositorioUsuarios);
+builder.Services.AddSingleton(repositorioProyectos);
+builder.Services.AddSingleton(repositorioRecursos);
+
 builder.Services.AddSingleton(gestorUsuarios);
 builder.Services.AddSingleton(gestorProyectos);
 builder.Services.AddSingleton(gestorRecursos);
@@ -22,7 +33,7 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<LogicaSesion>();
 
 // simulación de datos para probar la interfaz
-InicializarDatosHardcodeados(gestorUsuarios, gestorProyectos, gestorRecursos, gestorTareas);
+InicializarDatosHardcodeados(gestorUsuarios, gestorProyectos, gestorRecursos, gestorTareas, repositorioUsuarios);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -53,15 +64,23 @@ void InicializarDatosHardcodeados(
     GestorUsuarios gestorUsuarios, 
     GestorProyectos gestorProyectos, 
     GestorRecursos gestorRecursos, 
-    GestorTareas gestorTareas)
+    GestorTareas gestorTareas, IRepositorioUsuarios repositorioUsuarios)
 {
+   /* //Usuario admin inicial
+    Usuario adminInicial = repositorioUsuarios.ObtenerPorId(0);
+    UsuarioDTO adminInicialDTO = UsuarioDTO.DesdeEntidad(adminInicial);
+    
     //Usuario admin sistema y admin proyecto a la vez - Juan Pérez
-    Usuario adminProyectoYSistema =
-        gestorUsuarios.CrearUsuario("Juan", "Pérez", new DateTime(1990, 1, 1), "admin@gmail.com", "Admin123$");
+    UsuarioDTO adminProyectoYSistemaDTO = new UsuarioDTO()
+    {
+        Nombre = "Juan", Apellido = "Pérez", FechaNacimiento = new DateTime(1990, 1, 1),
+        Email = "admin@gmail.com", Contrasena = "Admin123$"
+    };
+    gestorUsuarios.CrearYAgregarUsuario(adminInicialDTO, adminProyectoYSistemaDTO);
+    Usuario adminProyectoYSistema = repositorioUsuarios.ObtenerPorId(adminProyectoYSistemaDTO.Id);
     adminProyectoYSistema.EsAdministradorSistema = true;
     adminProyectoYSistema.EsAdministradorProyecto = true;
-    gestorUsuarios.AgregarUsuario(adminProyectoYSistema, adminProyectoYSistema);
-
+/*
     // Usuario solo administrador de proyecto 
     Usuario usuarioSoloAdminProyecto = gestorUsuarios.CrearUsuario("Admin", "Proyecto", new DateTime(2000, 5, 20), "adminProyecto@gmail.com", "Contrasena123$");
     usuarioSoloAdminProyecto.EsAdministradorProyecto = true;
@@ -88,7 +107,7 @@ void InicializarDatosHardcodeados(
     gestorTareas.AgregarTareaAlProyecto(proyectoA.Id, adminProyectoYSistema, tarea2);
     
     // Asignar a Sofía Martínez a la tarea 2
-    gestorTareas.AgregarMiembroATarea(adminProyectoYSistema, tarea2.Id, proyectoA.Id , usuarioSinRol);
+    gestorTareas.AgregarMiembroATarea(adminProyectoYSistema, tarea2.Id, proyectoA.Id , usuarioSinRol);*/
 }
 
 
