@@ -87,7 +87,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarTareaAlProyecto_LanzaExcepcionSiProyectoNoExiste()
     {
         Tarea tarea = CrearTarea();
@@ -95,7 +95,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarTareaAlProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
     {
         Proyecto proyecto = CrearYAgregarProyecto(_admin);
@@ -105,7 +105,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarTareaAlProyecto_LanzaExcepcionSiSolicitanteNoEsAdministradorDelProyecto()
     {
         Usuario otroAdmin = CrearAdministradorProyecto();
@@ -116,7 +116,7 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, otroAdmin, tarea);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
     public void AgregarTareaAlProyecto_LanzaExcepcionSiLaTareaIniciaAntesDelProyecto()
     {
@@ -158,7 +158,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarTareaDelProyecto_LanzaExcepcionSiProyectoNoExiste()
     {
         Tarea tarea = CrearTarea();
@@ -166,7 +166,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarTareaDelProyectoo_LanzaExcepcionSiSolicitanteNoEsAdmin()
     {
         Proyecto proyecto = CrearYAgregarProyecto(_admin);
@@ -178,7 +178,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarTareaDelProyecto_LanzaExcepcionSiSolicitanteNoElAdministradorDelProyecto()
     {
         Usuario otroAdmin = CrearAdministradorProyecto();
@@ -192,7 +192,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionTarea))]
     public void EliminarTareaDelProyecto_LanzaExcepcionSiOtrasTareasDependenDeElla()
     {
         Proyecto proyecto = CrearYAgregarProyecto(_admin);
@@ -252,7 +252,7 @@ public class GestorTareasTests
         Assert.AreEqual(tarea2, tareaObtenida2);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
     public void ObtenerTareaPorId_LanzaExcepcionSiNoHayTareaConEseId()
     {
@@ -261,7 +261,7 @@ public class GestorTareasTests
         Tarea tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, -1);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ObtenerTareaPorId_LanzaExcepcionSiNoHayProyecto()
     {
@@ -281,7 +281,7 @@ public class GestorTareasTests
         Assert.AreEqual("Nuevo nombre", tarea.Titulo);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ModificarTitulo_UsuarioNoAdminNoPuedeModificarlo()
     {
@@ -292,7 +292,7 @@ public class GestorTareasTests
         _gestorTareas.ModificarTituloTarea(_noAdmin, tarea.Id, proyecto.Id, "Nuevo nombre");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ModificarTitulo_UsuarioAdminNoDelProyectoNoPuedeModificarlo()
     {
@@ -316,7 +316,7 @@ public class GestorTareasTests
         Assert.AreEqual("Nueva descripcion", tarea.Descripcion);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ModificarDescripcion_UsuarioNoAdminNoPuedeModificarla()
     {
@@ -327,7 +327,7 @@ public class GestorTareasTests
         _gestorTareas.ModificarDescripcionTarea(_noAdmin, tarea.Id, proyecto.Id, "Nueva descripcion");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ModificarDescripcion_UsuarioAdminNoDelProyectoNoPuedeModificarla()
     {
@@ -351,7 +351,7 @@ public class GestorTareasTests
         Assert.AreEqual(4, tarea.DuracionEnDias);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ModificarDuracion_UsuarioNoAdminNoPuedeModificarla()
     {
@@ -362,7 +362,7 @@ public class GestorTareasTests
         _gestorTareas.ModificarDuracionTarea(_noAdmin, tarea.Id, proyecto.Id, 4);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ModificarDuracion_UsuarioAdminNoDelProyectoNoPuedeModificarla()
     {
@@ -388,7 +388,7 @@ public class GestorTareasTests
         Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ModificarFechaInicio_UsuarioNoAdminNoPuedeModificarla()
     {
@@ -400,7 +400,7 @@ public class GestorTareasTests
         _gestorTareas.ModificarFechaInicioTarea(_noAdmin, tarea.Id, proyecto.Id, fechaNueva);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ModificarFechaInicio_UsuarioAdminNoDelProyectoNoPuedeModificarla()
     {
@@ -437,7 +437,7 @@ public class GestorTareasTests
         Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     [TestMethod]
     public void CambiarEstado_UsuarioNoMiembroNoPuedeModificarla()
     {
@@ -449,7 +449,7 @@ public class GestorTareasTests
         Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
     public void MiembroNoPuedeCambiarEstadoABloqueada()
     {
@@ -461,7 +461,7 @@ public class GestorTareasTests
         _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.Bloqueada);
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
     public void MiembroNoPuedeCambiarEstadoAPendiente()
     {
@@ -525,7 +525,7 @@ public class GestorTareasTests
     }
     
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionTarea))]
     public void AgregarDependenciaCiclicaLanzaExcepcion()
     {
         Proyecto proyecto = CrearYAgregarProyecto(_admin);
@@ -540,7 +540,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarDependencia_MiembroNoAdminNoPuedeAgregarLanzaExcepcion()
     {
         _noAdmin.Id = 40;
@@ -555,7 +555,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarDependencia_UsuarioNoMiembroNoPuedeAgregarLanzaExcepcion()
     {
         _noAdmin.Id = 40;
@@ -569,7 +569,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarDependencia_UsuarioAdminSistemaNoPuedeAgregarLanzaExcepcion()
     {
         Usuario adminSistema = CrearAdministradorSistema();
@@ -584,7 +584,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarDependencia_UsuarioAdminSistemaPeroMiembroNoPuedeAgregarLanzaExcepcion()
     {
         Usuario adminSistema = CrearAdministradorSistema();
@@ -615,7 +615,7 @@ public class GestorTareasTests
 
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarDependencia_MiembroNoAdminNoPuedeEliminarLanzaExcepcion()
     {
         _noAdmin.Id = 40;
@@ -631,7 +631,7 @@ public class GestorTareasTests
     }
         
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarDependencia_UsuarioNoMiembroNoPuedeEliminarLanzaExcepcion()
     {
         _noAdmin.Id = 40;
@@ -646,7 +646,7 @@ public class GestorTareasTests
     }
     
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarDependencia_UsuarioAdminSistemaNoPuedeEliminarLanzaExcepcion()
     {
         Usuario adminSistema = CrearAdministradorSistema();
@@ -662,7 +662,7 @@ public class GestorTareasTests
     }
         
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarDependencia_UsuarioAdminSistemaPeroMiembroNoPuedeEliminarLanzaExcepcion()
     {
         Usuario adminSistema = CrearAdministradorSistema();
@@ -695,7 +695,7 @@ public class GestorTareasTests
         Assert.IsTrue(tarea.UsuariosAsignados.Contains(_noAdmin));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminNoPuedeAgregarMiembroATarea()
     {
@@ -711,7 +711,7 @@ public class GestorTareasTests
         _gestorTareas.AgregarMiembroATarea(_noAdmin, tarea.Id, proyecto.Id, _noAdmin);
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     [TestMethod]
     public void NoSePuedeAgregarMiembroATareaSiNoEsMiembroDelProyecto()
     {
@@ -763,7 +763,7 @@ public class GestorTareasTests
         Assert.IsFalse(tarea.UsuariosAsignados.Contains(_noAdmin));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminNoPuedeEliminarMiembroDeTarea()
     {
@@ -780,7 +780,7 @@ public class GestorTareasTests
         _gestorTareas.EliminarMiembroDeTarea(_noAdmin, tarea.Id, proyecto.Id, _noAdmin);
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     [TestMethod]
     public void NoSePuedeEliminarNoMiembroDeTarea()
     {
@@ -834,7 +834,7 @@ public class GestorTareasTests
         Assert.IsTrue(tarea.RecursosNecesarios.Contains(recurso));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminNoPuedeAgregarRecursoATarea()
     {
@@ -892,7 +892,7 @@ public class GestorTareasTests
         Assert.IsFalse(tarea.RecursosNecesarios.Contains(recurso));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminNoPuedeEliminarRecursoDeTarea()
     {
@@ -910,7 +910,7 @@ public class GestorTareasTests
         _gestorTareas.EliminarRecursoDeTarea(_noAdmin, tarea.Id, proyecto.Id, recurso);
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
     public void NoSePuedeEliminarRecursoDeTareaNoExistente()
     {

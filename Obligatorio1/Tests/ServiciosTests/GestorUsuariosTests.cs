@@ -66,7 +66,7 @@ public class GestorUsuariosTests
         Assert.AreSame(usuario2, _gestorUsuarios.Usuarios.ObtenerTodos().ElementAt(2));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminDeSistemaNoPuedeAgregarUsuario()
     {   
@@ -89,14 +89,14 @@ public class GestorUsuariosTests
         Assert.AreSame(usuario1, _gestorUsuarios.Usuarios.ObtenerTodos().ElementAt(1));
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void GestorNoEliminaPrimerAdministradorSistema()
     {
         _gestorUsuarios.EliminarUsuario(_adminSistema,1);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminDeSistemaNoPuedeEliminarUsuario()
     {
@@ -127,7 +127,7 @@ public class GestorUsuariosTests
         Assert.AreEqual(usuario1, busqueda);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionUsuario))]
     [TestMethod]
     public void ErrorSiSeBuscaUnUsuarioNoRegistrado()
     {
@@ -141,7 +141,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuario.EsAdministradorSistema);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void SoloUnAdminDeSistemaPuedeAsignarOtro()
     {
@@ -164,7 +164,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(nuevoAdminProyecto.EsAdministradorProyecto);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNoPuedeAsignarAdministradorProyecto()
     {
@@ -189,7 +189,7 @@ public class GestorUsuariosTests
         Assert.IsFalse(nuevoAdminProyecto.EsAdministradorProyecto);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNoPuedeEliminarAdministradorProyecto()
     {
@@ -204,7 +204,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ErrorEliminarAdministradorProyectoSiUsuarioNoEsAdministradorProyecto()
     {
@@ -215,7 +215,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ErrorEliminarAdministradorProyectoSiUsuarioEstaAdministrandoUnProyecto()
     {
@@ -228,7 +228,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ErrorEliminarUsuarioMiembroDeProyecto()
     {
@@ -274,7 +274,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuario.Autenticar("TaskTrackPro@2025"));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoNoPuedeReiniciarContrasena()
     {
@@ -319,7 +319,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminDeSistemaNiDeProyectoPuedeAutogenerarContrasena()
     {
@@ -369,7 +369,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoNoPuedeModificarContrasena()
     {
@@ -519,7 +519,7 @@ public class GestorUsuariosTests
         Assert.AreEqual(usuario, obtenido);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionUsuario))]
     [TestMethod]
     public void LoginIncorrectoConContraseñaIncorrecta()
     {
@@ -528,7 +528,7 @@ public class GestorUsuariosTests
         Usuario obtenido = _gestorUsuarios.LogIn(usuario.Email, "ContraseñaIncorrecta");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionUsuario))]
     [TestMethod]
     public void LoginIncorrectoConEmailNoRegistrado()
     {
@@ -552,7 +552,7 @@ public class GestorUsuariosTests
         Assert.AreEqual(usuario3, usuariosNoEnLista.ElementAt(0));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ValidarQueUnUsuarioNoEsPrimerAdminLanzaExcepcionConElPrimerAdmin()
     {

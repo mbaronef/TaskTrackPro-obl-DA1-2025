@@ -40,7 +40,7 @@ public class GestorUsuarios
         Usuario usuario = ObtenerUsuarioPorId(id);
         if (!solicitante.EsAdministradorSistema && !solicitante.Equals(usuario))
         {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar usuarios");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegado);
         }
         VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         Usuarios.Eliminar(usuario.Id);
@@ -53,7 +53,7 @@ public class GestorUsuarios
         Usuario usuario = Usuarios.ObtenerPorId(idUsuario);
         if (usuario == null)
         {
-            throw new ExcepcionServicios("El usuario no existe");
+            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
         }
         return usuario;
     }
@@ -132,7 +132,7 @@ public class GestorUsuarios
     {
         if (idUsuario == AdministradorInicial.Id)
         {
-            throw new ExcepcionServicios("No se puede eliminar al primer administrador del sistema");
+            throw new ExcepcionPermisos(MensajesError.PrimerAdminSistema);
         }
     }
 
@@ -140,7 +140,7 @@ public class GestorUsuarios
     {
         if(usuario.CantidadProyectosAsignados > 0)
         {
-            throw new ExcepcionServicios("No puede eliminar un usuario que es miembro de un proyecto.");
+            throw new ExcepcionPermisos(MensajesError.UsuarioMiembroDeProyecto);
         }
     }
     
@@ -148,14 +148,14 @@ public class GestorUsuarios
     {
         if (!usuario.EsAdministradorSistema)
         {
-            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara(accion)); 
         }
     }
     private void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(Usuario usuario)
     {
         if (usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionServicios("No se puede quitar permisos de proyecto a un usuario que tiene un proyecto a su cargo.");
+            throw new ExcepcionPermisos(MensajesError.UsuarioAdministrandoProyecto);
         }
     }
 
@@ -163,7 +163,7 @@ public class GestorUsuarios
     {
         if (!usuario.EsAdministradorProyecto)
         {
-            throw new ExcepcionServicios("El usuario a desasignar no es administrador de proyectos.");
+            throw new ExcepcionPermisos(MensajesError.UsuarioNoAdminProyecto);
         }
         
     }
@@ -172,7 +172,7 @@ public class GestorUsuarios
     {
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
         {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para autogenerar la contraseña del usuario");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara("autogenerar la contraseña del usuario"));
         }
     }
     
@@ -181,7 +181,7 @@ public class GestorUsuarios
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto &&
             !solicitante.Equals(usuario))
         {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para reiniciar la contraseña del usuario");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara("reiniciar la contraseña del usuario"));
         }
     }
     
@@ -190,7 +190,7 @@ public class GestorUsuarios
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto &&
             !solicitante.Equals(usuario))
         {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para modificar la contraseña del usuario");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara("modificar la contraseña del usuario"));
         }
         
     }
@@ -207,7 +207,7 @@ public class GestorUsuarios
     {
         if (usuario == null)
         {
-            throw new ExcepcionServicios("Correo electrónico no registrado.");
+            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
         }
     }
 
@@ -215,7 +215,7 @@ public class GestorUsuarios
     {
         if (!usuario.Autenticar(contrasena))
         {
-            throw new ExcepcionServicios("La contraseña ingresada es incorrecta.");
+            throw new ExcepcionUsuario(MensajesError.ContrasenaIncorrecta);
         }
     }
     

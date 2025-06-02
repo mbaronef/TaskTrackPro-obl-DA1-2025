@@ -52,36 +52,35 @@ public static class UtilidadesContrasena
     {
         if (contrasena.Length < _largoMinimoContrasena)
         {
-            throw new ExcepcionServicios($"La contraseña debe tener al menos {_largoMinimoContrasena} caracteres.");
+            throw new ExcepcionServicios(string.Format(MensajesError.ContrasenaMuyCorta, _largoMinimoContrasena));
         }
     } 
     private static void ValidarAlgunaMayuscula(string contrasena)
     {
         if (!contrasena.Any(char.IsUpper))
         {
-            throw new ExcepcionServicios("La contraseña debe incluir al menos una letra mayúscula (A-Z).");
+            throw new ExcepcionServicios(MensajesError.ContrasenaSinMayuscula);
         }
     } 
     private static void ValidarAlgunaMinuscula(string contrasena)
     {
         if (!contrasena.Any(char.IsLower))
         {
-            throw new ExcepcionServicios("La contraseña debe incluir al menos una letra minúscula (a-z).");
+            throw new ExcepcionServicios(MensajesError.ContrasenaSinMinuscula);
         }
     } 
     private static void ValidarAlgunNumero(string contrasena)
     {
         if (!contrasena.Any(char.IsDigit))
         {
-            throw new ExcepcionServicios("La contraseña debe incluir al menos un número (0-9).");
+            throw new ExcepcionServicios(MensajesError.ContrasenaSinNumero);
         }
     } 
     private static void ValidarAlgunCaracterEspecial(string contrasena)
     {
         if (!Regex.IsMatch(contrasena, "[^a-zA-Z0-9]")) // RegEx para que haya algún caracter distinto a minúsuclas, mayúsuclas o números
         {
-            throw new ExcepcionServicios(
-                "La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).");
+            throw new ExcepcionServicios(MensajesError.ContrasenaSinCaracterEspecial);
         }
     } 
     

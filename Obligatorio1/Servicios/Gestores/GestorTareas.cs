@@ -49,7 +49,7 @@ public class GestorTareas
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
         Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
         if (tarea == null)
-            throw new ExcepcionServicios("Tarea no existente");
+            throw new ExcepcionTarea(MensajesError.TareaNoExistente);
         return tarea;
     }
 
@@ -122,7 +122,7 @@ public class GestorTareas
         catch (ExcepcionServicios ex)
         {
             tarea.EliminarDependencia(dependencia.Tarea.Id);
-            throw new ExcepcionServicios("No se puede  agregar la dependencia de la tarea ya que se generarían dependencias cíclicas.");
+            throw new ExcepcionTarea(MensajesError.GeneraCiclos);
         }
 
         proyecto.NotificarMiembros($"Se agregó una dependencia a la tarea id {idTarea} del proyecto '{proyecto.Nombre}' del tipo {tipoDependencia} con la tarea id {tareaDependencia.Id}.");
@@ -211,14 +211,14 @@ public class GestorTareas
     private void VerificarEstadoEditablePorUsuario(EstadoTarea estado)
     {
         if (estado != EstadoTarea.EnProceso && estado != EstadoTarea.Completada)
-            throw new ExcepcionServicios("No se puede cambiar manualmente a un estado distinto de 'En Proceso' o 'Completada'.");
+            throw new ExcepcionTarea(MensajesError.EstadoNoEditable);
     }
 
     private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
     {
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         if (!tarea.RecursosNecesarios.Contains(recurso))
-            throw new ExcepcionServicios("El recurso no está asignado a la tarea.");
+            throw new ExcepcionTarea(MensajesError.RecursoNoAsignado);
     }
 
     private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
@@ -230,7 +230,7 @@ public class GestorTareas
     {
         if (proyecto.Tareas.Any(tarea => tarea.EsSucesoraDe(idTarea)))
         {
-            throw new ExcepcionServicios("No se puede eliminar la tarea porque tiene tareas sucesoras.");
+            throw new ExcepcionTarea(MensajesError.TareaConSucesoras);
         }
     }
 
@@ -238,7 +238,7 @@ public class GestorTareas
     {
         if (nuevaTarea.FechaInicioMasTemprana < proyecto.FechaInicio)
         {
-            throw new ExcepcionServicios("La fecha de inicio de la tarea no puede ser anterior a la fecha de inicio del proyecto.");
+            throw new ExcepcionTarea(MensajesError.FechaInicioTarea);
         }
     }
 }
