@@ -59,7 +59,7 @@ else
                                 <p><strong>Estado:</strong> @FormatearEstado(tarea.Estado)</p>
                                 @if (tarea.Dependencias.Count > 0)
                                 {
-                                    <p><strong>Depende de:</strong> @string.Join(", ", tarea.Dependencias.Select(d => d.ToString()))</p>
+                                    <p><strong>Depende de:</strong> @string.Join(", ", tarea.Dependencias.Select(d => $"{d.TareaPrevia.Titulo} ({d.Tipo})"))</p>
                                 }
                                 else
                                 {
@@ -80,7 +80,7 @@ else
 
                                 @if (tarea.UsuariosAsignados.Count > 0)
                                 {
-                                    <p><strong>Miembros:</strong> @string.Join(", ", tarea.UsuariosAsignados.Select(u => u.ToString()))</p>
+                                    <p><strong>Miembros:</strong> @string.Join(", ", tarea.UsuariosAsignados.Select(u => $"{u.Nombre} {u.Apellido} ({u.Email})"))</p>
                                 }
                                 else
                                 {
@@ -409,12 +409,12 @@ else
                 <strong>@dep.TareaPrevia.Titulo</strong> — @dep.Tipo
             </span>
                                     <button class="btn btn-outline-danger btn-sm"
-                                            @onclick="() => PedirConfirmacion(dep.TareaPreviaId)">
+                                            @onclick="() => PedirConfirmacion(dep)">
                                         <i class="bi bi-trash3"></i> Quitar
                                     </button>
                                 </div>
 
-                                @if (dependenciaAConfirmar == dep.TareaPreviaId)
+                                @if (dependenciaAConfirmar == $"{dep.TareaPreviaId} {dep.Tipo}")
                                 {
                                     <div class="alert alert-warning mt-2 mb-0 p-2 d-flex justify-content-between align-items-center">
                                         <span>¿Estás seguro de que querés eliminar esta dependencia?</span>
@@ -478,7 +478,7 @@ else
                                     <option disabled selected value="0">Seleccione un recurso</option>
                                     @foreach (var r in recursosProyecto)
                                     {
-                                        <option value="@r.Id">@r.ToString()</option>
+                                        <option value="@r.Id">Nombre: '@r.Nombre', tipo: '@r.Tipo', descripción: '@r.Descripcion' </option>
                                     }
                                 </select>
                             </div>
@@ -499,7 +499,7 @@ else
                         @foreach (var recurso in tareaActual.RecursosNecesarios)
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="bi bi-box-seam me-1 text-primary"></i> @recurso.ToString()</span>
+                                <span><i class="bi bi-box-seam me-1 text-primary"></i>Nombre: '@recurso.Nombre', tipo: '@recurso.Tipo', descripción: '@recurso.Descripcion' </span>
                                 <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarRecursoDeTarea(recurso.Id)">
                                     <i class="bi bi-trash3"></i> Quitar
                                 </button>
@@ -557,7 +557,7 @@ else
                                     <option disabled selected value="0">Seleccione un usuario</option>
                                     @foreach (var u in usuariosDeProyecto)
                                     {
-                                        <option value="@u.Id">@u.ToString()</option>
+                                        <option value="@u.Id">@u.Nombre @u.Apellido (@u.Email)</option>
                                     }
                                 </select>
                             </div>
@@ -578,7 +578,7 @@ else
                         @foreach (var miembro in tareaActual.UsuariosAsignados)
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="bi bi-person-circle me-1 text-primary"></i> @miembro.ToString()</span>
+                                <span><i class="bi bi-person-circle me-1 text-primary"></i> @miembro.Nombre @miembro.Apellido (@miembro.Email)</span>
                                 <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarMiembroDeTarea(miembro.Id)">
                                     <i class="bi bi-trash3"></i> Quitar
                                 </button>
@@ -628,7 +628,7 @@ else
     private TareaDTO tareaActual = new TareaDTO();
     private DependenciaDTO dependenciaDTO = new DependenciaDTO();
     private List<TareaDTO> tareasDelProyecto = new List<TareaDTO>();
-    private int? dependenciaAConfirmar = null;
+    private string? dependenciaAConfirmar = null;
 
     private RecursoAsignacionDTO recursoAsignacionDto = new RecursoAsignacionDTO();
     private List<RecursoDTO> recursosProyecto = new List<RecursoDTO>();
@@ -856,6 +856,7 @@ else
             editoCompletada = false;
             editoEnProceso = false;
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             StateHasChanged();
         }
         catch (Exception e)
@@ -894,6 +895,7 @@ else
             // actualizaciones
             dependenciaDTO = new DependenciaDTO();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             StateHasChanged();
         }
         catch (Exception e)
@@ -910,6 +912,7 @@ else
             mensaje = "Dependencia eliminada con éxito.";
             // actualizaciones
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             StateHasChanged();
         }
         catch (Exception e)
@@ -928,6 +931,7 @@ else
             // actualizaciones
             recursoAsignacionDto = new RecursoAsignacionDTO();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             ActualizarRecursosDisponibles();
             StateHasChanged();
         }
@@ -953,6 +957,7 @@ else
             mensaje = "Recurso eliminado con éxito.";
             // actualizaciones
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             ActualizarRecursosDisponibles();
             StateHasChanged();
         }
@@ -972,6 +977,7 @@ else
             // actualizaciones
             usuarioAsignacionDto = new UsuarioAsignacionDTO();
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             ActualizarUsuariosProyecto();
             StateHasChanged();
         }
@@ -997,6 +1003,7 @@ else
             mensaje = "Usuario eliminado de la tarea con éxito.";
             // actualizaciones
             proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             ActualizarUsuariosProyecto();
             StateHasChanged();
         }
@@ -1040,9 +1047,9 @@ else
         return System.Text.RegularExpressions.Regex.Replace(estado.ToString(), "(\\B[A-Z])", " $1");
     }
 
-    private void PedirConfirmacion(int idDependencia)
+    private void PedirConfirmacion(DependenciaDTO dependencia)
     {
-        dependenciaAConfirmar = idDependencia;
+        dependenciaAConfirmar = $"{dependencia.TareaPreviaId} {dependencia.Tipo}";
     }
 
     private void CancelarEliminacion()
@@ -1052,9 +1059,11 @@ else
 
     private void ConfirmarEliminacion()
     {
-        if (dependenciaAConfirmar.HasValue)
+        if (!string.IsNullOrWhiteSpace(dependenciaAConfirmar))
         {
-            EliminarDependencia(dependenciaAConfirmar.Value);
+            string[] partes = dependenciaAConfirmar.Split(' ');
+            int id = int.Parse(partes[0]);
+            EliminarDependencia(id);
             dependenciaAConfirmar = null;
         }
     }

@@ -19,8 +19,8 @@ public class ProyectoDTO
     public DateTime FechaInicio { get; set; } = DateTime.Today;
     
     public DateTime FechaFinMasTemprana { get; set; }
-    
-    public List<TareaDTO> Tareas { get; private set; }
+
+    public List<TareaDTO> Tareas { get; private set; } = new List<TareaDTO>();
     
     public UsuarioDTO Administrador { get; set; }
     

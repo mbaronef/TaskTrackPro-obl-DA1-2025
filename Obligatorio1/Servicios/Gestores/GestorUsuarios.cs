@@ -94,8 +94,9 @@ public class GestorUsuarios
         Notificar(usuarioObjetivo, $"Se reinició su contraseña. La nueva contraseña es {_contrasenaPorDefecto}");
     }
 
-    public void AutogenerarContrasena(Usuario solicitante, int idUsuarioObjetivo)
+    public void AutogenerarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
     {
+        Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
         string nuevaContrasena = UtilidadesContrasena.AutogenerarContrasenaValida();
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);

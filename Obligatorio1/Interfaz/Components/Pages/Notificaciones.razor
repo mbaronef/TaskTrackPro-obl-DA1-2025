@@ -59,14 +59,15 @@ else
             {
                 await Sesion.ActualizarSesion();
                 sesionCargada = true;
-                StateHasChanged(); // Re-renderiza para mostrar sesión activa
+                StateHasChanged(); 
             }
         }
     }
 
-    private void EliminarNotificacion(int id)
+    private async Task EliminarNotificacion(int id)
     {
         GestorUsuarios.BorrarNotificacion(Sesion.UsuarioLogueado.Id, id);
-        StateHasChanged(); // Re-renderiza para actualizar la lista
+        await Sesion.ActualizarSesion(); 
+        StateHasChanged(); 
     }
 }

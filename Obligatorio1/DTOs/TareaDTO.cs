@@ -26,11 +26,11 @@ public class TareaDTO
     public int Holgura { get; set; }
     
     public DateTime FechaFinMasTemprana { get; set; }
-    
-    public List<UsuarioListarDTO> UsuariosAsignados { get; private set; }
-    
-    public List<RecursoDTO> RecursosNecesarios { get; private set; }
-    public List<DependenciaDTO> Dependencias { get; private set; }
+
+    public List<UsuarioListarDTO> UsuariosAsignados { get; private set; } = new List<UsuarioListarDTO>();
+
+    public List<RecursoDTO> RecursosNecesarios { get; private set; } = new List<RecursoDTO>();
+    public List<DependenciaDTO> Dependencias { get; private set; } = new List<DependenciaDTO>();
 
     public Tarea AEntidad()
     {
