@@ -9,6 +9,7 @@ namespace Tests.DominioTests;
 public class TareaTests
 {
     private DateTime _fechaInicio = new DateTime(2500, 9, 1);
+    private MockNotificador _notificador;
 
     [TestMethod]
     public void ConstructorSinParametrosCreaTareaCorrectamente()
@@ -457,7 +458,7 @@ public class TareaTests
     [TestMethod]
     public void DarListaAsignados_DevuelveListaDeUsuariosAsignados()
     {
-        GestorUsuarios gestor = new GestorUsuarios();
+        GestorUsuarios gestor = new GestorUsuarios(_notificador);
         Usuario admin = gestor.AdministradorInicial;
         Usuario usuario1 = CrearUsuarioValido();
         Usuario usuario2 = new Usuario("Juana", "Pereza", new DateTime(1996, 2, 2), "juana@test.com", "TaskTrackPro@2025");
@@ -486,19 +487,6 @@ public class TareaTests
         Assert.AreEqual(2, lista.Count);
         Assert.IsTrue(lista.Contains(necesario));
         Assert.IsTrue(lista.Contains(necesario2));
-    }
-    
-    [TestMethod]
-    public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
-    {
-        Usuario miembro = CrearUsuarioValido();
-        Tarea tarea = CrearTareaValida();
-        tarea.AsignarUsuario(miembro);
-        tarea.NotificarMiembros("Se modificó el proyecto.");
-        foreach (Usuario u in tarea.UsuariosAsignados)
-        {
-            Assert.IsTrue(u.Notificaciones.Any(n => n.Mensaje == "Se modificó el proyecto."));
-        }
     }
 
     [TestMethod]

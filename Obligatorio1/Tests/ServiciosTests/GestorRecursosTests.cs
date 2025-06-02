@@ -2,6 +2,7 @@ using Dominio;
 using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Gestores;
+using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Tests.ServiciosTests;
@@ -12,15 +13,16 @@ public class GestorRecursosTests
     private GestorRecursos _gestorRecursos;
     private GestorProyectos _gestorProyectos;
     private Usuario _adminSistema;
+    private MockNotificador _mockNotificador;
 
     [TestInitialize]
     public void SetUp()
     {
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(RepositorioRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-
-       _gestorProyectos = new GestorProyectos();
-        _gestorRecursos = new GestorRecursos(_gestorProyectos);
+        _mockNotificador = new MockNotificador();
+       _gestorProyectos = new GestorProyectos(_mockNotificador);
+        _gestorRecursos = new GestorRecursos(_gestorProyectos, _mockNotificador);
         _adminSistema = CrearAdministradorSistema();
     }
 
@@ -209,7 +211,8 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(_adminSistema, recurso.Id);
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoEliminado(recurso.Nombre, recurso.Tipo, recurso.Descripcion);
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -225,7 +228,8 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(_adminSistema, recurso.Id);
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoEliminado(recurso.Nombre, recurso.Tipo, recurso.Descripcion);
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -430,10 +434,12 @@ public class GestorRecursosTests
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso, true);
+        string nombreAnterior = recurso.Nombre;
         _gestorRecursos.ModificarNombreRecurso(_adminSistema, recurso.Id, "Otro nombre");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(nombreAnterior, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -448,11 +454,13 @@ public class GestorRecursosTests
         Tarea tarea = CrearTarea();
         tarea.AgregarRecurso(recurso);
         proyecto.AgregarTarea(tarea);
+        string nombreAnterior = recurso.Nombre;
         
         _gestorRecursos.ModificarNombreRecurso(_adminSistema, recurso.Id, "Otro nombre");
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(nombreAnterior, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -463,10 +471,12 @@ public class GestorRecursosTests
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso, true);
+        string tipoAnterior = recurso.Tipo;
         _gestorRecursos.ModificarTipoRecurso(_adminSistema, recurso.Id, "Otro tipo");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(recurso.Nombre, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -481,11 +491,13 @@ public class GestorRecursosTests
         Tarea tarea = CrearTarea();
         tarea.AgregarRecurso(recurso);
         proyecto.AgregarTarea(tarea);
+        string tipoAnterior = recurso.Tipo;
         
         _gestorRecursos.ModificarTipoRecurso(_adminSistema, recurso.Id, "Otro tipo");
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(recurso.Nombre, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -496,10 +508,12 @@ public class GestorRecursosTests
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         Recurso recurso = CrearRecurso();
         _gestorRecursos.AgregarRecurso(adminProyecto, recurso, true);
+        string descripcionAnterior = recurso.Descripcion;
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistema, recurso.Id, "Otra descripción");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(recurso.Nombre, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -514,11 +528,13 @@ public class GestorRecursosTests
         Tarea tarea = CrearTarea();
         tarea.AgregarRecurso(recurso);
         proyecto.AgregarTarea(tarea);
+        string descripcionAnterior = recurso.Descripcion;
         
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistema, recurso.Id, "Otra descripción");
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(recurso.Nombre, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 

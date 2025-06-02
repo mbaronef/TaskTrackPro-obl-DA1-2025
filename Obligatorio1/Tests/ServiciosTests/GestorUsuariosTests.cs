@@ -10,11 +10,13 @@ public class GestorUsuariosTests
 {
     private GestorUsuarios _gestorUsuarios;
     private Usuario _adminSistema;
+    private MockNotificador _notificador;
 
     [TestInitialize]
     public void SetUp()
     {
-        _gestorUsuarios = new GestorUsuarios();
+        _notificador = new MockNotificador();
+        _gestorUsuarios = new GestorUsuarios(_notificador);
         _adminSistema = _gestorUsuarios.AdministradorInicial;
     }
     

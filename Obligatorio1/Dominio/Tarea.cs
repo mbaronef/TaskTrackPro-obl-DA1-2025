@@ -128,14 +128,6 @@ public class Tarea
         CalcularFechaFinMasTemprana();
     }
     
-    public void NotificarMiembros(string mensaje)
-    {
-        foreach (Usuario usuario in UsuariosAsignados)
-        {
-            usuario.RecibirNotificacion(mensaje);
-        }
-    }
-    
     public bool EsCritica()
     {
         return Holgura == 0;

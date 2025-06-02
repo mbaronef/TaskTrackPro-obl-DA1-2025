@@ -125,16 +125,6 @@ public class Proyecto
             }
         }
     }
-    
-    public void NotificarMiembros(string mensaje)
-    {
-        Miembros.ForEach(miembro => miembro.RecibirNotificacion(mensaje));
-    }
-
-    public void NotificarAdministrador(string mensaje)
-    {
-        Administrador.RecibirNotificacion(mensaje);
-    }
 
     public bool EsMiembro(int idUsuario)
     {

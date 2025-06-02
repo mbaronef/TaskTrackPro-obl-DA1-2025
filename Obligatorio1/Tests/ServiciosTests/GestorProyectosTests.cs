@@ -1,6 +1,7 @@
 using Dominio;
 using Servicios.Excepciones;
 using Servicios.Gestores;
+using Servicios.Notificaciones;
 
 namespace Tests.ServiciosTests
 
@@ -14,11 +15,13 @@ namespace Tests.ServiciosTests
         private Usuario _usuarioNoAdmin;
         private Usuario _adminSistema;
         private Proyecto _proyecto;
+        private MockNotificador _mockNotificador;
 
         [TestInitialize]
         public void Inicializar()
         {
-            _gestor = new GestorProyectos();
+            _mockNotificador = new MockNotificador();
+            _gestor = new GestorProyectos(_mockNotificador);
             _admin = CrearAdminProyecto(1);
             _adminSistema = CrearAdminSistema(2);
             _usuarioNoAdmin = CrearMiembro(3);
@@ -134,7 +137,7 @@ namespace Tests.ServiciosTests
             foreach (Usuario miembro in miembros)
             {
                 Assert.AreEqual(1, miembro.Notificaciones.Count);
-                Assert.AreEqual("Se creó el proyecto 'Proyecto'.", miembro.Notificaciones[0].Mensaje);
+                Assert.AreEqual(MensajesNotificacion.ProyectoCreado(proyecto.Nombre), miembro.Notificaciones[0].Mensaje);
             }
         }
 
@@ -197,7 +200,7 @@ namespace Tests.ServiciosTests
             foreach (Usuario miembro in proyecto.Miembros)
             {
                 Assert.AreEqual(2, miembro.Notificaciones.Count);
-                Assert.AreEqual("Se eliminó el proyecto 'Proyecto'.", miembro.Notificaciones[1].Mensaje);
+                Assert.AreEqual(MensajesNotificacion.ProyectoEliminado(proyecto.Nombre), miembro.Notificaciones[1].Mensaje);
             }
         }
 
@@ -251,11 +254,12 @@ namespace Tests.ServiciosTests
             Usuario miembro2 = CrearMiembro(5);
             List<Usuario> miembros = new List<Usuario> { miembro1, miembro2 };
             Proyecto proyecto = CrearProyectoCon(_admin, miembros);
+            string anterior = proyecto.Nombre;
 
             _gestor.CrearProyecto(proyecto, _admin);
             _gestor.ModificarNombreDelProyecto(proyecto.Id, "Nuevo Nombre", _admin);
 
-            string mensajeEsperado = "Se cambió el nombre del proyecto 'Proyecto' a 'Nuevo Nombre'.";
+            string mensajeEsperado = MensajesNotificacion.NombreProyectoModificado(anterior, proyecto.Nombre);
 
             foreach (Usuario usuario in proyecto.Miembros)
             {
@@ -305,7 +309,7 @@ namespace Tests.ServiciosTests
             string nuevaDescripcion = "Nueva descripcion";
             _gestor.ModificarDescripcionDelProyecto(proyecto.Id, nuevaDescripcion, _admin);
 
-            string mensajeEsperado = $"Se cambió la descripción del proyecto '{proyecto.Nombre}' a '{nuevaDescripcion}'.";
+            string mensajeEsperado = MensajesNotificacion.DescripcionProyectoModificada(proyecto.Nombre, nuevaDescripcion);
 
             foreach (var usuario in proyecto.Miembros)
             {
@@ -356,7 +360,7 @@ namespace Tests.ServiciosTests
             DateTime nuevaFecha = new DateTime(2026, 5, 1);
             _gestor.ModificarFechaDeInicioDelProyecto(proyecto.Id, nuevaFecha, _admin);
 
-            string mensajeEsperado = $"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.";
+            string mensajeEsperado = MensajesNotificacion.FechaInicioProyectoModificada(proyecto.Nombre, nuevaFecha);
 
             foreach (var usuario in proyecto.Miembros)
             {
@@ -466,7 +470,7 @@ namespace Tests.ServiciosTests
 
             _gestor.CambiarAdministradorDeProyecto(_adminSistema, proyecto.Id, nuevoAdmin.Id);
 
-            string msg = $"Se cambió el administrador del proyecto '{proyecto.Nombre}'. El nuevo administrador es '{nuevoAdmin}'.";
+            string msg = MensajesNotificacion.AdministradorProyectoModificado(proyecto.Nombre, nuevoAdmin.ToString());
 
             foreach (var u in new[] { nuevoAdmin, _usuarioNoAdmin })
             {
@@ -529,8 +533,8 @@ namespace Tests.ServiciosTests
             _gestor.CrearProyecto(proyecto, _admin);
             _gestor.AgregarMiembroAProyecto(proyecto.Id, _admin, _usuarioNoAdmin);
 
-            string esperado = $"Se agregó a un nuevo miembro (id {_usuarioNoAdmin.Id}) al proyecto '{proyecto.Nombre}'.";
-
+            string esperado = MensajesNotificacion.MiembroAgregado(proyecto.Nombre, _usuarioNoAdmin.Id);
+            
             foreach (var usuario in proyecto.Miembros.Concat(new[] { proyecto.Administrador }))
             {
                 Assert.IsTrue(usuario.Notificaciones.Any(n => n.Mensaje == esperado));
@@ -618,7 +622,7 @@ namespace Tests.ServiciosTests
 
             _gestor.EliminarMiembroDelProyecto(proyecto.Id, _admin, miembro1.Id);
 
-            string esperado = $"Se eliminó a el miembro (id {miembro1.Id}) del proyecto '{proyecto.Nombre}'.";
+            string esperado = MensajesNotificacion.MiembroEliminado(proyecto.Nombre, miembro1.Id);
 
             foreach (var usuario in new[] { _admin, miembro2 })
             {
@@ -682,12 +686,16 @@ namespace Tests.ServiciosTests
             Proyecto proyecto2 = CrearProyectoCon(otroAdmin);
             
             List<Proyecto> proyectos = new List<Proyecto> { proyecto1, proyecto2 };
+            string mensajeEsperado = "notificación";
             _gestor.NotificarAdministradoresDeProyectos(proyectos, "notificación");
 
             Notificacion ultimaNotificacionAdmin = _admin.Notificaciones.Last();
             Notificacion ultimaNotificacionOtroAdmin = otroAdmin.Notificaciones.Last();
-            Assert.AreEqual("notificación", ultimaNotificacionAdmin.Mensaje);
-            Assert.AreEqual("notificación", ultimaNotificacionOtroAdmin.Mensaje);
+            Assert.IsTrue(_mockNotificador.Notificaciones.Any(n =>
+                    n.Item1 == _admin && n.Item2 == mensajeEsperado));
+
+            Assert.IsTrue(_mockNotificador.Notificaciones.Any(n =>
+                    n.Item1 == otroAdmin && n.Item2 == mensajeEsperado));
         }
 
     }

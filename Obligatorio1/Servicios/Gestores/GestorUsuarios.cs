@@ -1,6 +1,7 @@
 using Dominio;
 using Repositorios;
 using Servicios.Excepciones;
+using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
@@ -11,9 +12,13 @@ public class GestorUsuarios
     
     public Usuario AdministradorInicial { get; private set; }
     public RepositorioUsuarios Usuarios { get; } = new RepositorioUsuarios();
+    
+    private readonly INotificador _notificador;
 
-    public GestorUsuarios()
+
+    public GestorUsuarios(INotificador notificador)
     {
+        _notificador = notificador;
         AdministradorInicial = CrearUsuario("Admin", "Admin", new DateTime(1999, 01, 01), "admin@sistema.com", _contrasenaPorDefecto);
         AdministradorInicial.EsAdministradorSistema = true; 
         Usuarios.Agregar(AdministradorInicial);
@@ -29,8 +34,7 @@ public class GestorUsuarios
     {
         VerificarPermisoAdministradorSistema(solicitante, "crear usuarios");
         Usuarios.Agregar(usuario);
-        string mensajeNotificacion =
-            $"Se creó un nuevo usuario: {usuario.Nombre} {usuario.Apellido}";
+        string mensajeNotificacion = MensajesNotificacion.UsuarioCreado(usuario.Nombre, usuario.Apellido);
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
     }
 
@@ -44,7 +48,7 @@ public class GestorUsuarios
         }
         VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         Usuarios.Eliminar(usuario.Id);
-        string mensajeNotificacion = $"Se eliminó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
+        string mensajeNotificacion = MensajesNotificacion.UsuarioEliminado(usuario.Nombre, usuario.Apellido);
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
     }
 
@@ -89,7 +93,7 @@ public class GestorUsuarios
         string contrasenaPorDefectoEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
         usuarioObjetivo.EstablecerContrasenaEncriptada(contrasenaPorDefectoEncriptada);
         
-        Notificar(usuarioObjetivo, $"Se reinició su contraseña. La nueva contraseña es {_contrasenaPorDefecto}");
+        Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaReiniciada(_contrasenaPorDefecto));
     }
 
     public void AutogenerarContrasena(Usuario solicitante, int idUsuarioObjetivo)
@@ -101,7 +105,7 @@ public class GestorUsuarios
         Usuario usuarioObjetivo = ObtenerUsuarioPorId(idUsuarioObjetivo);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
         
-        Notificar(usuarioObjetivo, $"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}");
+        Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
     }
 
     public void ModificarContrasena(Usuario solicitante, int idUsuarioObjetivo, string nuevaContrasena)
@@ -199,7 +203,7 @@ public class GestorUsuarios
     {
         if (!solicitante.Equals(usuarioObjetivo))
         {
-            Notificar(usuarioObjetivo, $"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}");
+            Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
         }
     }
     
@@ -227,6 +231,6 @@ public class GestorUsuarios
     
     private void Notificar(Usuario usuario, string mensajeNotificacion)
     {
-        usuario.RecibirNotificacion(mensajeNotificacion);
+        _notificador.NotificarUno(usuario, mensajeNotificacion);
     }
 }

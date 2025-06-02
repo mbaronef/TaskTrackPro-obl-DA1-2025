@@ -14,15 +14,16 @@ public class GestorTareasTests
     private GestorProyectos _gestorProyectos;
     private Usuario _admin;
     private Usuario _noAdmin;
+    private MockNotificador _mockNotificador;
 
     [TestInitialize]
     public void Inicializar()
     {
         typeof(GestorTareas).GetField("_cantidadTareas", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         typeof(RepositorioProyectos).GetField("_cantidadProyectos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-        
-        _gestorProyectos = new GestorProyectos();
-        _gestorTareas = new GestorTareas(_gestorProyectos);
+        _mockNotificador = new MockNotificador();
+        _gestorProyectos = new GestorProyectos(_mockNotificador);
+        _gestorTareas = new GestorTareas(_gestorProyectos, _mockNotificador);
         _admin = CrearAdministradorProyecto();
         _noAdmin = CrearUsuarioNoAdmin();
     }

@@ -1,6 +1,7 @@
 using Dominio;
 using Repositorios;
 using Servicios.Excepciones;
+using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
@@ -8,6 +9,12 @@ namespace Servicios.Gestores;
 public class GestorProyectos
 {
     public RepositorioProyectos Proyectos { get; } = new RepositorioProyectos();
+    private readonly INotificador _notificador;
+    
+    public GestorProyectos(INotificador notificador)
+    {
+        _notificador = notificador;
+    }
 
     public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
     {
@@ -21,7 +28,7 @@ public class GestorProyectos
 
         solicitante.EstaAdministrandoUnProyecto = true;
 
-        proyecto.NotificarMiembros($"Se creó el proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.ProyectoCreado(proyecto.Nombre));
     }
 
     public void EliminarProyecto(int idProyecto, Usuario solicitante)
@@ -37,7 +44,7 @@ public class GestorProyectos
             miembro.CantidadProyectosAsignados--;
         }
 
-        proyecto.NotificarMiembros($"Se eliminó el proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.ProyectoEliminado(proyecto.Nombre));
     }
 
     public void ModificarNombreDelProyecto(int idProyecto, string nuevoNombre, Usuario solicitante)
@@ -52,7 +59,7 @@ public class GestorProyectos
 
         proyecto.ModificarNombre(nuevoNombre);
 
-        proyecto.NotificarMiembros($"Se cambió el nombre del proyecto '{nombreAnterior}' a '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.NombreProyectoModificado(nombreAnterior, proyecto.Nombre));
     }
 
     public void ModificarDescripcionDelProyecto(int idProyecto, string descripcion, Usuario solicitante)
@@ -63,7 +70,7 @@ public class GestorProyectos
         
         proyecto.ModificarDescripcion(descripcion);
 
-        proyecto.NotificarMiembros($"Se cambió la descripción del proyecto '{proyecto.Nombre}' a '{proyecto.Descripcion}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.DescripcionProyectoModificada(proyecto.Nombre, proyecto.Descripcion));
     }
 
     public void ModificarFechaDeInicioDelProyecto(int idProyecto, DateTime nuevaFecha, Usuario solicitante)
@@ -76,7 +83,7 @@ public class GestorProyectos
         
         CaminoCritico.CalcularCaminoCritico(proyecto);
 
-        proyecto.NotificarMiembros($"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.FechaInicioProyectoModificada(proyecto.Nombre, nuevaFecha));
     }
 
     public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdmin)
@@ -97,7 +104,7 @@ public class GestorProyectos
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoUnProyecto = true;
         
-        proyecto.NotificarMiembros($"Se cambió el administrador del proyecto '{proyecto.Nombre}'. El nuevo administrador es '{nuevoAdmin}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.AdministradorProyectoModificado(proyecto.Nombre, nuevoAdmin.ToString()));
     }
 
     public void AgregarMiembroAProyecto(int idProyecto, Usuario solicitante, Usuario nuevoMiembro)
@@ -110,7 +117,7 @@ public class GestorProyectos
         
         proyecto.AsignarMiembro(nuevoMiembro);
 
-        proyecto.NotificarMiembros($"Se agregó a un nuevo miembro (id {nuevoMiembro.Id}) al proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.MiembroAgregado(proyecto.Nombre, nuevoMiembro.Id));
 
     }
     
@@ -128,7 +135,7 @@ public class GestorProyectos
         
         proyecto.EliminarMiembro(idMiembroAEliminar);
         
-        proyecto.NotificarMiembros($"Se eliminó a el miembro (id {idMiembroAEliminar}) del proyecto '{proyecto.Nombre}'.");
+        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.MiembroEliminado(proyecto.Nombre, idMiembroAEliminar));
     }
 
     public List<Proyecto> ObtenerProyectosPorUsuario(int idUsuario)
@@ -202,7 +209,7 @@ public class GestorProyectos
     }
     public void NotificarAdministradoresDeProyectos(List<Proyecto> proyectos, string mensaje)
     {
-        proyectos.ForEach(proyecto => proyecto.NotificarAdministrador(mensaje));
+        proyectos.ForEach(proyecto => _notificador.NotificarUno(proyecto.Administrador, mensaje));
     }
 
     private void VerificarNombreNoRepetido(string nuevoNombre)

@@ -3,14 +3,16 @@ using Dominio;
 using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
 using Servicios.Gestores;
+using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 var builder = WebApplication.CreateBuilder(args);
 
-GestorUsuarios gestorUsuarios = new GestorUsuarios();
-GestorProyectos gestorProyectos = new GestorProyectos();
-GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos);
-GestorTareas gestorTareas = new GestorTareas(gestorProyectos);
+Notificador _notificador = new Notificador();
+GestorUsuarios gestorUsuarios = new GestorUsuarios(_notificador);
+GestorProyectos gestorProyectos = new GestorProyectos(_notificador);
+GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos, _notificador);
+GestorTareas gestorTareas = new GestorTareas(gestorProyectos, _notificador);
 
 // Add services to the container.
 builder.Services.AddSingleton(gestorUsuarios);
