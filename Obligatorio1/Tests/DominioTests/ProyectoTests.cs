@@ -15,10 +15,7 @@ public class ProyectoTests
     [TestInitialize]
     public void AntesDeCadaTest()
     {
-        _gestorUsuarios = new GestorUsuarios();
-        Usuario adminSistema = _gestorUsuarios.AdministradorInicial;
         _admin = CrearAdmin(1);
-        _gestorUsuarios.AgregarUsuario(adminSistema, _admin);
         _miembros = new List<Usuario>();
     }
 
@@ -307,7 +304,6 @@ public class ProyectoTests
         Usuario adminSistema = CrearAdminSistema();
         Usuario otro = CrearMiembro(2);
         _proyecto = CrearProyectoCon(_admin, _miembros);
-        _gestorUsuarios.AgregarUsuario(adminSistema, otro);
         _proyecto.AsignarMiembro(otro);
         bool resultado = _proyecto.EsAdministrador(otro);
         Assert.IsFalse(resultado);

@@ -218,11 +218,10 @@ namespace Tests.DominioTests
         [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
-            GestorUsuarios gestor = new GestorUsuarios();
-            Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
-            gestor.AgregarUsuario(adminSistema,usuario1);
-            Usuario usuario2 = gestor.ObtenerUsuarioPorId(usuario1.Id);
+            Usuario usuario2 = CrearUsuarioValido();
+            usuario1.Id = 1; // se hardcodean ids para simplificar (no recurrir a gestor/repositorio)
+            usuario2.Id = 1; 
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsTrue(sonIguales);
         }
@@ -230,12 +229,10 @@ namespace Tests.DominioTests
         [TestMethod]
         public void EqualsRetornaFalseSiLosIdsNoSonIguales()
         {
-            GestorUsuarios gestor = new GestorUsuarios();
-            Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
-            gestor.AgregarUsuario(adminSistema, usuario1);
             Usuario usuario2 = CrearUsuarioValido();
-            gestor.AgregarUsuario(adminSistema, usuario2);
+            usuario1.Id = 1; // se hardcodean ids para simplificar (no recurrir a gestor/repositorio)
+            usuario2.Id = 2; 
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsFalse(sonIguales);
         }

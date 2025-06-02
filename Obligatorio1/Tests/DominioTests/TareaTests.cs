@@ -457,12 +457,10 @@ public class TareaTests
     [TestMethod]
     public void DarListaAsignados_DevuelveListaDeUsuariosAsignados()
     {
-        GestorUsuarios gestor = new GestorUsuarios();
-        Usuario admin = gestor.AdministradorInicial;
         Usuario usuario1 = CrearUsuarioValido();
         Usuario usuario2 = new Usuario("Juana", "Pereza", new DateTime(1996, 2, 2), "juana@test.com", "TaskTrackPro@2025");
-        gestor.AgregarUsuario(admin, usuario1);
-        gestor.AgregarUsuario(admin, usuario2);
+        usuario1.Id = 1; // se hardcodean ids por simplicidad de tests. 
+        usuario2.Id = 2;
         Tarea tarea = CrearTareaValida();
         tarea.AsignarUsuario(usuario1);
         tarea.AsignarUsuario(usuario2);
