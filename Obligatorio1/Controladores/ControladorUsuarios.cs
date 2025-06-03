@@ -1,3 +1,4 @@
+using DTOs;
 using Servicios.Gestores;
 
 namespace Controladores;
@@ -8,5 +9,10 @@ public class ControladorUsuarios
     public ControladorUsuarios(GestorUsuarios gestor)
     {
         _gestorUsuarios = gestor;
+    }
+
+    public List<UsuarioListarDTO> ObtenerUsuariosDiferentes(List<UsuarioListarDTO> usuarios)
+    {
+        return _gestorUsuarios.ObtenerUsuariosDiferentes(usuarios);
     }
 }

@@ -279,6 +279,7 @@ else
         UsuarioDTO nuevo = GestorUsuarios.ObtenerUsuarioPorId(idNuevoMiembro.Value);
         GestorProyectos.AgregarMiembroAProyecto(id, Sesion.UsuarioLogueado, nuevo);
         usuariosNoMiembros.RemoveAll(u => u.Id == nuevo.Id);
+        proyecto = GestorProyectos.ObtenerProyectoPorId(proyecto.Id);
         mostrarModalAgregar = false;
         mostrarMensajeExitoAgregar = true;
     }
@@ -312,6 +313,7 @@ else
             usuariosNoMiembros.Add(UsuarioListarDTO.DesdeDTO(miembroAEliminar));
             mostrarModalEliminar = false;
             mostrarMensajeExitoEliminar = true;
+            proyecto = GestorProyectos.ObtenerProyectoPorId(proyecto.Id);
         }
         catch (ExcepcionServicios ex)
         {
