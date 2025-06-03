@@ -18,9 +18,9 @@ public class GestorProyectos
 
     public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
     {
-        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
+        PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
-        VerificarUsuarioNoAdministraOtroProyecto(solicitante);
+        PermisosUsuariosServicio.VerificarUsuarioNoAdministraOtroProyecto(solicitante);
 
         VerificarNombreNoRepetido(proyecto.Nombre);
         
@@ -35,7 +35,7 @@ public class GestorProyectos
     {
         Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
 
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         solicitante.EstaAdministrandoUnProyecto = false;
         Proyectos.Eliminar(proyecto.Id);
@@ -51,7 +51,7 @@ public class GestorProyectos
     {
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
 
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         VerificarNombreNoRepetido(nuevoNombre);
         
@@ -66,7 +66,7 @@ public class GestorProyectos
     {
         Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
 
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         proyecto.ModificarDescripcion(descripcion);
 
@@ -77,7 +77,7 @@ public class GestorProyectos
     {
         Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
 
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         proyecto.ModificarFechaInicio(nuevaFecha);
         
@@ -88,17 +88,17 @@ public class GestorProyectos
 
     public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdmin)
     {
-        VerificarUsuarioEsAdminSistema(solicitante);
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "cambiar el administrador del proyecto");
 
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
 
-        VerificarUsuarioMiembroDelProyecto(idNuevoAdmin, proyecto);
+        PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(idNuevoAdmin, proyecto);
         
         Usuario nuevoAdmin = ObtenerMiembro(idNuevoAdmin, proyecto);
 
-        VerificarUsuarioNoAdministraOtroProyecto(nuevoAdmin);
+        PermisosUsuariosServicio.VerificarUsuarioNoAdministraOtroProyecto(nuevoAdmin);
 
-        VerificarUsuarioTengaPermisosDeAdminProyecto(nuevoAdmin, "el nuevo administrador");
+        PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(nuevoAdmin, "el nuevo administrador");
         
         proyecto.Administrador.EstaAdministrandoUnProyecto = false;
         proyecto.Administrador = nuevoAdmin;
@@ -111,9 +111,9 @@ public class GestorProyectos
     {
         Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
 
-        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
+        PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
         proyecto.AsignarMiembro(nuevoMiembro);
 
@@ -125,11 +125,11 @@ public class GestorProyectos
     {
         Proyecto proyecto =  ObtenerProyectoPorId(idProyecto);
         
-        VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
+        PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
-        VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         
-        VerificarUsuarioMiembroDelProyecto(idMiembroAEliminar, proyecto);
+        PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(idMiembroAEliminar, proyecto);
 
         VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idMiembroAEliminar);
         
@@ -221,6 +221,8 @@ public class GestorProyectos
             throw new ExcepcionProyecto(MensajesError.NombreRepetido);
         }
     }
+    
+    
 
     private void VerificarUsuarioNoAdministraOtroProyecto(Usuario usuario)
     {

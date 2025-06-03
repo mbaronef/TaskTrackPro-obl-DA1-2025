@@ -1,5 +1,4 @@
 ﻿using Dominio;
-using Dominio.Excepciones;
 using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Gestores;
