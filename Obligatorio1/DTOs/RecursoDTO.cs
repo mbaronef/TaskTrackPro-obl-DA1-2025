@@ -18,9 +18,16 @@ public class RecursoDTO
 
     public ProyectoDTO ProyectoAsociado { get; set; }
     
+    public int CantidadDeTareasUsandolo { get; set; } = 0;
+    
     public Recurso AEntidad()
     {
-        return new Recurso(Nombre, Tipo, Descripcion);
+        Recurso recurso = new Recurso(Nombre, Tipo, Descripcion);
+        for(int i = 0; i < CantidadDeTareasUsandolo; i++)
+        {
+            recurso.IncrementarCantidadDeTareasUsandolo();
+        }
+        return recurso;
     }
     
     public static RecursoDTO DesdeEntidad(Recurso recurso)
