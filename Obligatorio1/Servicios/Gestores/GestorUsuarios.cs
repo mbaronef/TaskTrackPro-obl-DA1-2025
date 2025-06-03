@@ -144,25 +144,6 @@ public class GestorUsuarios
         }
     }
     
-    private void VerificarUsuarioPuedaReiniciarContrasena(Usuario solicitante, Usuario usuario)
-    {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto &&
-            !solicitante.Equals(usuario))
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para reiniciar la contraseña del usuario");
-        }
-    }
-    
-    private void VerificarSolicitantePuedaModificarContrasena(Usuario solicitante, Usuario usuario)
-    {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto &&
-            !solicitante.Equals(usuario))
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para modificar la contraseña del usuario");
-        }
-        
-    }
-    
     private void NotificarUsuarioModificacionSiNoEsElMismo(Usuario solicitante, Usuario usuarioObjetivo, String nuevaContrasena)
     {
         if (!solicitante.Equals(usuarioObjetivo))
