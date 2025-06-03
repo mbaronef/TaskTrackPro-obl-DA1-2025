@@ -81,7 +81,7 @@ public class GestorProyectos
 
     public void CambiarAdministradorDeProyecto(Usuario solicitante, int idProyecto, int idNuevoAdmin)
     {
-        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "camnbiar el administrador del proyecto");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "cambiar el administrador del proyecto");
 
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
 
