@@ -1,3 +1,4 @@
+using Controladores;
 using Repositorios;
 using Repositorios.Interfaces;
 using Servicios.Gestores;
@@ -20,7 +21,7 @@ public class ControladorUsuariosTests
     [TestMethod]
     public void Constructor()
     {
-        ControladorUsuariosTests controlador = new ControladorUsuarios(_gestorUsuarios);
+        ControladorUsuarios controlador = new ControladorUsuarios(_gestorUsuarios);
         Assert.IsNotNull(controlador);
     }
 }
