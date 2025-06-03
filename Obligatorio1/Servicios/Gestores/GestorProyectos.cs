@@ -165,32 +165,6 @@ public class GestorProyectos
         }
         return proyecto;
     }
-
-    public void VerificarUsuarioEsAdminProyectoDeEseProyecto(Proyecto proyecto, Usuario usuario)
-    {
-        if (!proyecto.EsAdministrador(usuario))
-        {
-            throw new ExcepcionPermisos(MensajesError.NoEsAdminDelProyecto);
-        } 
-    }
-
-    public void VerificarUsuarioTengaPermisosDeAdminProyecto(Usuario solicitante, string tipoUsuario)
-    {
-        if (!solicitante.EsAdministradorProyecto)
-        {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPorTipo(tipoUsuario));
-        }
-    }
-
-    public void VerificarUsuarioMiembroDelProyecto(int idUsuario, Proyecto proyecto)
-    {
-        Usuario usuario = ObtenerMiembro(idUsuario, proyecto);
-
-        if (usuario is null)
-        {
-            throw new ExcepcionProyecto(MensajesError.UsuarioNoMiembroDelProyecto);
-        }
-    }
     
     public void VerificarUsuarioNoTieneTareasAsignadas(int idProyecto, int idMiembroAEliminar)
     {
@@ -219,24 +193,6 @@ public class GestorProyectos
         if (existeOtro)
         {
             throw new ExcepcionProyecto(MensajesError.NombreRepetido);
-        }
-    }
-    
-    
-
-    private void VerificarUsuarioNoAdministraOtroProyecto(Usuario usuario)
-    {
-        if (usuario.EstaAdministrandoUnProyecto)
-        {
-            throw new ExcepcionPermisos(MensajesError.UsuarioAdministrandoProyecto);
-        }
-    }
-
-    private void VerificarUsuarioEsAdminSistema(Usuario usuario)
-    {
-        if (!usuario.EsAdministradorSistema)
-        {
-            throw new ExcepcionPermisos(MensajesError.UsuarioNoAdminSistema);
         }
     }
 }

@@ -88,7 +88,7 @@ public class GestorUsuarios
     public void ReiniciarContrasena(Usuario solicitante, int idUsuarioObjetivo)
     {
         Usuario usuarioObjetivo = ObtenerUsuarioPorId(idUsuarioObjetivo);
-        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "El usuario no tiene los permisos para reiniciar la contraseña.");
+        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "reiniciar la contraseña del usuario");
 
         string contrasenaPorDefectoEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
         usuarioObjetivo.EstablecerContrasenaEncriptada(contrasenaPorDefectoEncriptada);
@@ -111,7 +111,7 @@ public class GestorUsuarios
     public void ModificarContrasena(Usuario solicitante, int idUsuarioObjetivo, string nuevaContrasena)
     {
         Usuario usuarioObjetivo = ObtenerUsuarioPorId(idUsuarioObjetivo);
-        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "El usuario no tiene permisos para modificar la contraseña.");
+        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "modificar la contraseña del usuario");
         
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
@@ -146,57 +146,6 @@ public class GestorUsuarios
         {
             throw new ExcepcionPermisos(MensajesError.UsuarioMiembroDeProyecto);
         }
-    }
-    
-    private void VerificarPermisoAdministradorSistema(Usuario usuario, string accion)
-    {
-        if (!usuario.EsAdministradorSistema)
-        {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara(accion)); 
-        }
-    }
-    private void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(Usuario usuario)
-    {
-        if (usuario.EstaAdministrandoUnProyecto)
-        {
-            throw new ExcepcionPermisos(MensajesError.UsuarioAdministrandoProyecto);
-        }
-    }
-
-    private void VerificarUsuarioADesasignarSeaAdminProyecto(Usuario usuario)
-    {
-        if (!usuario.EsAdministradorProyecto)
-        {
-            throw new ExcepcionPermisos(MensajesError.UsuarioNoAdminProyecto);
-        }
-        
-    }
-    
-    private void VerificarSolicitantePuedaAutogenerarContrasena(Usuario solicitante)
-    {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
-        {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara("autogenerar la contraseña del usuario"));
-        }
-    }
-    
-    private void VerificarUsuarioPuedaReiniciarContrasena(Usuario solicitante, Usuario usuario)
-    {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto &&
-            !solicitante.Equals(usuario))
-        {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara("reiniciar la contraseña del usuario"));
-        }
-    }
-    
-    private void VerificarSolicitantePuedaModificarContrasena(Usuario solicitante, Usuario usuario)
-    {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto &&
-            !solicitante.Equals(usuario))
-        {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara("modificar la contraseña del usuario"));
-        }
-        
     }
     
     private void NotificarUsuarioModificacionSiNoEsElMismo(Usuario solicitante, Usuario usuarioObjetivo, String nuevaContrasena)

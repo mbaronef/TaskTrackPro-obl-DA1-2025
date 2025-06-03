@@ -9,7 +9,7 @@ public static class PermisosUsuariosServicio
     {
         if (!usuario.EsAdministradorSistema)
         {
-            throw new ExcepcionServicios($"No tiene permisos para {accion}");
+            throw new ExcepcionPermisos(MensajesError.UsuarioNoAdminSistema);
         }
     }
     
@@ -17,7 +17,7 @@ public static class PermisosUsuariosServicio
     {
         if (!proyecto.EsAdministrador(usuario))
         {
-            throw new ExcepcionServicios("Solo el administrador del proyecto puede realizar esta acción.");
+            throw new ExcepcionPermisos(MensajesError.NoEsAdminDelProyecto);
         } 
     }
     
@@ -27,11 +27,11 @@ public static class PermisosUsuariosServicio
 
         if (usuario is null)
         {
-            throw new ExcepcionServicios("El usuario no es miembro del proyecto.");
+            throw new ExcepcionProyecto(MensajesError.UsuarioNoMiembroDelProyecto);
         }
     }
     
-    public static Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
+    private static Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
         Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
         return miembro;
@@ -41,7 +41,7 @@ public static class PermisosUsuariosServicio
     {
         if (usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionServicios("El usuario está administrando un proyecto.");
+            throw new ExcepcionPermisos(MensajesError.UsuarioAdministrandoProyecto);
         }
     }
 
@@ -49,7 +49,7 @@ public static class PermisosUsuariosServicio
     {
         if (!solicitante.EsAdministradorProyecto)
         {
-            throw new ExcepcionServicios($"El {tipoUsuario} no tiene los permisos de administrador de proyecto.");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPorTipo(tipoUsuario));
         }
     }
     
@@ -57,7 +57,7 @@ public static class PermisosUsuariosServicio
     {
         if (usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionServicios("No se puede quitar permisos de proyecto a un usuario que tiene un proyecto a su cargo.");
+            throw new ExcepcionPermisos(MensajesError.UsuarioAdministrandoProyecto);
         }
     }
 
@@ -65,7 +65,7 @@ public static class PermisosUsuariosServicio
     {
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto && !solicitante.Equals(usuario))
         {
-            throw new ExcepcionServicios("{accion}");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara($"{accion}"));
         }
     }
     
@@ -89,7 +89,7 @@ public static class PermisosUsuariosServicio
     {
         if(usuario.CantidadProyectosAsignados > 0)
         {
-            throw new ExcepcionServicios("No puede eliminar un usuario que es miembro de un proyecto.");
+            throw new ExcepcionPermisos(MensajesError.UsuarioNoMiembroDelProyecto);
         }
     }
     
