@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace Interfaz.DTOs;
+namespace DTOS_;
 
 public class UsuarioDTO
 {

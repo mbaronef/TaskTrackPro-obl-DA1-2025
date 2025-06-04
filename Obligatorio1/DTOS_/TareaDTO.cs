@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Dominio;
 
-namespace Interfaz.DTOs;
+namespace DTOS_;
 
 public class TareaDTO
 {

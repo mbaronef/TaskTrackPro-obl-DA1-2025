@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servicios", "Servicios\Serv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaz", "Interfaz\Interfaz.csproj", "{A3FA3098-25FF-4BE4-8450-5008CEDC4AFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTOS_", "DTOS_\DTOS_.csproj", "{075AD916-D9F5-4CD0-A647-5C380EB26EDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{A3FA3098-25FF-4BE4-8450-5008CEDC4AFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3FA3098-25FF-4BE4-8450-5008CEDC4AFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3FA3098-25FF-4BE4-8450-5008CEDC4AFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{075AD916-D9F5-4CD0-A647-5C380EB26EDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{075AD916-D9F5-4CD0-A647-5C380EB26EDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{075AD916-D9F5-4CD0-A647-5C380EB26EDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{075AD916-D9F5-4CD0-A647-5C380EB26EDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

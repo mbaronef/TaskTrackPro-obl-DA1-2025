@@ -1,4 +1,4 @@
-namespace Interfaz.DTOs;
+namespace DTOS_;
 public class TareaCambioEstadoDTO
 {
     public bool EditoEnProceso { get; set; }
