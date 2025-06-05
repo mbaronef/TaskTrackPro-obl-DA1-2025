@@ -735,6 +735,27 @@ namespace Tests.ServiciosTests
             Assert.IsNotNull(dto);
             Assert.AreEqual(proyecto.Id, dto.Id);
         }
+        
+        [TestMethod]
+        public void ObtenerProyectosPorUsuarioDTO_DevuelveSoloLosDelUsuario()
+        {
+            Usuario admin = CrearAdminProyecto(10);
+            Usuario miembro = CrearMiembro(11);
+
+            Proyecto proyecto1 = CrearProyectoCon(admin, new List<Usuario> { miembro });
+            proyecto1.ModificarNombre("Proyecto A");
+
+            Proyecto proyecto2 = CrearProyectoCon(admin); // sin el miembro
+            proyecto2.ModificarNombre("Proyecto B");
+
+            _gestor.CrearProyecto(proyecto1, admin);
+            _gestor.CrearProyecto(proyecto2, admin);
+
+            var resultado = _gestor.ObtenerProyectosPorUsuarioDTO(miembro.Id);
+
+            Assert.AreEqual(1, resultado.Count);
+            Assert.AreEqual("Proyecto A", resultado[0].Nombre);
+        }
 
 
     }
