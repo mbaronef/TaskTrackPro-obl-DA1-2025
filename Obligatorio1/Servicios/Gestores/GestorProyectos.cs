@@ -201,29 +201,4 @@ public class GestorProyectos
             throw new ExcepcionProyecto(MensajesError.NombreRepetido);
         }
     }
-    
-    public List<ProyectoDTO> ObtenerTodosDTO()
-    {
-        return Proyectos.ObtenerTodos().Select(ProyectoDTO.DesdeEntidad).ToList();
-    }
-    
-    public List<ProyectoDTO> ObtenerProyectosPorUsuarioDTO(int idUsuario)
-    {
-        return ObtenerProyectosPorUsuario(idUsuario).Select(ProyectoDTO.DesdeEntidad).ToList();
-    }
-    
-    public void CrearProyectoDesdeDTO(ProyectoDTO dto, UsuarioDTO solicitanteDTO)
-    {
-        Usuario solicitante = solicitanteDTO.AEntidad(); 
-        Proyecto proyecto = dto.ANuevaEntidad(solicitante);
-        CrearProyecto(proyecto, solicitante);
-    }
-    
-    public ProyectoDTO ObtenerProyectoPorIdDTO(int id)
-    {
-        Proyecto proyecto = ObtenerProyectoPorId(id); 
-        return ProyectoDTO.DesdeEntidad(proyecto);
-    }
-    
-    // borrar funciones nuevas, tests nuevos, 
 }
