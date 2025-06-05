@@ -224,4 +224,6 @@ public class GestorProyectos
         Proyecto proyecto = ObtenerProyectoPorId(id); 
         return ProyectoDTO.DesdeEntidad(proyecto);
     }
+    
+    // borrar funciones nuevas, tests nuevos, 
 }
