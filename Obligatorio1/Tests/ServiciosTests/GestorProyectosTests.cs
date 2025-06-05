@@ -724,7 +724,7 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void ObtenerTodosDTO_CopiaIdCorrectamente()
         {
-            Usuario admin = CrearAdminProyecto(10);
+            Usuario admin = CrearAdminProyecto(10);//
             Proyecto proyecto = CrearProyectoCon(admin);
             proyecto.ModificarNombre("Proyecto A");
 
