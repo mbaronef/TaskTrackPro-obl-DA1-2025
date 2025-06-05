@@ -773,23 +773,9 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void CrearProyectoDesdeDTO_CreaProyectoCorrectamente()
         {
-            ProyectoDTO dto = new ProyectoDTO
-            {
-                Nombre = "Proyecto Test",
-                Descripcion = "Descripción del proyecto",
-                FechaInicio = DateTime.Today.AddDays(1)
-            };
+            ProyectoDTO dto = CrearDTOProyecto("Proyecto A");
 
-            UsuarioDTO solicitanteDTO = new UsuarioDTO
-            {
-                Id = _admin.Id,
-                Nombre = _admin.Nombre,
-                Apellido = _admin.Apellido,
-                FechaNacimiento = _admin.FechaNacimiento,
-                Email = _admin.Email,
-                EsAdministradorProyecto = _admin.EsAdministradorProyecto,
-                EsAdministradorSistema = _admin.EsAdministradorSistema
-            };
+            UsuarioDTO solicitanteDTO = UsuarioDTO.DesdeEntidad(_admin);
             
             _gestor.CrearProyectoDesdeDTO(dto, solicitanteDTO);
             
@@ -802,9 +788,9 @@ namespace Tests.ServiciosTests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionPermisos))]
-        public void CrearProyectoDesdeDTO_LanzaExcepcion_SiSolicitanteNoEsAdminProyecto()
+        public void CrearProyectoDesdeDTO_LanzaExcepcionSiSolicitanteNoEsAdminProyecto()
         {
-            ProyectoDTO dto = CrearDTOProyecto("Test");
+            ProyectoDTO dto = CrearDTOProyecto("Proyecto A");
 
             Usuario noAdmin = CrearMiembro(1);
             UsuarioDTO dtoSolicitante = UsuarioDTO.DesdeEntidad(noAdmin);
