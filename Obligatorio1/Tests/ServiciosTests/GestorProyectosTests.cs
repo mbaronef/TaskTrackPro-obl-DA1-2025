@@ -1,4 +1,5 @@
 using Dominio;
+using DTOS_;
 using Servicios.Excepciones;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
@@ -696,6 +697,28 @@ namespace Tests.ServiciosTests
 
             Assert.IsTrue(_mockNotificador.Notificaciones.Any(n =>
                     n.Item1 == otroAdmin && n.Item2 == mensajeEsperado));
+        }
+        
+        [TestMethod]
+        public void ObtenerTodosDTO_DevuelveListaDeProyectosDTO()
+        {
+            Usuario admin1 = CrearAdminProyecto(4);
+            Usuario admin2 = CrearAdminProyecto(5);
+
+            Proyecto proyecto1 = CrearProyectoCon(admin1);
+            proyecto1.ModificarNombre("Proyecto 1");
+
+            Proyecto proyecto2 = CrearProyectoCon(admin2);
+            proyecto2.ModificarNombre("Proyecto 2");
+
+            _gestor.CrearProyecto(proyecto1, admin1);
+            _gestor.CrearProyecto(proyecto2, admin2);
+            
+            List<ProyectoDTO> proyectosDTO = _gestor.ObtenerTodosDTO();
+            
+            Assert.AreEqual(2, proyectosDTO.Count);
+            Assert.IsTrue(proyectosDTO.Any(p => p.Nombre == "Proyecto 1"));
+            Assert.IsTrue(proyectosDTO.Any(p => p.Nombre == "Proyecto 2"));
         }
 
     }
