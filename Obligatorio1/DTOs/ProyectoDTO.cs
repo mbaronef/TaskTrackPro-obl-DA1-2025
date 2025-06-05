@@ -24,7 +24,7 @@ public class ProyectoDTO
     
     public UsuarioDTO Administrador { get; set; }
     
-    public List<UsuarioListarDTO> Miembros { get; private set; }
+    public List<UsuarioListarDTO> Miembros { get;  set; }
     
     public static ValidationResult ValidarFechaInicio(DateTime fecha, ValidationContext context)
     {
