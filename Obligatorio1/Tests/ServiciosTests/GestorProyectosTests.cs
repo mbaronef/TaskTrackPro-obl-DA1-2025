@@ -775,12 +775,14 @@ namespace Tests.ServiciosTests
                 Nombre = _admin.Nombre,
                 Apellido = _admin.Apellido,
                 FechaNacimiento = _admin.FechaNacimiento,
-                Email = _admin.Email
+                Email = _admin.Email,
+                EsAdministradorProyecto = _admin.EsAdministradorProyecto,
+                EsAdministradorSistema = _admin.EsAdministradorSistema
             };
             
             _gestor.CrearProyectoDesdeDTO(dto, solicitanteDTO);
             
-            var proyectos = _gestor.ObtenerTodosDTO();
+            List<ProyectoDTO> proyectos = _gestor.ObtenerTodosDTO();
             Assert.AreEqual(1, proyectos.Count);
             Assert.AreEqual(dto.Nombre, proyectos[0].Nombre);
             Assert.AreEqual(dto.Descripcion, proyectos[0].Descripcion);

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Dominio;
 
 
 namespace DTOS_;
@@ -27,4 +28,14 @@ public class UsuarioDTO
 
     public bool EsAdministradorSistema { get; set; }
     public bool EsAdministradorProyecto { get; set; }
+    
+    public Usuario AEntidad()
+    {
+        return new Usuario(Nombre, Apellido, FechaNacimiento, Email, this.Contrasena)
+        {
+            Id = this.Id,
+            EsAdministradorSistema = this.EsAdministradorSistema,
+            EsAdministradorProyecto = this.EsAdministradorProyecto
+        };
+    }
 }

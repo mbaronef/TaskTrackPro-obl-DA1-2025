@@ -206,4 +206,11 @@ public class GestorProyectos
     {
         return ObtenerProyectosPorUsuario(idUsuario).Select(ProyectoDTO.DesdeEntidad).ToList();
     }
+    
+    public void CrearProyectoDesdeDTO(ProyectoDTO dto, UsuarioDTO solicitanteDTO)
+    {
+        Usuario solicitante = solicitanteDTO.AEntidad(); 
+        Proyecto proyecto = dto.ANuevaEntidad(solicitante);
+        CrearProyecto(proyecto, solicitante);
+    }
 }
