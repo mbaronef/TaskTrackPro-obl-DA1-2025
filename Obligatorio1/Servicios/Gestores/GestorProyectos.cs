@@ -201,4 +201,9 @@ public class GestorProyectos
     {
         return Proyectos.ObtenerTodos().Select(ProyectoDTO.DesdeEntidad).ToList();
     }
+    
+    public List<ProyectoDTO> ObtenerProyectosPorUsuarioDTO(int idUsuario)
+    {
+        return ObtenerProyectosPorUsuario(idUsuario).Select(ProyectoDTO.DesdeEntidad).ToList();
+    }
 }

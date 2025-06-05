@@ -737,24 +737,25 @@ namespace Tests.ServiciosTests
         }
         
         [TestMethod]
-        public void ObtenerProyectosPorUsuarioDTO_DevuelveSoloLosDelUsuario()
+        public void ObtenerProyectosPorUsuarioDTO_DevuelveProyectosCorrectos()
         {
-            Usuario admin = CrearAdminProyecto(10);
-            Usuario miembro = CrearMiembro(11);
+            Usuario admin1 = CrearAdminProyecto(4);
+            Usuario admin2 = CrearAdminProyecto(5);
+            Usuario miembro = CrearMiembro(6);
 
-            Proyecto proyecto1 = CrearProyectoCon(admin, new List<Usuario> { miembro });
-            proyecto1.ModificarNombre("Proyecto A");
+            Proyecto proyecto1 = CrearProyectoCon(admin1, new List<Usuario> { miembro });
+            proyecto1.ModificarNombre("Proyecto 1");
+            _gestor.CrearProyecto(proyecto1, admin1);
 
-            Proyecto proyecto2 = CrearProyectoCon(admin); // sin el miembro
-            proyecto2.ModificarNombre("Proyecto B");
-
-            _gestor.CrearProyecto(proyecto1, admin);
-            _gestor.CrearProyecto(proyecto2, admin);
-
+            Proyecto proyecto2 = CrearProyectoCon(admin2); // no incluye al miembro
+            proyecto2.ModificarNombre("Proyecto 2");
+            _gestor.CrearProyecto(proyecto2, admin2);
+            
             var resultado = _gestor.ObtenerProyectosPorUsuarioDTO(miembro.Id);
-
+            
             Assert.AreEqual(1, resultado.Count);
-            Assert.AreEqual("Proyecto A", resultado[0].Nombre);
+            Assert.AreEqual(proyecto1.Nombre, resultado[0].Nombre);
+            Assert.AreEqual(proyecto1.Id, resultado[0].Id);
         }
 
 
