@@ -14,15 +14,17 @@ public class GestorTareasTests
     private Usuario _admin;
     private Usuario _noAdmin;
     private MockNotificador _mockNotificador;
+    private MockCalculadorCaminoCritico _mockCalculadorCaminoCritico;
 
     [TestInitialize]
     public void Inicializar()
     {
         typeof(GestorTareas).GetField("_cantidadTareas", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         typeof(RepositorioProyectos).GetField("_cantidadProyectos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        _mockCalculadorCaminoCritico = new MockCalculadorCaminoCritico();
         _mockNotificador = new MockNotificador();
-        _gestorProyectos = new GestorProyectos(_mockNotificador);
-        _gestorTareas = new GestorTareas(_gestorProyectos, _mockNotificador);
+        _gestorProyectos = new GestorProyectos(_mockNotificador, _mockCalculadorCaminoCritico);
+        _gestorTareas = new GestorTareas(_gestorProyectos, _mockNotificador, _mockCalculadorCaminoCritico);
         _admin = CrearAdministradorProyecto();
         _noAdmin = CrearUsuarioNoAdmin();
     }

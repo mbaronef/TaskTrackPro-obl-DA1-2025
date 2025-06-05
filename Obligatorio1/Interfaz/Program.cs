@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using Dominio;
+using Interfaces.InterfacesServicios;
 using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
 using Servicios.Gestores;
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 Notificador _notificador = new Notificador();
 GestorUsuarios gestorUsuarios = new GestorUsuarios(_notificador);
+builder.Services.AddSingleton<INotificador, Notificador>();
+builder.Services.AddScoped<ICalculadorCaminoCritico, CaminoCritico>();
 GestorProyectos gestorProyectos = new GestorProyectos(_notificador);
 GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos, _notificador);
 GestorTareas gestorTareas = new GestorTareas(gestorProyectos, _notificador);

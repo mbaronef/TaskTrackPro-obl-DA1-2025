@@ -14,14 +14,16 @@ public class GestorRecursosTests
     private GestorProyectos _gestorProyectos;
     private Usuario _adminSistema;
     private MockNotificador _mockNotificador;
+    private MockCalculadorCaminoCritico _mockCalculadorCaminoCritico;
 
     [TestInitialize]
     public void SetUp()
     {
         // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(RepositorioRecursos).GetField("_cantidadRecursos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        _mockCalculadorCaminoCritico = new MockCalculadorCaminoCritico();
         _mockNotificador = new MockNotificador();
-       _gestorProyectos = new GestorProyectos(_mockNotificador);
+       _gestorProyectos = new GestorProyectos(_mockNotificador, _mockCalculadorCaminoCritico);
         _gestorRecursos = new GestorRecursos(_gestorProyectos, _mockNotificador);
         _adminSistema = CrearAdministradorSistema();
     }
@@ -89,7 +91,7 @@ public class GestorRecursosTests
         Assert.AreEqual(recurso2, _gestorRecursos.Recursos.ObtenerTodos().ElementAt(1));
     }
 
-    [ExpectedException(typeof(ExcepcionPermisos))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminSistemaNiProyectoNoAgregaRecurso()
     {
@@ -148,7 +150,7 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(_adminSistema, recurso.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionPermisos))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoEliminaRecursos()
     {
@@ -255,7 +257,7 @@ public class GestorRecursosTests
         Assert.AreEqual("Nuevo nombre", recurso.Nombre);
     }
 
-    [ExpectedException(typeof(ExcepcionPermisos))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoPuedeModificarNombre()
     {
@@ -320,7 +322,7 @@ public class GestorRecursosTests
         Assert.AreEqual("Nuevo tipo", recurso.Tipo);
     }
 
-    [ExpectedException(typeof(ExcepcionPermisos))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoPuedeModificarTipo()
     {
@@ -385,7 +387,7 @@ public class GestorRecursosTests
         Assert.AreEqual("Nueva descripción", recurso.Descripcion);
     }
 
-    [ExpectedException(typeof(ExcepcionPermisos))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoPuedeModificarDescripcion()
     {

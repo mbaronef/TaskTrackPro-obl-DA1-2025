@@ -1,5 +1,6 @@
 ﻿using Dominio;
 using Dominio.Excepciones;
+using Interfaces.InterfacesServicios;
 using Servicios.Excepciones;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
@@ -11,11 +12,14 @@ public class GestorTareas
     private GestorProyectos _gestorProyectos;
     private static int _cantidadTareas;
     private readonly INotificador _notificador;
+    private readonly ICalculadorCaminoCritico _caminoCritico;
 
-    public GestorTareas(GestorProyectos gestorProyectos, INotificador notificador)
+
+    public GestorTareas(GestorProyectos gestorProyectos, INotificador notificador, ICalculadorCaminoCritico caminoCritico)
     {
         _gestorProyectos = gestorProyectos;
         _notificador = notificador;
+        _caminoCritico = caminoCritico;
     }
     
     public void AgregarTareaAlProyecto(int idProyecto, Usuario solicitante, Tarea nuevaTarea)
@@ -29,7 +33,7 @@ public class GestorTareas
         
         proyecto.AgregarTarea(nuevaTarea);
 
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.TareaAgregada(nuevaTarea.Id, proyecto.Nombre));
     }
 
@@ -41,7 +45,7 @@ public class GestorTareas
 
         proyecto.EliminarTarea(idTareaAEliminar);
 
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
 
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.TareaEliminada(idTareaAEliminar, proyecto.Nombre));
     }
@@ -75,7 +79,7 @@ public class GestorTareas
         tarea.ModificarDuracion(nuevaDuracion);
 
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
 
         NotificarCambio("duración", idTarea, idProyecto);
     }
@@ -86,7 +90,7 @@ public class GestorTareas
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
 
         NotificarCambio("fecha de inicio", idTarea, idProyecto);
     }
@@ -100,7 +104,7 @@ public class GestorTareas
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.CambiarEstado(nuevoEstado);
         
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.EstadoTareaModificado(idTarea, proyecto.Nombre, nuevoEstado));
 
         if (nuevoEstado == EstadoTarea.Completada)
@@ -118,7 +122,7 @@ public class GestorTareas
         tarea.AgregarDependencia(dependencia);
         try
         {
-            CaminoCritico.CalcularCaminoCritico(proyecto);
+            _caminoCritico.CalcularCaminoCritico(proyecto);
         }
         catch (ExcepcionServicios ex)
         {
@@ -133,7 +137,7 @@ public class GestorTareas
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
         tarea.EliminarDependencia(idTareaDependencia);
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.DependenciaEliminada(idTareaDependencia, idTarea, proyecto.Nombre));
     }
 

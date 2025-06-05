@@ -1,5 +1,6 @@
 using Dominio;
 using DTOS_;
+using Interfaces.InterfacesServicios;
 using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Notificaciones;
@@ -11,10 +12,13 @@ public class GestorProyectos
 {
     public RepositorioProyectos Proyectos { get; } = new RepositorioProyectos();
     private readonly INotificador _notificador;
+    private readonly ICalculadorCaminoCritico _caminoCritico;
+
     
-    public GestorProyectos(INotificador notificador)
+    public GestorProyectos(INotificador notificador, ICalculadorCaminoCritico  caminoCritico)
     {
         _notificador = notificador;
+        _caminoCritico = caminoCritico;
     }
 
     public void CrearProyecto(Proyecto proyecto, Usuario solicitante)
@@ -82,7 +86,7 @@ public class GestorProyectos
         
         proyecto.ModificarFechaInicio(nuevaFecha);
         
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
 
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.FechaInicioProyectoModificada(proyecto.Nombre, nuevaFecha));
     }

@@ -1,13 +1,14 @@
 using Dominio;
+using Interfaces.InterfacesServicios;
 using Servicios.Excepciones;
 using Servicios.Notificaciones;
 
 namespace Servicios.Utilidades;
 
-public static class CaminoCritico
+public class CaminoCritico : ICalculadorCaminoCritico
 { 
     private static readonly INotificador _notificador = new Notificador();
-    public static void CalcularCaminoCritico(Proyecto proyecto)
+    public void CalcularCaminoCritico(Proyecto proyecto)
     {
         if (proyecto.TieneTareas())
         {

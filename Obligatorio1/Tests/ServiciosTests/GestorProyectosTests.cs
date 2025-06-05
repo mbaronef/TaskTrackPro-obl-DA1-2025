@@ -17,12 +17,14 @@ namespace Tests.ServiciosTests
         private Usuario _adminSistema;
         private Proyecto _proyecto;
         private MockNotificador _mockNotificador;
+        private MockCalculadorCaminoCritico _mockCalculadorCaminoCritico;
 
         [TestInitialize]
         public void Inicializar()
         {
+            _mockCalculadorCaminoCritico = new MockCalculadorCaminoCritico();
             _mockNotificador = new MockNotificador();
-            _gestor = new GestorProyectos(_mockNotificador);
+            _gestor = new GestorProyectos(_mockNotificador, _mockCalculadorCaminoCritico);
             _admin = CrearAdminProyecto(1);
             _adminSistema = CrearAdminSistema(2);
             _usuarioNoAdmin = CrearMiembro(3);
