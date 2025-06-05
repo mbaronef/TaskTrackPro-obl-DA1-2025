@@ -28,17 +28,7 @@ namespace Tests.ServiciosTests
             _usuarioNoAdmin = CrearMiembro(3);
             _proyecto = CrearProyectoCon(_admin);
         }
-        
-        private ProyectoDTO CrearDTOProyecto(string nombre, DateTime? fechaInicio = null)
-        {
-            return new ProyectoDTO
-            {
-                Nombre = nombre,
-                Descripcion = "Descripción de prueba",
-                FechaInicio = fechaInicio ?? DateTime.Today.AddDays(1)
-            };
-        }
-        
+
         private Usuario CrearAdminProyecto(int id)
         {
             Usuario admin = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
@@ -735,7 +725,7 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void ObtenerTodosDTO_CopiaIdCorrectamente()
         {
-            Usuario admin = CrearAdminProyecto(10);//
+            Usuario admin = CrearAdminProyecto(10);
             Proyecto proyecto = CrearProyectoCon(admin);
             proyecto.ModificarNombre("Proyecto A");
 
@@ -758,7 +748,7 @@ namespace Tests.ServiciosTests
             proyecto1.ModificarNombre("Proyecto 1");
             _gestor.CrearProyecto(proyecto1, admin1);
 
-            Proyecto proyecto2 = CrearProyectoCon(admin2); // no incluye al miembro
+            Proyecto proyecto2 = CrearProyectoCon(admin2); 
             proyecto2.ModificarNombre("Proyecto 2");
             _gestor.CrearProyecto(proyecto2, admin2);
             
@@ -773,7 +763,7 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void CrearProyectoDesdeDTO_CreaProyectoCorrectamente()
         {
-            ProyectoDTO dto = CrearDTOProyecto("Proyecto A");
+            ProyectoDTO dto = ProyectoDTO.DesdeEntidad(_proyecto);
 
             UsuarioDTO solicitanteDTO = UsuarioDTO.DesdeEntidad(_admin);
             
@@ -790,12 +780,28 @@ namespace Tests.ServiciosTests
         [ExpectedException(typeof(ExcepcionPermisos))]
         public void CrearProyectoDesdeDTO_LanzaExcepcionSiSolicitanteNoEsAdminProyecto()
         {
-            ProyectoDTO dto = CrearDTOProyecto("Proyecto A");
+            ProyectoDTO dto = ProyectoDTO.DesdeEntidad(_proyecto);
 
             Usuario noAdmin = CrearMiembro(1);
             UsuarioDTO dtoSolicitante = UsuarioDTO.DesdeEntidad(noAdmin);
             
             _gestor.CrearProyectoDesdeDTO(dto, dtoSolicitante);
+        }
+        
+        [TestMethod]
+        public void ObtenerProyectoPorIdDTO_DevuelveProyectoCorrecto()
+        {
+            Proyecto proyecto = CrearProyectoCon(_admin);
+            proyecto.ModificarNombre("Proyecto de prueba");
+            _gestor.CrearProyecto(proyecto, _admin);
+            
+            ProyectoDTO dto = _gestor.ObtenerProyectoPorIdDTO(proyecto.Id);
+            
+            Assert.IsNotNull(dto);
+            Assert.AreEqual(proyecto.Id, dto.Id);
+            Assert.AreEqual(proyecto.Nombre, dto.Nombre);
+            Assert.AreEqual(proyecto.Descripcion, dto.Descripcion);
+            Assert.AreEqual(proyecto.FechaInicio, dto.FechaInicio);
         }
 
 
