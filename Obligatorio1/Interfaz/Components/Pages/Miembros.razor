@@ -281,6 +281,7 @@ else
         usuariosNoMiembros.RemoveAll(u => u.Id == nuevo.Id);
         mostrarModalAgregar = false;
         mostrarMensajeExitoAgregar = true;
+        CargarDatosDelProyecto();
     }
 
     private void ConfirmarEliminar(UsuarioListarDTO usuario)
@@ -312,6 +313,7 @@ else
             usuariosNoMiembros.Add(UsuarioListarDTO.DesdeDTO(miembroAEliminar));
             mostrarModalEliminar = false;
             mostrarMensajeExitoEliminar = true;
+            CargarDatosDelProyecto();
         }
         catch (ExcepcionServicios ex)
         {

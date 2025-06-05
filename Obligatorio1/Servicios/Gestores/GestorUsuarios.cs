@@ -135,7 +135,8 @@ public class GestorUsuarios
 
     public List<UsuarioListarDTO> ObtenerUsuariosDiferentes(List<UsuarioListarDTO> usuarios)
     {
-        return ObtenerTodos().Except(usuarios).ToList();
+        List<int> idsAExcluir = usuarios.Select(u => u.Id).ToList();
+        return ObtenerTodos().Where(u => !idsAExcluir.Contains(u.Id)).ToList();
     }
     
     public void ValidarUsuarioNoEsAdministradorInicial(int idUsuario)
