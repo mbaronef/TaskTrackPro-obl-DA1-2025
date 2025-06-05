@@ -803,6 +803,16 @@ namespace Tests.ServiciosTests
             Assert.AreEqual(proyecto.Descripcion, dto.Descripcion);
             Assert.AreEqual(proyecto.FechaInicio, dto.FechaInicio);
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionPermisos))]
+        public void ObtenerProyectoPorIdDTO_LanzaExcepcionSiProyectoNoExiste()
+        {
+            int idInexistente = 999;
+
+            _gestor.ObtenerProyectoPorIdDTO(idInexistente);
+
+        }
 
 
     }
