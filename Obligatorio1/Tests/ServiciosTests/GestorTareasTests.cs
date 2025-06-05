@@ -379,6 +379,8 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarFechaInicio_AdminProyectoModificaFechaInicioTareaOk()
     {
+        _gestorTareas = new GestorTareas(_gestorProyectos, _mockNotificador, new CaminoCritico());
+
         Proyecto proyecto = CrearYAgregarProyecto(_admin);
 
         Tarea tarea = CrearTarea();
@@ -387,8 +389,7 @@ public class GestorTareasTests
 
         _gestorTareas.ModificarFechaInicioTarea(_admin, tarea.Id, proyecto.Id, fechaNueva);
         // No debería lanzar excepción. Luego se llama a CPM que modifica la fecha de inicio por la del proyecto
-        //Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
-        Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
+        Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
@@ -531,6 +532,7 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionTarea))]
     public void AgregarDependenciaCiclicaLanzaExcepcion()
     {
+        _gestorTareas = new GestorTareas(_gestorProyectos, _mockNotificador, new CaminoCritico());
         Proyecto proyecto = CrearYAgregarProyecto(_admin);
         Tarea tarea1 = CrearTarea();
         Tarea tarea2 = CrearTarea();

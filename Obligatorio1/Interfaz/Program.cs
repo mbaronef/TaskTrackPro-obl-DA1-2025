@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using Dominio;
 using Interfaces.InterfacesServicios;
+using InterfacesServicios;
 using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
 using Servicios.Gestores;
@@ -9,13 +10,14 @@ using Servicios.Utilidades;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Notificador _notificador = new Notificador();
+INotificador _notificador = new Notificador();
+ICalculadorCaminoCritico _calculadorCaminoCritico = new CaminoCritico();
 GestorUsuarios gestorUsuarios = new GestorUsuarios(_notificador);
 builder.Services.AddSingleton<INotificador, Notificador>();
 builder.Services.AddScoped<ICalculadorCaminoCritico, CaminoCritico>();
-GestorProyectos gestorProyectos = new GestorProyectos(_notificador);
+GestorProyectos gestorProyectos = new GestorProyectos(_notificador, _calculadorCaminoCritico);
 GestorRecursos gestorRecursos = new GestorRecursos(gestorProyectos, _notificador);
-GestorTareas gestorTareas = new GestorTareas(gestorProyectos, _notificador);
+GestorTareas gestorTareas = new GestorTareas(gestorProyectos, _notificador, _calculadorCaminoCritico);
 
 // Add services to the container.
 builder.Services.AddSingleton(gestorUsuarios);
