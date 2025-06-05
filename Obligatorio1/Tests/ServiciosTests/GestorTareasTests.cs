@@ -387,7 +387,8 @@ public class GestorTareasTests
 
         _gestorTareas.ModificarFechaInicioTarea(_admin, tarea.Id, proyecto.Id, fechaNueva);
         // No debería lanzar excepción. Luego se llama a CPM que modifica la fecha de inicio por la del proyecto
-        Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
+        //Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
+        Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]

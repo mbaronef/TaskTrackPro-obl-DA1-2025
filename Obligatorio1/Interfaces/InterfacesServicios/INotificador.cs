@@ -1,6 +1,6 @@
 using Dominio;
 
-namespace Servicios.Notificaciones;
+namespace InterfacesServicios;
 
 public interface INotificador
 {
