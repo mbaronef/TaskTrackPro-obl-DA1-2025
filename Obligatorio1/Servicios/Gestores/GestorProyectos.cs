@@ -213,4 +213,10 @@ public class GestorProyectos
         Proyecto proyecto = dto.ANuevaEntidad(solicitante);
         CrearProyecto(proyecto, solicitante);
     }
+    
+    public ProyectoDTO ObtenerProyectoPorIdDTO(int id)
+    {
+        Proyecto proyecto = ObtenerProyectoPorId(id); 
+        return ProyectoDTO.DesdeEntidad(proyecto);
+    }
 }
