@@ -321,7 +321,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
 
-    [ExpectedException(typeof(ExcepcionPermisos))]
+    [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void NoAdminDeSistemaNiDeProyectoPuedeAutogenerarContrasena()
     {
