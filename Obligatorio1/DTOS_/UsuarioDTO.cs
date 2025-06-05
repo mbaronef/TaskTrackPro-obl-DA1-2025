@@ -38,4 +38,20 @@ public class UsuarioDTO
             EsAdministradorProyecto = this.EsAdministradorProyecto
         };
     }
+    
+    public static UsuarioDTO DesdeEntidad(Usuario usuario)
+    {
+        return new UsuarioDTO
+        {
+            Id = usuario.Id,
+            Nombre = usuario.Nombre,
+            Apellido = usuario.Apellido,
+            FechaNacimiento = usuario.FechaNacimiento,
+            Email = usuario.Email,
+            Contrasena = "TaskTrackPro@2025", 
+            EsAdministradorSistema = usuario.EsAdministradorSistema,
+            EsAdministradorProyecto = usuario.EsAdministradorProyecto
+        };
+    }
+
 }

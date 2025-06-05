@@ -28,6 +28,17 @@ namespace Tests.ServiciosTests
             _usuarioNoAdmin = CrearMiembro(3);
             _proyecto = CrearProyectoCon(_admin);
         }
+        
+        private ProyectoDTO CrearDTOProyecto(string nombre, DateTime? fechaInicio = null)
+        {
+            return new ProyectoDTO
+            {
+                Nombre = nombre,
+                Descripcion = "Descripción de prueba",
+                FechaInicio = fechaInicio ?? DateTime.Today.AddDays(1)
+            };
+        }
+        
         private Usuario CrearAdminProyecto(int id)
         {
             Usuario admin = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
@@ -788,7 +799,20 @@ namespace Tests.ServiciosTests
             Assert.AreEqual(dto.Descripcion, proyectos[0].Descripcion);
             Assert.AreEqual(dto.FechaInicio, proyectos[0].FechaInicio);
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionPermisos))]
+        public void CrearProyectoDesdeDTO_LanzaExcepcion_SiSolicitanteNoEsAdminProyecto()
+        {
+            ProyectoDTO dto = CrearDTOProyecto("Test");
+
+            Usuario noAdmin = CrearMiembro(1);
+            UsuarioDTO dtoSolicitante = UsuarioDTO.DesdeEntidad(noAdmin);
+            
+            _gestor.CrearProyectoDesdeDTO(dto, dtoSolicitante);
+        }
 
 
     }
+    
 }
