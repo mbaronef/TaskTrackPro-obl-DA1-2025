@@ -1,4 +1,5 @@
 using Dominio;
+using DTOS_;
 using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Notificaciones;
@@ -194,5 +195,10 @@ public class GestorProyectos
         {
             throw new ExcepcionProyecto(MensajesError.NombreRepetido);
         }
+    }
+    
+    public List<ProyectoDTO> ObtenerTodosDTO()
+    {
+        return Proyectos.ObtenerTodos().Select(ProyectoDTO.DesdeEntidad).ToList();
     }
 }

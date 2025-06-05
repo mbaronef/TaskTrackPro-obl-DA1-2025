@@ -5,6 +5,7 @@ namespace DTOS_;
 public class ProyectoDTO
 
 {
+    public int Id { get; set; }
     [Required(ErrorMessage = "El nombre es obligatorio")]
     public string Nombre { get; set; }
 
@@ -19,6 +20,17 @@ public class ProyectoDTO
     public Proyecto ANuevaEntidad(Usuario administrador)
     {
         return new Proyecto(Nombre, Descripcion, FechaInicio, administrador, new List<Usuario>());
+    }
+    
+    public static ProyectoDTO DesdeEntidad(Proyecto proyecto)
+    {
+        return new ProyectoDTO
+        {
+            Id = proyecto.Id,
+            Nombre = proyecto.Nombre,
+            Descripcion = proyecto.Descripcion,
+            FechaInicio = proyecto.FechaInicio
+        };
     }
         
     public static ValidationResult ValidarFechaInicio(DateTime fecha, ValidationContext context)

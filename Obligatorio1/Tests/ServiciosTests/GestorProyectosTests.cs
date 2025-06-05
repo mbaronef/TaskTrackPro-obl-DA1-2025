@@ -720,6 +720,22 @@ namespace Tests.ServiciosTests
             Assert.IsTrue(proyectosDTO.Any(p => p.Nombre == "Proyecto 1"));
             Assert.IsTrue(proyectosDTO.Any(p => p.Nombre == "Proyecto 2"));
         }
+        
+        [TestMethod]
+        public void ObtenerTodosDTO_CopiaIdCorrectamente()
+        {
+            Usuario admin = CrearAdminProyecto(10);
+            Proyecto proyecto = CrearProyectoCon(admin);
+            proyecto.ModificarNombre("Proyecto A");
+
+            _gestor.CrearProyecto(proyecto, admin);
+
+            var dto = _gestor.ObtenerTodosDTO().FirstOrDefault();
+
+            Assert.IsNotNull(dto);
+            Assert.AreEqual(proyecto.Id, dto.Id);
+        }
+
 
     }
 }
