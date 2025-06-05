@@ -36,6 +36,8 @@ public class GestorTareas
         CaminoCritico.CalcularCaminoCritico(proyecto);
 
         proyecto.NotificarMiembros($"Se agregó la tarea (id {nuevaTarea.Id}) al proyecto '{proyecto.Nombre}'.");
+
+        nuevaTareaDTO.Id = nuevaTarea.Id;
     }
 
     public void EliminarTareaDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idTareaAEliminar)

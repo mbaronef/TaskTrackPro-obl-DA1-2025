@@ -130,6 +130,7 @@ public class GestorUsuariosTests
     public void GestorAsignaAdministradorDeSistema()
     {
         UsuarioDTO usuario = CrearYAsignarAdminSistema();
+        usuario = _gestorUsuarios.ObtenerUsuarioPorId(usuario.Id); // actualización
         Assert.IsTrue(usuario.EsAdministradorSistema);
     }
 
@@ -153,6 +154,8 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, nuevoAdminProyecto);
 
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
+        
+        nuevoAdminProyecto = _gestorUsuarios.ObtenerUsuarioPorId(nuevoAdminProyecto.Id); // actualización
         Assert.IsTrue(nuevoAdminProyecto.EsAdministradorProyecto);
     }
 
@@ -215,7 +218,9 @@ public class GestorUsuariosTests
         UsuarioDTO nuevoAdminProyecto = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, nuevoAdminProyecto);
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
-        nuevoAdminProyecto.EstaAdministrandoUnProyecto = true; // esto lo gestiona el gestor de proyectos
+        
+        Usuario nuevoAdmin = _repositorioUsuarios.ObtenerPorId(nuevoAdminProyecto.Id); // esto lo gestiona el gestor de proyectos
+        nuevoAdmin.EstaAdministrandoUnProyecto = true;
 
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }

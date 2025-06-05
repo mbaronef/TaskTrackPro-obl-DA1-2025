@@ -34,7 +34,9 @@ public class TareaDTO
 
     public Tarea AEntidad()
     {
-        return new Tarea(Titulo, Descripcion, DuracionEnDias, FechaInicioMasTemprana);
+        Tarea tarea = new Tarea(Titulo, Descripcion, DuracionEnDias, FechaInicioMasTemprana);
+        tarea.Id = Id;
+        return tarea;
     }
     
     public static TareaDTO DesdeEntidad(Tarea tarea)

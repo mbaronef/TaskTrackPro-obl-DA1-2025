@@ -23,6 +23,7 @@ public class RecursoDTO
     public Recurso AEntidad()
     {
         Recurso recurso = new Recurso(Nombre, Tipo, Descripcion);
+        recurso.Id = Id;
         for(int i = 0; i < CantidadDeTareasUsandolo; i++)
         {
             recurso.IncrementarCantidadDeTareasUsandolo();

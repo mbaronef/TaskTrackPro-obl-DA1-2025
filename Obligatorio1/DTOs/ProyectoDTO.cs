@@ -37,7 +37,9 @@ public class ProyectoDTO
     }
     public Proyecto AEntidad(Usuario administrador)
     {
-        return new Proyecto(Nombre, Descripcion, FechaInicio, administrador, new List<Usuario>());
+        Proyecto proyecto = new Proyecto(Nombre, Descripcion, FechaInicio, administrador, new List<Usuario>());
+        proyecto.Id = Id;
+        return proyecto;
     }
     public static ProyectoDTO DesdeEntidad(Proyecto proyecto)
     {

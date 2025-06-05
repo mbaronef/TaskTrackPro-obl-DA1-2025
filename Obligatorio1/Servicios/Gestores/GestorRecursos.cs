@@ -29,7 +29,7 @@ public class GestorRecursos
         VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
         if (solicitante.EstaAdministrandoUnProyecto && esExclusivo)
         {
-            AsociarProyectoQueAdministraARecurso(solicitante, recurso);
+            AsociarRecursoAProyectoQueAdministra(solicitante, recurso);
         }
         _repositorioRecursos.Agregar(recurso);
         recursoDTO.Id = recurso.Id;
@@ -118,7 +118,7 @@ public class GestorRecursos
         }
     }
 
-    private void AsociarProyectoQueAdministraARecurso(Usuario administradorProyecto, Recurso recurso)
+    private void AsociarRecursoAProyectoQueAdministra(Usuario administradorProyecto, Recurso recurso)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
         recurso.AsociarAProyecto(proyecto);

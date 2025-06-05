@@ -299,7 +299,7 @@ public class GestorProyectos
     
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
     {
-        var usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
+        Usuario usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
         if (usuario == null)
         {
             throw new ExcepcionServicios($"Usuario no encontrado.");

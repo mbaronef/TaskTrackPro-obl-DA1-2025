@@ -3,6 +3,7 @@ using DTOs;
 using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Gestores;
+using Servicios.Utilidades;
 
 namespace Tests.ServiciosTests
 
@@ -22,35 +23,45 @@ namespace Tests.ServiciosTests
         [TestInitialize]
         public void Inicializar()
         {
+            // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
+            typeof(RepositorioProyectos).GetField("_cantidadProyectos",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+
             _repositorioUsuarios = new RepositorioUsuarios();
             _repositorioProyectos = new RepositorioProyectos();
             _gestor = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos);
-            _admin = CrearAdminProyecto(1);
+            _admin = CrearAdminProyecto();
             _adminDTO = UsuarioDTO.DesdeEntidad(_admin);
-            _adminSistema = CrearAdminSistema(2);
-            _usuarioNoAdmin = CrearMiembro(3);
+            _adminSistema = CrearAdminSistema();
+            _usuarioNoAdmin = CrearMiembro();
             _proyecto = CrearProyectoCon(_admin);
         }
-        private Usuario CrearAdminProyecto(int id)
+        private Usuario CrearAdminProyecto()
         {
-            Usuario admin = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
+            //simulación del gestor 
+            string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+            Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
             admin.EsAdministradorProyecto = true;
-            admin.Id = id; // se hardcodea en tests por simplicidad
+            _repositorioUsuarios.Agregar(admin);
             return admin;
         }
 
-        private UsuarioDTO CrearAdminSistema(int id)
+        private UsuarioDTO CrearAdminSistema()
         {
-            Usuario adminSistema = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
-            adminSistema.EsAdministradorSistema = true;
-            adminSistema.Id = id; // se hardcodea en tests pero en realidad el que gestiona ids es el gestor de usuarios
-            return UsuarioDTO.DesdeEntidad(adminSistema);
+            //simulación del gestor 
+            string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+            Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
+            admin.EsAdministradorSistema = true;
+            _repositorioUsuarios.Agregar(admin);
+            return UsuarioDTO.DesdeEntidad(admin); 
         }
 
-        private Usuario CrearMiembro(int id)
+        private Usuario CrearMiembro()
         {
-            Usuario miembro = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
-            miembro.Id = id; // se hardcodea en tests pero en realidad el que gestiona ids es el gestor de usuarios
+            //simulación del gestor 
+            string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
+            Usuario miembro = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
+            _repositorioUsuarios.Agregar(miembro);
             return miembro;
         }
 
@@ -63,17 +74,6 @@ namespace Tests.ServiciosTests
                 FechaInicio = DateTime.Today.AddDays(1),
                 Administrador = UsuarioDTO.DesdeEntidad(admin)
             };
-        }
-
-        private TareaDTO CrearTarea(int id = 1, DateTime? inicio = null, DateTime? fin = null)
-        {
-            string titulo = "Tarea";
-            string descripcion = "Prueba de tarea";
-            int duracionEnDias = 8;
-            DateTime fechaInicio = new DateTime(2500, 9, 1);
-        
-            TareaDTO tarea = new TareaDTO(){Titulo = titulo, Descripcion = descripcion, DuracionEnDias = duracionEnDias, FechaInicioMasTemprana = fechaInicio};
-            return tarea;
         }
         
         //crearProyecto
@@ -132,20 +132,11 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void CrearProyecto_NotificaAMiembrosDelProyecto()
         {
-            Usuario miembro1 = CrearMiembro(4);
-            Usuario miembro2 = CrearMiembro(5);
-            List<Usuario> miembros = new() { miembro1, miembro2 };
-
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = miembros.Select(UsuarioListarDTO.DesdeEntidad).ToList();
-
+            
             _gestor.CrearProyecto(proyecto, _adminDTO);
-
-            foreach (Usuario miembro in miembros)
-            {
-                Assert.AreEqual(1, miembro.Notificaciones.Count);
-                Assert.AreEqual("Se creó el proyecto 'Proyecto'.", miembro.Notificaciones[0].Mensaje);
-            }
+            
+            Assert.AreEqual("Se creó el proyecto 'Proyecto'.", _admin.Notificaciones.First().Mensaje);
         }
 
         // eliminarProyecto
@@ -155,9 +146,9 @@ namespace Tests.ServiciosTests
         public void EliminarProyecto_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto()
         {
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO> { UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
 
             _gestor.EliminarProyecto(proyecto.Id, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
         }
@@ -196,20 +187,24 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void EliminarProyecto_NotificaAMiembrosDelProyecto()
         {
-            Usuario miembro1 = CrearMiembro(4);
-            Usuario miembro2 = CrearMiembro(5);
-            List<Usuario> miembros = new() { miembro1, miembro2 };
+            UsuarioDTO miembro1 = UsuarioDTO.DesdeEntidad(CrearMiembro());
+            UsuarioDTO miembro2 = UsuarioDTO.DesdeEntidad(CrearMiembro());
 
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, miembro1);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, miembro2);
+            
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
+            
             _gestor.EliminarProyecto(proyecto.Id, _adminDTO);
-
-            foreach (UsuarioListarDTO miembro in proyecto.Miembros)
-            {
-                Assert.AreEqual(2, miembro.Notificaciones.Count);
-                Assert.AreEqual("Se eliminó el proyecto 'Proyecto'.", miembro.Notificaciones[1].Mensaje);
-            }
+            
+            miembro1 = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(miembro1.Id)); // actualización
+            miembro2 = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(miembro2.Id));
+            
+            Assert.AreEqual("Se eliminó el proyecto 'Proyecto'.", miembro1.Notificaciones.Last().Mensaje);
+            Assert.AreEqual("Se eliminó el proyecto 'Proyecto'.", miembro2.Notificaciones.Last().Mensaje);
         }
 
         [TestMethod]
@@ -230,6 +225,8 @@ namespace Tests.ServiciosTests
             _gestor.CrearProyecto(_proyecto, _adminDTO);
 
             _gestor.ModificarNombreDelProyecto(_proyecto.Id, "Nuevo Nombre", _adminDTO);
+            
+            _proyecto = _gestor.ObtenerProyectoPorId(_proyecto.Id); // actualización
 
             Assert.AreEqual("Nuevo Nombre", _proyecto.Nombre);
         }
@@ -239,7 +236,7 @@ namespace Tests.ServiciosTests
         public void ModificarNombreDelProyecto_LanzaExcepcionSiNombreYaExiste()
         {
             ProyectoDTO proyecto1 = CrearProyectoCon(_admin);
-            ProyectoDTO proyecto2 = CrearProyectoCon(CrearAdminProyecto(4));
+            ProyectoDTO proyecto2 = CrearProyectoCon(CrearAdminProyecto());
             proyecto2.Nombre = "Otro Nombre";
 
             _gestor.CrearProyecto(proyecto1, _adminDTO);
@@ -259,14 +256,16 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void ModificarNombreDelProyecto_NotificaALosMiembrosDelProyecto()
         {
-            Usuario miembro1 = CrearMiembro(4);
-            Usuario miembro2 = CrearMiembro(5);
+            Usuario miembro1 = CrearMiembro();
+            Usuario miembro2 = CrearMiembro();
             List<Usuario> miembros = new List<Usuario> { miembro1, miembro2 };
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
             proyecto.Miembros = miembros.Select(UsuarioListarDTO.DesdeEntidad).ToList();
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
             _gestor.ModificarNombreDelProyecto(proyecto.Id, "Nuevo Nombre", _adminDTO);
+
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
             string mensajeEsperado = "Se cambió el nombre del proyecto 'Proyecto' a 'Nuevo Nombre'.";
 
@@ -309,6 +308,8 @@ namespace Tests.ServiciosTests
             _gestor.CrearProyecto(proyecto, _adminDTO);
 
             _gestor.ModificarDescripcionDelProyecto(proyecto.Id, "Nueva descripcion", _adminDTO);
+            
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
             Assert.AreEqual("Nueva descripcion", proyecto.Descripcion);
         }
@@ -317,15 +318,17 @@ namespace Tests.ServiciosTests
         public void ModificarDescripcionDelProyecto_NotificaALosMiembrosDelProyecto()
         {
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO> { UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
             
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin) );
 
             string nuevaDescripcion = "Nueva descripcion";
             _gestor.ModificarDescripcionDelProyecto(proyecto.Id, nuevaDescripcion, _adminDTO);
 
             string mensajeEsperado = $"Se cambió la descripción del proyecto '{proyecto.Nombre}' a '{nuevaDescripcion}'.";
 
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
+            
             foreach (var usuario in proyecto.Miembros)
             {
                 Assert.AreEqual(mensajeEsperado, usuario.Notificaciones.Last().Mensaje);
@@ -366,7 +369,9 @@ namespace Tests.ServiciosTests
 
             DateTime nuevaFecha = new DateTime(2026, 5, 1);
             _gestor.ModificarFechaDeInicioDelProyecto(proyecto.Id, nuevaFecha, _adminDTO);
-
+            
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
+            
             Assert.AreEqual(nuevaFecha, proyecto.FechaInicio);
         }
 
@@ -381,8 +386,10 @@ namespace Tests.ServiciosTests
             DateTime nuevaFecha = new DateTime(2026, 5, 1);
             _gestor.ModificarFechaDeInicioDelProyecto(proyecto.Id, nuevaFecha, _adminDTO);
 
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
+            
             string mensajeEsperado = $"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.";
-
+            
             foreach (var usuario in proyecto.Miembros)
             {
                 Assert.AreEqual(mensajeEsperado, usuario.Notificaciones.Last().Mensaje);
@@ -392,27 +399,29 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void CambiarAdministradorDeProyecto_AsignaNuevoAdminOK()
         {
-            Usuario nuevoAdmin = CrearAdminProyecto(4);
+            Usuario nuevoAdmin = CrearAdminProyecto();
 
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO> { UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(nuevoAdmin));
 
             _gestor.CambiarAdministradorDeProyecto(_adminSistema, proyecto.Id, nuevoAdmin.Id);
-
+            
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
+            
             Assert.AreEqual(nuevoAdmin.Id, proyecto.Administrador.Id);
         }
 
         [TestMethod]
         public void CambiarAdministradorDeProyecto_DesactivaFlagDelAdminAnterior()
         {
-            Usuario adminNuevo = CrearAdminProyecto(4);
+            Usuario adminNuevo = CrearAdminProyecto();
 
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO> { UsuarioListarDTO.DesdeEntidad(adminNuevo) };
             
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(adminNuevo));
 
             _gestor.CambiarAdministradorDeProyecto(_adminSistema, proyecto.Id, adminNuevo.Id);
 
@@ -422,11 +431,12 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void CambiarAdministradorDeProyecto_ActivaFlagDelAdminNuevo()
         {
-            Usuario adminNuevo = CrearAdminProyecto(4);
+            Usuario adminNuevo = CrearAdminProyecto();
 
             ProyectoDTO proyecto = CrearProyectoCon(_admin); 
-            proyecto.Miembros = new List<UsuarioListarDTO> { UsuarioListarDTO.DesdeEntidad(adminNuevo) };
+            
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(adminNuevo));
 
             _gestor.CambiarAdministradorDeProyecto(_adminSistema, proyecto.Id, adminNuevo.Id);
 
@@ -439,9 +449,9 @@ namespace Tests.ServiciosTests
         public void CambiarAdministradorDeProyecto_LanzaExcepcionSiSolicitanteNoEsAdminSistema()
         {
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO> { UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
 
             _gestor.CambiarAdministradorDeProyecto(_adminDTO, proyecto.Id, _usuarioNoAdmin.Id);
         }
@@ -468,13 +478,13 @@ namespace Tests.ServiciosTests
         [ExpectedException(typeof(ExcepcionServicios))]
         public void CambiarAdministradorDeProyecto_LanzaExcepcionNuevoAdminYaAdministraOtroProyecto()
         {
-            Usuario nuevoAdmin = CrearAdminProyecto(2);
+            Usuario nuevoAdmin = CrearAdminProyecto();
             nuevoAdmin.EstaAdministrandoUnProyecto = true;
 
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO>() { UsuarioListarDTO.DesdeEntidad(nuevoAdmin) };
             
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(nuevoAdmin));
 
             _gestor.CambiarAdministradorDeProyecto(_adminSistema, proyecto.Id, nuevoAdmin.Id);
         }
@@ -484,9 +494,9 @@ namespace Tests.ServiciosTests
         public void CambiarAdministradorDeProyecto_LanzaExcepcion_NuevoAdminNoTienePermisosDeAdminProyecto()
         {
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO> { UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
             
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
 
             _gestor.CambiarAdministradorDeProyecto(_adminSistema, proyecto.Id, _usuarioNoAdmin.Id);
         }
@@ -494,22 +504,23 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void CambiarAdministradorDeProyecto_NotificaALosMiembros()
         {
-            Usuario nuevoAdmin = CrearAdminProyecto(4);
+            Usuario nuevoAdmin = CrearAdminProyecto();
 
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO>() { UsuarioListarDTO.DesdeEntidad(nuevoAdmin), UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
             
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(nuevoAdmin));
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
 
             _gestor.CambiarAdministradorDeProyecto(_adminSistema, proyecto.Id, nuevoAdmin.Id);
+            
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
             string msg = $"Se cambió el administrador del proyecto '{proyecto.Nombre}'. El nuevo administrador es '{nuevoAdmin}'.";
 
-            foreach (var u in new[] { nuevoAdmin, _usuarioNoAdmin })
-            {
-                Assert.AreEqual(2, u.Notificaciones.Count);
-                Assert.AreEqual(msg, u.Notificaciones[1].Mensaje);
-            }
+            Assert.AreEqual(msg, _admin.Notificaciones.Last().Mensaje);
+            Assert.AreEqual(msg, nuevoAdmin.Notificaciones.Last().Mensaje);
+            Assert.AreEqual(msg, _usuarioNoAdmin.Notificaciones.Last().Mensaje);
         }
 
         //agregar miembro al proyecto
@@ -528,7 +539,7 @@ namespace Tests.ServiciosTests
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
             _gestor.CrearProyecto(proyecto, _adminDTO);
             
-            UsuarioDTO nuevo = UsuarioDTO.DesdeEntidad(CrearMiembro(4));
+            UsuarioDTO nuevo = UsuarioDTO.DesdeEntidad(CrearMiembro());
 
             _gestor.AgregarMiembroAProyecto(proyecto.Id, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin), nuevo);
         }
@@ -537,8 +548,8 @@ namespace Tests.ServiciosTests
         [ExpectedException(typeof(ExcepcionServicios))]
         public void AgregarMiembro_LanzaExcepcionSolicitanteNoEsAdministradorDelProyecto()
         {
-            UsuarioDTO solicitante = UsuarioDTO.DesdeEntidad(CrearAdminProyecto(4));
-            UsuarioDTO nuevo = UsuarioDTO.DesdeEntidad(CrearMiembro(5));
+            UsuarioDTO solicitante = UsuarioDTO.DesdeEntidad(CrearAdminProyecto());
+            UsuarioDTO nuevo = UsuarioDTO.DesdeEntidad(CrearMiembro());
             ProyectoDTO proyecto = CrearProyectoCon(_admin); 
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
@@ -550,11 +561,12 @@ namespace Tests.ServiciosTests
         public void AgregarMiembro_AgregaElMiembroALaListaOK()
         {
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            UsuarioDTO nuevo = UsuarioDTO.DesdeEntidad(CrearMiembro(4));
+            UsuarioDTO nuevo = UsuarioDTO.DesdeEntidad(CrearMiembro());
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
             _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, nuevo);
 
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
             Assert.IsTrue(proyecto.Miembros.Any(u => u.Id == nuevo.Id));
         }
 
@@ -565,7 +577,9 @@ namespace Tests.ServiciosTests
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
             _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
-
+            
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
+            
             string esperado = $"Se agregó a un nuevo miembro (id {_usuarioNoAdmin.Id}) al proyecto '{proyecto.Nombre}'.";
 
             foreach (var usuario in proyecto.Miembros)
@@ -589,9 +603,9 @@ namespace Tests.ServiciosTests
         public void EliminarMiembroDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
         {
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO>() { UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
             
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
 
             _gestor.EliminarMiembroDelProyecto(proyecto.Id, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin), _usuarioNoAdmin.Id);
         }
@@ -600,11 +614,11 @@ namespace Tests.ServiciosTests
         [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarMiembroDelProyecto_LanzaExcepcionSolicitanteNoEsAdministradorDelProyecto()
         {
-            UsuarioDTO solicitante = UsuarioDTO.DesdeEntidad(CrearAdminProyecto(4));
+            UsuarioDTO solicitante = UsuarioDTO.DesdeEntidad(CrearAdminProyecto());
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO>() { UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
 
             _gestor.EliminarMiembroDelProyecto(proyecto.Id, solicitante, _usuarioNoAdmin.Id);
         }
@@ -623,15 +637,15 @@ namespace Tests.ServiciosTests
         [ExpectedException(typeof(ExcepcionServicios))]
         public void EliminarMiembroConTareaAsignada_LanzaExcepcion()
         {
+            GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios);
+            TareaDTO tarea = new TareaDTO(){ Titulo = "Tarea", Descripcion = "Descripcion", DuracionEnDias = 2 , FechaInicioMasTemprana = DateTime.Today.AddDays(5)};
+            
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO>() { UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
-
-            TareaDTO tarea = CrearTarea(1);
-            tarea.UsuariosAsignados.Add(UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin));
-            
-            proyecto.Tareas.Add(tarea);
-            
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
+            
+            gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _adminDTO, tarea);
+            gestorTareas.AgregarMiembroATarea(_adminDTO, tarea.Id, proyecto.Id, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
             
             _gestor.EliminarMiembroDelProyecto(proyecto.Id, _adminDTO, _usuarioNoAdmin.Id);
         }
@@ -640,11 +654,13 @@ namespace Tests.ServiciosTests
         public void EliminarMiembroDelProyecto_EliminaMiembroOK()
         {
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO>() { UsuarioListarDTO.DesdeEntidad(_usuarioNoAdmin) };
 
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
 
             _gestor.EliminarMiembroDelProyecto(proyecto.Id, _adminDTO, _usuarioNoAdmin.Id);
+            
+            proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
             Assert.IsFalse(proyecto.Miembros.Any(u => u.Id == _usuarioNoAdmin.Id));
         }
@@ -652,18 +668,22 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void EliminarMiembroDelProyecto_NotificaALosMiembros()
         {
-            UsuarioListarDTO miembro1 = UsuarioListarDTO.DesdeEntidad(CrearMiembro(4));
-            UsuarioListarDTO miembro2 = UsuarioListarDTO.DesdeEntidad(CrearMiembro(5));
+            UsuarioDTO miembro1 = UsuarioDTO.DesdeEntidad(CrearMiembro());
+            UsuarioDTO miembro2 = UsuarioDTO.DesdeEntidad(CrearMiembro());
 
             ProyectoDTO proyecto = CrearProyectoCon(_admin);
-            proyecto.Miembros = new List<UsuarioListarDTO> { miembro1, miembro2 };
                 
             _gestor.CrearProyecto(proyecto, _adminDTO);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, miembro1);
+            _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, miembro2);
 
             _gestor.EliminarMiembroDelProyecto(proyecto.Id, _adminDTO, miembro1.Id);
 
             string esperado = $"Se eliminó a el miembro (id {miembro1.Id}) del proyecto '{proyecto.Nombre}'.";
 
+            _adminDTO = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_adminDTO.Id)); // actualización
+            miembro2 = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(miembro2.Id));
+            
             Assert.IsTrue(_adminDTO.Notificaciones.Any(n => n.Mensaje == esperado));
             Assert.IsTrue(miembro2.Notificaciones.Any(n => n.Mensaje == esperado));
         }
@@ -671,22 +691,23 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void ObtenerProyectosPorUsuario_DevuelveProyectosDelMiembro()
         {
-            Usuario admin1 = CrearAdminProyecto(4);
-            Usuario admin2 = CrearAdminProyecto(5);
-            UsuarioListarDTO miembro1 = UsuarioListarDTO.DesdeEntidad(CrearMiembro(6));
-            UsuarioListarDTO miembro2 = UsuarioListarDTO.DesdeEntidad(CrearMiembro(7));
+            Usuario admin1 = CrearAdminProyecto();
+            Usuario admin2 = CrearAdminProyecto();
+            UsuarioDTO miembro1 = UsuarioDTO.DesdeEntidad(CrearMiembro());
+            UsuarioDTO miembro2 = UsuarioDTO.DesdeEntidad(CrearMiembro());
 
             ProyectoDTO proyecto1 = CrearProyectoCon(admin1);
-            proyecto1.Miembros = new List<UsuarioListarDTO> { miembro1, miembro2 };
+            proyecto1.Nombre = "Proyecto 1";
             
             _gestor.CrearProyecto(proyecto1, UsuarioDTO.DesdeEntidad(admin1));
-            proyecto1.Nombre = "Proyecto 1";
+            _gestor.AgregarMiembroAProyecto(proyecto1.Id, UsuarioDTO.DesdeEntidad(admin1), miembro1);
+            _gestor.AgregarMiembroAProyecto(proyecto1.Id, UsuarioDTO.DesdeEntidad(admin1), miembro2);
 
             ProyectoDTO proyecto2 = CrearProyectoCon(admin2);
-            proyecto2.Miembros = new List<UsuarioListarDTO> { miembro1 };
+            proyecto2.Nombre = "Proyecto 2";
             
             _gestor.CrearProyecto(proyecto2, UsuarioDTO.DesdeEntidad(admin2));
-            proyecto2.Nombre = "Proyecto 2";
+            _gestor.AgregarMiembroAProyecto(proyecto2.Id, UsuarioDTO.DesdeEntidad(admin2), miembro1);
 
             List<ProyectoDTO> proyectosDeMiembro1 = _gestor.ObtenerProyectosPorUsuario(miembro1.Id);
             List<ProyectoDTO> proyectosDeMiembro2 = _gestor.ObtenerProyectosPorUsuario(miembro2.Id);
@@ -722,7 +743,7 @@ namespace Tests.ServiciosTests
         public void NotificarAdministradoresDeProyectos_NotificaAdministradores()
         {
             Proyecto proyecto1 =new Proyecto("Proyecto 1", "Descripción 1", DateTime.Today.AddDays(1), _admin, new List<Usuario>());
-            Usuario otroAdmin = CrearAdminProyecto(3);
+            Usuario otroAdmin = CrearAdminProyecto();
             Proyecto proyecto2 = new Proyecto("Proyecto 2", "Descripción 2", DateTime.Today.AddDays(2), otroAdmin, new List<Usuario>());
             
             List<Proyecto> proyectos = new List<Proyecto> { proyecto1, proyecto2 };
