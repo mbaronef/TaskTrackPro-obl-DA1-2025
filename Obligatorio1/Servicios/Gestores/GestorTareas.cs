@@ -213,7 +213,7 @@ public class GestorTareas
         return tarea.EsMiembro(usuario);
     }
     
-    public Tarea ObtenerTareaDominioPorId(int idProyecto, int idTarea)
+    private Tarea ObtenerTareaDominioPorId(int idProyecto, int idTarea)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);

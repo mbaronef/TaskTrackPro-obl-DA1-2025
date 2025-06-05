@@ -44,16 +44,16 @@ public class GestorUsuarios
         string mensajeNotificacion = $"Se eliminó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
     }
+    
+    public List<UsuarioListarDTO> ObtenerTodos()
+    {
+        return _usuarios.ObtenerTodos().Select(UsuarioListarDTO.DesdeEntidad).ToList();
+    }
 
     public UsuarioDTO ObtenerUsuarioPorId(int idUsuario)
     {
         Usuario usuario = obtenerUsuarioDominioPorId(idUsuario);
         return UsuarioDTO.DesdeEntidad(usuario);
-    }
-    
-    public List<UsuarioListarDTO> ObtenerTodos()
-    {
-        return _usuarios.ObtenerTodos().Select(UsuarioListarDTO.DesdeEntidad).ToList();
     }
 
     public void AgregarAdministradorSistema(UsuarioDTO solicitanteDTO, int idUsuario)
@@ -147,7 +147,7 @@ public class GestorUsuarios
         }
     }
 
-    public void VerificarUsuarioNoEsMiembroDeProyecto(Usuario usuario)
+    private void VerificarUsuarioNoEsMiembroDeProyecto(Usuario usuario)
     {
         if(usuario.CantidadProyectosAsignados > 0)
         {

@@ -34,13 +34,7 @@ public class GestorRecursos
         _repositorioRecursos.Agregar(recurso);
         recursoDTO.Id = recurso.Id;
     }
-
-    public RecursoDTO ObtenerRecursoPorId(int idRecurso)
-    {
-        Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
-        return RecursoDTO.DesdeEntidad(recurso);
-    }
-
+    
     public void EliminarRecurso(UsuarioDTO solicitanteDTO, int idRecurso)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
@@ -50,6 +44,24 @@ public class GestorRecursos
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         _repositorioRecursos.Eliminar(recurso.Id);
         NotificarEliminacion(recurso);
+    }
+
+    public RecursoDTO ObtenerRecursoPorId(int idRecurso)
+    {
+        Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
+        return RecursoDTO.DesdeEntidad(recurso);
+    }
+    
+    public List<RecursoDTO> ObtenerRecursosGenerales()
+    {
+        List<Recurso> recursosGenerales = _repositorioRecursos.ObtenerTodos().Where(recurso => !recurso.EsExclusivo()).ToList();
+        return recursosGenerales.Select(RecursoDTO.DesdeEntidad).ToList();
+    }
+    
+    public List<RecursoDTO> ObtenerRecursosExclusivos(int idProyecto)
+    {
+        List<RecursoDTO> todosLosRecursos = _repositorioRecursos.ObtenerTodos().Select(RecursoDTO.DesdeEntidad).ToList();
+        return todosLosRecursos.Where(recurso => recurso.ProyectoAsociado != null && recurso.ProyectoAsociado.Id == idProyecto).ToList();
     }
 
     public void ModificarNombreRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoNombre)
@@ -82,19 +94,6 @@ public class GestorRecursos
         recurso.ModificarDescripcion(nuevaDescripcion);
         NotificarModificacion(recurso, recurso.Nombre);
     }
-
-    public List<RecursoDTO> ObtenerRecursosGenerales()
-    {
-        List<Recurso> recursosGenerales = _repositorioRecursos.ObtenerTodos().Where(recurso => !recurso.EsExclusivo()).ToList();
-        return recursosGenerales.Select(RecursoDTO.DesdeEntidad).ToList();
-    }
-    
-    public List<RecursoDTO> ObtenerRecursosExclusivos(int idProyecto)
-    {
-        List<RecursoDTO> todosLosRecursos = _repositorioRecursos.ObtenerTodos().Select(RecursoDTO.DesdeEntidad).ToList();
-        return todosLosRecursos.Where(recurso => recurso.ProyectoAsociado != null && recurso.ProyectoAsociado.Id == idProyecto).ToList();
-    }
-
     public RecursoDTO ObtenerRecursoExclusivoPorId(int idProyecto, int idRecurso)
     {
         List<RecursoDTO> recursosExclusivos = ObtenerRecursosExclusivos(idProyecto);
@@ -162,7 +161,7 @@ public class GestorRecursos
         }
         else
         { // decidimos que si el recurso no es exclusivo, se notifica a todos los admins de todos los proyectos.
-            _gestorProyectos.NotificarAdministradoresDeProyectos(_gestorProyectos.ObtenerTodos(), mensaje);
+            _gestorProyectos.NotificarAdministradoresDeProyectos(_gestorProyectos.ObtenerTodosDominio(), mensaje);
         }
     }
 
@@ -181,7 +180,7 @@ public class GestorRecursos
     }
     private void NotificarAdministradoresDeProyectosQueUsanRecurso(Recurso recurso, string mensaje)
     {
-        List<Proyecto> proyectosQueUsanElRecurso = _gestorProyectos.ObtenerTodos()
+        List<Proyecto> proyectosQueUsanElRecurso = _gestorProyectos.ObtenerTodosDominio()
             .Where(proyecto => RecursosNecesariosPorProyecto(proyecto).Contains(recurso)).ToList();
         _gestorProyectos.NotificarAdministradoresDeProyectos(proyectosQueUsanElRecurso, mensaje);
     }

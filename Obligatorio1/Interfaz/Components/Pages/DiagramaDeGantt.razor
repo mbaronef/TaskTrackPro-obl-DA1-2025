@@ -1,6 +1,7 @@
 @page "/proyecto/{id:int}/diagrama_de_gantt"
 @using DTOs
 @using Servicios.Gestores
+@using Servicios.Utilidades
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
 @inject GestorProyectos GestorProyectos
@@ -38,14 +39,16 @@ else
                 NavigationManager.NavigateTo("/Error");
                 return;
             }
-            proyecto = GestorProyectos.CalcularCaminoCriticoYActualizarDTO(proyecto);
+            GestorProyectos.CalcularCaminoCritico(proyecto);
+            proyecto = GestorProyectos.ObtenerProyectoPorId(proyecto.Id);
             StateHasChanged(); // Asegurar que el div se renderice primero
             return; // Esperar hasta el segundo render
         }
 
         if (proyecto != null && !graficoDibujado)
         {
-            proyecto = GestorProyectos.CalcularCaminoCriticoYActualizarDTO(proyecto);
+            GestorProyectos.CalcularCaminoCritico(proyecto);
+            proyecto = GestorProyectos.ObtenerProyectoPorId(proyecto.Id);
             var tareas = proyecto.Tareas.Select(t => new
             {
                 titulo = t.Titulo,

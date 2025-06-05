@@ -85,7 +85,7 @@ namespace Tests.ServiciosTests
             _gestor.CrearProyecto(proyecto, _adminDTO);
 
             Assert.AreEqual(1, proyecto.Id);
-            Assert.AreEqual(proyecto.Id, _gestor.ObtenerTodos().ElementAt(0).Id);
+            Assert.AreEqual(proyecto.Id, _gestor.ObtenerTodosDominio().ElementAt(0).Id);
         }
 
         [TestMethod]
@@ -165,11 +165,11 @@ namespace Tests.ServiciosTests
         {
             _gestor.CrearProyecto(_proyecto, _adminDTO);
 
-            Assert.AreEqual(1, _gestor.ObtenerTodos().Count);
+            Assert.AreEqual(1, _gestor.ObtenerTodosDominio().Count);
 
             _gestor.EliminarProyecto(_proyecto.Id, _adminDTO);
 
-            Assert.AreEqual(0, _gestor.ObtenerTodos().Count);
+            Assert.AreEqual(0, _gestor.ObtenerTodosDominio().Count);
         }
 
         [TestMethod]

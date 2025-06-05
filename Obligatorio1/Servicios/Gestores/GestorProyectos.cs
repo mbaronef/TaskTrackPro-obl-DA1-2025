@@ -56,14 +56,21 @@ public class GestorProyectos
         proyecto.NotificarMiembros($"Se eliminó el proyecto '{proyecto.Nombre}'.");
     }
     
-    public List<Proyecto> ObtenerTodos()
-    {
-        return _proyectos.ObtenerTodos();
-    }
-    public List<ProyectoDTO> ObtenerTodosDTO()
+    public List<ProyectoDTO> ObtenerTodos()
     {
         List<Proyecto> proyectos = _proyectos.ObtenerTodos();
         return proyectos.Select(ProyectoDTO.DesdeEntidad).ToList();
+    }
+    
+    public List<Proyecto> ObtenerTodosDominio()
+    {
+        return _proyectos.ObtenerTodos();
+    }
+    
+    public ProyectoDTO ObtenerProyectoPorId(int id)
+    {
+        Proyecto proyecto = ObtenerProyectoDominioPorId(id);
+        return ProyectoDTO.DesdeEntidad(proyecto);
     }
 
     public void ModificarNombreDelProyecto(int idProyecto, string nuevoNombre, UsuarioDTO solicitanteDTO)
@@ -189,12 +196,6 @@ public class GestorProyectos
         return proyecto;
     }
     
-    public ProyectoDTO ObtenerProyectoPorId(int id)
-    {
-        Proyecto proyecto = ObtenerProyectoDominioPorId(id);
-        return ProyectoDTO.DesdeEntidad(proyecto);
-    }
-    
     public void VerificarUsuarioEsAdminProyectoDeEseProyecto(Proyecto proyecto, Usuario usuario)
     {
         if (!proyecto.EsAdministrador(usuario))
@@ -230,22 +231,15 @@ public class GestorProyectos
             throw new ExcepcionServicios("El usuario tiene tareas asignadas");
         }
     }
-
-    public Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
-    {
-        Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
-        return miembro;
-    }
     public void NotificarAdministradoresDeProyectos(List<Proyecto> proyectos, string mensaje)
     {
         proyectos.ForEach(proyecto => proyecto.NotificarAdministrador(mensaje));
     }
 
-    public ProyectoDTO CalcularCaminoCriticoYActualizarDTO(ProyectoDTO proyectoDTO)
+    public void CalcularCaminoCritico(ProyectoDTO proyectoDTO)
     {
         Proyecto proyecto = ObtenerProyectoDominioPorId(proyectoDTO.Id);
         CaminoCritico.CalcularCaminoCritico(proyecto);
-        return ProyectoDTO.DesdeEntidad(proyecto);
     }
 
     public bool EsAdministradorDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)
@@ -271,6 +265,13 @@ public class GestorProyectos
 
         return proyecto;
     }
+    
+    private Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
+    {
+        Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
+        return miembro;
+    }
+    
     private void VerificarNombreNoRepetido(string nuevoNombre)
     {
         bool existeOtro = _proyectos.ObtenerTodos().Any(proyecto => proyecto.Nombre == nuevoNombre);
