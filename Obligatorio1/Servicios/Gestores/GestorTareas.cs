@@ -1,5 +1,4 @@
 ﻿using Dominio;
-using Dominio.Excepciones;
 using DTOs;
 using Repositorios.Interfaces;
 using Servicios.Excepciones;

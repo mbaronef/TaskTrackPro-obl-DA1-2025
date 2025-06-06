@@ -215,7 +215,6 @@ public class GestorProyectos
     public void VerificarUsuarioMiembroDelProyecto(int idUsuario, Proyecto proyecto)
     {
         Usuario usuario = ObtenerMiembro(idUsuario, proyecto);
-
         if (usuario is null)
         {
             throw new ExcepcionServicios("El usuario no es miembro del proyecto.");

@@ -40,16 +40,18 @@ public class GestorRecursosTests
     {
         //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
+        Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
         admin.EsAdministradorSistema = true;
         _repositorioUsuarios.Agregar(admin);
         return UsuarioDTO.DesdeEntidad(admin); // dto
     }
-    
+
     private Usuario CrearAdministradorProyecto()
     {
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
         adminProyecto.EsAdministradorProyecto = true;
         _repositorioUsuarios.Agregar(adminProyecto);
         return adminProyecto;
@@ -59,7 +61,8 @@ public class GestorRecursosTests
     {
         //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+            contrasenaEncriptada);
         _repositorioUsuarios.Agregar(usuario);
         return UsuarioDTO.DesdeEntidad(usuario); // dto
     }
@@ -72,15 +75,19 @@ public class GestorRecursosTests
     private Proyecto CrearYAgregarProyecto(Usuario adminProyecto)
     {
         DateTime fechaInicio = DateTime.Today.AddDays(1);
-        ProyectoDTO proyecto = new ProyectoDTO(){
-            Nombre = "Nombre", Descripcion = "Descripción", FechaInicio = fechaInicio, Administrador = UsuarioDTO.DesdeEntidad(adminProyecto)};
+        ProyectoDTO proyecto = new ProyectoDTO()
+        {
+            Nombre = "Nombre", Descripcion = "Descripción", FechaInicio = fechaInicio,
+            Administrador = UsuarioDTO.DesdeEntidad(adminProyecto)
+        };
         _gestorProyectos.CrearProyecto(proyecto, UsuarioDTO.DesdeEntidad(adminProyecto));
         return _gestorProyectos.ObtenerProyectoDominioPorId(proyecto.Id);
     }
 
     private RecursoDTO CrearRecursoDTO()
     {
-        return new RecursoDTO(){ Nombre = "Analista Senior", Tipo = "Humano", Descripcion = "Un analista Senior con experiencia"};
+        return new RecursoDTO()
+            { Nombre = "Analista Senior", Tipo = "Humano", Descripcion = "Un analista Senior con experiencia" };
     }
 
     [TestMethod]
@@ -116,8 +123,8 @@ public class GestorRecursosTests
     public void AdminProyectoAgregaRecursoExclusivo()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        CrearYAgregarProyecto(adminProyecto); 
-        
+        CrearYAgregarProyecto(adminProyecto);
+
         RecursoDTO recursoDTO = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recursoDTO, true);
 
@@ -132,7 +139,7 @@ public class GestorRecursosTests
         RecursoDTO recurso2 = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso1, false);
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso2, false);
-        
+
         Assert.AreEqual(recurso1.Id, _gestorRecursos.ObtenerRecursoPorId(1).Id);
         Assert.AreEqual(recurso2.Id, _gestorRecursos.ObtenerRecursoPorId(2).Id);
     }
@@ -193,8 +200,9 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
 
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.EstaAdministrandoUnProyecto = true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
-        
+        adminProyecto.EstaAdministrandoUnProyecto =
+            true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
+
         _gestorRecursos.EliminarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso.Id);
     }
 
@@ -205,10 +213,14 @@ public class GestorRecursosTests
         Usuario adminProyecto = CrearAdministradorProyecto();
         adminProyecto.Id = 1; // lo gestiona el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
-       
+
         UsuarioDTO otroAdminProyecto = UsuarioDTO.DesdeEntidad(CrearAdministradorProyecto());
         otroAdminProyecto.Id = 2; // lo gestiona el repo de usuarios
-        ProyectoDTO otroProyecto = new ProyectoDTO(){Nombre = "Otro Nombre", Descripcion = "Descripción", FechaInicio = DateTime.Today.AddDays(1), Administrador = otroAdminProyecto};
+        ProyectoDTO otroProyecto = new ProyectoDTO()
+        {
+            Nombre = "Otro Nombre", Descripcion = "Descripción", FechaInicio = DateTime.Today.AddDays(1),
+            Administrador = otroAdminProyecto
+        };
         _gestorProyectos.CrearProyecto(otroProyecto, otroAdminProyecto);
 
         RecursoDTO recurso = CrearRecursoDTO();
@@ -226,7 +238,8 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(_adminSistemaDTO, recurso.Id);
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia",
+            ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -235,24 +248,25 @@ public class GestorRecursosTests
     {
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
-        
+
         Usuario adminProyecto = CrearAdministradorProyecto();
         CrearYAgregarProyecto(adminProyecto);
-        
+
         _gestorRecursos.EliminarRecurso(_adminSistemaDTO, recurso.Id);
-        
+
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia", ultimaNotificacion.Mensaje);
+        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia",
+            ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-    
+
     [TestMethod]
     public void AdminSistemaModificaNombreDeRecursoOk()
     {
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Nuevo nombre");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
         Assert.AreEqual("Nuevo nombre", recurso.Nombre);
     }
@@ -268,7 +282,7 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(adminProyectoDTO, recurso, true);
 
         _gestorRecursos.ModificarNombreRecurso(adminProyectoDTO, recurso.Id, "Nuevo nombre");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
         Assert.AreEqual("Nuevo nombre", recurso.Nombre);
     }
@@ -282,7 +296,7 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
         _gestorRecursos.ModificarNombreRecurso(usuario, recurso.Id, "Nuevo nombre");
     }
-    
+
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarNombreDeRecursoNoExclusivo()
@@ -291,8 +305,9 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
 
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.EstaAdministrandoUnProyecto = true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
-        
+        adminProyecto.EstaAdministrandoUnProyecto =
+            true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
+
         _gestorRecursos.ModificarNombreRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso.Id, "otro nombre");
     }
 
@@ -306,23 +321,25 @@ public class GestorRecursosTests
 
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
-        
-        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto(ProyectoDTO.DesdeEntidad(otroProyecto), UsuarioDTO.DesdeEntidad(otroAdminProyecto));
+
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción", DateTime.Today.AddDays(1), otroAdminProyecto,
+            new List<Usuario>());
+        _gestorProyectos.CrearProyecto(ProyectoDTO.DesdeEntidad(otroProyecto),
+            UsuarioDTO.DesdeEntidad(otroAdminProyecto));
 
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso, true);
-        
+
         _gestorRecursos.ModificarNombreRecurso(UsuarioDTO.DesdeEntidad(otroAdminProyecto), recurso.Id, "Nuevo nombre");
     }
-    
+
     [TestMethod]
     public void AdminSistemaModificaTipoDeRecursoOk()
     {
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Nuevo tipo");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
         Assert.AreEqual("Nuevo tipo", recurso.Tipo);
     }
@@ -338,7 +355,7 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(adminProyectoDTO, recurso, true);
 
         _gestorRecursos.ModificarTipoRecurso(adminProyectoDTO, recurso.Id, "Nuevo tipo");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
         Assert.AreEqual("Nuevo tipo", recurso.Tipo);
     }
@@ -362,13 +379,15 @@ public class GestorRecursosTests
         CrearYAgregarProyecto(adminProyecto);
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
-        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto( ProyectoDTO.DesdeEntidad(otroProyecto), UsuarioDTO.DesdeEntidad(otroAdminProyecto));
-        
-        
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción", DateTime.Today.AddDays(1), otroAdminProyecto,
+            new List<Usuario>());
+        _gestorProyectos.CrearProyecto(ProyectoDTO.DesdeEntidad(otroProyecto),
+            UsuarioDTO.DesdeEntidad(otroAdminProyecto));
+
+
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso, true);
-        
+
         _gestorRecursos.ModificarTipoRecurso(UsuarioDTO.DesdeEntidad(otroAdminProyecto), recurso.Id, "Nuevo tipo");
     }
 
@@ -385,14 +404,14 @@ public class GestorRecursosTests
 
         _gestorRecursos.ModificarTipoRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso.Id, "otro tipo");
     }
-    
+
     [TestMethod]
     public void AdminSistemaModificaDescripcionDeRecursoOk()
     {
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Nueva descripción");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
         Assert.AreEqual("Nueva descripción", recurso.Descripcion);
     }
@@ -408,7 +427,7 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(adminProyectoDTO, recurso, true);
 
         _gestorRecursos.ModificarDescripcionRecurso(adminProyectoDTO, recurso.Id, "Nueva descripción");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
         Assert.AreEqual("Nueva descripción", recurso.Descripcion);
     }
@@ -433,15 +452,18 @@ public class GestorRecursosTests
 
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
         otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
-        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción",DateTime.Today.AddDays(1),otroAdminProyecto, new List<Usuario>());
-        _gestorProyectos.CrearProyecto( ProyectoDTO.DesdeEntidad(otroProyecto), UsuarioDTO.DesdeEntidad(otroAdminProyecto));
+        Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción", DateTime.Today.AddDays(1), otroAdminProyecto,
+            new List<Usuario>());
+        _gestorProyectos.CrearProyecto(ProyectoDTO.DesdeEntidad(otroProyecto),
+            UsuarioDTO.DesdeEntidad(otroAdminProyecto));
 
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso, true);
-        
-        _gestorRecursos.ModificarDescripcionRecurso(UsuarioDTO.DesdeEntidad(otroAdminProyecto), recurso.Id, "Nueva descripción");
+
+        _gestorRecursos.ModificarDescripcionRecurso(UsuarioDTO.DesdeEntidad(otroAdminProyecto), recurso.Id,
+            "Nueva descripción");
     }
-    
+
     [ExpectedException(typeof(ExcepcionServicios))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarDescripcionDeRecursoNoExclusivo()
@@ -450,11 +472,12 @@ public class GestorRecursosTests
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
 
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.EstaAdministrandoUnProyecto = true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
-        
+        adminProyecto.EstaAdministrandoUnProyecto =
+            true; // hardcodeado por simplicidad de tests (para no crear un proyecto)
+
         _gestorRecursos.ModificarNombreRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso.Id, "otra descripción");
     }
-    
+
     [TestMethod]
     public void ModificarNombreDeRecursoExclusivoNotificaAlAdministradorDeProyecto()
     {
@@ -465,26 +488,30 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(
+            "El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'",
+            ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-    
+
     [TestMethod]
     public void ModificarNombreDeRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
-        
+
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         Tarea tarea = CrearTarea();
         tarea.AgregarRecurso(recurso.AEntidad());
         proyecto.AgregarTarea(tarea);
-        
+
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
-        
+
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(
+            "El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'",
+            ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -498,29 +525,33 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(
+            "El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'",
+            ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-    
+
     [TestMethod]
     public void ModificarTipoDeRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
-        
+
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         Tarea tarea = CrearTarea();
         tarea.AgregarRecurso(recurso.AEntidad());
         proyecto.AgregarTarea(tarea);
-        
+
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
-        
+
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(
+            "El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'",
+            ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-    
+
     [TestMethod]
     public void ModificarDescripcionDeRecursoExclusivoNotificaAlAdministradorDeProyecto()
     {
@@ -531,26 +562,30 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Otra descripción");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(
+            "El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'",
+            ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-    
+
     [TestMethod]
     public void ModificarDescripcionDeRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
-        
+
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         Tarea tarea = CrearTarea();
         tarea.AgregarRecurso(recurso.AEntidad());
         proyecto.AgregarTarea(tarea);
-        
+
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Otra descripción");
-        
+
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(
+            "El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'",
+            ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -558,10 +593,10 @@ public class GestorRecursosTests
     public void SeMuestranRecursosGeneralesOk()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        CrearYAgregarProyecto(adminProyecto); 
+        CrearYAgregarProyecto(adminProyecto);
         RecursoDTO recursoExclusivo = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recursoExclusivo, true);
-        
+
         RecursoDTO recurso1 = CrearRecursoDTO();
         RecursoDTO recurso2 = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso1, false);
@@ -571,22 +606,66 @@ public class GestorRecursosTests
         Assert.AreEqual(recurso1.Id, _gestorRecursos.ObtenerRecursosGenerales().ElementAt(0).Id);
         Assert.AreEqual(recurso2.Id, _gestorRecursos.ObtenerRecursosGenerales().ElementAt(1).Id);
     }
-    
+
     [TestMethod]
     public void SeMuestranRecursosExclusivosDeUnProyectoOk()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
         UsuarioDTO adminProyectoDTO = UsuarioDTO.DesdeEntidad(adminProyecto);
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-    
+
         RecursoDTO recursoExclusivo1 = CrearRecursoDTO();
         RecursoDTO recursoExclusivo2 = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(adminProyectoDTO, recursoExclusivo1, true);
         _gestorRecursos.AgregarRecurso(adminProyectoDTO, recursoExclusivo2, true);
-        
+
         List<RecursoDTO> recursosExclusivosDelProyecto = _gestorRecursos.ObtenerRecursosExclusivos(proyecto.Id);
         Assert.AreEqual(2, recursosExclusivosDelProyecto.Count());
         Assert.AreEqual(recursoExclusivo1.Id, recursosExclusivosDelProyecto.ElementAt(0).Id);
         Assert.AreEqual(recursoExclusivo2.Id, recursosExclusivosDelProyecto.ElementAt(1).Id);
+    }
+
+    [TestMethod]
+    public void SeObtieneUnRecursoExclusivoPorIdOk()
+    {
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+        UsuarioDTO adminProyectoDTO = UsuarioDTO.DesdeEntidad(adminProyecto);
+
+        RecursoDTO recursoExclusivo = CrearRecursoDTO();
+        _gestorRecursos.AgregarRecurso(adminProyectoDTO, recursoExclusivo, true);
+
+        RecursoDTO recursoObtenido = _gestorRecursos.ObtenerRecursoExclusivoPorId(proyecto.Id, recursoExclusivo.Id);
+
+        Assert.AreEqual(recursoObtenido.Id, recursoExclusivo.Id);
+        Assert.AreEqual(recursoObtenido.Nombre, recursoExclusivo.Nombre);
+        Assert.AreEqual(recursoObtenido.Tipo, recursoExclusivo.Tipo);
+        Assert.AreEqual(recursoObtenido.Descripcion, recursoExclusivo.Descripcion);
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void ObtenerUnRecursoExclusivoInexistenteLanzaExcepcion()
+    {
+        RecursoDTO recurso = CrearRecursoDTO();
+        _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
+
+        Usuario adminProyecto = CrearAdministradorProyecto();
+        Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
+
+        _gestorRecursos.ObtenerRecursoExclusivoPorId(proyecto.Id, recurso.Id);
+    }
+
+    [ExpectedException(typeof(ExcepcionServicios))]
+    [TestMethod]
+    public void NoPuedeAgregarUnRecursoUnSolicitanteInexistente()
+    {
+        UsuarioDTO usuarioNoEnRepositorio = new UsuarioDTO()
+        {
+            Id = 99999, Nombre = "Juan", Apellido = "Pérez", FechaNacimiento = new DateTime(2000, 01, 01),
+            Email = "juan@perez.com", Contrasena = "Juan123>$%"
+        };
+        RecursoDTO recurso = CrearRecursoDTO();
+        _gestorRecursos.AgregarRecurso(usuarioNoEnRepositorio, recurso, false);
     }
 }
