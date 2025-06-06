@@ -863,7 +863,7 @@ public class GestorProyectosTests
         Proyecto proyectoActualizadoDominio = _gestor.ObtenerProyectoDominioPorId(proyecto.Id);
         List<Tarea> tareasCriticas = proyectoActualizadoDominio.Tareas.Where(t => t.EsCritica()).ToList();
 
-        Assert.AreEqual(3, tareasCriticas.Count); // "Todas las tareas deberían estar en el camino crítico"
+        Assert.AreEqual(3, tareasCriticas.Count); // Todas las tareas deberían estar en el camino crítico
     }
 
 }
