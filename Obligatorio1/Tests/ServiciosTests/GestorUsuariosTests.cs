@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using Dominio;
 using DTOs;
 using Repositorios;
@@ -589,6 +590,20 @@ public class GestorUsuariosTests
     public void ValidarQueUnUsuarioNoEsPrimerAdminLanzaExcepcionConElPrimerAdmin()
     {
         _gestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(_adminSistemaDTO.Id);
+    }
+
+    [TestMethod]
+    public void SeBorraUnaNotificacionOk()
+    {
+        UsuarioDTO usuario = CrearUsuarioDTO("Juan", "Pérez", "admin@gmail.com", "Admin123$");
+        _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario);
+
+        Usuario usuarioDominio = _repositorioUsuarios.ObtenerPorId(usuario.Id);
+        usuarioDominio.RecibirNotificacion("notificación"); //se hardcodea por simplicidad de test
+        
+        _gestorUsuarios.BorrarNotificacion(usuario.Id, usuarioDominio.Notificaciones.First().Id);
+        
+        Assert.AreEqual(0, usuarioDominio.Notificaciones.Count());
     }
 }
 

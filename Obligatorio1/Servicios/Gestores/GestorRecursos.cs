@@ -101,7 +101,12 @@ public class GestorRecursos
     public RecursoDTO ObtenerRecursoExclusivoPorId(int idProyecto, int idRecurso)
     {
         List<RecursoDTO> recursosExclusivos = ObtenerRecursosExclusivos(idProyecto);
-        return recursosExclusivos.FirstOrDefault(recurso => recurso.Id == idRecurso);
+        RecursoDTO recurso = recursosExclusivos.FirstOrDefault(recurso => recurso.Id == idRecurso);
+        if (recurso == null)
+        {
+            throw new ExcepcionServicios("Recurso exclusivo no encontrado");
+        }
+        return recurso;
     }
 
     private Recurso ObtenerRecursoDominioPorId(int idRecurso)

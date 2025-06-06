@@ -28,6 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="ControladoresTests\" />
       <Folder Include="RepositoriosTests\" />
     </ItemGroup>
 
