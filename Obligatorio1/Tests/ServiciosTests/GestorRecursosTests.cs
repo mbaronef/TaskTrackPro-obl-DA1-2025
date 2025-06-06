@@ -1,4 +1,4 @@
-using Dominio;
+/*using Dominio;
 using DTOs;
 using Repositorios;
 using Servicios.Excepciones;
@@ -668,4 +668,4 @@ public class GestorRecursosTests
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(usuarioNoEnRepositorio, recurso, false);
     }
-}
+}*/

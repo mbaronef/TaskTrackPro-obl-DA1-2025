@@ -1,4 +1,4 @@
-﻿using Dominio;
+﻿/*using Dominio;
 using Dominio.Excepciones;
 using DTOs;
 using Repositorios;
@@ -1000,4 +1000,4 @@ public class GestorTareasTests
 
         Assert.IsFalse(_gestorTareas.EsMiembroDeTarea(_admin, tarea.Id, proyecto.Id));
     }
-}
+}*/

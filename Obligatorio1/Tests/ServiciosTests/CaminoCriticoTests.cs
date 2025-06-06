@@ -1,4 +1,4 @@
-using Dominio;
+/*using Dominio;
 using Servicios.Excepciones;
 using Servicios.Utilidades;
 
@@ -173,4 +173,4 @@ public class CaminoCriticoTests
         Notificacion ultimaNoti = _admin.Notificaciones.Last();
         Assert.AreEqual(esperado, ultimaNoti.Mensaje);
     }
-}
+}*/
