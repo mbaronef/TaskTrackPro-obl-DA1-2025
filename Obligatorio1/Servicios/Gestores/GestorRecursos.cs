@@ -2,6 +2,8 @@ using Dominio;
 using DTOs;
 using Repositorios.Interfaces;
 using Servicios.Excepciones;
+using Servicios.Notificaciones;
+using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
@@ -10,22 +12,23 @@ public class GestorRecursos
     private IRepositorio<Recurso> _repositorioRecursos;
     private GestorProyectos _gestorProyectos;
     private IRepositorioUsuarios _repositorioUsuarios;
+    private readonly INotificador _notificador;
 
     public GestorRecursos(
         IRepositorio<Recurso> repositorioRecursos,
         GestorProyectos gestorProyectos,
-        IRepositorioUsuarios repositorioUsuarios)
+        IRepositorioUsuarios repositorioUsuarios, INotificador notificador)
     {
         _repositorioRecursos = repositorioRecursos;
         _gestorProyectos = gestorProyectos;
         _repositorioUsuarios = repositorioUsuarios;
+        _notificador = notificador;
     }
     public void AgregarRecurso(UsuarioDTO solicitanteDTO, RecursoDTO recursoDTO, bool esExclusivo)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = recursoDTO.AEntidad();
-        
-        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
         if (solicitante.EstaAdministrandoUnProyecto && esExclusivo)
         {
             AsociarRecursoAProyectoQueAdministra(solicitante, recurso);
@@ -38,7 +41,7 @@ public class GestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
-        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
         VerificarRecursoEnUso(recurso, "eliminar");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         _repositorioRecursos.Eliminar(recurso.Id);
@@ -67,7 +70,7 @@ public class GestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
-        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de"); 
         string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
@@ -78,7 +81,7 @@ public class GestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
-        VerificarPermisoAdminSistemaOAdminProyecto(solicitante,"modificar el tipo de un recurso");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante,"modificar el tipo de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
         recurso.ModificarTipo(nuevoTipo);
         NotificarModificacion(recurso, recurso.Nombre);
@@ -88,7 +91,7 @@ public class GestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
-        VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
         recurso.ModificarDescripcion(nuevaDescripcion);
         NotificarModificacion(recurso, recurso.Nombre);
@@ -117,7 +120,7 @@ public class GestorRecursos
     {
         if (!usuario.EsAdministradorSistema && !usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara(accion));
         }
     }
 
@@ -131,7 +134,7 @@ public class GestorRecursos
     {
         if (recurso.SeEstaUsando())
         {
-            throw new ExcepcionServicios($"No se puede {accion} un recurso que está en uso");
+            throw new ExcepcionRecurso(MensajesError.RecursoEnUso); 
         }
     }
     
@@ -145,14 +148,13 @@ public class GestorRecursos
 
         if (recurso.ProyectoAsociado == null)
         {
-            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion} recursos generales.");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara($"{accion} recursos generales."));
         }
 
         Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
         if (!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
         {
-            throw new ExcepcionServicios(
-                $"No tiene los permisos necesarios para {accion} recursos que no son exclusivos de su proyecto");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara( $"{accion} recursos que no son exclusivos de su proyecto"));
         }
     }
 
@@ -161,7 +163,7 @@ public class GestorRecursos
         string mensaje = $"Se eliminó el recurso {recurso.Nombre} de tipo {recurso.Tipo} - {recurso.Descripcion}";
         if (recurso.EsExclusivo())
         {
-            recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
+            _notificador.NotificarUno(recurso.ProyectoAsociado.Administrador, MensajesNotificacion.RecursoEliminado(recurso.Nombre, recurso.Tipo, recurso.Descripcion));
         }
         else
         { // decidimos que si el recurso no es exclusivo, se notifica a todos los admins de todos los proyectos.
@@ -171,11 +173,10 @@ public class GestorRecursos
 
     private void NotificarModificacion(Recurso recurso, string nombreAnterior)
     {
-        string mensaje =
-            $"El recurso '{nombreAnterior}' ha sido modificado. Nuevos valores: {recurso.ToString()}";
+        string mensaje = MensajesNotificacion.RecursoModificado(nombreAnterior, recurso.ToString());
         if (recurso.EsExclusivo())
         {
-            recurso.ProyectoAsociado.NotificarAdministrador(mensaje);
+            _notificador.NotificarUno(recurso.ProyectoAsociado.Administrador, mensaje);
         }
         else
         { 

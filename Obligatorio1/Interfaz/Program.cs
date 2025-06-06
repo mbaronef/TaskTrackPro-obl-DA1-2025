@@ -1,24 +1,28 @@
 using Blazored.LocalStorage;
 using Dominio;
-using DTOs;
 using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
 using Repositorios;
 using Repositorios.Interfaces;
+using Servicios.CaminoCritico;
 using Servicios.Gestores;
-using Servicios.Utilidades;
+using Servicios.Notificaciones;
 
 var builder = WebApplication.CreateBuilder(args);
 
+INotificador _notificador = new Notificador();
+ICalculadorCaminoCritico _calculadorCaminoCritico = new CaminoCritico();
 IRepositorioUsuarios repositorioUsuarios = new RepositorioUsuarios();
 IRepositorio<Proyecto> repositorioProyectos = new RepositorioProyectos();
 IRepositorio<Recurso> repositorioRecursos = new RepositorioRecursos();
 
-GestorUsuarios gestorUsuarios = new GestorUsuarios(repositorioUsuarios);
-GestorProyectos gestorProyectos = new GestorProyectos(repositorioUsuarios, repositorioProyectos);
-GestorRecursos gestorRecursos = new GestorRecursos(repositorioRecursos, gestorProyectos, repositorioUsuarios);
-GestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuarios);
+builder.Services.AddSingleton<INotificador, Notificador>();
+builder.Services.AddScoped<ICalculadorCaminoCritico, CaminoCritico>();
 
+GestorUsuarios gestorUsuarios = new GestorUsuarios(repositorioUsuarios, _notificador);
+GestorProyectos gestorProyectos = new GestorProyectos(repositorioUsuarios, repositorioProyectos, _notificador, _calculadorCaminoCritico);
+GestorRecursos gestorRecursos = new GestorRecursos(repositorioRecursos, gestorProyectos, repositorioUsuarios, _notificador);
+GestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuarios, _notificador, _calculadorCaminoCritico);
 // Add services to the container.
 builder.Services.AddSingleton(repositorioUsuarios);
 builder.Services.AddSingleton(repositorioProyectos);
