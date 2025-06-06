@@ -1,12 +1,16 @@
 using Dominio;
 using DTOs;
+using Interfaces.InterfacesServicios;
+using InterfacesServicios;
 using Servicios.Excepciones;
+using Servicios.Notificaciones;
 
 namespace Servicios.Utilidades;
 
-public static class CaminoCritico
+public class CaminoCritico : ICalculadorCaminoCritico
 { 
-    public static void CalcularCaminoCritico(Proyecto proyecto)
+    private static readonly INotificador _notificador = new Notificador();
+    public void CalcularCaminoCritico(Proyecto proyecto)
     {
         if (proyecto.TieneTareas())
         {
@@ -26,9 +30,7 @@ public static class CaminoCritico
             }
 
             proyecto.FechaFinMasTemprana = tareas.Max(t => t.FechaFinMasTemprana);
-            proyecto.NotificarMiembros(
-                $"Se cambió la fecha de fin más temprana del proyecto '{proyecto.Nombre}' a '{proyecto.FechaFinMasTemprana:dd/MM/yyyy}'.");
-
+            _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.FechaFinMasTempranaActualizada(proyecto.Nombre, proyecto.FechaFinMasTemprana));
             Dictionary<Tarea, List<Tarea>> sucesoras = ObtenerSucesorasPorTarea(tareas);
             CalcularHolguras(tareasOrdenTopologico, sucesoras, proyecto);
         }
@@ -60,7 +62,7 @@ public static class CaminoCritico
         
         if (tareasOrdenadas.Count != tareas.Count)
         { // Validación: si hay ciclo, no se procesaron todas
-            throw new ExcepcionServicios("El grafo de tareas tiene dependencias cíclicas.");
+            throw new ExcepcionServicios(MensajesError.GrafoConCiclos);
         }
         
         return tareasOrdenadas;

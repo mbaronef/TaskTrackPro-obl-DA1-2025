@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using Dominio;
 
-namespace DTOs;
+namespace DTOS_;
 
 public class ProyectoEdicionDTO
 {
-    public int Id { get; set; }
     [Required(ErrorMessage = "El nombre es obligatorio")]
     public string Nombre { get; set; }
 
@@ -16,7 +15,7 @@ public class ProyectoEdicionDTO
     [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
     [CustomValidation(typeof(ProyectoEdicionDTO), nameof(ValidarFechaInicio))]
     public DateTime FechaInicio { get; set; } = DateTime.Today;
-
+    
     public static ValidationResult ValidarFechaInicio(DateTime fecha, ValidationContext context)
     {
         if (fecha < DateTime.Today)

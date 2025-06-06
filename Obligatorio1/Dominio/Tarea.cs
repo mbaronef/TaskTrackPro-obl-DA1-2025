@@ -25,9 +25,9 @@ public class Tarea
 
     public Tarea(string titulo, string descripcion, int duracionEnDias,  DateTime fechaInicioMasTemprana)
     {
-        ValidarStringNoVacioNiNull(titulo, "El título de la tarea no puede estar vacío o ser nulo.");
-        ValidarIntNoNegativoNiCero(duracionEnDias, "La duración no puede ser un número negativo.");
-        ValidarStringNoVacioNiNull(descripcion, "La descripción no puede estar vacía ni nula.");
+        ValidarStringNoVacioNiNull(titulo, MensajesErrorDominio.TituloTareaVacio);
+        ValidarIntNoNegativoNiCero(duracionEnDias, MensajesErrorDominio.DuracionTareaInvalida);
+        ValidarStringNoVacioNiNull(descripcion, MensajesErrorDominio.DescripcionVacia);
         ValidarFechaInicio(fechaInicioMasTemprana);
         Titulo = titulo;
         Descripcion = descripcion;
@@ -42,12 +42,7 @@ public class Tarea
     
     public void CambiarEstado(EstadoTarea nuevoEstado)
     {
-        EstadoCompletadaAPendiente(nuevoEstado);
-        EstadoCompletadaAEnProceso(nuevoEstado);
-        EstadoCompletadaABloqueada(nuevoEstado);
-        EstadoEnProcesoAPendiente(nuevoEstado);
-        EstadoPendienteACompletada(nuevoEstado);
-        EstadoBloqueadaACompletada(nuevoEstado);
+        ValidarTransicionInvalida(Estado, nuevoEstado);
         Estado = nuevoEstado;
         if (nuevoEstado == EstadoTarea.EnProceso)
         {
@@ -64,7 +59,7 @@ public class Tarea
     
     public void AsignarUsuario(Usuario usuario)
     {
-        ValidarObjetoNoNull(usuario,"No se puede asignar una tarea a un usuario null.");
+        ValidarObjetoNoNull(usuario, MensajesErrorDominio.UsuarioNullEnAsignacion);
         VerificarUsuarioNoEstaAsignado(usuario);
         UsuariosAsignados.Add(usuario);
     }
@@ -72,13 +67,13 @@ public class Tarea
     {
         VerificarMiembrosNoVacia();
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsuario);
-        ValidarObjetoNoNull(usuarioAEliminar,"El usuario no está asignado a la tarea.");
+        ValidarObjetoNoNull(usuarioAEliminar, MensajesErrorDominio.UsuarioNoAsignado);
         UsuariosAsignados.Remove(usuarioAEliminar);
     }
     
     public void AgregarRecurso(Recurso recurso)
     {
-        ValidarObjetoNoNull(recurso,"No se puede agregar un recurso null.");
+        ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullEnTarea);
         VerificarRecursoNoEstaAgregado(recurso);
         RecursosNecesarios.Add(recurso);
         recurso.IncrementarCantidadDeTareasUsandolo();
@@ -86,13 +81,13 @@ public class Tarea
     public void EliminarRecurso(int idRecurso)
     {
         Recurso recursoAEliminar = BuscarRecursoPorId(idRecurso);
-        ValidarObjetoNoNull(recursoAEliminar,"El recurso no se encuentra dentro de los recursos necesarios.");
+        ValidarObjetoNoNull(recursoAEliminar, MensajesErrorDominio.RecursoNoNecesario);
         RecursosNecesarios.Remove(recursoAEliminar);
     }
     
     public void AgregarDependencia(Dependencia dependencia)
     {
-        ValidarObjetoNoNull(dependencia,"No se puede agregar una dependencia null.");
+        ValidarObjetoNoNull(dependencia, MensajesErrorDominio.DependenciaNullEnTarea);
         VerificarDependenciaNoEstaAgregada(dependencia);
         Dependencias.Add(dependencia);
         ActualizarEstadoBloqueadaOPendiente();
@@ -101,20 +96,20 @@ public class Tarea
     public void EliminarDependencia(int idTarea)
     {
         Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
-        ValidarObjetoNoNull(dependenciaAEliminar,"La dependencia no se encuentra dentro de la lista de dependencias.");
+        ValidarObjetoNoNull(dependenciaAEliminar,MensajesErrorDominio.DependenciaNoExisteEnTarea);
         Dependencias.Remove(dependenciaAEliminar);
         ActualizarEstadoBloqueadaOPendiente();
     }
     
     public void ModificarTitulo(string tituloNuevo)
     {
-        ValidarStringNoVacioNiNull(tituloNuevo,"El titulo no puede estar vacío");
+        ValidarStringNoVacioNiNull(tituloNuevo, MensajesErrorDominio.TituloTareaVacio);
         Titulo = tituloNuevo;
     }
     
     public void ModificarDescripcion(string nuevaDescripcion)
     {
-        ValidarStringNoVacioNiNull(nuevaDescripcion,"La descripción no puede estar vacía");
+        ValidarStringNoVacioNiNull(nuevaDescripcion, MensajesErrorDominio.DescripcionVacia);
         Descripcion = nuevaDescripcion;
     }
     
@@ -130,14 +125,6 @@ public class Tarea
         VerificarFechaNoMenorAHoy(fechaInicioNueva);
         FechaInicioMasTemprana = fechaInicioNueva;
         CalcularFechaFinMasTemprana();
-    }
-    
-    public void NotificarMiembros(string mensaje)
-    {
-        foreach (Usuario usuario in UsuariosAsignados)
-        {
-            usuario.RecibirNotificacion(mensaje);
-        }
     }
     
     public bool EsCritica()
@@ -178,20 +165,20 @@ public class Tarea
     private void VerificarFechaNoMenorAHoy(DateTime fechaNueva)
     {
         if (fechaNueva < DateTime.Now.Date)
-            throw new ExcepcionDominio("La fecha no puede ser anterior a hoy.");
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaTareaInvalida);
     }
     
     private void DuracionNoMenorACero(int duracion)
     {
         if (duracion <= 0)
-            throw new ExcepcionDominio("La duración no puede ser cero o negativa.");
+            throw new ExcepcionDominio(MensajesErrorDominio.DuracionTareaInvalida);
     }
     
     private void VerificarMiembrosNoVacia()
     {
         if (!UsuariosAsignados.Any())
         {
-            throw new ExcepcionDominio("La lista de usuarios asignados está vacía o no está inicializada.");
+            throw new ExcepcionDominio(MensajesErrorDominio.UsuariosAsignadosVacio);
         }
     }
     
@@ -211,7 +198,7 @@ public class Tarea
     {
         if (fechaInicio.HasValue && fechaInicio.Value.Date < DateTime.Today)
         {
-            throw new ExcepcionDominio("La fecha de inicio debe ser igual o posterior a la fecha de hoy.");
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioInvalida);
         }
     }
     
@@ -220,71 +207,36 @@ public class Tarea
         if (objeto is null)
             throw new ExcepcionDominio(mensajeError);
     }
-
-    private void EstadoCompletadaAPendiente(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Pendiente)
-        {
-            throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a pendiente.");
-        }
-    }
     
-    private void EstadoCompletadaAEnProceso(EstadoTarea nuevoEstado)
+    private void ValidarTransicionInvalida(EstadoTarea actual, EstadoTarea nuevo)
     {
-        if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.EnProceso)
+        if ((actual == EstadoTarea.Completada && nuevo == EstadoTarea.Pendiente) ||
+            (actual == EstadoTarea.Completada && nuevo == EstadoTarea.EnProceso) ||
+            (actual == EstadoTarea.Completada && nuevo == EstadoTarea.Bloqueada) ||
+            (actual == EstadoTarea.EnProceso && nuevo == EstadoTarea.Pendiente) ||
+            (actual == EstadoTarea.Pendiente && nuevo == EstadoTarea.Completada) ||
+            (actual == EstadoTarea.Bloqueada && nuevo == EstadoTarea.Completada))
         {
-            throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a en proceso.");
-        }
-    }
-    
-    private void EstadoCompletadaABloqueada(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.Completada && nuevoEstado == EstadoTarea.Bloqueada)
-        {
-            throw new ExcepcionDominio("No se puede cambiar una tarea finalizada a bloqueada.");
-        }
-    }
-    
-    private void EstadoEnProcesoAPendiente(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.EnProceso && nuevoEstado == EstadoTarea.Pendiente)
-        {
-            throw new ExcepcionDominio("No se puede cambiar una tarea en proceso a pendiente.");
-        }
-    }
-    
-    private void EstadoPendienteACompletada(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.Pendiente && nuevoEstado == EstadoTarea.Completada)
-        {
-            throw new ExcepcionDominio("No se puede cambiar una tarea pendiente a completada.");
-        }
-    }
-    
-    private void EstadoBloqueadaACompletada(EstadoTarea nuevoEstado)
-    {
-        if (Estado == EstadoTarea.Bloqueada && nuevoEstado == EstadoTarea.Completada)
-        {
-            throw new ExcepcionDominio("No se puede cambiar una tarea bloqueada a completada.");
+            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(actual, nuevo));
         }
     }
     
     private void VerificarUsuarioNoEstaAsignado(Usuario usuario)
     {
         if(UsuariosAsignados.Contains(usuario))
-            throw new ExcepcionDominio("El usuario ya fue agregado a la tarea.");
+            throw new ExcepcionDominio(MensajesErrorDominio.UsuarioYaAgregado);
     }
     
     private void VerificarRecursoNoEstaAgregado(Recurso recurso)
     {
         if(RecursosNecesarios.Contains(recurso))
-            throw new ExcepcionDominio("El recurso ya fue agregado.");
+            throw new ExcepcionDominio(MensajesErrorDominio.RecursoYaAgregado);
     }
     
     private void VerificarDependenciaNoEstaAgregada(Dependencia dependencia)
     {
         if (Dependencias.Contains(dependencia))
-            throw new ExcepcionDominio("La dependencia ya fue agregada.");
+            throw new ExcepcionDominio(MensajesErrorDominio.DependenciaYaAgregada);
     }
     
     private Usuario BuscarUsuarioPorId(int id)

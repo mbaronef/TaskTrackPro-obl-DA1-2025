@@ -485,19 +485,6 @@ public class TareaTests
         Assert.IsTrue(lista.Contains(necesario));
         Assert.IsTrue(lista.Contains(necesario2));
     }
-    
-    [TestMethod]
-    public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
-    {
-        Usuario miembro = CrearUsuarioValido();
-        Tarea tarea = CrearTareaValida();
-        tarea.AsignarUsuario(miembro);
-        tarea.NotificarMiembros("Se modificó el proyecto.");
-        foreach (Usuario u in tarea.UsuariosAsignados)
-        {
-            Assert.IsTrue(u.Notificaciones.Any(n => n.Mensaje == "Se modificó el proyecto."));
-        }
-    }
 
     [TestMethod]
     public void FechaFinMasTempranaSeCalculaCorrectamente()

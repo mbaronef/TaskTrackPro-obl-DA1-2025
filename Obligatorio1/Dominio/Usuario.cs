@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Dominio.Excepciones;
 
@@ -70,7 +71,7 @@ public class Usuario
         int indice = Notificaciones.FindIndex(n => n.Id == idNotificacion);
         if (indice == -1)
         {
-            throw new ExcepcionDominio("No existe la notificación");
+            throw new ExcepcionDominio(MensajesErrorDominio.NotificacionNoExiste);
         }
         Notificaciones.RemoveAt(indice);
 
@@ -80,7 +81,7 @@ public class Usuario
     {
         if (string.IsNullOrWhiteSpace(texto))
         {
-            throw new ExcepcionDominio($"El atributo {nombreAtributo} no puede ser vacío");   
+            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, nombreAtributo));   
         }
     }
     
@@ -88,12 +89,12 @@ public class Usuario
     {
         if (fechaNacimiento.AddYears(_edadMinima) > DateTime.Today)
         {
-            throw new ExcepcionDominio($"El usuario debe tener más de {_edadMinima} años");
+            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.EdadMinima, _edadMinima));
         }
 
         if (fechaNacimiento.AddYears(_edadMaxima) <= DateTime.Today)
         {
-            throw new ExcepcionDominio($"El usuario debe tener menos de {_edadMaxima} años");
+            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.EdadMaxima, _edadMaxima));
         }
     }
 
@@ -102,7 +103,7 @@ public class Usuario
         // Valida formato de email con arroba y dominio (ej: usuario@dominio.com)
         if (!Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
         {
-            throw new ExcepcionDominio("El email tiene un formato inválido");
+            throw new ExcepcionDominio(MensajesErrorDominio.EmailInvalido);
         }
     }
 

@@ -1,8 +1,10 @@
 using Dominio;
 using DTOs;
+using Interfaces.InterfacesRepositorios;
+using InterfacesServicios;
 using Repositorios;
-using Repositorios.Interfaces;
 using Servicios.Excepciones;
+using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
@@ -12,10 +14,12 @@ public class GestorUsuarios
     private string _contrasenaPorDefecto = "TaskTrackPro@2025";
     public Usuario AdministradorInicial { get; private set; }
     private IRepositorioUsuarios _usuarios;
+    private readonly INotificador _notificador;
 
-    public GestorUsuarios(IRepositorioUsuarios repositorioUsuarios)
+    public GestorUsuarios(IRepositorioUsuarios repositorioUsuarios, INotificador notificador)
     {
         _usuarios = repositorioUsuarios;
+        _notificador = notificador;
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
         AdministradorInicial = new Usuario("Admin", "Admin", new DateTime(1999, 01, 01), "admin@sistema.com", contrasenaEncriptada);
         AdministradorInicial.EsAdministradorSistema = true; 
@@ -37,11 +41,11 @@ public class GestorUsuarios
         Usuario usuario = obtenerUsuarioDominioPorId(id);
         if (!solicitante.EsAdministradorSistema && !solicitante.Equals(usuario))
         {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para eliminar usuarios");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegado);
         }
-        VerificarUsuarioNoEsMiembroDeProyecto(usuario);
+        PermisosUsuariosServicio.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         _usuarios.Eliminar(usuario.Id);
-        string mensajeNotificacion = $"Se eliminó un nuevo usuario. Nombre: {usuario.Nombre}, Apellido: {usuario.Apellido}";
+        string mensajeNotificacion = MensajesNotificacion.UsuarioEliminado(usuario.Nombre, usuario.Apellido);
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
     }
     
@@ -59,7 +63,7 @@ public class GestorUsuarios
     public void AgregarAdministradorSistema(UsuarioDTO solicitanteDTO, int idUsuario)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        VerificarPermisoAdministradorSistema(solicitante, "asignar un administrador de sistema");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "asignar un administrador de sistema");
         Usuario usuario = obtenerUsuarioDominioPorId(idUsuario);
         usuario.EsAdministradorSistema = true;
     }
@@ -67,7 +71,7 @@ public class GestorUsuarios
     public void AsignarAdministradorProyecto(UsuarioDTO solicitanteDTO, int idUsuario)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        VerificarPermisoAdministradorSistema(solicitante, "asignar administradores de proyecto");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "asignar administradores de proyecto");
         Usuario nuevoAdministradorProyecto = obtenerUsuarioDominioPorId(idUsuario);
         nuevoAdministradorProyecto.EsAdministradorProyecto = true;
     }
@@ -75,10 +79,10 @@ public class GestorUsuarios
     public void DesasignarAdministradorProyecto(UsuarioDTO solicitanteDTO, int idUsuario)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        VerificarPermisoAdministradorSistema(solicitante, "desasignar administradores de proyecto");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "desasignar administradores de proyecto");
         Usuario administradorProyecto = obtenerUsuarioDominioPorId(idUsuario);
-        VerificarUsuarioADesasignarSeaAdminProyecto(administradorProyecto);
-        VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(administradorProyecto);
+        PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(administradorProyecto, "solicitante");
+        PermisosUsuariosServicio.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(administradorProyecto);
         administradorProyecto.EsAdministradorProyecto = false;
     }
 
@@ -86,32 +90,32 @@ public class GestorUsuarios
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
-        VerificarUsuarioPuedaReiniciarContrasena(solicitante, usuarioObjetivo);
+        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "reiniciar la contraseña del usuario");
 
         string contrasenaPorDefectoEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
         usuarioObjetivo.EstablecerContrasenaEncriptada(contrasenaPorDefectoEncriptada);
         
-        Notificar(usuarioObjetivo, $"Se reinició su contraseña. La nueva contraseña es {_contrasenaPorDefecto}");
+        Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaReiniciada(_contrasenaPorDefecto));
     }
 
     public void AutogenerarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
+        PermisosUsuariosServicio.VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
         string nuevaContrasena = UtilidadesContrasena.AutogenerarContrasenaValida();
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
         
-        Notificar(usuarioObjetivo, $"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}");
+        Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
     }
 
     public void ModificarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo, string nuevaContrasena)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
-        VerificarSolicitantePuedaModificarContrasena(solicitante, usuarioObjetivo);
+        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "modificar la contraseña del usuario");
         
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
@@ -143,7 +147,7 @@ public class GestorUsuarios
     {
         if (idUsuario == AdministradorInicial.Id)
         {
-            throw new ExcepcionServicios("No se puede eliminar al primer administrador del sistema");
+            throw new ExcepcionPermisos(MensajesError.PrimerAdminSistema);
         }
     }
 
@@ -151,10 +155,9 @@ public class GestorUsuarios
     {
         if(usuario.CantidadProyectosAsignados > 0)
         {
-            throw new ExcepcionServicios("No puede eliminar un usuario que es miembro de un proyecto.");
+            throw new ExcepcionPermisos(MensajesError.UsuarioMiembroDeProyecto);
         }
     }
-    
     private Usuario CrearUsuario(UsuarioDTO nuevoUsuarioDTO)
     {
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevoUsuarioDTO.Contrasena);
@@ -163,7 +166,7 @@ public class GestorUsuarios
 
     private void AgregarUsuario(Usuario solicitante, Usuario usuario)
     {
-        VerificarPermisoAdministradorSistema(solicitante, "crear usuarios");
+        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "crear usuarios");
         _usuarios.Agregar(usuario);
         string mensajeNotificacion =
             $"Se creó un nuevo usuario: {usuario.Nombre} {usuario.Apellido}";
@@ -180,62 +183,11 @@ public class GestorUsuarios
         return usuario;
     }
     
-    private void VerificarPermisoAdministradorSistema(Usuario usuario, string accion)
-    {
-        if (!usuario.EsAdministradorSistema)
-        {
-            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
-        }
-    }
-    private void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(Usuario usuario)
-    {
-        if (usuario.EstaAdministrandoUnProyecto)
-        {
-            throw new ExcepcionServicios("No se puede quitar permisos de proyecto a un usuario que tiene un proyecto a su cargo.");
-        }
-    }
-
-    private void VerificarUsuarioADesasignarSeaAdminProyecto(Usuario usuario)
-    {
-        if (!usuario.EsAdministradorProyecto)
-        {
-            throw new ExcepcionServicios("El usuario a desasignar no es administrador de proyectos.");
-        }
-        
-    }
-    
-    private void VerificarSolicitantePuedaAutogenerarContrasena(Usuario solicitante)
-    {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para autogenerar la contraseña del usuario");
-        }
-    }
-    
-    private void VerificarUsuarioPuedaReiniciarContrasena(Usuario solicitante, Usuario usuario)
-    {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto &&
-            !solicitante.Equals(usuario))
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para reiniciar la contraseña del usuario");
-        }
-    }
-    
-    private void VerificarSolicitantePuedaModificarContrasena(Usuario solicitante, Usuario usuario)
-    {
-        if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto &&
-            !solicitante.Equals(usuario))
-        {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para modificar la contraseña del usuario");
-        }
-        
-    }
-    
     private void NotificarUsuarioModificacionSiNoEsElMismo(Usuario solicitante, Usuario usuarioObjetivo, String nuevaContrasena)
     {
         if (!solicitante.Equals(usuarioObjetivo))
         {
-            Notificar(usuarioObjetivo, $"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}");
+            Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
         }
     }
     
@@ -243,7 +195,7 @@ public class GestorUsuarios
     {
         if (usuario == null)
         {
-            throw new ExcepcionServicios("Correo electrónico no registrado.");
+            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
         }
     }
 
@@ -251,7 +203,7 @@ public class GestorUsuarios
     {
         if (!usuario.Autenticar(contrasena))
         {
-            throw new ExcepcionServicios("La contraseña ingresada es incorrecta.");
+            throw new ExcepcionUsuario(MensajesError.ContrasenaIncorrecta);
         }
     }
     
@@ -263,6 +215,6 @@ public class GestorUsuarios
     
     private void Notificar(Usuario usuario, string mensajeNotificacion)
     {
-        usuario.RecibirNotificacion(mensajeNotificacion);
+        _notificador.NotificarUno(usuario, mensajeNotificacion);
     }
 }

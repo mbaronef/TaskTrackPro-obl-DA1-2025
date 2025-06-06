@@ -11,10 +11,12 @@ public class ProyectoTests
     private GestorUsuarios _gestorUsuarios;
     private Usuario _admin;
     private List<Usuario> _miembros;
+    private MockNotificador _notificador;
 
     [TestInitialize]
     public void AntesDeCadaTest()
     {
+        _notificador = new MockNotificador();
         _admin = CrearAdmin(1);
         _miembros = new List<Usuario>();
     }
@@ -501,32 +503,6 @@ public class ProyectoTests
         _proyecto = CrearProyectoCon(_admin);
 
         _proyecto.AsignarNuevoAdministrador(miembro);
-    }
-
-    //notificarMiembros
-    [TestMethod]
-    public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
-    {
-        Usuario miembro = CrearMiembro(2);
-        _proyecto = CrearProyectoCon(_admin);
-        _proyecto.AsignarMiembro(miembro);
-        _proyecto.NotificarMiembros("Se modificó el proyecto.");
-
-        foreach (Usuario usuario in _miembros)
-        {
-            Assert.IsTrue(usuario.Notificaciones.Any(n => n.Mensaje == "Se modificó el proyecto."));
-        }
-    }
-
-    // notificarAdministrador
-    [TestMethod]
-    public void NotificarAdministrador_AgregaNotificacionAlAdministrador()
-    {
-        _proyecto = CrearProyectoCon(_admin);
-
-        _proyecto.NotificarAdministrador("Mensaje para admin");
-
-        Assert.IsTrue(_admin.Notificaciones.Any(n => n.Mensaje == "Mensaje para admin"));
     }
 
     //es miembro por id

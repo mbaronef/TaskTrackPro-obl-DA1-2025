@@ -18,10 +18,10 @@ public class Proyecto
     
     public Proyecto(string nombre, string descripcion,DateTime fechaInicio, Usuario administrador, List<Usuario> miembros) 
     {
-        ValidarTextoObligatorio(nombre, "El nombre del proyecto no puede estar vacío o null.");
-        ValidarTextoObligatorio(descripcion, "La descripción del proyecto no puede estar vacía o null.");
-        ValidarNoNulo(administrador, "El proyecto debe tener un administrador.");
-        ValidarNoNulo(miembros,"La lista de miembros no puede ser null.");
+        ValidarTextoObligatorio(nombre, MensajesErrorDominio.NombreProyectoVacio);
+        ValidarTextoObligatorio(descripcion, MensajesErrorDominio.DescripcionVacia);
+        ValidarNoNulo(administrador, MensajesErrorDominio.ProyectoSinAdministrador);
+        ValidarNoNulo(miembros, MensajesErrorDominio.MiembrosProyectoNull);
         ValidarLargoDescripción(descripcion);
         ValidarFechaInicioMayorAActual(fechaInicio);
         
@@ -39,7 +39,7 @@ public class Proyecto
     
     public void AgregarTarea(Tarea tarea)
     {
-        ValidarNoNulo(tarea,"No se puede agregar una tarea null.");
+        ValidarNoNulo(tarea, MensajesErrorDominio.TareaNull);
         ValidarTareaNoDuplicada(tarea);
         
         Tareas.Add(tarea);
@@ -49,14 +49,14 @@ public class Proyecto
     {
         Tarea tareaAEliminar = BuscarTareaPorId(idTarea);
 
-        ValidarNoNulo(tareaAEliminar,"La tarea no pertenece al proyecto.");
+        ValidarNoNulo(tareaAEliminar, MensajesErrorDominio.TareaNoPerteneceAlProyecto);
 
         Tareas.Remove(tareaAEliminar);
     }
 
     public void AsignarMiembro(Usuario usuario)
     {
-        ValidarNoNulo(usuario,"No se puede agregar un miembro null.");
+        ValidarNoNulo(usuario, MensajesErrorDominio.MiembroNull);
         ValidarUsuarioNoSeaMiembro(usuario);
         
         Miembros.Add(usuario);
@@ -67,7 +67,7 @@ public class Proyecto
     {
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsuario);
         
-        ValidarNoNulo(usuarioAEliminar,"El usuario no es miembro del proyecto.");
+        ValidarNoNulo(usuarioAEliminar, MensajesErrorDominio.UsuarioNoEsMiembroDelProyecto);
         ValidarQueUsuarioAEliminarNoSeaAdministrador(usuarioAEliminar);
         
         Miembros.Remove(usuarioAEliminar);
@@ -98,14 +98,14 @@ public class Proyecto
     
     public void ModificarNombre(string nombreNuevo)
     {
-        ValidarTextoObligatorio(nombreNuevo,"El nombre no puede estar vacío");
+        ValidarTextoObligatorio(nombreNuevo,MensajesErrorDominio.NombreProyectoVacio);
         
         Nombre = nombreNuevo;
     }
 
     public void ModificarDescripcion(string nuevaDescripcion)
     {
-        ValidarTextoObligatorio(nuevaDescripcion,"La descripción no puede estar vacía");
+        ValidarTextoObligatorio(nuevaDescripcion,MensajesErrorDominio.DescripcionVacia);
         ValidarLargoDescripción(nuevaDescripcion);
         
         Descripcion = nuevaDescripcion;
@@ -124,16 +124,6 @@ public class Proyecto
                 Administrador.EstaAdministrandoUnProyecto = true;
             }
         }
-    }
-    
-    public void NotificarMiembros(string mensaje)
-    {
-        Miembros.ForEach(miembro => miembro.RecibirNotificacion(mensaje));
-    }
-
-    public void NotificarAdministrador(string mensaje)
-    {
-        Administrador.RecibirNotificacion(mensaje);
     }
 
     public bool EsMiembro(int idUsuario)
@@ -158,7 +148,7 @@ public class Proyecto
     {
         if (descripcion.Length > _maximoCaracteresDescripcion)
         {
-            throw new ExcepcionDominio($"La descripción no puede superar los {_maximoCaracteresDescripcion} caracteres");
+            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.DescripcionMuyLarga,_maximoCaracteresDescripcion));
         }
     }
 
@@ -182,21 +172,21 @@ public class Proyecto
     {
         if (Tareas.Contains(tarea))
         {
-            throw new ExcepcionDominio("La tarea ya fue agregada al proyecto.");
+            throw new ExcepcionDominio(MensajesErrorDominio.TareaYaAgregada);
         }
     }
 
     private void ValidarUsuarioEnMiembros(int idUsuario)
     {
         Usuario usuario = BuscarUsuarioPorId(idUsuario);
-        ValidarNoNulo(usuario, "El usuario no es miembro del proyecto.");
+        ValidarNoNulo(usuario, MensajesErrorDominio.UsuarioNoEsMiembroDelProyecto);
     }
 
     private void ValidarQueUsuarioAEliminarNoSeaAdministrador(Usuario usuario)
     {
         if (EsAdministrador(usuario))
         {
-            throw new ExcepcionDominio("No se puede eliminar al administrador actual. Asigne un nuevo administrador antes.");
+            throw new ExcepcionDominio(MensajesErrorDominio.NoPuedeEliminarAdmin);
         }
     }
 
@@ -212,7 +202,7 @@ public class Proyecto
     {
         if (Miembros.Contains(usuario))
         {
-            throw new ExcepcionDominio("El miembro ya pertenece al proyecto.");
+            throw new ExcepcionDominio(MensajesErrorDominio.MiembroYaEnProyecto);
         }
     }
 
@@ -220,7 +210,7 @@ public class Proyecto
     {
         if (fecha < DateTime.Today)
         {
-            throw new ExcepcionDominio("La fecha de inicio no puede ser anterior a hoy.");
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoMenorAHoy);
         }
     }
 
@@ -228,7 +218,7 @@ public class Proyecto
     {
         if (Tareas.Any(t => nuevaFecha > t.FechaInicioMasTemprana))
         {
-            throw new ExcepcionDominio("La fecha de inicio no puede ser posterior a la de alguna tarea.");
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoMayorQueTareas);
         }
     }
 
@@ -236,8 +226,7 @@ public class Proyecto
     {
         if (fecha < FechaInicio)
         {
-            throw new ExcepcionDominio(
-                "La fecha de fin más temprana no puede ser anterior a la fecha de inicio del proyecto.");
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaFinProyectoMenorQueInicio);
         }
     }
 
@@ -245,8 +234,7 @@ public class Proyecto
     {
         if (Tareas.Any(tarea => tarea.FechaFinMasTemprana > DateTime.MinValue && fecha < tarea.FechaFinMasTemprana))
         {
-            throw new ExcepcionDominio(
-                "La fecha de fin más temprana no puede ser menor que la fecha de fin de una tarea.");
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaFinProyectoMenorQueTareas);
         }
     }
 
@@ -254,12 +242,12 @@ public class Proyecto
     {
         if (inicio > fin)
         {
-            throw new ExcepcionDominio("La fecha de inicio no puede ser mayor que la fecha de fin más temprana.");
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoMayorQueFin);
         }
 
         if (inicio == fin)
         {
-            throw new ExcepcionDominio("La fecha de inicio no puede ser la misma que la fecha de fin más temprana.");
+            throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoIgualFin);
 
         }
     }

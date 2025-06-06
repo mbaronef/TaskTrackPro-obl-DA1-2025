@@ -3,6 +3,7 @@ using DTOs;
 using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Gestores;
+using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Tests.ServiciosTests;
@@ -16,6 +17,8 @@ public class GestorRecursosTests
 
     private GestorRecursos _gestorRecursos;
     private GestorProyectos _gestorProyectos;
+    private MockNotificador _mockNotificador;
+    private MockCalculadorCaminoCritico _mockCalculadorCaminoCritico;
     private UsuarioDTO _adminSistemaDTO;
 
     [TestInitialize]
@@ -28,10 +31,12 @@ public class GestorRecursosTests
         _repositorioRecursos = new RepositorioRecursos();
         _repositorioUsuarios = new RepositorioUsuarios();
         _repositorioProyectos = new RepositorioProyectos();
+        _mockCalculadorCaminoCritico = new MockCalculadorCaminoCritico();
+        _mockNotificador = new MockNotificador();
 
-        _gestorProyectos = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos);
+        _gestorProyectos = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _mockNotificador, _mockCalculadorCaminoCritico);
 
-        _gestorRecursos = new GestorRecursos(_repositorioRecursos, _gestorProyectos, _repositorioUsuarios);
+        _gestorRecursos = new GestorRecursos(_repositorioRecursos, _gestorProyectos, _repositorioUsuarios, _mockNotificador);
 
         _adminSistemaDTO = CrearAdministradorSistemaDTO();
     }
@@ -137,7 +142,7 @@ public class GestorRecursosTests
         Assert.AreEqual(recurso2.Id, _gestorRecursos.ObtenerRecursoPorId(2).Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionRecurso))]
     [TestMethod]
     public void GestorNoObtieneRecursoConIdInexistente()
     {
@@ -153,7 +158,7 @@ public class GestorRecursosTests
         Assert.AreEqual(0, _gestorRecursos.ObtenerRecursosGenerales().Count());
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionRecurso))]
     [TestMethod]
     public void NoSeEliminaRecursoSiEstaEnUso()
     {
@@ -185,7 +190,7 @@ public class GestorRecursosTests
         Assert.AreEqual(0, _repositorioRecursos.ObtenerTodos().Count());
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeEliminarRecursoNoExclusivo()
     {
@@ -198,7 +203,7 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeEliminarRecursosExclusivosDeOtrosProyectos()
     {
@@ -226,7 +231,8 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(_adminSistemaDTO, recurso.Id);
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoEliminado(recurso.Nombre, recurso.Tipo, recurso.Descripcion);
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -242,7 +248,8 @@ public class GestorRecursosTests
         _gestorRecursos.EliminarRecurso(_adminSistemaDTO, recurso.Id);
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("Se eliminó el recurso Analista Senior de tipo Humano - Un analista Senior con experiencia", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoEliminado(recurso.Nombre, recurso.Tipo, recurso.Descripcion);
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -283,7 +290,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarNombreRecurso(usuario, recurso.Id, "Nuevo nombre");
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarNombreDeRecursoNoExclusivo()
     {
@@ -296,7 +303,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarNombreRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso.Id, "otro nombre");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarNombreDeRecursosNoExclusivosDeSuProyecto()
     {
@@ -353,7 +360,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarTipoRecurso(usuario, recurso.Id, "Nuevo tipo");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarTipoDeRecursosNoExclusivosDeSuProyecto()
     {
@@ -372,7 +379,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarTipoRecurso(UsuarioDTO.DesdeEntidad(otroAdminProyecto), recurso.Id, "Nuevo tipo");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarTipoDeRecursoNoExclusivo()
     {
@@ -423,7 +430,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarDescripcionRecurso(usuario, recurso.Id, "Nueva descripción");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarDescripciónDeRecursosNoExclusivosDeSuProyecto()
     {
@@ -442,7 +449,7 @@ public class GestorRecursosTests
         _gestorRecursos.ModificarDescripcionRecurso(UsuarioDTO.DesdeEntidad(otroAdminProyecto), recurso.Id, "Nueva descripción");
     }
     
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void AdminProyectoNoPuedeModificarDescripcionDeRecursoNoExclusivo()
     {
@@ -462,10 +469,12 @@ public class GestorRecursosTests
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso, true);
+        string nombreAnterior = recurso.Nombre;
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(nombreAnterior, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -480,11 +489,13 @@ public class GestorRecursosTests
         Tarea tarea = CrearTarea();
         tarea.AgregarRecurso(recurso.AEntidad());
         proyecto.AgregarTarea(tarea);
+        string nombreAnterior = recurso.Nombre;
         
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Otro nombre', tipo: 'Humano', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(nombreAnterior, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -495,10 +506,12 @@ public class GestorRecursosTests
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso, true);
+        string tipoAnterior = recurso.Tipo;
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
-
+        
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(recurso.Nombre, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -513,11 +526,13 @@ public class GestorRecursosTests
         Tarea tarea = CrearTarea();
         tarea.AgregarRecurso(recurso.AEntidad());
         proyecto.AgregarTarea(tarea);
+        string tipoAnterior = recurso.Tipo;
         
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Otro tipo', descripción: 'Un analista Senior con experiencia'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(recurso.Nombre, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -528,10 +543,12 @@ public class GestorRecursosTests
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso, true);
+        string descripcionAnterior = recurso.Descripcion;
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Otra descripción");
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(recurso.Nombre, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
     
@@ -546,11 +563,13 @@ public class GestorRecursosTests
         Tarea tarea = CrearTarea();
         tarea.AgregarRecurso(recurso.AEntidad());
         proyecto.AgregarTarea(tarea);
+        string descripcionAnterior = recurso.Descripcion;
         
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Otra descripción");
         
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        Assert.AreEqual("El recurso 'Analista Senior' ha sido modificado. Nuevos valores: Nombre: 'Analista Senior', tipo: 'Humano', descripción: 'Otra descripción'", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado(recurso.Nombre, recurso.ToString());
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 

@@ -1,4 +1,4 @@
-namespace Repositorios.Interfaces;
+namespace Interfaces.InterfacesRepositorios;
 
 public interface IRepositorio<T>
 {
