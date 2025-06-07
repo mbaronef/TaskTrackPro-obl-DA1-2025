@@ -51,4 +51,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.CambiarAdministradorDeProyecto(solicitante, idProyecto, idNuevoAdmin);
     }
+    
+    public void AgregarMiembroAProyecto(int idProyecto, UsuarioDTO solicitante, UsuarioDTO nuevoMiembro)
+    {
+        _gestorProyectos.AgregarMiembroAProyecto(idProyecto, solicitante, nuevoMiembro);
+    }
 }
