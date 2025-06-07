@@ -67,4 +67,9 @@ public class ControladorUsuarios
         _gestorUsuarios.BorrarNotificacion(idUsuario, idNotificacion);
     }
 
+    public UsuarioDTO LogIn(string email, string contrasena)
+    {
+        return _gestorUsuarios.LogIn(email, contrasena);
+    }
+
 }
