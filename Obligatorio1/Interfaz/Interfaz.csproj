@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Controladores\Controladores.csproj" />
       <ProjectReference Include="..\Repositorios\Repositorios.csproj" />
       <ProjectReference Include="..\Servicios\Servicios.csproj" />
       <ProjectReference Include="..\DTOs\DTOs.csproj" />

@@ -1,16 +1,16 @@
 @page "/proyecto/{id:int}/editar"
 @using DTOs
+@using Controladores
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
-@inject GestorProyectos GestorProyectos
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
+@inject ControladorProyectos ControladorProyectos
 @rendermode InteractiveServer
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
-else if (!GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, id))
+else if (!ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, id))
 {
     <p class="text-danger text-center mt-5">No tienes permisos para editar este proyecto.</p>
 }
@@ -90,7 +90,7 @@ else
                 sesionCargada = true;
                 try
                 {
-                    proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                    proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
                 }
                 catch (Exception e)
                 {
@@ -118,17 +118,17 @@ else
             UsuarioDTO solicitante = Sesion.UsuarioLogueado;
             if (!proyectoEdicion.Nombre.Equals(proyecto.Nombre))
             {
-                GestorProyectos.ModificarNombreDelProyecto(id, proyectoEdicion.Nombre, solicitante);
+                ControladorProyectos.ModificarNombreDelProyecto(id, proyectoEdicion.Nombre, solicitante);
             }
             if (!proyectoEdicion.Descripcion.Equals(proyecto.Descripcion))
             {
-                GestorProyectos.ModificarDescripcionDelProyecto(id, proyectoEdicion.Descripcion, solicitante);
+                ControladorProyectos.ModificarDescripcionDelProyecto(id, proyectoEdicion.Descripcion, solicitante);
             }
             if (!proyectoEdicion.FechaInicio.Equals(proyecto.FechaInicio))
             {
-                GestorProyectos.ModificarFechaDeInicioDelProyecto(id, proyectoEdicion.FechaInicio, solicitante);
+                ControladorProyectos.ModificarFechaDeInicioDelProyecto(id, proyectoEdicion.FechaInicio, solicitante);
             }
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             tipoAlerta = "success";
             mensaje = "Cambios guardados correctamente.";
             await Sesion.ActualizarSesion();
@@ -147,7 +147,7 @@ else
         try
         {
             UsuarioDTO solicitante = Sesion.UsuarioLogueado;
-            GestorProyectos.EliminarProyecto(id, solicitante);
+            ControladorProyectos.EliminarProyecto(id, solicitante);
             await Sesion.ActualizarSesion();
             StateHasChanged();
             Navigator.NavigateTo("/exito/proyecto/eliminado");
