@@ -31,6 +31,11 @@ public class ControladorTareas
     {
         _gestorTareas.ModificarDescripcionTarea(solicitanteDTO, idTarea, idProyecto, nuevaDescripcion);
     }
+
+    public void ModificarDuracionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, int nuevaDuracion)
+    {
+        _gestorTareas.ModificarDuracionTarea(solicitanteDTO, idTarea, idProyecto, nuevaDuracion);
+    }
     
     public void CambiarEstadoTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto,
         EstadoTareaDTO nuevoEstadoDTO)
