@@ -5,6 +5,7 @@ using Moq;
 
 namespace Tests.ControladoresTests;
 
+[TestClass]
 public class ControladorRecursosTests
 {
     private Mock<IGestorRecursos> _mockGestorRecursos;
