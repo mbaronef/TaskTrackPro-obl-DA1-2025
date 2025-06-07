@@ -26,4 +26,9 @@ public class ControladorRecursos
     {
         return _gestorRecursos.ObtenerRecursoPorId(idRecurso);
     }
+
+    public List<RecursoDTO> ObtenerRecursosGenerales()
+    {
+        return _gestorRecursos.ObtenerRecursosGenerales();
+    }
 }
