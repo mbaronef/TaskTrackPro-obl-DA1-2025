@@ -169,4 +169,22 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.EliminarMiembroDelProyecto(idProyecto, solicitante, idMiembro), Times.Once);
     }
+    
+    [TestMethod]
+    public void ObtenerProyectosPorUsuario_LlamaCorrectamenteAGestorYDevuelveLista()
+    {
+        int idUsuario = 1;
+        var proyectosEsperados = new List<ProyectoDTO>
+        {
+            new ProyectoDTO { Id = 1, Nombre = "P1" },
+            new ProyectoDTO { Id = 2, Nombre = "P2" }
+        };
+
+        _mockGestorProyectos.Setup(g => g.ObtenerProyectosPorUsuario(idUsuario)).Returns(proyectosEsperados);
+
+        var resultado = _controladorProyectos.ObtenerProyectosPorUsuario(idUsuario);
+
+        Assert.AreEqual(2, resultado.Count);
+        _mockGestorProyectos.Verify(g => g.ObtenerProyectosPorUsuario(idUsuario), Times.Once);
+    }
 }
