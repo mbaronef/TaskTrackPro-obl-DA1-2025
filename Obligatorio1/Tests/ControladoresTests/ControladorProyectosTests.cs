@@ -1,4 +1,6 @@
+using System.Runtime.InteropServices.JavaScript;
 using Controladores;
+using Dominio;
 
 namespace Tests.ControladoresTests;
 using DTOs;
@@ -186,5 +188,20 @@ public class ControladorProyectosTests
 
         Assert.AreEqual(2, resultado.Count);
         _mockGestorProyectos.Verify(g => g.ObtenerProyectosPorUsuario(idUsuario), Times.Once);
+    }
+    
+    [TestMethod]
+    public void ObtenerProyectoDelAdministrador_LlamaCorrectamenteAGestorYDevuelveProyecto()
+    {
+        Usuario admin = new Usuario();
+        Proyecto proyectoEsperado = new Proyecto("P1", "descripcion", DateTime.Today.AddYears(1),admin,  new List<Usuario>());
+
+        _mockGestorProyectos.Setup(g => g.ObtenerProyectoDelAdministrador(admin.Id)).Returns(proyectoEsperado);
+
+        var resultado = _controladorProyectos.ObtenerProyectoDelAdministrador(admin.Id);
+
+        Assert.AreEqual(admin.Id, resultado.Id);
+        Assert.AreEqual("P1", resultado.Nombre);
+        _mockGestorProyectos.Verify(g => g.ObtenerProyectoDelAdministrador(admin.Id), Times.Once);
     }
 }
