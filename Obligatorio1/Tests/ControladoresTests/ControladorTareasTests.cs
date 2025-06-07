@@ -53,6 +53,20 @@ public class ControladorTareasTests
         Assert.AreEqual(tareaEsperada.Id, resultado.Id);
         _mockGestorTareas.Verify(g => g.ObtenerTareaPorId(idProyecto, idTarea), Times.Once);
     }
+    
+    [TestMethod]
+    public void AgregarTareaAlProyecto_LlamaCorrectamenteAGestor()
+    {
+        int idProyecto = 1;
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        TareaDTO nuevaTarea = new TareaDTO { Id = 2 };
+
+        _mockGestorTareas.Setup(g => g.AgregarTareaAlProyecto(idProyecto, usuario, nuevaTarea));
+
+        _controladorTareas.AgregarTareaAlProyecto(idProyecto, usuario, nuevaTarea);
+
+        _mockGestorTareas.Verify(g => g.AgregarTareaAlProyecto(idProyecto, usuario, nuevaTarea), Times.Once);
+    }
 
     
     
