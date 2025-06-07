@@ -1,15 +1,14 @@
 @page "/proyecto/{id:int}/diagrama_de_gantt"
 @using DTOs
-@using Servicios.Gestores
-@using Servicios.Utilidades
+@using Controladores
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
-@inject GestorProyectos GestorProyectos
 @inject NavigationManager NavigationManager
+@inject ControladorProyectos ControladorProyectos
 
 
 <h3>Diagrama de Gantt</h3>
-@if (!GestorProyectos.ObtenerProyectoPorId(Id).Tareas.Any())
+@if (!ControladorProyectos.ObtenerProyectoPorId(Id).Tareas.Any())
 {
     <p>Aún no se han asignado tareas al proyecto. El diagrama se actualizará cuando se añadan tareas.</p>
 }
@@ -32,23 +31,23 @@ else
         {
             try
             {
-                proyecto = GestorProyectos.ObtenerProyectoPorId(Id);
+                proyecto = ControladorProyectos.ObtenerProyectoPorId(Id);
             }
             catch
             {
                 NavigationManager.NavigateTo("/Error");
                 return;
             }
-            GestorProyectos.CalcularCaminoCritico(proyecto);
-            proyecto = GestorProyectos.ObtenerProyectoPorId(proyecto.Id);
+            ControladorProyectos.CalcularCaminoCritico(proyecto);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(proyecto.Id);
             StateHasChanged(); // Asegurar que el div se renderice primero
             return; // Esperar hasta el segundo render
         }
 
         if (proyecto != null && !graficoDibujado)
         {
-            GestorProyectos.CalcularCaminoCritico(proyecto);
-            proyecto = GestorProyectos.ObtenerProyectoPorId(proyecto.Id);
+            ControladorProyectos.CalcularCaminoCritico(proyecto);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(proyecto.Id);
             var tareas = proyecto.Tareas.Select(t => new
             {
                 titulo = t.Titulo,

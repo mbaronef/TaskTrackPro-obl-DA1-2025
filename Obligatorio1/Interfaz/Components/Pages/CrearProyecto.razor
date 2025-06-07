@@ -1,11 +1,11 @@
 @page "/crear-proyecto"
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
 @using DTOs
+@using Controladores
 @rendermode InteractiveServer
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
-@inject GestorProyectos GestorProyectos
+@inject ControladorProyectos ControladorProyectos
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
@@ -77,7 +77,7 @@ else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnP
         try
         {
             UsuarioDTO solicitante = Sesion.UsuarioLogueado;
-            GestorProyectos.CrearProyecto(nuevoProyecto, solicitante);
+            ControladorProyectos.CrearProyecto(nuevoProyecto, solicitante);
             mensaje = "Proyecto creado con éxito.";
             tipoAlerta = "success";
             int idProyectoCreado = nuevoProyecto.Id;

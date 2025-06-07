@@ -1,18 +1,19 @@
 @page "/proyecto/{id:int}/miembros"
 @using DTOs
 @using Servicios.Gestores
-@inject GestorProyectos GestorProyectos
+@using Controladores
 @inject GestorUsuarios GestorUsuarios
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Excepciones
 @rendermode InteractiveServer
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
+@inject ControladorProyectos ControladorProyectos
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
-else if (!Sesion.EsAdminSistema() && !GestorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, id))
+else if (!Sesion.EsAdminSistema() && !ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, id))
 {
     <p class="text-danger">No tenés acceso a los miembros de este proyecto.</p>
 }
@@ -245,10 +246,10 @@ else
     {
         try
         {
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             miembros = proyecto.Miembros;
             usuariosNoMiembros = GestorUsuarios.ObtenerUsuariosDiferentes(miembros);
-            esAdminProyecto = GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id);
+            esAdminProyecto = ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id);
         }
         catch
         {
@@ -277,7 +278,7 @@ else
         }
 
         UsuarioDTO nuevo = GestorUsuarios.ObtenerUsuarioPorId(idNuevoMiembro.Value);
-        GestorProyectos.AgregarMiembroAProyecto(id, Sesion.UsuarioLogueado, nuevo);
+        ControladorProyectos.AgregarMiembroAProyecto(id, Sesion.UsuarioLogueado, nuevo);
         usuariosNoMiembros.RemoveAll(u => u.Id == nuevo.Id);
         mostrarModalAgregar = false;
         mostrarMensajeExitoAgregar = true;
@@ -306,9 +307,9 @@ else
             mostrarErrorEliminarMiembro = false;
             errorEliminarMiembro = "";
 
-            GestorProyectos.VerificarUsuarioNoTieneTareasAsignadas(id, miembroAEliminar.Id);
+            ControladorProyectos.VerificarUsuarioNoTieneTareasAsignadas(id, miembroAEliminar.Id);
 
-            GestorProyectos.EliminarMiembroDelProyecto(id, Sesion.UsuarioLogueado, miembroAEliminar.Id);
+            ControladorProyectos.EliminarMiembroDelProyecto(id, Sesion.UsuarioLogueado, miembroAEliminar.Id);
             miembros.RemoveAll(u => u.Id == miembroAEliminar.Id);
             usuariosNoMiembros.Add(UsuarioListarDTO.DesdeDTO(miembroAEliminar));
             mostrarModalEliminar = false;
@@ -348,7 +349,7 @@ else
 
         try
         {
-            GestorProyectos.CambiarAdministradorDeProyecto(Sesion.UsuarioLogueado, id, idNuevoAdmin.Value);
+            ControladorProyectos.CambiarAdministradorDeProyecto(Sesion.UsuarioLogueado, id, idNuevoAdmin.Value);
             proyecto.Administrador = UsuarioDTO.DesdeListarDTO(miembros.First(u => u.Id == idNuevoAdmin.Value));
             await Sesion.ActualizarSesion();
             StateHasChanged();

@@ -1,9 +1,9 @@
+@using Controladores
 @using DTOs
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
-@inject GestorProyectos GestorProyectos
+@inject ControladorProyectos ControladorProyectos
 @rendermode InteractiveServer
 @implements IDisposable
 
@@ -12,17 +12,17 @@
 {
     @if (Sesion.EsAdminSistema())
     {
-        proyectos = GestorProyectos.ObtenerTodos();
+        proyectos = ControladorProyectos.ObtenerTodos();
     }
     else
     {
-        proyectos = GestorProyectos.ObtenerProyectosPorUsuario(Sesion.UsuarioLogueado.Id);   
+        proyectos = ControladorProyectos.ObtenerProyectosPorUsuario(Sesion.UsuarioLogueado.Id);   
     }
     foreach (var proyecto in proyectos)
     {
         <details class="mb-2">
             <summary>
-                @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
+                @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
                 {
                     <i class="bi bi-star-fill text-white me-1" title="Administrador del proyecto"></i>
                 }
@@ -33,7 +33,7 @@
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white text-nowrap">Recursos Exclusivos</NavLink></li>
                 <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros</NavLink></li>
-                @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
+                @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
                 {
                     <li><NavLink href="@($"/proyecto/{proyecto.Id}/editar")" class="nav-link text-white">Editar</NavLink></li>
                 }

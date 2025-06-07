@@ -1,11 +1,11 @@
 @page "/exito/proyecto/{id:int}/creado"
 @using DTOs
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
+@using Controladores
 @rendermode InteractiveServer
-@inject GestorProyectos GestorProyectos
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
+@inject ControladorProyectos ControladorProyectos
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
@@ -77,7 +77,7 @@ else
             else
             {
                 await Sesion.ActualizarSesion();
-                proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }

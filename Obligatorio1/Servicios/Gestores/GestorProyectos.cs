@@ -3,12 +3,13 @@ using DTOs;
 using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
 using Servicios.Excepciones;
+using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
-public class GestorProyectos
+public class GestorProyectos :  IGestorProyectos
 {
     private IRepositorio<Proyecto> _proyectos;
     private IRepositorioUsuarios _repositorioUsuarios;
