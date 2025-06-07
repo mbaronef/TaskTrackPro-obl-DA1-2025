@@ -20,4 +20,9 @@ public class ControladorTareas
     {
         return _gestorTareas.ObtenerTareaPorId(idProyecto, idTarea);
     }
+
+    public void AgregarTareaAlProyecto(int idProyecto, UsuarioDTO solicitanteDTO, TareaDTO nuevaTareaDTO)
+    {
+        _gestorTareas.AgregarTareaAlProyecto(idProyecto, solicitanteDTO, nuevaTareaDTO);
+    }
 }
