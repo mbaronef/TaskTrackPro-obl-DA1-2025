@@ -32,4 +32,14 @@ public class ControladorUsuarios
         return _gestorUsuarios.ObtenerUsuarioPorId(idUsuario);
     }
 
+    public void AgregarAdministradorSistema(UsuarioDTO solicitante, int id)
+    {
+        _gestorUsuarios.AgregarAdministradorSistema(solicitante, id);
+    }
+    
+    public void AsignarAdministradorProyecto(UsuarioDTO solicitante, int id)
+    {
+        _gestorUsuarios.AsignarAdministradorProyecto(solicitante, id);
+    }
+
 }
