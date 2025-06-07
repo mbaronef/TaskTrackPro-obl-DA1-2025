@@ -46,4 +46,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.ModificarFechaDeInicioDelProyecto(idProyecto, nuevaFecha, solicitante);
     }
+    
+    public void CambiarAdministradorDeProyecto(UsuarioDTO solicitante, int idProyecto, int idNuevoAdmin)
+    {
+        _gestorProyectos.CambiarAdministradorDeProyecto(solicitante, idProyecto, idNuevoAdmin);
+    }
 }
