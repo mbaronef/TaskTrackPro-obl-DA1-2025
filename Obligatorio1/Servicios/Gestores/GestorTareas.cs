@@ -3,12 +3,13 @@ using DTOs;
 using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
 using Servicios.Excepciones;
+using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
-public class GestorTareas
+public class GestorTareas : IGestorTareas
 {
     private GestorProyectos _gestorProyectos;
     private static int _cantidadTareas;
