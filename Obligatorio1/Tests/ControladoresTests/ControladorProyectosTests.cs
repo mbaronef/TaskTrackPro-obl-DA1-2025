@@ -155,4 +155,18 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.AgregarMiembroAProyecto(idProyecto, solicitante, nuevoMiembro), Times.Once);
     }
+    
+    [TestMethod]
+    public void EliminarMiembroDelProyecto_LlamaCorrectamenteAGestor()
+    {
+        var solicitante = new UsuarioDTO { Id = 1 };
+        int idProyecto = 3;
+        int idMiembro = 4;
+
+        _mockGestorProyectos.Setup(g => g.EliminarMiembroDelProyecto(idProyecto, solicitante, idMiembro));
+
+        _controladorProyectos.EliminarMiembroDelProyecto(idProyecto, solicitante, idMiembro);
+
+        _mockGestorProyectos.Verify(g => g.EliminarMiembroDelProyecto(idProyecto, solicitante, idMiembro), Times.Once);
+    }
 }
