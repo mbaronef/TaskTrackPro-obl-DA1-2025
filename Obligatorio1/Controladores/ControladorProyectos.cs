@@ -36,4 +36,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante);
     }
+    
+    public void ModificarDescripcionDelProyecto(int idProyecto, string descripcion, UsuarioDTO solicitante)
+    {
+        _gestorProyectos.ModificarDescripcionDelProyecto(idProyecto, descripcion, solicitante);
+    }
 }
