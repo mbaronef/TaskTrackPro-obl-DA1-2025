@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
 using Controladores;
 using Dominio;
 
@@ -20,7 +19,32 @@ public class ControladorProyectosTests
         _mockGestorProyectos = new Mock<IGestorProyectos>();
         _controladorProyectos = new ControladorProyectos(_mockGestorProyectos.Object);
     }
+    
+    private UsuarioDTO CrearSolicitante(int id = 1) => new UsuarioDTO { Id = id };
+    
+    private Usuario CrearUsuario(int id = 1, string email = "admin@test.com")
+        => new Usuario("Nombre", "Apellido", DateTime.Today.AddYears(-20), email, "Pass123$") { Id = id };
 
+    private Proyecto CrearProyectoDominio(string nombre = "P1", Usuario admin = null, List<Usuario> miembros = null)
+        => new Proyecto(
+            nombre,
+            "desc",
+            DateTime.Today.AddYears(1),
+            admin ?? new Usuario(),
+            miembros ?? new List<Usuario>());    
+    
+    private ProyectoDTO CrearProyectoDTO(int id = 1, string nombre = "Proyecto Test")
+        => new ProyectoDTO { Id = id, Nombre = nombre };
+    
+    private List<ProyectoDTO> CrearListaProyectoDTO()
+    {
+        return new List<ProyectoDTO>
+        {
+            new ProyectoDTO { Id = 1, Nombre = "Proyecto A" },
+            new ProyectoDTO { Id = 2, Nombre = "Proyecto B" }
+        };
+    }
+    
     [TestMethod]
     public void Constructor_CreaControladorOk()
     {
@@ -31,8 +55,8 @@ public class ControladorProyectosTests
     [TestMethod]
     public void CrearProyecto_LlamaCorrectamenteAlGestor()
     {
-        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
-        ProyectoDTO nuevoProyecto = new ProyectoDTO { Nombre = "Proyecto Test" };
+        UsuarioDTO solicitante = CrearSolicitante();
+        ProyectoDTO nuevoProyecto = CrearProyectoDTO();
 
         _mockGestorProyectos.Setup(g => g.CrearProyecto(nuevoProyecto, solicitante));
 
@@ -45,7 +69,7 @@ public class ControladorProyectosTests
     public void EliminarProyecto_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
-        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = CrearSolicitante();
 
         _mockGestorProyectos.Setup(g => g.EliminarProyecto(idProyecto, solicitante));
 
@@ -57,11 +81,7 @@ public class ControladorProyectosTests
     [TestMethod]
     public void ObtenerTodos_LlamaCorrectamenteAGestorYDevuelveLista()
     {
-        var listaEsperada = new List<ProyectoDTO>
-        {
-            new ProyectoDTO { Id = 1, Nombre = "Proyecto A" },
-            new ProyectoDTO { Id = 2, Nombre = "Proyecto B" }
-        };
+        var listaEsperada = CrearListaProyectoDTO();
 
         _mockGestorProyectos.Setup(g => g.ObtenerTodos()).Returns(listaEsperada);
 
@@ -77,7 +97,7 @@ public class ControladorProyectosTests
     public void ObtenerProyectoPorId_LlamaCorrectamenteAGestorYDevuelveProyecto()
     {
         int idProyecto = 1;
-        ProyectoDTO proyectoEsperado = new ProyectoDTO { Id = idProyecto, Nombre = "Proyecto Test" };
+        ProyectoDTO proyectoEsperado = CrearProyectoDTO(idProyecto, "Proyecto Test");
 
         _mockGestorProyectos.Setup(g => g.ObtenerProyectoPorId(idProyecto)).Returns(proyectoEsperado);
 
@@ -92,7 +112,7 @@ public class ControladorProyectosTests
     public void ModificarNombreDelProyecto_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
-        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = CrearSolicitante();
         string nuevoNombre = "Nuevo Proyecto";
 
         _mockGestorProyectos.Setup(g => g.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante));
@@ -106,7 +126,7 @@ public class ControladorProyectosTests
     public void ModificarDescripcionDelProyecto_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
-        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = CrearSolicitante();
         string nuevaDescripcion = "Descripción actualizada";
 
         _mockGestorProyectos.Setup(g => g.ModificarDescripcionDelProyecto(idProyecto, nuevaDescripcion, solicitante));
@@ -120,7 +140,7 @@ public class ControladorProyectosTests
     public void ModificarFechaDeInicioDelProyecto_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
-        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = CrearSolicitante();
         DateTime nuevaFecha = DateTime.Today.AddDays(5);
 
         _mockGestorProyectos.Setup(g => g.ModificarFechaDeInicioDelProyecto(idProyecto, nuevaFecha, solicitante));
@@ -133,7 +153,7 @@ public class ControladorProyectosTests
     [TestMethod]
     public void CambiarAdministradorDeProyecto_LlamaCorrectamenteAGestor()
     {
-        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = CrearSolicitante();
         int idProyecto = 10;
         int idNuevoAdmin = 99;
 
@@ -147,7 +167,7 @@ public class ControladorProyectosTests
     [TestMethod]
     public void AgregarMiembroAProyecto_LlamaCorrectamenteAGestor()
     {
-        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = CrearSolicitante();
         UsuarioDTO nuevoMiembro = new UsuarioDTO { Id = 2 };
         int idProyecto = 5;
 
@@ -161,7 +181,7 @@ public class ControladorProyectosTests
     [TestMethod]
     public void EliminarMiembroDelProyecto_LlamaCorrectamenteAGestor()
     {
-        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante =CrearSolicitante();
         int idProyecto = 3;
         int idMiembro = 4;
 
@@ -176,11 +196,7 @@ public class ControladorProyectosTests
     public void ObtenerProyectosPorUsuario_LlamaCorrectamenteAGestorYDevuelveLista()
     {
         int idUsuario = 1;
-        var proyectosEsperados = new List<ProyectoDTO>
-        {
-            new ProyectoDTO { Id = 1, Nombre = "P1" },
-            new ProyectoDTO { Id = 2, Nombre = "P2" }
-        };
+        List<ProyectoDTO> proyectosEsperados = CrearListaProyectoDTO();
 
         _mockGestorProyectos.Setup(g => g.ObtenerProyectosPorUsuario(idUsuario)).Returns(proyectosEsperados);
 
@@ -193,16 +209,16 @@ public class ControladorProyectosTests
     [TestMethod]
     public void ObtenerProyectoDelAdministrador_LlamaCorrectamenteAGestorYDevuelveProyecto()
     {
-        Usuario admin = new Usuario();
-        Proyecto proyectoEsperado = new Proyecto("P1", "descripcion", DateTime.Today.AddYears(1),admin,  new List<Usuario>());
+        int adminId = 0;
+        Proyecto proyectoEsperado = CrearProyectoDominio();
+        
+        _mockGestorProyectos.Setup(g => g.ObtenerProyectoDelAdministrador(adminId)).Returns(proyectoEsperado);
 
-        _mockGestorProyectos.Setup(g => g.ObtenerProyectoDelAdministrador(admin.Id)).Returns(proyectoEsperado);
+        Proyecto resultado = _controladorProyectos.ObtenerProyectoDelAdministrador(adminId);
 
-        Proyecto resultado = _controladorProyectos.ObtenerProyectoDelAdministrador(admin.Id);
-
-        Assert.AreEqual(admin.Id, resultado.Id);
+        Assert.AreEqual(adminId, resultado.Id);
         Assert.AreEqual("P1", resultado.Nombre);
-        _mockGestorProyectos.Verify(g => g.ObtenerProyectoDelAdministrador(admin.Id), Times.Once);
+        _mockGestorProyectos.Verify(g => g.ObtenerProyectoDelAdministrador(adminId), Times.Once);
     }
     
     [TestMethod]
@@ -221,9 +237,9 @@ public class ControladorProyectosTests
     [TestMethod]
     public void NotificarAdministradoresDeProyectos_LlamaCorrectamenteAGestor()
     {
-        Usuario admin = new Usuario();
-        Proyecto proyecto = new Proyecto("P1", "descripcion", DateTime.Today.AddYears(1),admin,  new List<Usuario>());
-        List<Proyecto> proyectos = new List<Proyecto> {proyecto};
+        Usuario admin = CrearUsuario(99, "otroadmin@mail.com");
+        Proyecto proyecto = CrearProyectoDominio(admin: admin);
+        List<Proyecto> proyectos = new List<Proyecto> { proyecto };
         string mensaje = "Mensaje test";
 
         _mockGestorProyectos.Setup(g => g.NotificarAdministradoresDeProyectos(proyectos, mensaje));
@@ -277,8 +293,7 @@ public class ControladorProyectosTests
     public void ObtenerProyectoDominioPorId_LlamaCorrectamenteAGestorYDevuelveProyecto()
     {
         int idProyecto = 5;
-        Usuario admin = new Usuario();
-        Proyecto proyectoEsperado = new Proyecto("P1", "descripcion", DateTime.Today.AddYears(1),admin,  new List<Usuario>());
+        Proyecto proyectoEsperado = CrearProyectoDominio();
 
         _mockGestorProyectos.Setup(g => g.ObtenerProyectoDominioPorId(idProyecto)).Returns(proyectoEsperado);
 
