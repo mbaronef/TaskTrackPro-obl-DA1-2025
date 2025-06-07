@@ -37,4 +37,17 @@ public class ControladorRecursosTests
         _mockGestorRecursos.Verify(g => g.AgregarRecurso(usuario, nuevoRecurso, false), Times.Once);
     }
     
+    [TestMethod]
+    public void EliminarRecurso_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idRecursoAEliminar = 1;
+
+        _mockGestorRecursos.Setup(g => g.EliminarRecurso(usuario, idRecursoAEliminar));
+
+        _controladorRecursos.EliminarRecurso(usuario, idRecursoAEliminar);
+
+        _mockGestorRecursos.Verify(g => g.EliminarRecurso(usuario, idRecursoAEliminar), Times.Once);
+    }
+    
 }
