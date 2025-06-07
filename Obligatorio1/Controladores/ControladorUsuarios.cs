@@ -41,5 +41,10 @@ public class ControladorUsuarios
     {
         _gestorUsuarios.AsignarAdministradorProyecto(solicitante, id);
     }
+    
+    public void DesasignarAdministradorProyecto(UsuarioDTO solicitante, int id)
+    {
+        _gestorUsuarios.DesasignarAdministradorProyecto(solicitante, id);
+    }
 
 }
