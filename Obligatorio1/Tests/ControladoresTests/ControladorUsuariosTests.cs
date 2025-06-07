@@ -37,6 +37,38 @@ public class ControladorUsuariosTests
         _mockGestorUsuarios.Verify(g => g.CrearYAgregarUsuario(solicitante, nuevoUsuario), Times.Once);
     }
     
+    [TestMethod]
+    public void EliminarUsuario_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        int id = 1;
+
+        _mockGestorUsuarios.Setup(g => g.EliminarUsuario(solicitante, id));
+
+        _controladorUsuarios.EliminarUsuario(solicitante, id);
+
+        _mockGestorUsuarios.Verify(g => g.EliminarUsuario(solicitante, id), Times.Once);
+    }
+    
+    [TestMethod]
+    public void ObtenerTodos_LlamaCorrectamenteAGestor()
+    {
+        var listaEsperada = new List<UsuarioListarDTO>{
+            new UsuarioListarDTO { Id = 1, Nombre = "Usuario A" },
+            new UsuarioListarDTO { Id = 2, Nombre = "Usuario B" }
+        };
+
+        _mockGestorUsuarios.Setup(g => g.ObtenerTodos()).Returns(listaEsperada);
+
+        List<UsuarioListarDTO> resultado = _controladorUsuarios.ObtenerTodos();
+
+        Assert.AreEqual(2, resultado.Count);
+        Assert.AreEqual("Recurso A", resultado[0].Nombre);
+        Assert.AreEqual("Recurso B", resultado[1].Nombre);
+        _mockGestorUsuarios.Verify(g => g.ObtenerTodos(), Times.Once);
+        
+    }
+    
     
     
     
