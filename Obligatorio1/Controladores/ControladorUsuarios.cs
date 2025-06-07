@@ -62,4 +62,9 @@ public class ControladorUsuarios
         _gestorUsuarios.ModificarContrasena(solicitanteDTO, idUsuarioObjetivo, nuevaPass);
     }
 
+    public void BorrarNotificacion(int idUsuario, int idNotificacion)
+    {
+        _gestorUsuarios.BorrarNotificacion(idUsuario, idNotificacion);
+    }
+
 }
