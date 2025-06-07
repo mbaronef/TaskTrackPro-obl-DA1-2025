@@ -217,4 +217,19 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idUsuario), Times.Once);
     }
+    
+    [TestMethod]
+    public void NotificarAdministradoresDeProyectos_LlamaCorrectamenteAGestor()
+    {
+        Usuario admin = new Usuario();
+        Proyecto proyecto = new Proyecto("P1", "descripcion", DateTime.Today.AddYears(1),admin,  new List<Usuario>());
+        List<Proyecto> proyectos = new List<Proyecto> {proyecto};
+        string mensaje = "Mensaje test";
+
+        _mockGestorProyectos.Setup(g => g.NotificarAdministradoresDeProyectos(proyectos, mensaje));
+
+        _controladorProyectos.NotificarAdministradoresDeProyectos(proyectos, mensaje);
+
+        _mockGestorProyectos.Verify(g => g.NotificarAdministradoresDeProyectos(proyectos, mensaje), Times.Once);
+    }
 }
