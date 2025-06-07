@@ -72,4 +72,9 @@ public class ControladorUsuarios
         return _gestorUsuarios.LogIn(email, contrasena);
     }
 
+    public List<UsuarioListarDTO> ObtenerUsuariosDiferentes(List<UsuarioListarDTO> usuarios)
+    {
+        return _gestorUsuarios.ObtenerUsuariosDiferentes(usuarios);
+    }
+
 }
