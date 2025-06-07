@@ -100,7 +100,20 @@ public class ControladorRecursosTests
         Assert.AreEqual("Recurso A", resultado[0].Nombre);
         Assert.AreEqual("Recurso B", resultado[1].Nombre);
         _mockGestorRecursos.Verify(g => g.ObtenerRecursosExclusivos(3), Times.Once);
-        
+    }
+    
+    [TestMethod]
+    public void ModificarNombreRecurso_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idRecurso = 1;
+        string nuevoNombre= "Nuevo nombre";
+
+        _mockGestorRecursos.Setup(g => g.ModificarNombreRecurso(usuario, idRecurso, nuevoNombre));
+
+        _controladorRecursos.ModificarNombreRecurso(usuario, idRecurso, nuevoNombre);
+
+        _mockGestorRecursos.Verify(g => g.ModificarNombreRecurso(usuario, idRecurso, nuevoNombre), Times.Once);
     }
     
 }
