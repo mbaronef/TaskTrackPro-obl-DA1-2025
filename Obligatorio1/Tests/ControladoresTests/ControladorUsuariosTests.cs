@@ -23,20 +23,20 @@ public class ControladorUsuariosTests
     {
         Assert.IsNotNull(_controladorUsuarios);
     }
-    
+
     [TestMethod]
     public void CrearYAgregarUsuario_LlamaCorrectamenteAGestor()
     {
         UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         UsuarioDTO nuevoUsuario = new UsuarioDTO { Id = 2 };
-        
+
         _mockGestorUsuarios.Setup(g => g.CrearYAgregarUsuario(solicitante, nuevoUsuario));
 
         _controladorUsuarios.CrearYAgregarUsuario(solicitante, nuevoUsuario);
 
         _mockGestorUsuarios.Verify(g => g.CrearYAgregarUsuario(solicitante, nuevoUsuario), Times.Once);
     }
-    
+
     [TestMethod]
     public void EliminarUsuario_LlamaCorrectamenteAGestor()
     {
@@ -49,11 +49,12 @@ public class ControladorUsuariosTests
 
         _mockGestorUsuarios.Verify(g => g.EliminarUsuario(solicitante, id), Times.Once);
     }
-    
+
     [TestMethod]
     public void ObtenerTodos_LlamaCorrectamenteAGestor()
     {
-        var listaEsperada = new List<UsuarioListarDTO>{
+        var listaEsperada = new List<UsuarioListarDTO>
+        {
             new UsuarioListarDTO { Id = 1, Nombre = "Usuario A" },
             new UsuarioListarDTO { Id = 2, Nombre = "Usuario B" }
         };
@@ -66,7 +67,7 @@ public class ControladorUsuariosTests
         Assert.AreEqual("Usuario A", resultado[0].Nombre);
         Assert.AreEqual("Usuario B", resultado[1].Nombre);
         _mockGestorUsuarios.Verify(g => g.ObtenerTodos(), Times.Once);
-        
+
     }
 
     [TestMethod]
@@ -82,11 +83,41 @@ public class ControladorUsuariosTests
         Assert.AreEqual(usuarioEsperado.Id, resultado.Id);
         _mockGestorUsuarios.Verify(g => g.ObtenerUsuarioPorId(idUsuario), Times.Once);
     }
+
+    [TestMethod]
+    public void AgregarAdministradorSistema_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO nuevoAdmin = new UsuarioDTO { Id = 2 };
+        
+        _mockGestorUsuarios.Setup(g => g.AgregarAdministradorSistema(solicitante, nuevoAdmin.Id));
+
+        UsuarioDTO resultado = _controladorUsuarios.AgregarAdministradorSistema(solicitante, nuevoAdmin.Id);
+
+        Assert.IsTrue(nuevoAdmin.EsAdministradorSistema);
+        
+        _mockGestorUsuarios.Verify(g => g.AgregarAdministradorSistema(solicitante, nuevoAdmin.Id), Times.Once);
+    }
     
-    
-    
-    
-    
-    
-    
+    [TestMethod]
+    public void AsignarAdministradorProyecto_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO nuevoAdmin = new UsuarioDTO { Id = 2 };
+        
+        _mockGestorUsuarios.Setup(g => g.AsignarAdministradorProyecto(solicitante, nuevoAdmin.Id));
+
+        UsuarioDTO resultado = _controladorUsuarios.AsignarAdministradorProyecto(solicitante, nuevoAdmin.Id);
+
+        Assert.IsTrue(nuevoAdmin.EsAdministradorProyecto);
+        
+        _mockGestorUsuarios.Verify(g => g.AsignarAdministradorProyecto(solicitante, nuevoAdmin.Id), Times.Once);
+    }
+
+
+
+
+
+
+
 }
