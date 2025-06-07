@@ -176,5 +176,21 @@ public class ControladorUsuariosTests
         _mockGestorUsuarios.Verify(g => g.BorrarNotificacion(idUsuario, idNotificacion), Times.Once);
     }
     
+    [TestMethod]
+    public void LogIn_LlamaCorrectamenteAGestorYDevuelveUsuario()
+    {
+        string email = "usuario@correo.com";
+        string contrasena = "Contra123!";
+        UsuarioDTO usuarioEsperado = new UsuarioDTO { Id = 1, Email = email };
+
+        _mockGestorUsuarios.Setup(g => g.LogIn(email, contrasena)).Returns(usuarioEsperado);
+
+        var resultado = _controladorUsuarios.LogIn(email, contrasena);
+
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(usuarioEsperado.Id, resultado.Id);
+        Assert.AreEqual(usuarioEsperado.Email, resultado.Email);
+        _mockGestorUsuarios.Verify(g => g.LogIn(email, contrasena), Times.Once);
+    }
 
 }
