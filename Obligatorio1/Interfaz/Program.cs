@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Controladores;
 using Dominio;
 using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
@@ -22,7 +23,10 @@ builder.Services.AddScoped<ICalculadorCaminoCritico, CaminoCritico>();
 GestorUsuarios gestorUsuarios = new GestorUsuarios(repositorioUsuarios, _notificador);
 GestorProyectos gestorProyectos = new GestorProyectos(repositorioUsuarios, repositorioProyectos, _notificador, _calculadorCaminoCritico);
 GestorRecursos gestorRecursos = new GestorRecursos(repositorioRecursos, gestorProyectos, repositorioUsuarios, _notificador);
-GestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuarios, _notificador, _calculadorCaminoCritico);
+//GestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuarios, _notificador, _calculadorCaminoCritico);
+
+//ControladorTareas controladorTareas = new ControladorTareas(gestorTareas);
+
 // Add services to the container.
 builder.Services.AddSingleton(repositorioUsuarios);
 builder.Services.AddSingleton(repositorioProyectos);
@@ -31,13 +35,14 @@ builder.Services.AddSingleton(repositorioRecursos);
 builder.Services.AddSingleton(gestorUsuarios);
 builder.Services.AddSingleton(gestorProyectos);
 builder.Services.AddSingleton(gestorRecursos);
-builder.Services.AddSingleton(gestorTareas);
+//builder.Services.AddSingleton(gestorTareas);
+builder.Services.AddSingleton<GestorTareas>();
+
+//builder.Services.AddSingleton(controladorTareas);
+builder.Services.AddSingleton<ControladorTareas>();
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<LogicaSesion>();
-
-// simulación de datos para probar la interfaz
-InicializarDatosHardcodeados(gestorUsuarios, gestorProyectos, gestorRecursos, gestorTareas, repositorioUsuarios);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -64,7 +69,7 @@ app.MapRazorComponents<App>()
 
 app.Run();
 
-void InicializarDatosHardcodeados(
+/*void InicializarDatosHardcodeados(
     GestorUsuarios gestorUsuarios, 
     GestorProyectos gestorProyectos, 
     GestorRecursos gestorRecursos, 
@@ -111,8 +116,8 @@ void InicializarDatosHardcodeados(
     gestorTareas.AgregarTareaAlProyecto(proyectoA.Id, adminProyectoYSistema, tarea2);
     
     // Asignar a Sofía Martínez a la tarea 2
-    gestorTareas.AgregarMiembroATarea(adminProyectoYSistema, tarea2.Id, proyectoA.Id , usuarioSinRol);*/
-}
+    gestorTareas.AgregarMiembroATarea(adminProyectoYSistema, tarea2.Id, proyectoA.Id , usuarioSinRol);
+} */
 
 
 
