@@ -67,12 +67,24 @@ public class ControladorTareasTests
 
         _mockGestorTareas.Verify(g => g.AgregarTareaAlProyecto(idProyecto, usuario, nuevaTarea), Times.Once);
     }
+    
+    [TestMethod]
+    public void CambiarEstadoTarea_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idTarea = 1;
+        int idProyecto = 1;
+        EstadoTareaDTO nuevoEstado = EstadoTareaDTO.EnProceso;
+        
+        _mockGestorTareas.Setup(g => g.CambiarEstadoTarea(usuario, idTarea, idProyecto, nuevoEstado));
 
+        _controladorTareas.CambiarEstadoTarea(usuario, idTarea, idProyecto, nuevoEstado);
+
+        _mockGestorTareas.Verify(g => g.CambiarEstadoTarea(usuario, idTarea, idProyecto, nuevoEstado), Times.Once);
+    }
     
     
     /*métodos a probar:
-    GestorTareas.AgregarTareaAlProyecto()
-    GestorTareas.CambiarEstadoTarea()
     GestorTareas.ModificarTituloTarea()
     GestorTareas.ModificarDuracionTarea()
     GestorTareas.ModificarDescripcionTarea()
