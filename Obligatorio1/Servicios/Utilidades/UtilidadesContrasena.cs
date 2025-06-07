@@ -1,9 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Dominio.Excepciones;
+using Excepciones;
 using Servicios.Excepciones;
-using Servicios.Notificaciones;
 
 namespace Servicios.Utilidades;
 
@@ -54,28 +53,28 @@ public static class UtilidadesContrasena
     {
         if (contrasena.Length < _largoMinimoContrasena)
         {
-            throw new ExcepcionContrasena(MensajesError.ContrasenaMuyCorta(_largoMinimoContrasena));
+            throw new ExcepcionContrasena(MensajesErrorServicios.ContrasenaMuyCorta(_largoMinimoContrasena));
         }
     } 
     private static void ValidarAlgunaMayuscula(string contrasena)
     {
         if (!contrasena.Any(char.IsUpper))
         {
-            throw new ExcepcionContrasena(MensajesError.ContrasenaSinMayuscula);
+            throw new ExcepcionContrasena(MensajesErrorServicios.ContrasenaSinMayuscula);
         }
     } 
     private static void ValidarAlgunaMinuscula(string contrasena)
     {
         if (!contrasena.Any(char.IsLower))
         {
-            throw new ExcepcionContrasena(MensajesError.ContrasenaSinMinuscula);
+            throw new ExcepcionContrasena(MensajesErrorServicios.ContrasenaSinMinuscula);
         }
     } 
     private static void ValidarAlgunNumero(string contrasena)
     {
         if (!contrasena.Any(char.IsDigit))
         {
-            throw new ExcepcionContrasena(MensajesError.ContrasenaSinNumero);
+            throw new ExcepcionContrasena(MensajesErrorServicios.ContrasenaSinNumero);
         }
     } 
     private static void ValidarAlgunCaracterEspecial(string contrasena)
@@ -83,7 +82,7 @@ public static class UtilidadesContrasena
         if (!Regex.IsMatch(contrasena, "[^a-zA-Z0-9]")) // RegEx para que haya algún caracter distinto a minúsuclas, mayúsuclas o números
         {
             throw new ExcepcionContrasena(
-                MensajesError.ContrasenaSinCaracterEspecial);
+                MensajesErrorServicios.ContrasenaSinCaracterEspecial);
         }
     } 
     

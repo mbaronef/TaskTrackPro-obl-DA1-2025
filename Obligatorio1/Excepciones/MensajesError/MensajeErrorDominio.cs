@@ -1,4 +1,4 @@
-namespace Dominio.Excepciones;
+namespace Excepciones.MensajesError;
 
 public static class MensajesErrorDominio
 {
@@ -47,7 +47,7 @@ public static class MensajesErrorDominio
     public const string UsuariosAsignadosVacio = "La lista de usuarios asignados está vacía o no está inicializada.";
     public const string FechaInicioInvalida = "La fecha de inicio debe ser igual o posterior a la fecha de hoy.";
     
-    public static string TransicionEstadoInvalidaDesdeHacia(EstadoTarea desde, EstadoTarea hacia)
+    public static string TransicionEstadoInvalidaDesdeHacia(string desde, string hacia)
         => $"No se puede cambiar una tarea de estado {desde} a estado {hacia}.";
 
     

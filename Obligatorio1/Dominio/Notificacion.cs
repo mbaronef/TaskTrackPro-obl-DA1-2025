@@ -1,4 +1,5 @@
-using Dominio.Excepciones;
+using Excepciones;
+using Excepciones.MensajesError;
 
 namespace Dominio;
 

@@ -1,7 +1,5 @@
 using Dominio;
-using Dominio.Excepciones;
-using Repositorios;
-using Servicios.Gestores;
+using Excepciones;
 
 namespace Tests.DominioTests;
 

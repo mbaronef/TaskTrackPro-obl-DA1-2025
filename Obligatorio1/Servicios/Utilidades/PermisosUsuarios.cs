@@ -1,4 +1,5 @@
 using Dominio;
+using Excepciones;
 using Servicios.Excepciones;
 
 namespace Servicios.Utilidades;
@@ -9,7 +10,7 @@ public static class PermisosUsuariosServicio
     {
         if (!usuario.EsAdministradorSistema)
         {
-            throw new ExcepcionPermisos(MensajesError.UsuarioNoAdminSistema);
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoAdminSistema);
         }
     }
     
@@ -17,7 +18,7 @@ public static class PermisosUsuariosServicio
     {
         if (!proyecto.EsAdministrador(usuario))
         {
-            throw new ExcepcionPermisos(MensajesError.NoEsAdminDelProyecto);
+            throw new ExcepcionPermisos(MensajesErrorServicios.NoEsAdminDelProyecto);
         } 
     }
     
@@ -27,7 +28,7 @@ public static class PermisosUsuariosServicio
 
         if (usuario is null)
         {
-            throw new ExcepcionPermisos(MensajesError.UsuarioNoMiembroDelProyecto);
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoMiembroDelProyecto);
         }
     }
     
@@ -41,7 +42,7 @@ public static class PermisosUsuariosServicio
     {
         if (usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionPermisos(MensajesError.UsuarioAdministrandoProyecto);
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioAdministrandoProyecto);
         }
     }
 
@@ -49,7 +50,7 @@ public static class PermisosUsuariosServicio
     {
         if (!solicitante.EsAdministradorProyecto)
         {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPorTipo(tipoUsuario));
+            throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPorTipo(tipoUsuario));
         }
     }
     
@@ -57,7 +58,7 @@ public static class PermisosUsuariosServicio
     {
         if (usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionPermisos(MensajesError.UsuarioAdministrandoProyecto);
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioAdministrandoProyecto);
         }
     }
 
@@ -65,7 +66,7 @@ public static class PermisosUsuariosServicio
     {
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto && !solicitante.Equals(usuario))
         {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara($"{accion}"));
+            throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPara($"{accion}"));
         }
     }
     
@@ -73,7 +74,7 @@ public static class PermisosUsuariosServicio
     {
         if (!usuario.EsAdministradorSistema && !usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara(accion));
+            throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPara(accion));
         }
     }
     
@@ -81,7 +82,7 @@ public static class PermisosUsuariosServicio
     {
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
         {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara("autogenerar la contraseña del usuario"));
+            throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPara("autogenerar la contraseña del usuario"));
         }
     }
     
@@ -89,7 +90,7 @@ public static class PermisosUsuariosServicio
     {
         if(usuario.CantidadProyectosAsignados > 0)
         {
-            throw new ExcepcionPermisos(MensajesError.UsuarioNoMiembroDelProyecto);
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoMiembroDelProyecto);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Dominio;
 using DTOs;
 using Repositorios.Interfaces;
+using Excepciones;
 using Servicios.Excepciones;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
@@ -102,7 +103,7 @@ public class GestorRecursos
         RecursoDTO recurso = recursosExclusivos.FirstOrDefault(recurso => recurso.Id == idRecurso);
         if (recurso == null)
         {
-            throw new ExcepcionRecurso(MensajesError.RecursoNoEncontrado);
+            throw new ExcepcionRecurso(MensajesErrorServicios.RecursoNoEncontrado);
         }
         return recurso;
     }
@@ -112,7 +113,7 @@ public class GestorRecursos
         Recurso recurso = _repositorioRecursos.ObtenerPorId(idRecurso);
         if (recurso == null)
         {
-            throw new ExcepcionRecurso(MensajesError.RecursoNoEncontrado);
+            throw new ExcepcionRecurso(MensajesErrorServicios.RecursoNoEncontrado);
         }
         return recurso;
     }
@@ -127,7 +128,7 @@ public class GestorRecursos
     {
         if (recurso.SeEstaUsando())
         {
-            throw new ExcepcionRecurso(MensajesError.RecursoEnUso); 
+            throw new ExcepcionRecurso(MensajesErrorServicios.RecursoEnUso); 
         }
     }
     
@@ -141,13 +142,13 @@ public class GestorRecursos
 
         if (recurso.ProyectoAsociado == null)
         {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara($"{accion} recursos generales."));
+            throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPara($"{accion} recursos generales."));
         }
 
         Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
         if (!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
         {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara( $"{accion} recursos que no son exclusivos de su proyecto"));
+            throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPara( $"{accion} recursos que no son exclusivos de su proyecto"));
         }
     }
 
@@ -191,7 +192,7 @@ public class GestorRecursos
         var usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
         if (usuario == null)
         {
-            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
+            throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);
         }
         return usuario;
     }

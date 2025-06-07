@@ -2,6 +2,7 @@ using Dominio;
 using DTOs;
 using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
+using Excepciones;
 using Servicios.Excepciones;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
@@ -196,7 +197,7 @@ public class GestorProyectos :  IGestorProyectos
 
         if (proyecto == null)
         {
-            throw new ExcepcionProyecto(MensajesError.UsuarioNoAdministraProyectos);
+            throw new ExcepcionProyecto(MensajesErrorServicios.UsuarioNoAdministraProyectos);
         }
 
         return proyecto;
@@ -208,7 +209,7 @@ public class GestorProyectos :  IGestorProyectos
         Usuario miembroAEliminar = ObtenerMiembro(idMiembroAEliminar, proyecto);
         if (proyecto.Tareas.Any(tarea => tarea.EsMiembro(miembroAEliminar)))
         {
-            throw new ExcepcionProyecto(MensajesError.UsuarioConTareas);
+            throw new ExcepcionProyecto(MensajesErrorServicios.UsuarioConTareas);
         }
     }
     public void NotificarAdministradoresDeProyectos(List<Proyecto> proyectos, string mensaje)
@@ -240,7 +241,7 @@ public class GestorProyectos :  IGestorProyectos
         
         if(proyecto is null)
         {
-            throw new ExcepcionProyecto(MensajesError.ProyectoNoEncontrado);
+            throw new ExcepcionProyecto(MensajesErrorServicios.ProyectoNoEncontrado);
         }
 
         return proyecto;
@@ -258,7 +259,7 @@ public class GestorProyectos :  IGestorProyectos
 
         if (existeOtro)
         {
-            throw new ExcepcionProyecto(MensajesError.NombreRepetido);
+            throw new ExcepcionProyecto(MensajesErrorServicios.NombreRepetido);
         }
     }
     
@@ -267,7 +268,7 @@ public class GestorProyectos :  IGestorProyectos
         Usuario usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
         if (usuario == null)
         {
-            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
+            throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);
         }
         return usuario;
     }

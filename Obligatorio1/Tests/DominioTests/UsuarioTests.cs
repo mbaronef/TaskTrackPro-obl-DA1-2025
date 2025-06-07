@@ -1,7 +1,5 @@
-using Castle.DynamicProxy.Generators;
 using Dominio;
-using Dominio.Excepciones;
-using Servicios.Gestores;
+using Excepciones;
 using Servicios.Utilidades;
 
 namespace Tests.DominioTests

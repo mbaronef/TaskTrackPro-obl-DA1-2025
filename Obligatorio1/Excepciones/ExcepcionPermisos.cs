@@ -1,6 +1,4 @@
-namespace Servicios.Excepciones;
-
-using Dominio.Excepciones;
+namespace Excepciones;
 
 public class ExcepcionPermisos : ExcepcionDominio
 {

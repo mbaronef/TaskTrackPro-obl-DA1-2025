@@ -2,6 +2,7 @@
 using DTOs;
 using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
+using Excepciones;
 using Servicios.Excepciones;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
@@ -143,7 +144,7 @@ public class GestorTareas : IGestorTareas
         catch (ExcepcionCaminoCritico)
         {
             tarea.EliminarDependencia(dependencia.Tarea.Id);
-            throw new ExcepcionTarea(MensajesError.GeneraCiclos);
+            throw new ExcepcionTarea(MensajesErrorServicios.GeneraCiclos);
         }
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.DependenciaAgregada(tarea.Id, proyecto.Nombre, tipoDependencia, tareaDependencia.Id));
     }
@@ -221,7 +222,7 @@ public class GestorTareas : IGestorTareas
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
         if (tarea == null)
-            throw new ExcepcionTarea(MensajesError.TareaNoExistente);
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaNoExistente);
         return tarea;
     }
     private Proyecto ObtenerProyectoValidandoAdmin(int idProyecto, Usuario solicitante)
@@ -259,14 +260,14 @@ public class GestorTareas : IGestorTareas
     private void VerificarEstadoEditablePorUsuario(EstadoTarea estado)
     {
         if (estado != EstadoTarea.EnProceso && estado != EstadoTarea.Completada)
-            throw new ExcepcionTarea(MensajesError.EstadoNoEditable);
+            throw new ExcepcionTarea(MensajesErrorServicios.EstadoNoEditable);
     }
 
     private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
     {
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         if (!tarea.RecursosNecesarios.Contains(recurso))
-            throw new ExcepcionTarea(MensajesError.RecursoNoAsignado);
+            throw new ExcepcionTarea(MensajesErrorServicios.RecursoNoAsignado);
     }
 
     private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
@@ -278,7 +279,7 @@ public class GestorTareas : IGestorTareas
     {
         if (proyecto.Tareas.Any(tarea => tarea.EsSucesoraDe(idTarea)))
         {
-            throw new ExcepcionTarea(MensajesError.TareaConSucesoras);
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaConSucesoras);
         }
     }
 
@@ -286,7 +287,7 @@ public class GestorTareas : IGestorTareas
     {
         if (nuevaTarea.FechaInicioMasTemprana < proyecto.FechaInicio)
         {
-            throw new ExcepcionTarea(MensajesError.FechaInicioTarea);
+            throw new ExcepcionTarea(MensajesErrorServicios.FechaInicioTarea);
         }
     }
     
@@ -295,7 +296,7 @@ public class GestorTareas : IGestorTareas
         var usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
         if (usuario == null)
         {
-            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
+            throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);
         }
         return usuario;
     }

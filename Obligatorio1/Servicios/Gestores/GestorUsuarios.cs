@@ -1,5 +1,6 @@
 using Dominio;
 using DTOs;
+using Excepciones;
 using Repositorios.Interfaces;
 using Servicios.Excepciones;
 using Servicios.Notificaciones;
@@ -39,7 +40,7 @@ public class GestorUsuarios
         Usuario usuario = obtenerUsuarioDominioPorId(id);
         if (!solicitante.EsAdministradorSistema && !solicitante.Equals(usuario))
         {
-            throw new ExcepcionPermisos(MensajesError.PermisoDenegado);
+            throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegado);
         }
         PermisosUsuariosServicio.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         _usuarios.Eliminar(usuario.Id);
@@ -145,7 +146,7 @@ public class GestorUsuarios
     {
         if (idUsuario == AdministradorInicial.Id)
         {
-            throw new ExcepcionPermisos(MensajesError.PrimerAdminSistema);
+            throw new ExcepcionPermisos(MensajesErrorServicios.PrimerAdminSistema);
         }
     }
     
@@ -168,7 +169,7 @@ public class GestorUsuarios
         Usuario usuario = _usuarios.ObtenerPorId(idUsuario);
         if (usuario == null)
         {
-            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
+            throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);
         }
         return usuario;
     }
@@ -185,7 +186,7 @@ public class GestorUsuarios
     {
         if (usuario == null)
         {
-            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
+            throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);
         }
     }
 
@@ -193,7 +194,7 @@ public class GestorUsuarios
     {
         if (!usuario.Autenticar(contrasena))
         {
-            throw new ExcepcionUsuario(MensajesError.ContrasenaIncorrecta);
+            throw new ExcepcionUsuario(MensajesErrorServicios.ContrasenaIncorrecta);
         }
     }
     

@@ -1,4 +1,4 @@
-﻿namespace Dominio.Excepciones;
+﻿namespace Excepciones;
 
 public class ExcepcionDominio : Exception
 {

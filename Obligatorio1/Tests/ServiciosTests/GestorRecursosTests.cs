@@ -2,7 +2,7 @@ using Dominio;
 using DTOs;
 using Repositorios;
 using Servicios.CaminoCritico;
-using Servicios.Excepciones;
+using Excepciones;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
