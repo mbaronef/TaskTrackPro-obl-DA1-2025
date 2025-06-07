@@ -284,7 +284,7 @@ public class ControladorProyectosTests
 
         Proyecto resultado = _controladorProyectos.ObtenerProyectoDominioPorId(idProyecto);
 
-        Assert.AreEqual("Test", resultado.Nombre);
+        Assert.AreEqual("P1", resultado.Nombre);
         _mockGestorProyectos.Verify(g => g.ObtenerProyectoDominioPorId(idProyecto), Times.Once);
     }
 }

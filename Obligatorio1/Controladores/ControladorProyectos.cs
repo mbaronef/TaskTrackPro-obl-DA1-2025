@@ -97,4 +97,9 @@ public class ControladorProyectos
     {
         return _gestorProyectos.EsMiembroDeProyecto(idUsuario, idProyecto);
     }
+    
+    public Proyecto ObtenerProyectoDominioPorId(int id)
+    {
+        return _gestorProyectos.ObtenerProyectoDominioPorId(id);
+    }
 }
