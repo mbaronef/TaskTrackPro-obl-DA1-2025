@@ -61,4 +61,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.EliminarMiembroDelProyecto(idProyecto, solicitante, idMiembro);
     }
+    
+    public List<ProyectoDTO> ObtenerProyectosPorUsuario(int idUsuario)
+    {
+        return _gestorProyectos.ObtenerProyectosPorUsuario(idUsuario);
+    }
 }
