@@ -26,4 +26,9 @@ public class ControladorProyectos
     {
         return _gestorProyectos.ObtenerTodos();
     }
+    
+    public ProyectoDTO ObtenerProyectoPorId(int idProyecto)
+    {
+        return _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+    }
 }
