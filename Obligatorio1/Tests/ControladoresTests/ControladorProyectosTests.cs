@@ -272,4 +272,19 @@ public class ControladorProyectosTests
         Assert.IsTrue(resultado);
         _mockGestorProyectos.Verify(g => g.EsMiembroDeProyecto(idUsuario, idProyecto), Times.Once);
     }
+    
+    [TestMethod]
+    public void ObtenerProyectoDominioPorId_LlamaCorrectamenteAGestorYDevuelveProyecto()
+    {
+        int idProyecto = 5;
+        Usuario admin = new Usuario();
+        Proyecto proyectoEsperado = new Proyecto("P1", "descripcion", DateTime.Today.AddYears(1),admin,  new List<Usuario>());
+
+        _mockGestorProyectos.Setup(g => g.ObtenerProyectoDominioPorId(idProyecto)).Returns(proyectoEsperado);
+
+        Proyecto resultado = _controladorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+
+        Assert.AreEqual("Test", resultado.Nombre);
+        _mockGestorProyectos.Verify(g => g.ObtenerProyectoDominioPorId(idProyecto), Times.Once);
+    }
 }
