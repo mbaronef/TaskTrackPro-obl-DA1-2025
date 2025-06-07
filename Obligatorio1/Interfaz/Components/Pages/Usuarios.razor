@@ -392,14 +392,9 @@ else
             mostrarFormCrear = false;
             mostrarError = false;
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensaje = $"Error al crear usuario: {ex.Message}";
-            mostrarError = true;
-        }
         catch (Exception ex)
         {
-            errorMensaje = "Ocurrió un error inesperado al crear el usuario.";
+            errorMensaje = $"Error al crear usuario: {ex.Message}";
             mostrarError = true;
         }
     }
@@ -478,7 +473,7 @@ else
                     GestorUsuarios.ModificarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando, usuarioAEditar.ContrasenaAutogenerada);
                 }
             }
-            
+
             if (usuarioAEditar.EsAdministradorProyecto && !usuarioOriginal.EsAdministradorProyecto)
             {
                 GestorUsuarios.AsignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
@@ -492,7 +487,7 @@ else
             {
                 GestorUsuarios.AgregarAdministradorSistema(Sesion.UsuarioLogueado, idUsuarioEditando);
             }
-            
+
             if (Sesion.UsuarioLogueado.Id == idUsuarioEditando)
             {
                 await Sesion.ActualizarSesion();
@@ -507,14 +502,9 @@ else
             mostrarExito = true;
             StateHasChanged();
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al editar usuario: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
         catch (Exception ex)
         {
-            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            errorMensajeEditar = $"Error al editar usuario: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }
@@ -529,14 +519,9 @@ else
             mensajeExito = "Usuario eliminado exitosamente.";
             mostrarExito = true;
         }
-        catch (ExcepcionServicios ex)
-        {
-            errorMensajeEditar = "No se puede eliminar al usuario, es miembro de proyectos. Para eliminarlo debe eliminarlo previamente de los proyectos que tiene asignados.";
-            mostrarErrorEditar = true;
-        }
         catch (Exception ex)
         {
-            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            errorMensajeEditar = "No se puede eliminar al usuario, es miembro de proyectos. Para eliminarlo debe eliminarlo previamente de los proyectos que tiene asignados.";
             mostrarErrorEditar = true;
         }
     }
@@ -573,14 +558,9 @@ else
             mensajeExitoContrasenaModal = "La contraseña se reiniciará al guardar los cambios del usuario.";
             mostrarExitoContrasenaModal = true;
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al reiniciar contraseña: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
         catch (Exception ex)
         {
-            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            errorMensajeEditar = $"Error al reiniciar contraseña: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }
@@ -643,14 +623,9 @@ else
             mostrarModalCambiarContrasena = false;
             nuevaContrasenaManual = "";
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al modificar contraseña: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
         catch (Exception ex)
         {
-            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            errorMensajeEditar = $"Error al modificar contraseña: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }

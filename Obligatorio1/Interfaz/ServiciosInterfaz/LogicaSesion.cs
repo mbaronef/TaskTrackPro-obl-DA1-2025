@@ -30,7 +30,7 @@ public class LogicaSesion
                 await _localStorage.SetItemAsync(CURRENT_USER, usuarioLogueado);
                 return true;
             }
-            catch(ExcepcionServicios e)
+            catch(Exception e)
             {
                 return false;
             }

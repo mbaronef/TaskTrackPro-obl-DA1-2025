@@ -315,7 +315,7 @@ else
             mostrarMensajeExitoEliminar = true;
             CargarDatosDelProyecto();
         }
-        catch (ExcepcionServicios ex)
+        catch (Exception e)
         {
             errorEliminarMiembro = "No se puede eliminar al miembro del proyecto, tiene tareas asignadas. Para eliminarlo debe eliminarlo previamente de las tareas que tiene asignadas.";
             mostrarErrorEliminarMiembro = true;
@@ -356,7 +356,7 @@ else
             mostrarModalCambioAdmin = false;
             mostrarMensajeExitoCambioAdmin = true;
         }
-        catch (ExcepcionServicios ex)
+        catch (Exception ex)
         {
             UsuarioListarDTO usuario = miembros.FirstOrDefault(u => u.Id == idNuevoAdmin.Value);
             if (usuario != null)
@@ -367,11 +367,6 @@ else
             {
                 errorMensajeCambioAdmin = ex.Message;
             }
-            mostrarErrorCambioAdmin = true;
-        }
-        catch (Exception ex)
-        {
-            errorMensajeCambioAdmin = "Ocurrió un error inesperado al cambiar el administrador.";
             mostrarErrorCambioAdmin = true;
         }
     }

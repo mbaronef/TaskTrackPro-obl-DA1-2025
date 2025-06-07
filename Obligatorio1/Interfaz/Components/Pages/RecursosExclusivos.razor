@@ -205,11 +205,7 @@ else
             mostrarFormCrearRecurso = false;
             mostrarError = false;
         }
-        catch (ExcepcionServicios ex)
-        {
-            errorMensaje = "Ocurrió un error inesperado al crear el recurso.";
-            mostrarError = true;
-        } catch (Exception ex)
+        catch (Exception ex)
         {
             errorMensaje = $"Error al crear recurso: {ex.Message}";
             mostrarError = true;
@@ -260,11 +256,6 @@ else
             mostrarFormEditarRecurso = false;
             recursoAEditar = null;
         }
-        catch (ExcepcionServicios)
-        {
-            errorMensajeEditar = "Ocurrió un error inesperado al editar el recurso.";
-            mostrarErrorEditar = true;
-        }
         catch (Exception ex)
         {
             errorMensajeEditar = $"Error al editar recurso: {ex.Message}";
@@ -295,13 +286,6 @@ else
                 mostrarFormEditarRecurso = false;
                 recursoAEditar = null;
             }
-        }
-        catch (ExcepcionServicios ex)
-        {
-            errorMensajeEliminar = "El recurso está en uso, por lo tanto no se puede eliminar.";
-            mostrarErrorEliminar = true;
-            StateHasChanged();
-            await OcultarErrorEliminarAutomaticamente();
         }
         catch (Exception ex)
         {
@@ -336,7 +320,7 @@ else
                 {
                     proyecto = GestorProyectos.ObtenerProyectoPorId(Id);
                 }
-                catch (ExcepcionServicios)
+                catch
                 {
                     NavigationManager.NavigateTo("/Error");
                     return;
