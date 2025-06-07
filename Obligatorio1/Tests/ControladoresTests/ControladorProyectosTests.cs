@@ -204,4 +204,17 @@ public class ControladorProyectosTests
         Assert.AreEqual("P1", resultado.Nombre);
         _mockGestorProyectos.Verify(g => g.ObtenerProyectoDelAdministrador(admin.Id), Times.Once);
     }
+    
+    [TestMethod]
+    public void VerificarUsuarioNoTieneTareasAsignadas_LlamaCorrectamenteAGestor()
+    {
+        int idProyecto = 1;
+        int idUsuario = 2;
+
+        _mockGestorProyectos.Setup(g => g.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idUsuario));
+
+        _controladorProyectos.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idUsuario);
+
+        _mockGestorProyectos.Verify(g => g.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idUsuario), Times.Once);
+    }
 }
