@@ -31,4 +31,9 @@ public class ControladorProyectos
     {
         return _gestorProyectos.ObtenerProyectoPorId(idProyecto);
     }
+    
+    public void ModificarNombreDelProyecto(int idProyecto, string nuevoNombre, UsuarioDTO solicitante)
+    {
+        _gestorProyectos.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante);
+    }
 }
