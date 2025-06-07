@@ -25,4 +25,10 @@ public class ControladorTareas
     {
         _gestorTareas.AgregarTareaAlProyecto(idProyecto, solicitanteDTO, nuevaTareaDTO);
     }
+
+    public void CambiarEstadoTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto,
+        EstadoTareaDTO nuevoEstadoDTO)
+    {
+        _gestorTareas.CambiarEstadoTarea(solicitanteDTO, idTarea, idProyecto, nuevoEstadoDTO);
+    }
 }
