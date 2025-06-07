@@ -217,5 +217,17 @@ public class ControladorUsuariosTests
         Assert.AreEqual(4, resultado[1].Id);
         _mockGestorUsuarios.Verify(g => g.ObtenerUsuariosDiferentes(entrada), Times.Once);
     }
+    
+    [TestMethod]
+    public void ValidarUsuarioNoEsAdministradorInicial_LlamaCorrectamenteAGestor()
+    {
+        int idUsuario = 5;
+
+        _mockGestorUsuarios.Setup(g => g.ValidarUsuarioNoEsAdministradorInicial(idUsuario));
+
+        _controladorUsuarios.ValidarUsuarioNoEsAdministradorInicial(idUsuario);
+
+        _mockGestorUsuarios.Verify(g => g.ValidarUsuarioNoEsAdministradorInicial(idUsuario), Times.Once);
+    }
 
 }
