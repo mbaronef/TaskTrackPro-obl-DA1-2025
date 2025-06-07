@@ -77,4 +77,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idMiembro);
     }
+    
+    public void NotificarAdministradoresDeProyectos(List<Proyecto> proyectos, string mensaje)
+    {
+        _gestorProyectos.NotificarAdministradoresDeProyectos(proyectos, mensaje);
+    }
 }
