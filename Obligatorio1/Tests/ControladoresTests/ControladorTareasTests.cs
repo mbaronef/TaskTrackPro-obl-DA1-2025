@@ -83,6 +83,21 @@ public class ControladorTareasTests
         _mockGestorTareas.Verify(g => g.CambiarEstadoTarea(usuario, idTarea, idProyecto, nuevoEstado), Times.Once);
     }
     
+    [TestMethod]
+    public void ModificarTituloTarea_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idTarea = 1;
+        int idProyecto = 1;
+        string nuevoTitulo = "Nuevo título";
+
+        _mockGestorTareas.Setup(g => g.ModificarTituloTarea(usuario, idTarea, idProyecto, nuevoTitulo));
+
+        _controladorTareas.ModificarTituloTarea(usuario, idTarea, idProyecto, nuevoTitulo);
+
+        _mockGestorTareas.Verify(g => g.ModificarTituloTarea(usuario, idTarea, idProyecto, nuevoTitulo), Times.Once);
+    }
+    
     
     /*métodos a probar:
     GestorTareas.ModificarTituloTarea()
