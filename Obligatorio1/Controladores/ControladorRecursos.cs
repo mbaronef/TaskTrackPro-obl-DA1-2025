@@ -36,4 +36,19 @@ public class ControladorRecursos
     {
         return _gestorRecursos.ObtenerRecursosExclusivos(idProyecto);
     }
+    
+    public void ModificarNombreRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoNombre)
+    {
+        _gestorRecursos.ModificarNombreRecurso(solicitanteDTO, idRecurso, nuevoNombre);
+    }
+    
+    public void ModificarDescripcionRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevaDescripcion)
+    {
+        _gestorRecursos.ModificarDescripcionRecurso(solicitanteDTO, idRecurso, nuevaDescripcion);
+    }
+    
+    public void ModificarTipoRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoTipo)
+    {
+        _gestorRecursos.ModificarTipoRecurso(solicitanteDTO, idRecurso, nuevoTipo);
+    }
 }

@@ -116,4 +116,31 @@ public class ControladorRecursosTests
         _mockGestorRecursos.Verify(g => g.ModificarNombreRecurso(usuario, idRecurso, nuevoNombre), Times.Once);
     }
     
+    [TestMethod]
+    public void ModificarTipoRecurso_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idRecurso = 1;
+        string nuevoTipo= "Nuevo tipo";
+
+        _mockGestorRecursos.Setup(g => g.ModificarTipoRecurso(usuario, idRecurso, nuevoTipo));
+
+        _controladorRecursos.ModificarTipoRecurso(usuario, idRecurso, nuevoTipo);
+
+        _mockGestorRecursos.Verify(g => g.ModificarTipoRecurso(usuario, idRecurso, nuevoTipo), Times.Once);
+    }
+    
+    [TestMethod]
+    public void ModificarDecripcionRecurso_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idRecurso = 1;
+        string nuevaDescripcion= "Nuevo descripcion";
+
+        _mockGestorRecursos.Setup(g => g.ModificarDescripcionRecurso(usuario, idRecurso, nuevaDescripcion));
+
+        _controladorRecursos.ModificarDescripcionRecurso(usuario, idRecurso, nuevaDescripcion);
+
+        _mockGestorRecursos.Verify(g => g.ModificarDescripcionRecurso(usuario, idRecurso, nuevaDescripcion), Times.Once);
+    }
 }
