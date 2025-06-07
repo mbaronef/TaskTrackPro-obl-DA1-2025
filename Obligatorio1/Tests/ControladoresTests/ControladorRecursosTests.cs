@@ -50,4 +50,18 @@ public class ControladorRecursosTests
         _mockGestorRecursos.Verify(g => g.EliminarRecurso(usuario, idRecursoAEliminar), Times.Once);
     }
     
+    [TestMethod]
+    public void ObtenerRecursoPorId_LlamaCorrectamenteAGestor()
+    {
+        int idRecurso = 1; 
+        RecursoDTO recursoEsperado = new RecursoDTO { Id = idRecurso };
+
+        _mockGestorRecursos.Setup(g => g.ObtenerRecursoPorId(idRecurso)).Returns(recursoEsperado);
+
+        TareaDTO resultado = _controladorRecursos.ObtenerRecursoPorId(idRecurso);
+
+        Assert.AreEqual(recursoEsperado.Id, resultado.Id);
+        _mockGestorRecursos.Verify(g => g.ObtenerRecursoPorId(idRecurso), Times.Once);
+    }
+    
 }
