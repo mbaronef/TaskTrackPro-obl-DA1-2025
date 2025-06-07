@@ -15,7 +15,12 @@ public class ControladorTareas
     {
         _gestorTareas.AgregarTareaAlProyecto(idProyecto, solicitanteDTO, nuevaTareaDTO);
     }
-    
+
+    public void EliminarTareaDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idTareaAEliminar)
+    {
+        _gestorTareas.EliminarTareaDelProyecto(idProyecto, solicitanteDTO, idTareaAEliminar);
+    }
+
     public bool EsMiembroDeTarea(UsuarioDTO usuarioDTO, int idTarea, int idProyecto)
     {
         return _gestorTareas.EsMiembroDeTarea(usuarioDTO, idTarea, idProyecto);
