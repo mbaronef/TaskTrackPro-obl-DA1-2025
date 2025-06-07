@@ -1,5 +1,4 @@
-﻿using Dominio;
-using DTOs;
+﻿using DTOs;
 
 namespace Servicios.Gestores.Interfaces;
 

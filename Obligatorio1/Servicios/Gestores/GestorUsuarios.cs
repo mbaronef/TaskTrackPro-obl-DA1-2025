@@ -2,12 +2,13 @@ using Dominio;
 using DTOs;
 using Repositorios.Interfaces;
 using Servicios.Excepciones;
+using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
-public class GestorUsuarios
+public class GestorUsuarios : IGestorUsuarios
 {
     private string _contrasenaPorDefecto = "TaskTrackPro@2025";
     public Usuario AdministradorInicial { get; private set; }
