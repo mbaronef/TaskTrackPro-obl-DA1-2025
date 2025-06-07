@@ -63,8 +63,8 @@ public class ControladorUsuariosTests
         List<UsuarioListarDTO> resultado = _controladorUsuarios.ObtenerTodos();
 
         Assert.AreEqual(2, resultado.Count);
-        Assert.AreEqual("Recurso A", resultado[0].Nombre);
-        Assert.AreEqual("Recurso B", resultado[1].Nombre);
+        Assert.AreEqual("Usuario A", resultado[0].Nombre);
+        Assert.AreEqual("Usuario B", resultado[1].Nombre);
         _mockGestorUsuarios.Verify(g => g.ObtenerTodos(), Times.Once);
         
     }

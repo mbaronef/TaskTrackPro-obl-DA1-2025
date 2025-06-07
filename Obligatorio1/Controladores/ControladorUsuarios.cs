@@ -6,6 +6,7 @@ namespace Controladores;
 public class ControladorUsuarios
 {
     private IGestorUsuarios _gestorUsuarios;
+
     public ControladorUsuarios(IGestorUsuarios gestorUsuarios)
     {
         _gestorUsuarios = gestorUsuarios;
@@ -15,4 +16,15 @@ public class ControladorUsuarios
     {
         _gestorUsuarios.CrearYAgregarUsuario(solicitanteDTO, nuevoUsuarioDTO);
     }
+
+    public void EliminarUsuario(UsuarioDTO solicitanteDTO, int id)
+    {
+        _gestorUsuarios.EliminarUsuario(solicitanteDTO, id);
+    }
+
+    public List<UsuarioListarDTO> ObtenerTodos()
+    {
+        return _gestorUsuarios.ObtenerTodos();
+    }
+
 }
