@@ -123,6 +123,45 @@ public class ControladorUsuariosTests
         _mockGestorUsuarios.Verify(g => g.DesasignarAdministradorProyecto(solicitante, nuevoAdmin), Times.Once);
     }
 
+    [TestMethod]
+    public void ReiniciarContrasena_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        int idObjetivo = 2;
+
+        _mockGestorUsuarios.Setup(g => g.ReiniciarContrasena(solicitante, idObjetivo));
+
+        _controladorUsuarios.ReiniciarContrasena(solicitante, idObjetivo);
+
+        _mockGestorUsuarios.Verify(g => g.ReiniciarContrasena(solicitante, idObjetivo), Times.Once);
+    }
+
+    [TestMethod]
+    public void AutogenerarContrasena_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        int idObjetivo = 2;
+
+        _mockGestorUsuarios.Setup(g => g.AutogenerarContrasena(solicitante, idObjetivo));
+
+        _controladorUsuarios.AutogenerarContrasena(solicitante, idObjetivo);
+
+        _mockGestorUsuarios.Verify(g => g.AutogenerarContrasena(solicitante, idObjetivo), Times.Once);
+    }
+
+    [TestMethod]
+    public void ModificarContrasena_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        int idObjetivo = 2;
+        string nuevaPass = "Contra123!";
+
+        _mockGestorUsuarios.Setup(g => g.ModificarContrasena(solicitante, idObjetivo, nuevaPass));
+
+        _controladorUsuarios.ModificarContrasena(solicitante, idObjetivo, nuevaPass);
+
+        _mockGestorUsuarios.Verify(g => g.ModificarContrasena(solicitante, idObjetivo, nuevaPass), Times.Once);
+    }
     
 
 
