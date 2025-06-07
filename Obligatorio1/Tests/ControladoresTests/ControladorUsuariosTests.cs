@@ -163,8 +163,18 @@ public class ControladorUsuariosTests
         _mockGestorUsuarios.Verify(g => g.ModificarContrasena(solicitante, idObjetivo, nuevaPass), Times.Once);
     }
     
+    [TestMethod]
+    public void BorrarNotificacion_LlamaCorrectamenteAGestor()
+    {
+        int idUsuario = 1;
+        int idNotificacion = 99;
 
+        _mockGestorUsuarios.Setup(g => g.BorrarNotificacion(idUsuario, idNotificacion));
 
+        _controladorUsuarios.BorrarNotificacion(idUsuario, idNotificacion);
 
+        _mockGestorUsuarios.Verify(g => g.BorrarNotificacion(idUsuario, idNotificacion), Times.Once);
+    }
+    
 
 }
