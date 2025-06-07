@@ -99,4 +99,18 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante), Times.Once);
     }
+    
+    [TestMethod]
+    public void ModificarDescripcionDelProyecto_LlamaCorrectamenteAGestor()
+    {
+        int idProyecto = 1;
+        var solicitante = new UsuarioDTO { Id = 1 };
+        string nuevaDescripcion = "Descripción actualizada";
+
+        _mockGestorProyectos.Setup(g => g.ModificarDescripcionDelProyecto(idProyecto, nuevaDescripcion, solicitante));
+
+        _controladorProyectos.ModificarDescripcionDelProyecto(idProyecto, nuevaDescripcion, solicitante);
+
+        _mockGestorProyectos.Verify(g => g.ModificarDescripcionDelProyecto(idProyecto, nuevaDescripcion, solicitante), Times.Once);
+    }
 }
