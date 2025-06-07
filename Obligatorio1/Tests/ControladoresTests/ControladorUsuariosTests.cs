@@ -192,5 +192,30 @@ public class ControladorUsuariosTests
         Assert.AreEqual(usuarioEsperado.Email, resultado.Email);
         _mockGestorUsuarios.Verify(g => g.LogIn(email, contrasena), Times.Once);
     }
+    
+    [TestMethod]
+    public void ObtenerUsuariosDiferentes_LlamaCorrectamenteAGestorYDevuelveLista()
+    {
+        var entrada = new List<UsuarioListarDTO>
+        {
+            new UsuarioListarDTO { Id = 1 },
+            new UsuarioListarDTO { Id = 2 }
+        };
+
+        var esperada = new List<UsuarioListarDTO>
+        {
+            new UsuarioListarDTO { Id = 3 },
+            new UsuarioListarDTO { Id = 4 }
+        };
+
+        _mockGestorUsuarios.Setup(g => g.ObtenerUsuariosDiferentes(entrada)).Returns(esperada);
+
+        var resultado = _controladorUsuarios.ObtenerUsuariosDiferentes(entrada);
+
+        Assert.AreEqual(2, resultado.Count);
+        Assert.AreEqual(3, resultado[0].Id);
+        Assert.AreEqual(4, resultado[1].Id);
+        _mockGestorUsuarios.Verify(g => g.ObtenerUsuariosDiferentes(entrada), Times.Once);
+    }
 
 }
