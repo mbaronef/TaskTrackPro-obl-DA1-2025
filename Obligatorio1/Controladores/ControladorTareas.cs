@@ -31,4 +31,9 @@ public class ControladorTareas
     {
         _gestorTareas.CambiarEstadoTarea(solicitanteDTO, idTarea, idProyecto, nuevoEstadoDTO);
     }
+
+    public void ModificarTituloTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, string nuevoTitulo)
+    {
+        _gestorTareas.ModificarTituloTarea(solicitanteDTO, idTarea, idProyecto, nuevoTitulo);
+    }
 }
