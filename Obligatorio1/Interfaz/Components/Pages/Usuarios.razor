@@ -5,6 +5,7 @@
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
 @using DTOs
+@using Excepciones
 @using Servicios.Utilidades
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
@@ -517,9 +518,14 @@ else
             mensajeExito = "Usuario eliminado exitosamente.";
             mostrarExito = true;
         }
-        catch (Exception ex)
+        catch (ExcepcionPermisos ex)
         {
             errorMensajeEditar = "No se puede eliminar al usuario, es miembro de proyectos. Para eliminarlo debe eliminarlo previamente de los proyectos que tiene asignados.";
+            mostrarErrorEditar = true;
+        }
+        catch (Exception ex)
+        {
+            errorMensajeEditar = $"Error al eliminar usuario: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }

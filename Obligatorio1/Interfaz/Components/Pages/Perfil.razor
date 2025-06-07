@@ -277,10 +277,10 @@
             {
                 if (Sesion.UsuarioLogueado.CantidadProyectosAsignados > 0)
                 {
-                    throw new ExcepcionContrasena("El usuario no puede eliminarse porque está asignado a uno o más proyectos.");
+                    throw new ExcepcionUsuario("El usuario no puede eliminarse porque está asignado a uno o más proyectos.");
                 }
             }
-            catch (Exception ex)
+            catch (ExcepcionUsuario ex)
             {
                 errorEliminar = "No se puede eliminar al usuario, es miembro de proyectos. Para eliminarlo debe eliminarlo previamente de los proyectos que tiene asignados.";
                 return;
@@ -289,7 +289,7 @@
             {
                 GestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(Sesion.UsuarioLogueado.Id);
             }
-            catch (Exception ex)
+            catch (ExcepcionPermisos ex)
             {
                 errorEliminar = "No se puede eliminar al usuario, es el primer administrador.";
                 return;

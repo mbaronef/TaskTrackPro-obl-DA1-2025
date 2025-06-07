@@ -22,13 +22,14 @@ public class LogicaSesion
         
         public async Task<bool> Login(string email, string contraseña)
         {
-            try{
+            try
+            {
                 UsuarioDTO usuarioLogueado = _gestorUsuarios.LogIn(email, contraseña);
                 UsuarioLogueado = usuarioLogueado;
                 await _localStorage.SetItemAsync(CURRENT_USER, usuarioLogueado);
                 return true;
             }
-            catch(Exception e)
+            catch
             {
                 return false;
             }

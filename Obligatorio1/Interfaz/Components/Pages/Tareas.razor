@@ -10,6 +10,7 @@
 @rendermode InteractiveServer
 @using System.Linq
 @using Controladores
+@using Excepciones
 @using DTOs
 
 @if (Sesion.UsuarioLogueado == null || !sesionCargada)
@@ -936,16 +937,13 @@ else
             ActualizarRecursosDisponibles();
             StateHasChanged();
         }
-        catch (Exception e)
+        catch (ExcepcionRecurso)
         {
-            if (e.Message.Equals("Recurso no existente"))
-            {
-                mensaje = "Seleccione un recurso";
-            }
-            else
-            {
-                mensaje = e.Message;
-            }
+            mensaje = "Seleccione un recurso";
+        }
+        catch(Exception e)
+        {
+            mensaje = e.Message;
         }
     }
 
@@ -982,16 +980,13 @@ else
             ActualizarUsuariosProyecto();
             StateHasChanged();
         }
-        catch (Exception e)
-        {
-            if (e.Message.Equals("El usuario no existe"))
-            {
-                mensaje = "Seleccione un usuario";
-            }
-            else
-            {
-                mensaje = e.Message;
-            }
+        catch (ExcepcionUsuario)
+        { 
+            mensaje = "Seleccione un usuario";
+        }
+        catch(Exception e)
+        { 
+            mensaje = e.Message;
         }
     }
 
@@ -1008,16 +1003,13 @@ else
             ActualizarUsuariosProyecto();
             StateHasChanged();
         }
-        catch (Exception e)
+        catch (ExcepcionUsuario)
+        {   
+            mensaje = "Seleccione un usuario";
+        }
+        catch (Exception e) 
         {
-            if (e.Message.Equals("El usuario no existe"))
-            {
-                mensaje = "Seleccione un usuario";
-            }
-            else
-            {
-                mensaje = e.Message;
-            }
+                mensaje = e.Message; 
         }
     }
 

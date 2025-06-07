@@ -2,6 +2,7 @@
 @using DTOs
 @using Servicios.Gestores
 @using Controladores
+@using Excepciones
 @inject GestorUsuarios GestorUsuarios
 @using Interfaz.ServiciosInterfaz
 @rendermode InteractiveServer
@@ -315,10 +316,21 @@ else
             mostrarMensajeExitoEliminar = true;
             CargarDatosDelProyecto();
         }
-        catch (Exception e)
+        catch (ExcepcionProyecto)
         {
             errorEliminarMiembro = "No se puede eliminar al miembro del proyecto, tiene tareas asignadas. Para eliminarlo debe eliminarlo previamente de las tareas que tiene asignadas.";
             mostrarErrorEliminarMiembro = true;
+        }
+        catch (ExcepcionPermisos)
+        {
+            errorEliminarMiembro = "No tiene permisos para eliminar el miembro de este proyecto.";
+            mostrarErrorEliminarMiembro = true;
+        }
+        catch (Exception)
+        {
+            errorEliminarMiembro = "Ocurrió un error inesperado.";
+            mostrarErrorEliminarMiembro = true;
+
         }
     }
     
