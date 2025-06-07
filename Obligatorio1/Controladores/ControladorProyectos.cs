@@ -21,4 +21,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.EliminarProyecto(idProyecto, solicitante);
     }
+    
+    public List<ProyectoDTO> ObtenerTodos()
+    {
+        return _gestorProyectos.ObtenerTodos();
+    }
 }
