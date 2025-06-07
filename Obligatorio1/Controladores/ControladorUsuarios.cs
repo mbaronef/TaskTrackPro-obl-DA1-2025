@@ -47,4 +47,19 @@ public class ControladorUsuarios
         _gestorUsuarios.DesasignarAdministradorProyecto(solicitante, id);
     }
 
+    public void ReiniciarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
+    {
+        _gestorUsuarios.ReiniciarContrasena(solicitanteDTO, idUsuarioObjetivo);
+    }
+    
+    public void AutogenerarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
+    {
+        _gestorUsuarios.AutogenerarContrasena(solicitanteDTO, idUsuarioObjetivo);
+    }
+    
+    public void ModificarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo, string nuevaPass)
+    {
+        _gestorUsuarios.ModificarContrasena(solicitanteDTO, idUsuarioObjetivo, nuevaPass);
+    }
+
 }
