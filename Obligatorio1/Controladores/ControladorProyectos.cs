@@ -1,3 +1,4 @@
+using DTOs;
 using Servicios.Gestores.Interfaces;
 
 namespace Controladores;
@@ -9,5 +10,10 @@ public class ControladorProyectos
     public ControladorProyectos(IGestorProyectos gestor)
     {
         _gestorProyectos = gestor;
+    }
+    
+    public void CrearProyecto(ProyectoDTO nuevoProyecto, UsuarioDTO solicitante)
+    {
+        _gestorProyectos.CrearProyecto(nuevoProyecto, solicitante);
     }
 }
