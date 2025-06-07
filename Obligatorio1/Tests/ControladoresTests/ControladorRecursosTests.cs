@@ -17,6 +17,23 @@ public class ControladorRecursosTests
         _controladorRecursos = new ControladorRecursos(_mockGestorRecursos.Object);
     }
     
+    [TestMethod]
+    public void Constructor_CreaControladorOk()
+    {
+        Assert.IsNotNull(_controladorRecursos);
+    }
     
+    [TestMethod]
+    public void AgregarRecurso_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        RecursoDTO nuevoRecurso = new RecursoDTO { Id = 2 };
+
+        _mockGestorRecursos.Setup(g => g.AgregarRecurso(usuario, nuevoRecurso, false));
+
+        _controladorRecursos.AgregarRecurso(usuario, nuevoRecurso, false);
+
+        _mockGestorRecursos.Verify(g => g.AgregarRecurso(usuario, nuevoRecurso, false), Times.Once);
+    }
     
 }
