@@ -5,7 +5,8 @@
 @using DTOs
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Excepciones
-@inject GestorProyectos GestorProyectos
+@using Controladores
+@inject ControladorProyectos ControladorProyectos
 @inject GestorRecursos GestorRecursos
 @inject NavigationManager NavigationManager
 @inject LogicaSesion Sesion
@@ -22,7 +23,7 @@ else
 {
     <h3>Recursos Exclusivos</h3>
 
-    @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
+    @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
     {
         <button class="btn btn-primary mb-3" @onclick="MostrarFormularioCrearRecurso">
             <i class="bi bi-plus-circle"></i> Crear recurso exclusivo
@@ -334,7 +335,7 @@ else
                 await Sesion.ActualizarSesion();
                 try
                 {
-                    proyecto = GestorProyectos.ObtenerProyectoPorId(Id);
+                    proyecto = ControladorProyectos.ObtenerProyectoPorId(Id);
                 }
                 catch (ExcepcionServicios)
                 {

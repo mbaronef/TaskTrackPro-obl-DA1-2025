@@ -1,7 +1,8 @@
 @page "/proyecto/{id:int}/tareas"
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Gestores
-@inject GestorProyectos GestorProyectos
+@using Controladores
+@inject ControladorProyectos ControladorProyectos
 @inject GestorTareas GestorTareas
 @inject GestorRecursos GestorRecursos
 @inject GestorUsuarios GestorUsuarios
@@ -23,7 +24,7 @@ else
     else
     {
         <h3>Tareas</h3>
-        @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
+        @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
         {
             <div class="text-center mb-3">
                 <button class="btn btn-primary btn text-white d-flex align-items-center gap-2" @onclick="() => MostrarVentanaCreacion()">
@@ -31,10 +32,10 @@ else
                 </button>
             </div>
         }
-        @if (proyecto.Tareas.Count == 0 && (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id)||Sesion.EsAdminSistema()))
+        @if (proyecto.Tareas.Count == 0 && (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id)||Sesion.EsAdminSistema()))
         {
             <p>Aún no hay tareas en el proyecto.</p>
-        } else if (proyecto.Tareas.Count == 0 && GestorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, proyecto.Id))
+        } else if (proyecto.Tareas.Count == 0 && ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, proyecto.Id))
         {
             <p>Aún no tienes tareas asignadas</p>
         }
@@ -42,7 +43,7 @@ else
         {
             @foreach (var tarea in proyecto.Tareas)
             {
-                @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || GestorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id)|| Sesion.EsAdminSistema())
+                @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || GestorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id)|| Sesion.EsAdminSistema())
                 {
                     var collapseId = $"collapseTarea{tarea.Id}";
 
@@ -87,7 +88,7 @@ else
                                     <p><strong>Aún no hay miembros asignados</strong></p>
                                 }
                             </div>
-                            @if (GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada)
+                            @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
                                     <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaEdicion(tarea.Id)">
@@ -110,7 +111,7 @@ else
                                     </button>
                                 </div>
                             }
-                            @if (GestorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id) && !GestorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada && tarea.Estado != EstadoTareaDTO.Bloqueada)
+                            @if (GestorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id) && !ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada && tarea.Estado != EstadoTareaDTO.Bloqueada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
                                     <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaEdicionReducida(tarea.Id)">
@@ -649,7 +650,7 @@ else
             else
             {
                 await Sesion.ActualizarSesion();
-                proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }
@@ -784,7 +785,7 @@ else
             mostrarVentanaCreacion = false;
             // actualizaciones
             tareaDTO = new TareaDTO();
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             StateHasChanged();
         }
         catch (Exception e)
@@ -805,7 +806,7 @@ else
             mostrarVentanaEdicionReducida = false;
             // actualizaciones
             tareaEdicionEstado = new TareaCambioEstadoDto();
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             StateHasChanged();
         }
         catch (Exception e)
@@ -855,7 +856,7 @@ else
             tareaEdicion = new TareaDTO();
             editoCompletada = false;
             editoEnProceso = false;
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             StateHasChanged();
         }
@@ -877,7 +878,7 @@ else
             tareaEdicion = new TareaDTO();
             editoCompletada = false;
             editoEnProceso = false;
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             StateHasChanged();
         }
         catch (Exception e)
@@ -894,7 +895,7 @@ else
             mensaje = "Dependencia agregada con éxito.";
             // actualizaciones
             dependenciaDTO = new DependenciaDTO();
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             StateHasChanged();
         }
@@ -911,7 +912,7 @@ else
             GestorTareas.EliminarDependenciaDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, tareaDependienteId, id);
             mensaje = "Dependencia eliminada con éxito.";
             // actualizaciones
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             StateHasChanged();
         }
@@ -930,7 +931,7 @@ else
             mensaje = "Recurso agregado con éxito.";
             // actualizaciones
             recursoAsignacionDto = new RecursoAsignacionDTO();
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             ActualizarRecursosDisponibles();
             StateHasChanged();
@@ -956,7 +957,7 @@ else
             GestorTareas.EliminarRecursoDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, recurso);
             mensaje = "Recurso eliminado con éxito.";
             // actualizaciones
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             ActualizarRecursosDisponibles();
             StateHasChanged();
@@ -976,7 +977,7 @@ else
             mensaje = "Miembro agregado con éxito.";
             // actualizaciones
             usuarioAsignacionDto = new UsuarioAsignacionDTO();
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             ActualizarUsuariosProyecto();
             StateHasChanged();
@@ -1002,7 +1003,7 @@ else
             GestorTareas.EliminarMiembroDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, miembro);
             mensaje = "Usuario eliminado de la tarea con éxito.";
             // actualizaciones
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             tareaActual = GestorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
             ActualizarUsuariosProyecto();
             StateHasChanged();
