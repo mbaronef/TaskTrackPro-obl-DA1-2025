@@ -54,6 +54,12 @@ public class ControladorTareas
         _gestorTareas.AgregarDependenciaATarea(solicitanteDTO, idTarea, idTareaDependencia, idProyecto, tipoDependencia);
     }
 
+    public void EliminarDependenciaDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idTareaDependencia,
+        int idProyecto)
+    {
+        _gestorTareas.EliminarDependenciaDeTarea(solicitanteDTO, idTarea, idTareaDependencia, idProyecto);
+    }
+
     public TareaDTO ObtenerTareaPorId(int idProyecto, int idTarea)
     {
         return _gestorTareas.ObtenerTareaPorId(idProyecto, idTarea);
