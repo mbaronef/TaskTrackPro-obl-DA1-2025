@@ -63,5 +63,23 @@ public class ControladorRecursosTests
         Assert.AreEqual(recursoEsperado.Id, resultado.Id);
         _mockGestorRecursos.Verify(g => g.ObtenerRecursoPorId(idRecurso), Times.Once);
     }
-    
+
+    [TestMethod]
+    public void ObtenerRecursosGenerales_LlamaCorrectamenteAGestor()
+    {
+        var listaEsperada = new List<RecursoDTO>{
+            new RecursoDTO { Id = 1, Nombre = "Recurso A" },
+            new RecursoDTO { Id = 2, Nombre = "Recurso B" }
+        };
+
+        _mockGestorRecursos.Setup(g => g.ObtenerRecursosGenerales()).Returns(listaEsperada);
+
+        List<RecursoDTO> resultado = _controladorRecursos.ObtenerRecursosGenerales();
+
+        Assert.AreEqual(2, resultado.Count);
+        Assert.AreEqual("Recurso A", resultado[0].Nombre);
+        Assert.AreEqual("Recurso B", resultado[1].Nombre);
+        _mockGestorRecursos.Verify(g => g.ObtenerRecursosGenerales(), Times.Once);
+        
+    }
 }
