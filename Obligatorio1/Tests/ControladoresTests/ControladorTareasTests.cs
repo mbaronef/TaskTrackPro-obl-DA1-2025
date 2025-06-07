@@ -174,6 +174,21 @@ public class ControladorTareasTests
     }
     
     [TestMethod]
+    public void AgregarMiembroATarea_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idTarea = 1;
+        int idProyecto = 1;
+        UsuarioDTO nuevoMiembro = new UsuarioDTO { Id = 2 };
+
+        _mockGestorTareas.Setup(g => g.AgregarMiembroATarea(usuario, idTarea, idProyecto, nuevoMiembro));
+
+        _controladorTareas.AgregarMiembroATarea(usuario, idTarea, idProyecto, nuevoMiembro);
+
+        _mockGestorTareas.Verify(g => g.AgregarMiembroATarea(usuario, idTarea, idProyecto, nuevoMiembro), Times.Once);
+    }
+    
+    [TestMethod]
     public void AgregarRecursoATarea_LlamaCorrectamenteAGestor()
     {
         UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
@@ -202,10 +217,4 @@ public class ControladorTareasTests
 
         _mockGestorTareas.Verify(g => g.EliminarRecursoDeTarea(usuario, idTarea, idProyecto, recursoAEliminar), Times.Once);
     }
-    
-    
-    /*métodos a probar:
-    GestorTareas.AgregarMiembroATarea()
-    GestorTareas.EliminarMiembroDeTarea()
-    */
 }
