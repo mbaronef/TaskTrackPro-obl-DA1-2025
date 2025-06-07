@@ -14,7 +14,7 @@ public class ControladorRecursosTests
     public void Setup()
     {
         _mockGestorRecursos = new Mock<IGestorRecursos>();
-        _controladorRecursos = new ControladorTareas(_mockGestorRecursos.Object);
+        _controladorRecursos = new ControladorRecursos(_mockGestorRecursos.Object);
     }
     
     
