@@ -15,4 +15,9 @@ public class ControladorTareas
     {
         return _gestorTareas.EsMiembroDeTarea(usuarioDTO, idTarea, idProyecto);
     }
+
+    public TareaDTO ObtenerTareaPorId(int idProyecto, int idTarea)
+    {
+        return _gestorTareas.ObtenerTareaPorId(idProyecto, idTarea);
+    }
 }
