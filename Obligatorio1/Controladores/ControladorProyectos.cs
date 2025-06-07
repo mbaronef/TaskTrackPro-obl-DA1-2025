@@ -72,4 +72,9 @@ public class ControladorProyectos
     {
         return _gestorProyectos.ObtenerProyectoDelAdministrador(idAdministrador);
     }
+    
+    public void VerificarUsuarioNoTieneTareasAsignadas(int idProyecto, int idMiembro)
+    {
+        _gestorProyectos.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idMiembro);
+    }
 }
