@@ -41,4 +41,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.ModificarDescripcionDelProyecto(idProyecto, descripcion, solicitante);
     }
+    
+    public void ModificarFechaDeInicioDelProyecto(int idProyecto, DateTime nuevaFecha, UsuarioDTO solicitante)
+    {
+        _gestorProyectos.ModificarFechaDeInicioDelProyecto(idProyecto, nuevaFecha, solicitante);
+    }
 }
