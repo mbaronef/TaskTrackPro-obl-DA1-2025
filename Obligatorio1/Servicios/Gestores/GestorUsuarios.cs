@@ -97,7 +97,7 @@ public class GestorUsuarios : IGestorUsuarios
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaReiniciada(_contrasenaPorDefecto));
     }
 
-    public void AutogenerarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
+    public string AutogenerarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         PermisosUsuariosServicio.VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
@@ -108,6 +108,7 @@ public class GestorUsuarios : IGestorUsuarios
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
         
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
+        return nuevaContrasena;
     }
 
     public void ModificarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo, string nuevaContrasena)
