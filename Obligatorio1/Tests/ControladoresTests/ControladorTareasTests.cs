@@ -28,8 +28,8 @@ public class ControladorTareasTests
     public void EsMiembroDeTarea_LLamaCorrectamenteAGestor()
     {
         UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
-        int idTarea = 10;
-        int idProyecto = 20;
+        int idTarea = 1;
+        int idProyecto = 1;
 
         _mockGestorTareas.Setup(g => g.EsMiembroDeTarea(usuario, idTarea, idProyecto)).Returns(true);
 
@@ -39,10 +39,24 @@ public class ControladorTareasTests
         _mockGestorTareas.Verify(g => g.EsMiembroDeTarea(usuario, idTarea, idProyecto), Times.Once);
     }
 
+    [TestMethod]
+    public void ObtenerTareaPorId_LlamaCorrectamenteAGestor()
+    {
+        int idProyecto = 1;
+        int idTarea = 1;
+        TareaDTO tareaEsperada = new TareaDTO { Id = idTarea };
+
+        _mockGestorTareas.Setup(g => g.ObtenerTareaPorId(idProyecto, idTarea)).Returns(tareaEsperada);
+
+        TareaDTO resultado = _controladorTareas.ObtenerTareaPorId(idProyecto, idTarea);
+
+        Assert.AreEqual(tareaEsperada.Id, resultado.Id);
+        _mockGestorTareas.Verify(g => g.ObtenerTareaPorId(idProyecto, idTarea), Times.Once);
+    }
+
     
     
     /*métodos a probar:
-    GestorTareas.ObtenerTareaPorId()
     GestorTareas.AgregarTareaAlProyecto()
     GestorTareas.CambiarEstadoTarea()
     GestorTareas.ModificarTituloTarea()

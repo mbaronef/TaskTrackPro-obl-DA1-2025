@@ -4,6 +4,9 @@ namespace Servicios.Gestores.Interfaces;
 
 public interface IGestorTareas
 {
+    void AgregarTareaAlProyecto(int idProyecto, UsuarioDTO solicitanteDTO, TareaDTO nuevaTareaDTO);
+    void EliminarTareaDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idTareaAEliminar);
+    TareaDTO ObtenerTareaPorId(int idProyecto, int idTarea);
     void ModificarTituloTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, string nuevoTitulo);
     void ModificarDescripcionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, string nuevaDescripcion);
     void ModificarDuracionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, int nuevaDuracion);
