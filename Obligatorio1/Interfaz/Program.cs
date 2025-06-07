@@ -24,8 +24,10 @@ builder.Services.AddSingleton<ICalculadorCaminoCritico, CaminoCritico>();
 GestorUsuarios gestorUsuarios = new GestorUsuarios(repositorioUsuarios, _notificador);
 GestorProyectos gestorProyectos = new GestorProyectos(repositorioUsuarios, repositorioProyectos, _notificador, _calculadorCaminoCritico);
 GestorRecursos gestorRecursos = new GestorRecursos(repositorioRecursos, gestorProyectos, repositorioUsuarios, _notificador);
-//GestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuarios, _notificador, _calculadorCaminoCritico);
-//ControladorTareas controladorTareas = new ControladorTareas(gestorTareas);
+GestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuarios, _notificador, _calculadorCaminoCritico);
+
+ControladorTareas controladorTareas = new ControladorTareas(gestorTareas);
+ControladorProyectos controladorProyectos = new ControladorProyectos(gestorProyectos);
 
 // Add services to the container.
 builder.Services.AddSingleton(repositorioUsuarios);
@@ -35,11 +37,12 @@ builder.Services.AddSingleton(repositorioRecursos);
 builder.Services.AddSingleton(gestorUsuarios);
 builder.Services.AddSingleton(gestorProyectos);
 builder.Services.AddSingleton(gestorRecursos);
-//builder.Services.AddSingleton(gestorTareas);
-builder.Services.AddSingleton<IGestorTareas, GestorTareas>();
+builder.Services.AddSingleton(gestorTareas);
+//builder.Services.AddSingleton<IGestorTareas, GestorTareas>();
 
-//builder.Services.AddSingleton(controladorTareas);
-builder.Services.AddSingleton<ControladorTareas>();
+builder.Services.AddSingleton(controladorTareas);
+builder.Services.AddSingleton(controladorProyectos);
+//builder.Services.AddSingleton<ControladorTareas>();
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<LogicaSesion>();
