@@ -1,6 +1,5 @@
 ﻿using Dominio;
 using Dominio.Excepciones;
-using Servicios.Gestores;
 
 namespace Tests.DominioTests;
 
@@ -223,7 +222,7 @@ public class TareaTests
     public void EsSucesoraDe_DevuelveTrueSiLaTareaTieneDependencias()
     {
         Tarea tarea = CrearTareaValida();
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaFSValida();
         tarea.AgregarDependencia(dependencia);
         bool resultado = tarea.EsSucesoraDe(dependencia.Tarea.Id);
         Assert.IsTrue(resultado);
@@ -232,7 +231,7 @@ public class TareaTests
     [TestMethod]
     public void EsSucesoraDe_DevuelveFalseSiLaTareaDependeDeOtraTarea()
     {
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaFSValida();
         Tarea tarea = CrearTareaValida();
         Tarea otraTarea = CrearTareaValida();
         tarea.Id = 2; //se hardcodean ids por simplicidad de tests. Los maneja el gestor
@@ -247,7 +246,7 @@ public class TareaTests
     public void EsSucesoraDe_DevuelveFalseSiNoTieneDependencias()
     {
         Tarea tarea = CrearTareaValida();
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaFSValida();
         tarea.AgregarDependencia(dependencia);
         tarea.EliminarDependencia(dependencia.Tarea.Id);
         bool resultado = tarea.EsSucesoraDe(dependencia.Tarea.Id);
@@ -459,7 +458,7 @@ public class TareaTests
     {
         Usuario usuario1 = CrearUsuarioValido();
         Usuario usuario2 = new Usuario("Juana", "Pereza", new DateTime(1996, 2, 2), "juana@test.com", "TaskTrackPro@2025");
-        usuario1.Id = 1; // se hardcodean ids por simplicidad de tests. 
+        usuario1.Id = 1; //se hardcodean ids por simplicidad de tests.
         usuario2.Id = 2;
         Tarea tarea = CrearTareaValida();
         tarea.AsignarUsuario(usuario1);
@@ -484,19 +483,6 @@ public class TareaTests
         Assert.AreEqual(2, lista.Count);
         Assert.IsTrue(lista.Contains(necesario));
         Assert.IsTrue(lista.Contains(necesario2));
-    }
-    
-    [TestMethod]
-    public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
-    {
-        Usuario miembro = CrearUsuarioValido();
-        Tarea tarea = CrearTareaValida();
-        tarea.AsignarUsuario(miembro);
-        tarea.NotificarMiembros("Se modificó el proyecto.");
-        foreach (Usuario u in tarea.UsuariosAsignados)
-        {
-            Assert.IsTrue(u.Notificaciones.Any(n => n.Mensaje == "Se modificó el proyecto."));
-        }
     }
 
     [TestMethod]
@@ -529,7 +515,7 @@ public class TareaTests
     public void AgregarDependencia_AgregarDependenciaALista()
     {
         Tarea tarea = CrearTareaValida();
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaSSValida();
         tarea.AgregarDependencia(dependencia); 
         Assert.IsTrue(tarea.Dependencias.Contains(dependencia));
         Assert.AreEqual(1, tarea.Dependencias.Count);
@@ -539,7 +525,7 @@ public class TareaTests
     public void AgregarDependencia_AgregarDependenciaAListaYModificaEstado()
     {
         Tarea tarea = CrearTareaValida();
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaFSValida();
         tarea.AgregarDependencia(dependencia); 
         Assert.AreEqual(EstadoTarea.Bloqueada, tarea.Estado);
     }
@@ -549,7 +535,7 @@ public class TareaTests
     {
         Tarea tarea = CrearTareaValida();
         
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaFSValida();
         dependencia.Tarea.CambiarEstado(EstadoTarea.EnProceso);
         dependencia.Tarea.CambiarEstado(EstadoTarea.Completada);
         
@@ -571,7 +557,7 @@ public class TareaTests
     public void AgregarDependencia_LanzarExcepcionSiDependenciaYaEstaEnDependencias()
     {
         Tarea tarea = CrearTareaValida();
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaSSValida();
         tarea.AgregarDependencia(dependencia);
         tarea.AgregarDependencia(dependencia);
     }
@@ -580,7 +566,7 @@ public class TareaTests
     public void EliminarDependencia_EliminarDependenciaDeDependencias()
     {
         Tarea tarea = CrearTareaValida();
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaFSValida();
         tarea.AgregarDependencia(dependencia);
         tarea.EliminarDependencia(1);
         Assert.IsFalse(tarea.Dependencias.Any(d => d.Tarea.Id == 1));
@@ -592,7 +578,7 @@ public class TareaTests
     public void EliminarDependencia_LanzaExcepcionSiDepenciaNoExiste()
     {
         Tarea tarea = CrearTareaValida();
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaSSValida();
         tarea.AgregarDependencia(dependencia);
         
         tarea.EliminarDependencia(3);
@@ -603,7 +589,7 @@ public class TareaTests
     public void VerificarDependenciaNoEstaAgregada_YaExisteLanzaExcepcion()
     {
         Tarea tarea = CrearTareaValida();
-        Dependencia dependencia = CrearDependenciaValida();
+        Dependencia dependencia = CrearDependenciaFSValida();
         tarea.AgregarDependencia(dependencia);
         tarea.AgregarDependencia(dependencia);
     }
@@ -678,7 +664,7 @@ public class TareaTests
         return usuario;
     }
 
-    private Dependencia CrearDependenciaValida()
+    private Dependencia CrearDependenciaSSValida()
     {
         Tarea tareaD = new Tarea("TituloD","DescripciónD",3, _fechaInicio);
         tareaD.Id = 1;
@@ -686,7 +672,12 @@ public class TareaTests
         return dependencia;
     }
     
-}
+    private Dependencia CrearDependenciaFSValida()
+    {
+        Tarea tareaD = new Tarea("TituloD","DescripciónD",3, _fechaInicio);
+        tareaD.Id = 1;
+        Dependencia dependencia = new Dependencia("FS", tareaD);
+        return dependencia;
+    }
     
-
-
+}

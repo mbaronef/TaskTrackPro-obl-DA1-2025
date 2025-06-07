@@ -61,6 +61,4 @@ public static class MensajesErrorDominio
     public const string RecursoNoNecesario = "El recurso no se encuentra dentro de los recursos necesarios.";
     public const string DependenciaNullEnTarea = "No se puede agregar una dependencia null.";
     public const string DependenciaNoExisteEnTarea = "La dependencia no se encuentra dentro de la lista de dependencias.";
-    
-
 }

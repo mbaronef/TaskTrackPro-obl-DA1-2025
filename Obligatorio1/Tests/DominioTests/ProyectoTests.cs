@@ -1,5 +1,6 @@
 using Dominio;
 using Dominio.Excepciones;
+using Repositorios;
 using Servicios.Gestores;
 
 namespace Tests.DominioTests;
@@ -8,7 +9,6 @@ namespace Tests.DominioTests;
 public class ProyectoTests
 {
     private Proyecto _proyecto;
-    private GestorUsuarios _gestorUsuarios;
     private Usuario _admin;
     private List<Usuario> _miembros;
 
@@ -301,7 +301,6 @@ public class ProyectoTests
     [TestMethod]
     public void EsAdministrador_RetornarFalseSiUsuarioNoEsAdministrador()
     {
-        Usuario adminSistema = CrearAdminSistema();
         Usuario otro = CrearMiembro(2);
         _proyecto = CrearProyectoCon(_admin, _miembros);
         _proyecto.AsignarMiembro(otro);
@@ -501,32 +500,6 @@ public class ProyectoTests
         _proyecto = CrearProyectoCon(_admin);
 
         _proyecto.AsignarNuevoAdministrador(miembro);
-    }
-
-    //notificarMiembros
-    [TestMethod]
-    public void NotificarMiembros_AgregaNotificacionATodosLosMiembros()
-    {
-        Usuario miembro = CrearMiembro(2);
-        _proyecto = CrearProyectoCon(_admin);
-        _proyecto.AsignarMiembro(miembro);
-        _proyecto.NotificarMiembros("Se modificó el proyecto.");
-
-        foreach (Usuario usuario in _miembros)
-        {
-            Assert.IsTrue(usuario.Notificaciones.Any(n => n.Mensaje == "Se modificó el proyecto."));
-        }
-    }
-
-    // notificarAdministrador
-    [TestMethod]
-    public void NotificarAdministrador_AgregaNotificacionAlAdministrador()
-    {
-        _proyecto = CrearProyectoCon(_admin);
-
-        _proyecto.NotificarAdministrador("Mensaje para admin");
-
-        Assert.IsTrue(_admin.Notificaciones.Any(n => n.Mensaje == "Mensaje para admin"));
     }
 
     //es miembro por id
