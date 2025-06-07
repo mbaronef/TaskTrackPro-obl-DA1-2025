@@ -188,10 +188,23 @@ public class ControladorTareasTests
         _mockGestorTareas.Verify(g => g.AgregarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso), Times.Once);
     }
     
+    [TestMethod]
+    public void EliminarRecursoDeTarea_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idTarea = 1;
+        int idProyecto = 1;
+        RecursoDTO recursoAEliminar = new RecursoDTO { Id = 1 };
+
+        _mockGestorTareas.Setup(g => g.EliminarRecursoDeTarea(usuario, idTarea, idProyecto, recursoAEliminar));
+
+        _controladorTareas.EliminarRecursoDeTarea(usuario, idTarea, idProyecto, recursoAEliminar);
+
+        _mockGestorTareas.Verify(g => g.EliminarRecursoDeTarea(usuario, idTarea, idProyecto, recursoAEliminar), Times.Once);
+    }
     
     
     /*métodos a probar:
-    GestorTareas.EliminarRecursoDeTarea()
     GestorTareas.AgregarMiembroATarea()
     GestorTareas.EliminarMiembroDeTarea()
     */
