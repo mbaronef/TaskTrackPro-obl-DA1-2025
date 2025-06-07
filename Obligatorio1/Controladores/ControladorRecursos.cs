@@ -31,4 +31,9 @@ public class ControladorRecursos
     {
         return _gestorRecursos.ObtenerRecursosGenerales();
     }
+    
+    public List<RecursoDTO> ObtenerRecursosExclusivos(int idProyecto)
+    {
+        return _gestorRecursos.ObtenerRecursosExclusivos(idProyecto);
+    }
 }
