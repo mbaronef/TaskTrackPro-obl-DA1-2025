@@ -11,29 +11,35 @@ public class ControladorTareas
         _gestorTareas = gestorTareas;
     }
     
+    public void AgregarTareaAlProyecto(int idProyecto, UsuarioDTO solicitanteDTO, TareaDTO nuevaTareaDTO)
+    {
+        _gestorTareas.AgregarTareaAlProyecto(idProyecto, solicitanteDTO, nuevaTareaDTO);
+    }
+    
     public bool EsMiembroDeTarea(UsuarioDTO usuarioDTO, int idTarea, int idProyecto)
     {
         return _gestorTareas.EsMiembroDeTarea(usuarioDTO, idTarea, idProyecto);
     }
 
-    public TareaDTO ObtenerTareaPorId(int idProyecto, int idTarea)
+    public void ModificarTituloTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, string nuevoTitulo)
     {
-        return _gestorTareas.ObtenerTareaPorId(idProyecto, idTarea);
+        _gestorTareas.ModificarTituloTarea(solicitanteDTO, idTarea, idProyecto, nuevoTitulo);
     }
 
-    public void AgregarTareaAlProyecto(int idProyecto, UsuarioDTO solicitanteDTO, TareaDTO nuevaTareaDTO)
+    public void ModificarDescripcionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto,
+        string nuevaDescripcion)
     {
-        _gestorTareas.AgregarTareaAlProyecto(idProyecto, solicitanteDTO, nuevaTareaDTO);
+        _gestorTareas.ModificarDescripcionTarea(solicitanteDTO, idTarea, idProyecto, nuevaDescripcion);
     }
-
+    
     public void CambiarEstadoTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto,
         EstadoTareaDTO nuevoEstadoDTO)
     {
         _gestorTareas.CambiarEstadoTarea(solicitanteDTO, idTarea, idProyecto, nuevoEstadoDTO);
     }
-
-    public void ModificarTituloTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, string nuevoTitulo)
+    
+    public TareaDTO ObtenerTareaPorId(int idProyecto, int idTarea)
     {
-        _gestorTareas.ModificarTituloTarea(solicitanteDTO, idTarea, idProyecto, nuevoTitulo);
+        return _gestorTareas.ObtenerTareaPorId(idProyecto, idTarea);
     }
 }
