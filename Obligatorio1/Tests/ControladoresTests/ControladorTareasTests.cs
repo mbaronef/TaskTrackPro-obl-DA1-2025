@@ -24,6 +24,22 @@ public class ControladorTareasTests
         Assert.IsNotNull(_controladorTareas);
     }
     
+    [TestMethod]
+    public void EsMiembroDeTarea_LLamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idTarea = 10;
+        int idProyecto = 20;
+
+        _mockGestorTareas.Setup(g => g.EsMiembroDeTarea(usuario, idTarea, idProyecto)).Returns(true);
+
+        bool resultado = _controladorTareas.EsMiembroDeTarea(usuario, idTarea, idProyecto);
+
+        Assert.IsTrue(resultado);
+        _mockGestorTareas.Verify(g => g.EsMiembroDeTarea(usuario, idTarea, idProyecto), Times.Once);
+    }
+
+    
     
     /*métodos a probar:
     GestorTareas.ObtenerTareaPorId()
