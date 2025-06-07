@@ -5,6 +5,7 @@ using Moq;
 
 namespace Tests.ControladoresTests;
 
+[TestClass]
 public class ControladorUsuariosTests
 {
     private Mock<IGestorUsuarios> _mockGestorUsuarios;
@@ -16,5 +17,10 @@ public class ControladorUsuariosTests
         _mockGestorUsuarios = new Mock<IGestorUsuarios>();
         _controladorUsuarios = new ControladorUsuarios(_mockGestorUsuarios.Object);
     }
-    
+
+    [TestMethod]
+    public void Constructor_CreaControladorOk()
+    {
+        Assert.IsNotNull(_controladorUsuarios);
+    }
 }
