@@ -9,30 +9,30 @@ public class Dependencia
 
     public Dependencia(string tipo, Tarea tarea)
     {
-        ValidarNoVacio(tipo,"No se puede ingresar un tipo vacío.");
-        ValidarTipoValido(tipo, "El tipo de dependencia debe ser 'FF' o 'FS'.");
-        ValidarTareaNoNula(tarea, "Una tarea no puede ser nula.");
+        ValidarNoVacio(tipo);
+        ValidarTipoValido(tipo);
+        ValidarTareaNoNula(tarea);
         Tipo = tipo;
         Tarea = tarea;
     }
-    private void ValidarNoVacio(string valor, string mensajeError)
+    private void ValidarNoVacio(string valor)
     {
         if (string.IsNullOrWhiteSpace(valor))
-            throw new ExcepcionDominio(mensajeError);
+            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, valor));
     }
 
-    private void ValidarTipoValido(string valor, string mensajeError)
+    private void ValidarTipoValido(string valor)
     {
         if (valor != "SS" && valor != "FS")
         {
-            throw new ExcepcionDominio(mensajeError);
+            throw new ExcepcionDominio(MensajesErrorDominio.TipoDependenciaInvalido);
         }
     }
     
-    private void ValidarTareaNoNula(Tarea tarea, string mensajeError)
+    private void ValidarTareaNoNula(Tarea tarea)
     {
         if (tarea == null)
-            throw new ExcepcionDominio(mensajeError);
+            throw new ExcepcionDominio(MensajesErrorDominio.TareaNula);
     }
     
     public override bool Equals(object obj)

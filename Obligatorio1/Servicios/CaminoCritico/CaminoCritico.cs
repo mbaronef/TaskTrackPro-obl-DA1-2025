@@ -59,7 +59,7 @@ public class CaminoCritico : ICalculadorCaminoCritico
         
         if (tareasOrdenadas.Count != tareas.Count)
         { // Validación: si hay ciclo, no se procesaron todas
-            throw new ExcepcionServicios(MensajesError.GrafoConCiclos);
+            throw new ExcepcionCaminoCritico(MensajesError.GrafoConCiclos);
         }
         
         return tareasOrdenadas;

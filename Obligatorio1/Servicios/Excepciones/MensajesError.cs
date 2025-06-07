@@ -38,7 +38,8 @@ public static class MensajesError
     
     public const string GrafoConCiclos= "El grafo de tareas tiene dependencias cíclicas.";
     
-    public const string ContrasenaMuyCorta = "La contraseña debe tener al menos {0} caracteres.";
+    public static string ContrasenaMuyCorta(int largoMinimoContrasena) =>
+        $"La contraseña debe tener al menos {largoMinimoContrasena} caracteres.";
     public const string ContrasenaSinMayuscula = "La contraseña debe incluir al menos una letra mayúscula (A-Z).";
     public const string ContrasenaSinMinuscula = "La contraseña debe incluir al menos una letra minúscula (a-z).";
     public const string ContrasenaSinNumero = "La contraseña debe incluir al menos un número (0-9).";
