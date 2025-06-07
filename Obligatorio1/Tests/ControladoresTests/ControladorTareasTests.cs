@@ -1,30 +1,31 @@
 using Controladores;
-using Repositorios;
-using Servicios.CaminoCritico;
-using Servicios.Gestores;
+using DTOs;
 using Servicios.Gestores.Interfaces;
-using Servicios.Notificaciones;
+using Moq;
 
 namespace Tests.ControladoresTests;
 
 [TestClass]
 public class ControladorTareasTests
 {
+    private Mock<IGestorTareas> _mockGestorTareas;
+    private ControladorTareas _controladorTareas;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        _mockGestorTareas = new Mock<IGestorTareas>();
+        _controladorTareas = new ControladorTareas(_mockGestorTareas.Object);
+    }
+
     [TestMethod]
     public void Constructor_CreaControladorOk()
     {
-        Notificador notificador = new Notificador();
-        CaminoCritico caminoCritico = new CaminoCritico();
-        RepositorioUsuarios repositorioUsuarios = new RepositorioUsuarios();
-        RepositorioProyectos repositorioProyectos = new RepositorioProyectos();
-        GestorProyectos gestorProyectos = new GestorProyectos(repositorioUsuarios, repositorioProyectos, notificador, caminoCritico);
-        IGestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuarios, notificador, caminoCritico);
-        
-        ControladorTareas controladorTareas = new ControladorTareas(gestorTareas);
-        Assert.IsNotNull(controladorTareas);
+        Assert.IsNotNull(_controladorTareas);
     }
+    
+    
     /*métodos a probar:
-     GestorTareas.EsMiembroDeTarea() 
     GestorTareas.ObtenerTareaPorId()
     GestorTareas.AgregarTareaAlProyecto()
     GestorTareas.CambiarEstadoTarea()
@@ -38,5 +39,5 @@ public class ControladorTareasTests
     GestorTareas.EliminarRecursoDeTarea()
     GestorTareas.AgregarMiembroATarea()
     GestorTareas.EliminarMiembroDeTarea()
-*/
+    */
 }
