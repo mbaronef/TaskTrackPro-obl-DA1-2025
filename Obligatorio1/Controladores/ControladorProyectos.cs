@@ -16,4 +16,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.CrearProyecto(nuevoProyecto, solicitante);
     }
+    
+    public void EliminarProyecto(int idProyecto, UsuarioDTO solicitante)
+    {
+        _gestorProyectos.EliminarProyecto(idProyecto, solicitante);
+    }
 }
