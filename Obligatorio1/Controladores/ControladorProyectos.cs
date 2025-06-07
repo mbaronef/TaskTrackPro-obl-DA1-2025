@@ -56,4 +56,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.AgregarMiembroAProyecto(idProyecto, solicitante, nuevoMiembro);
     }
+    
+    public void EliminarMiembroDelProyecto(int idProyecto, UsuarioDTO solicitante, int idMiembro)
+    {
+        _gestorProyectos.EliminarMiembroDelProyecto(idProyecto, solicitante, idMiembro);
+    }
 }
