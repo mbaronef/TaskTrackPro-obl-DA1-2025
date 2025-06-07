@@ -110,8 +110,20 @@ public class ControladorUsuariosTests
         _mockGestorUsuarios.Verify(g => g.AsignarAdministradorProyecto(solicitante, nuevoAdmin), Times.Once);
     }
 
+    [TestMethod]
+    public void DesasignarAdministradorProyecto_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        int nuevoAdmin = 2;
+        
+        _mockGestorUsuarios.Setup(g => g.DesasignarAdministradorProyecto(solicitante, nuevoAdmin));
 
+        _controladorUsuarios.DesasignarAdministradorProyecto(solicitante, nuevoAdmin);
+        
+        _mockGestorUsuarios.Verify(g => g.DesasignarAdministradorProyecto(solicitante, nuevoAdmin), Times.Once);
+    }
 
+    
 
 
 
