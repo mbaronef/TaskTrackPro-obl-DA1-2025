@@ -148,14 +148,7 @@ public class GestorUsuarios
             throw new ExcepcionPermisos(MensajesError.PrimerAdminSistema);
         }
     }
-
-    private void VerificarUsuarioNoEsMiembroDeProyecto(Usuario usuario)
-    {
-        if(usuario.CantidadProyectosAsignados > 0)
-        {
-            throw new ExcepcionPermisos(MensajesError.UsuarioMiembroDeProyecto);
-        }
-    }
+    
     private Usuario CrearUsuario(UsuarioDTO nuevoUsuarioDTO)
     {
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevoUsuarioDTO.Contrasena);
@@ -166,8 +159,7 @@ public class GestorUsuarios
     {
         PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "crear usuarios");
         _usuarios.Agregar(usuario);
-        string mensajeNotificacion =
-            $"Se creó un nuevo usuario: {usuario.Nombre} {usuario.Apellido}";
+        string mensajeNotificacion = MensajesNotificacion.UsuarioCreado(usuario.Nombre, usuario.Apellido);
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
     }
     
@@ -176,7 +168,7 @@ public class GestorUsuarios
         Usuario usuario = _usuarios.ObtenerPorId(idUsuario);
         if (usuario == null)
         {
-            throw new ExcepcionServicios("El usuario no existe");
+            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
         }
         return usuario;
     }

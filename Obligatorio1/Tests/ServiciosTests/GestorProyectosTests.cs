@@ -1,8 +1,10 @@
-/*using Dominio;
+using Dominio;
 using DTOs;
 using Repositorios;
+using Servicios.CaminoCritico;
 using Servicios.Excepciones;
 using Servicios.Gestores;
+using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Tests.ServiciosTests;
@@ -18,6 +20,8 @@ public class GestorProyectosTests
     private UsuarioDTO _adminDTO;
     private UsuarioDTO _adminSistema;
     private ProyectoDTO _proyecto;
+    private Notificador _notificador;
+    private CaminoCritico _caminoCritico;
 
     [TestInitialize]
     public void Inicializar()
@@ -26,9 +30,11 @@ public class GestorProyectosTests
         typeof(RepositorioProyectos).GetField("_cantidadProyectos",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
 
+        _notificador = new Notificador();
+        _caminoCritico = new CaminoCritico();
         _repositorioUsuarios = new RepositorioUsuarios();
         _repositorioProyectos = new RepositorioProyectos();
-        _gestor = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos);
+        _gestor = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
         _admin = CrearAdminProyecto();
         _adminDTO = UsuarioDTO.DesdeEntidad(_admin);
         _adminSistema = CrearAdminSistema();
@@ -79,7 +85,6 @@ public class GestorProyectosTests
         };
     }
 
-    //crearProyecto
     [TestMethod]
     public void CrearProyecto_AsignarIdCorrectamente()
     {
@@ -92,7 +97,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void CrearProyecto_LanzaExcepcionSiUsuarioNoTienePermisosDeAdminProyecto()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_usuarioNoAdmin);
@@ -101,7 +106,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void CrearProyecto_LanzaExcepcionSiSolicitanteYaAdministraOtroProyecto()
     {
         _admin.EstaAdministrandoUnProyecto = true;
@@ -122,14 +127,25 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void CrearProyecto_LanzaExcepcionSiNombreYaExiste()
     {
+        Usuario otroAdmin = CrearAdminProyecto();
         ProyectoDTO proyecto1 = CrearProyectoCon(_admin);
-        ProyectoDTO proyecto2 = CrearProyectoCon(_admin);
+        ProyectoDTO proyecto2 = CrearProyectoCon(otroAdmin);
 
         _gestor.CrearProyecto(proyecto1, _adminDTO);
-        _gestor.CrearProyecto(proyecto2, _adminDTO);
+        _gestor.CrearProyecto(proyecto2, UsuarioDTO.DesdeEntidad(otroAdmin));
+    }
+
+    [ExpectedException(typeof(ExcepcionUsuario))]
+    [TestMethod]
+    public void CrearProyecto_LanzaExcepcionSiSolicitanteNoExiste()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        UsuarioDTO usuarioInexistente = new UsuarioDTO() { Id = 9999, Nombre = "Inexistente" };
+
+        _gestor.CrearProyecto(proyecto, usuarioInexistente);
     }
 
     [TestMethod]
@@ -139,13 +155,12 @@ public class GestorProyectosTests
 
         _gestor.CrearProyecto(proyecto, _adminDTO);
 
-        Assert.AreEqual("Se creó el proyecto 'Proyecto'.", _admin.Notificaciones.First().Mensaje);
+        string mensajeEsperado = MensajesNotificacion.ProyectoCreado(proyecto.Nombre);
+        Assert.AreEqual(mensajeEsperado, _admin.Notificaciones.First().Mensaje);
     }
 
-    // eliminarProyecto
-
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarProyecto_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -157,7 +172,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void EliminarProyecto_LanzaExcepcionSiProyectoNoExiste()
     {
         _gestor.EliminarProyecto(1000, _adminDTO);
@@ -206,12 +221,14 @@ public class GestorProyectosTests
         miembro1 = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(miembro1.Id)); // actualización
         miembro2 = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(miembro2.Id));
 
-        Assert.AreEqual("Se eliminó el proyecto 'Proyecto'.", miembro1.Notificaciones.Last().Mensaje);
-        Assert.AreEqual("Se eliminó el proyecto 'Proyecto'.", miembro2.Notificaciones.Last().Mensaje);
+        string mensajeEsperado = MensajesNotificacion.ProyectoEliminado(proyecto.Nombre);
+        
+        Assert.AreEqual(mensajeEsperado, miembro1.Notificaciones.Last().Mensaje);
+        Assert.AreEqual(mensajeEsperado, miembro2.Notificaciones.Last().Mensaje);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void ModificarNombreDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -235,7 +252,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void ModificarNombreDelProyecto_LanzaExcepcionSiNombreYaExiste()
     {
         ProyectoDTO proyecto1 = CrearProyectoCon(_admin);
@@ -249,7 +266,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void ModificarNombreDelProyecto_LanzaExcepcionSiProyectoNoExiste()
     {
         _gestor.ModificarNombreDelProyecto(1000, "nuevo", _adminDTO);
@@ -270,20 +287,16 @@ public class GestorProyectosTests
 
         proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
-        string mensajeEsperado = "Se cambió el nombre del proyecto 'Proyecto' a 'Nuevo Nombre'.";
-
+        string mensajeEsperado = MensajesNotificacion.NombreProyectoModificado("Proyecto", "Nuevo Nombre"); 
         foreach (UsuarioListarDTO usuario in proyecto.Miembros)
         {
             Assert.AreEqual(2, usuario.Notificaciones.Count);
             Assert.AreEqual(mensajeEsperado, usuario.Notificaciones[1].Mensaje);
         }
     }
-
-
-    // modificacion de la descripcion del proyecto
-
+    
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void ModificarDescripcionDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -296,7 +309,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void ModificarDescripcionDelProyecto_LanzaExcepcionSiProyectoNoExiste()
     {
         _gestor.ModificarDescripcionDelProyecto(1000, "Nueva descripcion", _adminDTO);
@@ -328,8 +341,7 @@ public class GestorProyectosTests
         string nuevaDescripcion = "Nueva descripcion";
         _gestor.ModificarDescripcionDelProyecto(proyecto.Id, nuevaDescripcion, _adminDTO);
 
-        string mensajeEsperado =
-            $"Se cambió la descripción del proyecto '{proyecto.Nombre}' a '{nuevaDescripcion}'.";
+        string mensajeEsperado = MensajesNotificacion.DescripcionProyectoModificada(proyecto.Nombre, nuevaDescripcion);
 
         proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
@@ -339,10 +351,8 @@ public class GestorProyectosTests
         }
     }
 
-    // modificacion de la fecha de inicio del proyecto
-
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void ModificarFechaDeInicioDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -356,7 +366,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void ModificarFechaDeInicioDelProyecto_LanzaExcepcionSiProyectoNoExiste()
     {
         DateTime nuevaFecha = DateTime.Now;
@@ -392,8 +402,7 @@ public class GestorProyectosTests
 
         proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
-        string mensajeEsperado =
-            $"Se cambió la fecha de inicio del proyecto '{proyecto.Nombre}' a '{nuevaFecha:dd/MM/yyyy}'.";
+        string mensajeEsperado = MensajesNotificacion.FechaInicioProyectoModificada(proyecto.Nombre, nuevaFecha);
 
         foreach (var usuario in proyecto.Miembros)
         {
@@ -450,7 +459,7 @@ public class GestorProyectosTests
 
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void CambiarAdministradorDeProyecto_LanzaExcepcionSiSolicitanteNoEsAdminSistema()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -462,7 +471,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void CambiarAdministradorDeProyecto_LanzaExcepcionSiProyectoNoExiste()
     {
         _gestor.CambiarAdministradorDeProyecto(_adminSistema, 1000, 1);
@@ -470,7 +479,7 @@ public class GestorProyectosTests
 
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void CambiarAdministradorDeProyecto_LanzaExcepcionSiNuevoAdminNoEsMiembro()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -480,7 +489,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void CambiarAdministradorDeProyecto_LanzaExcepcionNuevoAdminYaAdministraOtroProyecto()
     {
         Usuario nuevoAdmin = CrearAdminProyecto();
@@ -495,7 +504,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void CambiarAdministradorDeProyecto_LanzaExcepcion_NuevoAdminNoTienePermisosDeAdminProyecto()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -521,25 +530,23 @@ public class GestorProyectosTests
 
         proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
-        string msg =
-            $"Se cambió el administrador del proyecto '{proyecto.Nombre}'. El nuevo administrador es '{nuevoAdmin}'.";
+        string msg = MensajesNotificacion.AdministradorProyectoModificado(proyecto.Nombre,
+            $"{nuevoAdmin.Nombre} {nuevoAdmin.Apellido} ({nuevoAdmin.Email})");
 
         Assert.AreEqual(msg, _admin.Notificaciones.Last().Mensaje);
         Assert.AreEqual(msg, nuevoAdmin.Notificaciones.Last().Mensaje);
         Assert.AreEqual(msg, _usuarioNoAdmin.Notificaciones.Last().Mensaje);
     }
 
-    //agregar miembro al proyecto
-
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void AgregarMiembro_LanzaExcepcionSiProyectoNoExiste()
     {
         _gestor.AgregarMiembroAProyecto(1000, _adminDTO, UsuarioDTO.DesdeEntidad(_usuarioNoAdmin));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarMiembro_LanzaExcepcionSiSolicitanteNoEsAdminProyecto()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -551,7 +558,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarMiembro_LanzaExcepcionSolicitanteNoEsAdministradorDelProyecto()
     {
         UsuarioDTO solicitante = UsuarioDTO.DesdeEntidad(CrearAdminProyecto());
@@ -586,28 +593,24 @@ public class GestorProyectosTests
 
         proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
-        string esperado =
-            $"Se agregó a un nuevo miembro (id {_usuarioNoAdmin.Id}) al proyecto '{proyecto.Nombre}'.";
+        string esperado = MensajesNotificacion.MiembroAgregado(proyecto.Nombre, _usuarioNoAdmin.Id);
 
         foreach (var usuario in proyecto.Miembros)
         {
             Assert.IsTrue(usuario.Notificaciones.Any(n => n.Mensaje == esperado));
         }
-
         Assert.IsTrue(proyecto.Administrador.Notificaciones.Any(n => n.Mensaje == esperado));
     }
 
-    //eliminar miembro del proyecto
-
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void EliminarMiembroDelProyecto_ProyectoNoExiste_LanzaExcepcion()
     {
         _gestor.EliminarMiembroDelProyecto(1000, _adminDTO, _usuarioNoAdmin.Id);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarMiembroDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -620,7 +623,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarMiembroDelProyecto_LanzaExcepcionSolicitanteNoEsAdministradorDelProyecto()
     {
         UsuarioDTO solicitante = UsuarioDTO.DesdeEntidad(CrearAdminProyecto());
@@ -633,7 +636,7 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarMiembroDelProyecto_LanzaExcepcionSiUsuarioNoEsMiembroDelProyecto()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -643,10 +646,10 @@ public class GestorProyectosTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void EliminarMiembroConTareaAsignada_LanzaExcepcion()
     {
-        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios);
+        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios, _notificador, _caminoCritico);
         TareaDTO tarea = new TareaDTO()
         {
             Titulo = "Tarea", Descripcion = "Descripcion", DuracionEnDias = 2,
@@ -693,7 +696,7 @@ public class GestorProyectosTests
 
         _gestor.EliminarMiembroDelProyecto(proyecto.Id, _adminDTO, miembro1.Id);
 
-        string esperado = $"Se eliminó a el miembro (id {miembro1.Id}) del proyecto '{proyecto.Nombre}'.";
+        string esperado = MensajesNotificacion.MiembroEliminado(proyecto.Nombre, miembro1.Id);
 
         _adminDTO = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_adminDTO.Id)); // actualización
         miembro2 = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(miembro2.Id));
@@ -744,10 +747,9 @@ public class GestorProyectosTests
 
         Assert.AreEqual(proyecto.Id, resultado.Id);
     }
-
-
+    
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void ObtenerProyectoDelAdministrador_LanzaExcepcionSiNoExisteProyectoConEseAdmin()
     {
         _gestor.ObtenerProyectoDelAdministrador(_admin.Id);
@@ -843,7 +845,7 @@ public class GestorProyectosTests
     [TestMethod]
     public void CalcularCaminoCritico_MarcaTareasCriticasCorrectamente()
     {
-        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios);
+        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios, _notificador, _caminoCritico);
         
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
         _gestor.CrearProyecto(proyecto, _adminDTO);
@@ -866,4 +868,4 @@ public class GestorProyectosTests
         Assert.AreEqual(3, tareasCriticas.Count); // Todas las tareas deberían estar en el camino crítico
     }
 
-}*/
+}

@@ -27,7 +27,7 @@ public static class PermisosUsuariosServicio
 
         if (usuario is null)
         {
-            throw new ExcepcionProyecto(MensajesError.UsuarioNoMiembroDelProyecto);
+            throw new ExcepcionPermisos(MensajesError.UsuarioNoMiembroDelProyecto);
         }
     }
     
@@ -73,7 +73,7 @@ public static class PermisosUsuariosServicio
     {
         if (!usuario.EsAdministradorSistema && !usuario.EstaAdministrandoUnProyecto)
         {
-            throw new ExcepcionServicios($"No tiene los permisos necesarios para {accion}");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara(accion));
         }
     }
     
@@ -81,7 +81,7 @@ public static class PermisosUsuariosServicio
     {
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
         {
-            throw new ExcepcionServicios("No tiene los permisos necesarios para autogenerar la contraseña del usuario");
+            throw new ExcepcionPermisos(MensajesError.PermisoDenegadoPara("autogenerar la contraseña del usuario"));
         }
     }
     

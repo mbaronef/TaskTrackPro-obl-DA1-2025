@@ -1,8 +1,9 @@
-/*using Dominio;
+using Dominio;
 using DTOs;
 using Repositorios;
 using Servicios.Excepciones;
 using Servicios.Gestores;
+using Servicios.Notificaciones;
 
 namespace Tests.ServiciosTests;
 
@@ -12,23 +13,29 @@ public class GestorUsuariosTests
     private GestorUsuarios _gestorUsuarios;
     private UsuarioDTO _adminSistemaDTO;
     private RepositorioUsuarios _repositorioUsuarios;
+    private Notificador _notificador;
 
     [TestInitialize]
     public void SetUp()
     {
+        // setup para reiniciar las variables estáticas, sin agregar un método en la clase que no sea coherente con el diseño
+        typeof(RepositorioUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+
+        _notificador = new Notificador();
         _repositorioUsuarios = new RepositorioUsuarios();
-        _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios);
+        _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios, _notificador);
         _adminSistemaDTO = UsuarioDTO.DesdeEntidad(_gestorUsuarios.AdministradorInicial);
     }
-    
+
     private UsuarioDTO CrearUsuarioDTO(string nombre, string apellido, string email, string contrasena)
     {
         return new UsuarioDTO()
         {
-            Nombre = nombre, Apellido = apellido, FechaNacimiento = new DateTime(2007,4,28), Email = email,Contrasena = contrasena
+            Nombre = nombre, Apellido = apellido, FechaNacimiento = new DateTime(2007, 4, 28), Email = email,
+            Contrasena = contrasena
         };
     }
-    
+
     private UsuarioDTO CrearYAsignarAdminSistema()
     {
         UsuarioDTO usuario = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
@@ -50,7 +57,7 @@ public class GestorUsuariosTests
     {
         UsuarioDTO usuario1 = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         UsuarioDTO usuario2 = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO,usuario1);
+        _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario1);
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario2);
 
         Assert.AreEqual(3, _gestorUsuarios.ObtenerTodos().Count);
@@ -58,14 +65,14 @@ public class GestorUsuariosTests
         Assert.AreEqual(usuario2.Id, _gestorUsuarios.ObtenerTodos().ElementAt(2).Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminDeSistemaNoPuedeAgregarUsuario()
-    {  
+    {
         UsuarioDTO solicitante = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
-        _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO,solicitante);
+        _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, solicitante);
         UsuarioDTO nuevoUsuario = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
-        _gestorUsuarios.CrearYAgregarUsuario(solicitante,nuevoUsuario);
+        _gestorUsuarios.CrearYAgregarUsuario(solicitante, nuevoUsuario);
     }
 
     [TestMethod]
@@ -80,15 +87,15 @@ public class GestorUsuariosTests
         Assert.AreEqual(2, _gestorUsuarios.ObtenerTodos().Count);
         Assert.AreEqual(usuario1.Id, _gestorUsuarios.ObtenerTodos().ElementAt(1).Id);
     }
-    
-    [ExpectedException(typeof(ExcepcionServicios))]
+
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void GestorNoEliminaPrimerAdministradorSistema()
     {
-        _gestorUsuarios.EliminarUsuario(_adminSistemaDTO,1);
+        _gestorUsuarios.EliminarUsuario(_adminSistemaDTO, 1);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminDeSistemaNoPuedeEliminarUsuario()
     {
@@ -98,7 +105,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario2);
         _gestorUsuarios.EliminarUsuario(usuario1, usuario2.Id);
     }
-    
+
     [TestMethod]
     public void UsuarioSePuedeEliminarASiMismo()
     {
@@ -119,7 +126,7 @@ public class GestorUsuariosTests
         Assert.AreEqual(usuario1.Id, busqueda.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionUsuario))]
     [TestMethod]
     public void ErrorSiSeBuscaUnUsuarioNoRegistrado()
     {
@@ -134,7 +141,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuario.EsAdministradorSistema);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void SoloUnAdminDeSistemaPuedeAsignarOtro()
     {
@@ -142,7 +149,7 @@ public class GestorUsuariosTests
         UsuarioDTO usuario2 = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario1);
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario2);
-        
+
         _gestorUsuarios.AgregarAdministradorSistema(usuario1, usuario2.Id);
     }
 
@@ -154,12 +161,12 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, nuevoAdminProyecto);
 
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
-        
+
         nuevoAdminProyecto = _gestorUsuarios.ObtenerUsuarioPorId(nuevoAdminProyecto.Id); // actualización
         Assert.IsTrue(nuevoAdminProyecto.EsAdministradorProyecto);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNoPuedeAsignarAdministradorProyecto()
     {
@@ -184,7 +191,7 @@ public class GestorUsuariosTests
         Assert.IsFalse(nuevoAdminProyecto.EsAdministradorProyecto);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNoPuedeEliminarAdministradorProyecto()
     {
@@ -199,7 +206,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ErrorEliminarAdministradorProyectoSiUsuarioNoEsAdministradorProyecto()
     {
@@ -209,8 +216,8 @@ public class GestorUsuariosTests
 
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
-    
-    [ExpectedException(typeof(ExcepcionServicios))]
+
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ErrorEliminarAdministradorProyectoSiUsuarioEstaAdministrandoUnProyecto()
     {
@@ -218,14 +225,15 @@ public class GestorUsuariosTests
         UsuarioDTO nuevoAdminProyecto = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, nuevoAdminProyecto);
         _gestorUsuarios.AsignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
-        
-        Usuario nuevoAdmin = _repositorioUsuarios.ObtenerPorId(nuevoAdminProyecto.Id); // esto lo gestiona el gestor de proyectos
+
+        Usuario nuevoAdmin =
+            _repositorioUsuarios.ObtenerPorId(nuevoAdminProyecto.Id); // esto lo gestiona el gestor de proyectos
         nuevoAdmin.EstaAdministrandoUnProyecto = true;
 
         _gestorUsuarios.DesasignarAdministradorProyecto(usuarioSolicitante, nuevoAdminProyecto.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ErrorEliminarUsuarioMiembroDeProyecto()
     {
@@ -234,8 +242,9 @@ public class GestorUsuariosTests
         adminDTO.EsAdministradorProyecto = true;
 
         Usuario admin = _repositorioUsuarios.ObtenerPorId(adminDTO.Id);
-        Proyecto proyecto = new Proyecto("Proyecto", "descripción",DateTime.Today.AddDays(1), admin, new List<Usuario>());
-        
+        Proyecto proyecto =
+            new Proyecto("Proyecto", "descripción", DateTime.Today.AddDays(1), admin, new List<Usuario>());
+
         _gestorUsuarios.EliminarUsuario(adminDTO, adminDTO.Id);
     }
 
@@ -277,7 +286,7 @@ public class GestorUsuariosTests
         Assert.IsTrue(usuario.Autenticar("TaskTrackPro@2025"));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoNoPuedeReiniciarContrasena()
     {
@@ -293,15 +302,19 @@ public class GestorUsuariosTests
     public void AdminSistemaAutogeneraUnaContraseñaCorrectamente()
     {
         UsuarioDTO usuarioSolicitante = CrearYAsignarAdminSistema();
-        UsuarioDTO usuarioObjetivoDTO = new UsuarioDTO(){
-                Nombre = "José", Apellido = "Perez", FechaNacimiento = new DateTime(1999, 9, 1), Email = "unemail@gmail.com", Contrasena = "Contrase#a9"};
+        UsuarioDTO usuarioObjetivoDTO = new UsuarioDTO()
+        {
+            Nombre = "José", Apellido = "Perez", FechaNacimiento = new DateTime(1999, 9, 1),
+            Email = "unemail@gmail.com", Contrasena = "Contrase#a9"
+        };
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivoDTO);
-        
+
         _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id);
-        
+
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
-        string nuevaContrasena = ultimaNotificacion.Mensaje.Replace("Se modificó su contraseña. La nueva contraseña es ", "");
+        string nuevaContrasena =
+            ultimaNotificacion.Mensaje.Replace("Se modificó su contraseña. La nueva contraseña es ", "");
         Assert.IsFalse(usuarioObjetivo.Autenticar("Contrase#a9"));
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
@@ -318,15 +331,16 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivoDTO);
 
         _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id);
-        
+
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
-        string nuevaContrasena = ultimaNotificacion.Mensaje.Replace("Se modificó su contraseña. La nueva contraseña es ", "");
+        string nuevaContrasena =
+            ultimaNotificacion.Mensaje.Replace("Se modificó su contraseña. La nueva contraseña es ", "");
         Assert.IsFalse(usuarioObjetivo.Autenticar("Contrase#a9"));
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminDeSistemaNiDeProyectoPuedeAutogenerarContrasena()
     {
@@ -346,12 +360,12 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivoDTO);
 
         string nuevaContrasena = "NuevaContraseña/1";
-        _gestorUsuarios.ModificarContrasena(usuarioSolicitante,usuarioObjetivoDTO.Id, nuevaContrasena);
-        
+        _gestorUsuarios.ModificarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id, nuevaContrasena);
+
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
-    
+
     [TestMethod]
     public void AdminProyectoPuedeModificarContrasenaDeUsuarioCorrectamente()
     {
@@ -364,8 +378,8 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivoDTO);
 
         string nuevaContrasena = "NuevaContraseña/1";
-        _gestorUsuarios.ModificarContrasena(usuarioSolicitante,usuarioObjetivoDTO.Id, nuevaContrasena);
-        
+        _gestorUsuarios.ModificarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id, nuevaContrasena);
+
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
     }
@@ -375,14 +389,14 @@ public class GestorUsuariosTests
     {
         UsuarioDTO usuarioDTO = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioDTO);
-        string nuevaContrasena =  "NuevaContraseña/1";
+        string nuevaContrasena = "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuarioDTO, usuarioDTO.Id, nuevaContrasena);
-        
+
         Usuario usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
         Assert.IsTrue(usuario.Autenticar(nuevaContrasena));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminSistemaNiAdminProyectoNoPuedeModificarContrasena()
     {
@@ -390,12 +404,12 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioSolicitante);
         UsuarioDTO usuarioObjetivo = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivo);
-        
+
         string nuevaContrasena = "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuarioSolicitante, usuarioObjetivo.Id, nuevaContrasena);
     }
-    
-    [ExpectedException(typeof(ExcepcionServicios))]
+
+    [ExpectedException(typeof(ExcepcionContrasena))]
     [TestMethod]
     public void DaErrorSiSeCambiaContrasenaInvalida()
     {
@@ -435,7 +449,9 @@ public class GestorUsuariosTests
 
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
-        Assert.AreEqual("Se reinició su contraseña. La nueva contraseña es TaskTrackPro@2025", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.ContrasenaReiniciada("TaskTrackPro@2025");
+        
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -447,11 +463,12 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivoDTO);
 
         _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id);
-        
+
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
-        string nuevaContrasena = ultimaNotificacion.Mensaje.Replace("Se modificó su contraseña. La nueva contraseña es ", "");
-        
+        string nuevaContrasena =
+            ultimaNotificacion.Mensaje.Replace("Se modificó su contraseña. La nueva contraseña es ", "");
+
         Assert.IsTrue(ultimaNotificacion.Mensaje.StartsWith("Se modificó su contraseña. La nueva contraseña es "));
         Assert.IsFalse(string.IsNullOrEmpty(nuevaContrasena)); // asegurar que hay una nueva contraseña en el mensaje
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
@@ -466,11 +483,14 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivoDTO);
 
         string nuevaContrasena = "NuevaContraseña/1";
-        _gestorUsuarios.ModificarContrasena(usuarioSolicitante,usuarioObjetivoDTO.Id, nuevaContrasena);
-        
+        _gestorUsuarios.ModificarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id, nuevaContrasena);
+
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
-        Assert.AreEqual($"Se modificó su contraseña. La nueva contraseña es {nuevaContrasena}", ultimaNotificacion.Mensaje);
+        string mensajeEsperado = MensajesNotificacion.ContrasenaModificada(nuevaContrasena);
+        
+        Assert.AreEqual(mensajeEsperado,
+            ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
 
@@ -479,9 +499,9 @@ public class GestorUsuariosTests
     {
         UsuarioDTO usuarioDTO = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioDTO);
-        string nuevaContrasena =  "NuevaContraseña/1";
+        string nuevaContrasena = "NuevaContraseña/1";
         _gestorUsuarios.ModificarContrasena(usuarioDTO, usuarioDTO.Id, nuevaContrasena);
-        
+
         Usuario usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
         Assert.AreEqual(0, usuario.Notificaciones.Count());
     }
@@ -492,11 +512,13 @@ public class GestorUsuariosTests
         UsuarioDTO admin2DTO = CrearYAsignarAdminSistema();
         UsuarioDTO usuario = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario);
-        
+
         Usuario admin2 = _repositorioUsuarios.ObtenerPorId(admin2DTO.Id);
         Notificacion ultimaNotificacion = admin2.Notificaciones.Last();
+        string mensajeEsperado = MensajesNotificacion.UsuarioCreado(usuario.Nombre, usuario.Apellido);
+        
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
-        Assert.AreEqual("Se creó un nuevo usuario: Juan Pérez", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
     }
 
     [TestMethod]
@@ -508,7 +530,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario);
         Assert.AreEqual(0, adminSistema.Notificaciones.Count());
     }
-    
+
     [TestMethod]
     public void SeNotificaAAdministradoresSistemaCuandoSeEliminaUnUsuario()
     {
@@ -516,11 +538,13 @@ public class GestorUsuariosTests
         UsuarioDTO usuario = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario);
         _gestorUsuarios.EliminarUsuario(_adminSistemaDTO, usuario.Id);
-        
+
         Usuario admin2 = _repositorioUsuarios.ObtenerPorId(admin2DTO.Id);
         Notificacion ultimaNotificacion = admin2.Notificaciones.Last();
+        string mensajeEsperado = MensajesNotificacion.UsuarioEliminado(usuario.Nombre, usuario.Apellido);
+        
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
-        Assert.AreEqual("Se eliminó un nuevo usuario. Nombre: Juan, Apellido: Pérez", ultimaNotificacion.Mensaje);
+        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
     }
 
     [TestMethod]
@@ -544,7 +568,7 @@ public class GestorUsuariosTests
         Assert.AreEqual(usuario.Id, obtenido.Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionUsuario))]
     [TestMethod]
     public void LoginIncorrectoConContraseñaIncorrecta()
     {
@@ -553,13 +577,13 @@ public class GestorUsuariosTests
         UsuarioDTO obtenido = _gestorUsuarios.LogIn(usuario.Email, "ContraseñaIncorrecta");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionUsuario))]
     [TestMethod]
     public void LoginIncorrectoConEmailNoRegistrado()
     {
         UsuarioDTO obtenido = _gestorUsuarios.LogIn("unemail@noregistrado.com", "unaContraseña");
     }
-    
+
     [TestMethod]
     public void SeObtienenLosUsuariosQueNoEstanEnUnaLista()
     {
@@ -569,20 +593,20 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario1);
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario2);
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario3);
-        
+
         List<UsuarioListarDTO> usuarios = new List<UsuarioListarDTO>
         {
             UsuarioListarDTO.DesdeDTO(usuario1),
             UsuarioListarDTO.DesdeDTO(usuario2),
             UsuarioListarDTO.DesdeDTO(_adminSistemaDTO),
         };
-        List<UsuarioListarDTO> usuariosNoEnLista  = _gestorUsuarios.ObtenerUsuariosDiferentes(usuarios);
-        
-        Assert.AreEqual(1, usuariosNoEnLista.Count); 
+        List<UsuarioListarDTO> usuariosNoEnLista = _gestorUsuarios.ObtenerUsuariosDiferentes(usuarios);
+
+        Assert.AreEqual(1, usuariosNoEnLista.Count);
         Assert.AreEqual(usuario3.Id, usuariosNoEnLista.ElementAt(0).Id);
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void ValidarQueUnUsuarioNoEsPrimerAdminLanzaExcepcionConElPrimerAdmin()
     {
@@ -597,10 +621,10 @@ public class GestorUsuariosTests
 
         Usuario usuarioDominio = _repositorioUsuarios.ObtenerPorId(usuario.Id);
         usuarioDominio.RecibirNotificacion("notificación"); //se hardcodea por simplicidad de test
-        
+
         _gestorUsuarios.BorrarNotificacion(usuario.Id, usuarioDominio.Notificaciones.First().Id);
-        
+
         Assert.AreEqual(0, usuarioDominio.Notificaciones.Count());
     }
-}*/
+}
 

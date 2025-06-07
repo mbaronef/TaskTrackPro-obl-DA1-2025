@@ -140,7 +140,7 @@ public class GestorTareas : IGestorTareas
         {
             _caminoCritico.CalcularCaminoCritico(proyecto);
         }
-        catch (ExcepcionServicios ex)
+        catch (ExcepcionCaminoCritico)
         {
             tarea.EliminarDependencia(dependencia.Tarea.Id);
             throw new ExcepcionTarea(MensajesError.GeneraCiclos);
@@ -221,7 +221,7 @@ public class GestorTareas : IGestorTareas
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
         if (tarea == null)
-            throw new ExcepcionServicios("Tarea no existente");
+            throw new ExcepcionTarea(MensajesError.TareaNoExistente);
         return tarea;
     }
     private Proyecto ObtenerProyectoValidandoAdmin(int idProyecto, Usuario solicitante)
@@ -295,7 +295,7 @@ public class GestorTareas : IGestorTareas
         var usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
         if (usuario == null)
         {
-            throw new ExcepcionServicios($"Usuario no encontrado.");
+            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
         }
         return usuario;
     }

@@ -22,35 +22,35 @@ public class UtilidadesContrasenaTests
         Assert.IsTrue(BCrypt.Net.BCrypt.Verify(unaContrasena, contrasenaEncriptada));
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionContrasena))]
     [TestMethod]
     public void IngresoDeContrasenaMuyCorta()
     {
         UtilidadesContrasena.ValidarYEncriptarContrasena("P3e.");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionContrasena))]
     [TestMethod]
     public void IngresoDeContrasenaSinMayusculas()
     {
         UtilidadesContrasena.ValidarYEncriptarContrasena("minuscula1@");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionContrasena))]
     [TestMethod]
     public void IngresoDeContrasenaSinMinusculas()
     {
         UtilidadesContrasena.ValidarYEncriptarContrasena("MAYUSCULA1@");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionContrasena))]
     [TestMethod]
     public void IngresoDeContrasenaSinNumeros()
     {
         UtilidadesContrasena.ValidarYEncriptarContrasena("CoNtRaSeN@");
     }
 
-    [ExpectedException(typeof(ExcepcionServicios))]
+    [ExpectedException(typeof(ExcepcionContrasena))]
     [TestMethod]
     public void IngresoDeContrasenaSinCaracterEspecial()
     {

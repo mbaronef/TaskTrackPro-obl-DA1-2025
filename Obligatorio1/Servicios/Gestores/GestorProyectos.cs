@@ -239,7 +239,7 @@ public class GestorProyectos
         
         if(proyecto is null)
         {
-            throw new ExcepcionServicios("El proyecto no existe.");
+            throw new ExcepcionProyecto(MensajesError.ProyectoNoEncontrado);
         }
 
         return proyecto;
@@ -266,7 +266,7 @@ public class GestorProyectos
         Usuario usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
         if (usuario == null)
         {
-            throw new ExcepcionServicios($"Usuario no encontrado.");
+            throw new ExcepcionUsuario(MensajesError.UsuarioNoEncontrado);
         }
         return usuario;
     }

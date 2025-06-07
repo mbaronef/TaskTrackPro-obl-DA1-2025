@@ -276,7 +276,7 @@
             {
                 if (Sesion.UsuarioLogueado.CantidadProyectosAsignados > 0)
                 {
-                    throw new ExcepcionServicios("El usuario no puede eliminarse porque está asignado a uno o más proyectos.");
+                    throw new ExcepcionContrasena("El usuario no puede eliminarse porque está asignado a uno o más proyectos.");
                 }
             }
             catch (Exception ex)
