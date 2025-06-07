@@ -189,6 +189,21 @@ public class ControladorTareasTests
     }
     
     [TestMethod]
+    public void EliminarMiembroDeTarea_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idTarea = 1;
+        int idProyecto = 1;
+        UsuarioDTO miembroAEliminar = new UsuarioDTO { Id = 2 };
+
+        _mockGestorTareas.Setup(g => g.EliminarMiembroDeTarea(usuario, idTarea, idProyecto, miembroAEliminar));
+
+        _controladorTareas.EliminarMiembroDeTarea(usuario, idTarea, idProyecto, miembroAEliminar);
+
+        _mockGestorTareas.Verify(g => g.EliminarMiembroDeTarea(usuario, idTarea, idProyecto, miembroAEliminar), Times.Once);
+    }
+    
+    [TestMethod]
     public void AgregarRecursoATarea_LlamaCorrectamenteAGestor()
     {
         UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
