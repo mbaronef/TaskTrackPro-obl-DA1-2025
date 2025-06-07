@@ -77,4 +77,9 @@ public class ControladorUsuarios
         return _gestorUsuarios.ObtenerUsuariosDiferentes(usuarios);
     }
 
+    public void ValidarUsuarioNoEsAdministradorInicial(int idUsuario)
+    {
+        _gestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(idUsuario);
+    }
+
 }
