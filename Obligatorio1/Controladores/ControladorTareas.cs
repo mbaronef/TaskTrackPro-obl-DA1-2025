@@ -41,7 +41,12 @@ public class ControladorTareas
     {
         _gestorTareas.ModificarDuracionTarea(solicitanteDTO, idTarea, idProyecto, nuevaDuracion);
     }
-    
+
+    public void ModificarFechaInicioTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, DateTime nuevaFecha)
+    {
+        _gestorTareas.ModificarFechaInicioTarea(solicitanteDTO, idTarea, idProyecto, nuevaFecha);
+    }
+
     public void CambiarEstadoTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto,
         EstadoTareaDTO nuevoEstadoDTO)
     {
