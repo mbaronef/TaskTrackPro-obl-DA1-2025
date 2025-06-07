@@ -77,7 +77,7 @@ public class ControladorUsuariosTests
 
         _mockGestorUsuarios.Setup(g => g.ObtenerUsuarioPorId(idUsuario)).Returns(usuarioEsperado);
 
-        TareaDTO resultado = _controladorUsuarios.ObtenerUsuarioPorId(idUsuario);
+        UsuarioDTO resultado = _controladorUsuarios.ObtenerUsuarioPorId(idUsuario);
 
         Assert.AreEqual(usuarioEsperado.Id, resultado.Id);
         _mockGestorUsuarios.Verify(g => g.ObtenerUsuarioPorId(idUsuario), Times.Once);

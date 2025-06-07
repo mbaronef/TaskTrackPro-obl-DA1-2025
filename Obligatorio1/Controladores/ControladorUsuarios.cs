@@ -27,4 +27,9 @@ public class ControladorUsuarios
         return _gestorUsuarios.ObtenerTodos();
     }
 
+    public UsuarioDTO ObtenerUsuarioPorId(int idUsuario)
+    {
+        return _gestorUsuarios.ObtenerUsuarioPorId(idUsuario);
+    }
+
 }
