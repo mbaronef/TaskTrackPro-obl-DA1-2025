@@ -87,4 +87,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.CalcularCaminoCritico(proyecto);
     }
+    
+    public bool EsAdministradorDeProyecto(UsuarioDTO usuario, int idProyecto)
+    {
+        return _gestorProyectos.EsAdministradorDeProyecto(usuario, idProyecto);
+    }
 }
