@@ -47,7 +47,13 @@ public class ControladorTareas
     {
         _gestorTareas.CambiarEstadoTarea(solicitanteDTO, idTarea, idProyecto, nuevoEstadoDTO);
     }
-    
+
+    public void AgregarDependenciaATarea(UsuarioDTO solicitanteDTO, int idTarea, int idTareaDependencia, int idProyecto,
+        string tipoDependencia)
+    {
+        _gestorTareas.AgregarDependenciaATarea(solicitanteDTO, idTarea, idTareaDependencia, idProyecto, tipoDependencia);
+    }
+
     public TareaDTO ObtenerTareaPorId(int idProyecto, int idTarea)
     {
         return _gestorTareas.ObtenerTareaPorId(idProyecto, idTarea);
