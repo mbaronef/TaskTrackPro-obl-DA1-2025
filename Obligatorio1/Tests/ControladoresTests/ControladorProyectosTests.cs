@@ -232,4 +232,16 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.NotificarAdministradoresDeProyectos(proyectos, mensaje), Times.Once);
     }
+    
+    [TestMethod]
+    public void CalcularCaminoCritico_LlamaCorrectamenteAGestor()
+    {
+        var proyecto = new ProyectoDTO { Id = 1 };
+
+        _mockGestorProyectos.Setup(g => g.CalcularCaminoCritico(proyecto));
+
+        _controladorProyectos.CalcularCaminoCritico(proyecto);
+
+        _mockGestorProyectos.Verify(g => g.CalcularCaminoCritico(proyecto), Times.Once);
+    }
 }
