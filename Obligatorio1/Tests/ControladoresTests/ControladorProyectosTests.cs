@@ -70,4 +70,19 @@ public class ControladorProyectosTests
         Assert.AreEqual("Proyecto B", resultado[1].Nombre);
         _mockGestorProyectos.Verify(g => g.ObtenerTodos(), Times.Once);
     }
+    
+    [TestMethod]
+    public void ObtenerProyectoPorId_LlamaCorrectamenteAGestorYDevuelveProyecto()
+    {
+        int idProyecto = 1;
+        var proyectoEsperado = new ProyectoDTO { Id = idProyecto, Nombre = "Proyecto Test" };
+
+        _mockGestorProyectos.Setup(g => g.ObtenerProyectoPorId(idProyecto)).Returns(proyectoEsperado);
+
+        var resultado = _controladorProyectos.ObtenerProyectoPorId(idProyecto);
+
+        Assert.AreEqual(idProyecto, resultado.Id);
+        Assert.AreEqual("Proyecto Test", resultado.Nombre);
+        _mockGestorProyectos.Verify(g => g.ObtenerProyectoPorId(idProyecto), Times.Once);
+    }
 }
