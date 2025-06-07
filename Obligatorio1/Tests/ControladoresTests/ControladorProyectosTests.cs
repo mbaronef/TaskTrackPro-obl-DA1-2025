@@ -85,4 +85,18 @@ public class ControladorProyectosTests
         Assert.AreEqual("Proyecto Test", resultado.Nombre);
         _mockGestorProyectos.Verify(g => g.ObtenerProyectoPorId(idProyecto), Times.Once);
     }
+    
+    [TestMethod]
+    public void ModificarNombreDelProyecto_LlamaCorrectamenteAGestor()
+    {
+        int idProyecto = 1;
+        var solicitante = new UsuarioDTO { Id = 1 };
+        string nuevoNombre = "Nuevo Proyecto";
+
+        _mockGestorProyectos.Setup(g => g.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante));
+
+        _controladorProyectos.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante);
+
+        _mockGestorProyectos.Verify(g => g.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante), Times.Once);
+    }
 }
