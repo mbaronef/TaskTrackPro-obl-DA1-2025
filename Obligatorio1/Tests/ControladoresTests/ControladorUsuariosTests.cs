@@ -68,6 +68,20 @@ public class ControladorUsuariosTests
         _mockGestorUsuarios.Verify(g => g.ObtenerTodos(), Times.Once);
         
     }
+
+    [TestMethod]
+    public void ObtenerUsuarioPorId_LlamaCorrectamenteAGestor()
+    {
+        int idUsuario = 1;
+        UsuarioDTO usuarioEsperado = new UsuarioDTO { Id = idUsuario };
+
+        _mockGestorUsuarios.Setup(g => g.ObtenerUsuarioPorId(idUsuario)).Returns(usuarioEsperado);
+
+        TareaDTO resultado = _controladorUsuarios.ObtenerUsuarioPorId(idUsuario);
+
+        Assert.AreEqual(usuarioEsperado.Id, resultado.Id);
+        _mockGestorUsuarios.Verify(g => g.ObtenerUsuarioPorId(idUsuario), Times.Once);
+    }
     
     
     
