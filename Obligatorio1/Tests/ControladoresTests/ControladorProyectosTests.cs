@@ -24,4 +24,18 @@ public class ControladorProyectosTests
     {
         Assert.IsNotNull(_controladorProyectos);
     }
+
+
+    [TestMethod]
+    public void CrearProyecto_LlamaCorrectamenteAlGestor()
+    {
+        var solicitante = new UsuarioDTO { Id = 1 };
+        var nuevoProyecto = new ProyectoDTO { Nombre = "Proyecto Test" };
+
+        _mockGestorProyectos.Setup(g => g.CrearProyecto(nuevoProyecto, solicitante));
+
+        _controladorProyectos.CrearProyecto(nuevoProyecto, solicitante);
+
+        _mockGestorProyectos.Verify(g => g.CrearProyecto(nuevoProyecto, solicitante), Times.Once);
+    }
 }
