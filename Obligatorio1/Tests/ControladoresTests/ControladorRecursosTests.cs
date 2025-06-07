@@ -82,4 +82,25 @@ public class ControladorRecursosTests
         _mockGestorRecursos.Verify(g => g.ObtenerRecursosGenerales(), Times.Once);
         
     }
+    
+    [TestMethod]
+    public void ObtenerRecursosExclusivos_LlamaCorrectamenteAGestor()
+    {
+        ProyectoDTO proyecto = new ProyectoDTO { Id = 3 };
+        var listaEsperada = new List<RecursoDTO>{
+            new RecursoDTO { Id = 1, Nombre = "Recurso A", ProyectoAsociado = proyecto},
+            new RecursoDTO { Id = 2, Nombre = "Recurso B", ProyectoAsociado = proyecto}
+        };
+
+        _mockGestorRecursos.Setup(g => g.ObtenerRecursosExclusivos(3)).Returns(listaEsperada);
+
+        List<RecursoDTO> resultado = _controladorRecursos.ObtenerRecursosExclusivos(3);
+
+        Assert.AreEqual(2, resultado.Count);
+        Assert.AreEqual("Recurso A", resultado[0].Nombre);
+        Assert.AreEqual("Recurso B", resultado[1].Nombre);
+        _mockGestorRecursos.Verify(g => g.ObtenerRecursosExclusivos(3), Times.Once);
+        
+    }
+    
 }
