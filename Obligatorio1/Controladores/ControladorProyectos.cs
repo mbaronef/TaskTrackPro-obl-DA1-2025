@@ -82,4 +82,9 @@ public class ControladorProyectos
     {
         _gestorProyectos.NotificarAdministradoresDeProyectos(proyectos, mensaje);
     }
+    
+    public void CalcularCaminoCritico(ProyectoDTO proyecto)
+    {
+        _gestorProyectos.CalcularCaminoCritico(proyecto);
+    }
 }
