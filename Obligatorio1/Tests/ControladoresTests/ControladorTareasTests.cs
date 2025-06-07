@@ -113,6 +113,21 @@ public class ControladorTareasTests
     }
     
     [TestMethod]
+    public void ModificarFechaInicioTarea_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idTarea = 1;
+        int idProyecto = 1;
+        DateTime nuevaFecha = DateTime.Today.AddDays(4);
+
+        _mockGestorTareas.Setup(g => g.ModificarFechaInicioTarea(usuario, idTarea, idProyecto, nuevaFecha));
+
+        _controladorTareas.ModificarFechaInicioTarea(usuario, idTarea, idProyecto, nuevaFecha);
+
+        _mockGestorTareas.Verify(g => g.ModificarFechaInicioTarea(usuario, idTarea, idProyecto, nuevaFecha), Times.Once);
+    }
+    
+    [TestMethod]
     public void CambiarEstadoTarea_LlamaCorrectamenteAGestor()
     {
         UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
