@@ -16,4 +16,9 @@ public class ControladorRecursos
     {
         _gestorRecursos.AgregarRecurso(solicitanteDTO, nuevoRecursoDTO, esExclusivo);
     }
+    
+    public void EliminarRecurso(UsuarioDTO solicitanteDTO, int idRecursoAEliminar)
+    {
+        _gestorRecursos.EliminarRecurso(solicitanteDTO, idRecursoAEliminar);
+    }
 }
