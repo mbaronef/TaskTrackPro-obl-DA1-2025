@@ -92,4 +92,9 @@ public class ControladorProyectos
     {
         return _gestorProyectos.EsAdministradorDeProyecto(usuario, idProyecto);
     }
+    
+    public bool EsMiembroDeProyecto(int idUsuario, int idProyecto)
+    {
+        return _gestorProyectos.EsMiembroDeProyecto(idUsuario, idProyecto);
+    }
 }
