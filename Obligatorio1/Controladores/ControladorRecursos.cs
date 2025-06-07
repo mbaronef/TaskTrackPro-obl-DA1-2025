@@ -51,4 +51,9 @@ public class ControladorRecursos
     {
         _gestorRecursos.ModificarTipoRecurso(solicitanteDTO, idRecurso, nuevoTipo);
     }
+    
+    public RecursoDTO ObtenerRecursoExclusivoPorId(int idProyecto, int idRecurso)
+    {
+        return _gestorRecursos.ObtenerRecursoExclusivoPorId(idProyecto, idRecurso);
+    }
 }

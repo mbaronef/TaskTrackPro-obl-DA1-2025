@@ -148,14 +148,14 @@ public class ControladorRecursosTests
     public void ObtenerRecursoExclusivoPorId_LlamaCorrectamenteAGestor()
     {
         int idRecurso = 1;
-        int idProyecto = 2;
-        RecursoDTO recursoEsperado = new RecursoDTO { Id = idRecurso, ProyectoAsociado = 2};
+        ProyectoDTO proyecto = new ProyectoDTO { Id = 2 };
+        RecursoDTO recursoEsperado = new RecursoDTO { Id = idRecurso, ProyectoAsociado = proyecto };
 
-        _mockGestorRecursos.Setup(g => g.ObtenerRecursoExclusivoPorId(idProyecto, idRecurso)).Returns(recursoEsperado);
+        _mockGestorRecursos.Setup(g => g.ObtenerRecursoExclusivoPorId(proyecto.Id, idRecurso)).Returns(recursoEsperado);
 
-        RecursoDTO resultado = _controladorRecursos.ObtenerRecursoExclusivoPorId(idProyecto, idRecurso);
+        RecursoDTO resultado = _controladorRecursos.ObtenerRecursoExclusivoPorId(proyecto.Id, idRecurso);
 
         Assert.AreEqual(recursoEsperado.Id, resultado.Id);
-        _mockGestorRecursos.Verify(g => g.ObtenerRecursoExclusivoPorId(idProyecto, idRecurso), Times.Once);
+        _mockGestorRecursos.Verify(g => g.ObtenerRecursoExclusivoPorId(proyecto.Id, idRecurso), Times.Once);
     }
 }
