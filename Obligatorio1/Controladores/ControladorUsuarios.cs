@@ -10,5 +10,9 @@ public class ControladorUsuarios
     {
         _gestorUsuarios = gestorUsuarios;
     }
-    
+
+    public void CrearYAgregarUsuario(UsuarioDTO solicitanteDTO, UsuarioDTO nuevoUsuarioDTO)
+    {
+        _gestorUsuarios.CrearYAgregarUsuario(solicitanteDTO, nuevoUsuarioDTO);
+    }
 }
