@@ -21,4 +21,9 @@ public class ControladorRecursos
     {
         _gestorRecursos.EliminarRecurso(solicitanteDTO, idRecursoAEliminar);
     }
+    
+    public RecursoDTO ObtenerRecursoPorId(int idRecurso)
+    {
+        return _gestorRecursos.ObtenerRecursoPorId(idRecurso);
+    }
 }

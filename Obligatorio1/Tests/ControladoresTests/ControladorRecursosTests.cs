@@ -58,7 +58,7 @@ public class ControladorRecursosTests
 
         _mockGestorRecursos.Setup(g => g.ObtenerRecursoPorId(idRecurso)).Returns(recursoEsperado);
 
-        TareaDTO resultado = _controladorRecursos.ObtenerRecursoPorId(idRecurso);
+        RecursoDTO resultado = _controladorRecursos.ObtenerRecursoPorId(idRecurso);
 
         Assert.AreEqual(recursoEsperado.Id, resultado.Id);
         _mockGestorRecursos.Verify(g => g.ObtenerRecursoPorId(idRecurso), Times.Once);
