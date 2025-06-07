@@ -39,6 +39,20 @@ public class ControladorTareasTests
     }
     
     [TestMethod]
+    public void EliminarTareaDelProyecto_LlamaCorrectamenteAGestor()
+    {
+        int idProyecto = 1;
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idTareaAEliminar = 1;
+
+        _mockGestorTareas.Setup(g => g.EliminarTareaDelProyecto(idProyecto, usuario, idTareaAEliminar));
+
+        _controladorTareas.EliminarTareaDelProyecto(idProyecto, usuario, idTareaAEliminar);
+
+        _mockGestorTareas.Verify(g => g.EliminarTareaDelProyecto(idProyecto, usuario, idTareaAEliminar), Times.Once);
+    }
+
+    [TestMethod]
     public void ObtenerTareaPorId_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
