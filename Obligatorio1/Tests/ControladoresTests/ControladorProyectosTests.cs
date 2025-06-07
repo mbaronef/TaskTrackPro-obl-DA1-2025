@@ -31,8 +31,8 @@ public class ControladorProyectosTests
     [TestMethod]
     public void CrearProyecto_LlamaCorrectamenteAlGestor()
     {
-        var solicitante = new UsuarioDTO { Id = 1 };
-        var nuevoProyecto = new ProyectoDTO { Nombre = "Proyecto Test" };
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        ProyectoDTO nuevoProyecto = new ProyectoDTO { Nombre = "Proyecto Test" };
 
         _mockGestorProyectos.Setup(g => g.CrearProyecto(nuevoProyecto, solicitante));
 
@@ -45,7 +45,7 @@ public class ControladorProyectosTests
     public void EliminarProyecto_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
-        var solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
 
         _mockGestorProyectos.Setup(g => g.EliminarProyecto(idProyecto, solicitante));
 
@@ -65,7 +65,7 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Setup(g => g.ObtenerTodos()).Returns(listaEsperada);
 
-        var resultado = _controladorProyectos.ObtenerTodos();
+        List<ProyectoDTO> resultado = _controladorProyectos.ObtenerTodos();
 
         Assert.AreEqual(2, resultado.Count);
         Assert.AreEqual("Proyecto A", resultado[0].Nombre);
@@ -77,11 +77,11 @@ public class ControladorProyectosTests
     public void ObtenerProyectoPorId_LlamaCorrectamenteAGestorYDevuelveProyecto()
     {
         int idProyecto = 1;
-        var proyectoEsperado = new ProyectoDTO { Id = idProyecto, Nombre = "Proyecto Test" };
+        ProyectoDTO proyectoEsperado = new ProyectoDTO { Id = idProyecto, Nombre = "Proyecto Test" };
 
         _mockGestorProyectos.Setup(g => g.ObtenerProyectoPorId(idProyecto)).Returns(proyectoEsperado);
 
-        var resultado = _controladorProyectos.ObtenerProyectoPorId(idProyecto);
+        ProyectoDTO resultado = _controladorProyectos.ObtenerProyectoPorId(idProyecto);
 
         Assert.AreEqual(idProyecto, resultado.Id);
         Assert.AreEqual("Proyecto Test", resultado.Nombre);
@@ -92,7 +92,7 @@ public class ControladorProyectosTests
     public void ModificarNombreDelProyecto_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
-        var solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         string nuevoNombre = "Nuevo Proyecto";
 
         _mockGestorProyectos.Setup(g => g.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante));
@@ -106,7 +106,7 @@ public class ControladorProyectosTests
     public void ModificarDescripcionDelProyecto_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
-        var solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         string nuevaDescripcion = "Descripción actualizada";
 
         _mockGestorProyectos.Setup(g => g.ModificarDescripcionDelProyecto(idProyecto, nuevaDescripcion, solicitante));
@@ -120,7 +120,7 @@ public class ControladorProyectosTests
     public void ModificarFechaDeInicioDelProyecto_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
-        var solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         DateTime nuevaFecha = DateTime.Today.AddDays(5);
 
         _mockGestorProyectos.Setup(g => g.ModificarFechaDeInicioDelProyecto(idProyecto, nuevaFecha, solicitante));
@@ -133,7 +133,7 @@ public class ControladorProyectosTests
     [TestMethod]
     public void CambiarAdministradorDeProyecto_LlamaCorrectamenteAGestor()
     {
-        var solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         int idProyecto = 10;
         int idNuevoAdmin = 99;
 
@@ -147,8 +147,8 @@ public class ControladorProyectosTests
     [TestMethod]
     public void AgregarMiembroAProyecto_LlamaCorrectamenteAGestor()
     {
-        var solicitante = new UsuarioDTO { Id = 1 };
-        var nuevoMiembro = new UsuarioDTO { Id = 2 };
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO nuevoMiembro = new UsuarioDTO { Id = 2 };
         int idProyecto = 5;
 
         _mockGestorProyectos.Setup(g => g.AgregarMiembroAProyecto(idProyecto, solicitante, nuevoMiembro));
@@ -161,7 +161,7 @@ public class ControladorProyectosTests
     [TestMethod]
     public void EliminarMiembroDelProyecto_LlamaCorrectamenteAGestor()
     {
-        var solicitante = new UsuarioDTO { Id = 1 };
+        UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         int idProyecto = 3;
         int idMiembro = 4;
 
@@ -184,7 +184,7 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Setup(g => g.ObtenerProyectosPorUsuario(idUsuario)).Returns(proyectosEsperados);
 
-        var resultado = _controladorProyectos.ObtenerProyectosPorUsuario(idUsuario);
+        List<ProyectoDTO> resultado = _controladorProyectos.ObtenerProyectosPorUsuario(idUsuario);
 
         Assert.AreEqual(2, resultado.Count);
         _mockGestorProyectos.Verify(g => g.ObtenerProyectosPorUsuario(idUsuario), Times.Once);
@@ -198,7 +198,7 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Setup(g => g.ObtenerProyectoDelAdministrador(admin.Id)).Returns(proyectoEsperado);
 
-        var resultado = _controladorProyectos.ObtenerProyectoDelAdministrador(admin.Id);
+        Proyecto resultado = _controladorProyectos.ObtenerProyectoDelAdministrador(admin.Id);
 
         Assert.AreEqual(admin.Id, resultado.Id);
         Assert.AreEqual("P1", resultado.Nombre);
@@ -236,12 +236,26 @@ public class ControladorProyectosTests
     [TestMethod]
     public void CalcularCaminoCritico_LlamaCorrectamenteAGestor()
     {
-        var proyecto = new ProyectoDTO { Id = 1 };
+        ProyectoDTO proyecto = new ProyectoDTO { Id = 1 };
 
         _mockGestorProyectos.Setup(g => g.CalcularCaminoCritico(proyecto));
 
         _controladorProyectos.CalcularCaminoCritico(proyecto);
 
         _mockGestorProyectos.Verify(g => g.CalcularCaminoCritico(proyecto), Times.Once);
+    }
+    
+    [TestMethod]
+    public void EsAdministradorDeProyecto_LlamaCorrectamenteAGestorYDevuelveTrue()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idProyecto = 3;
+
+        _mockGestorProyectos.Setup(g => g.EsAdministradorDeProyecto(usuario, idProyecto)).Returns(true);
+
+        bool resultado = _controladorProyectos.EsAdministradorDeProyecto(usuario, idProyecto);
+
+        Assert.IsTrue(resultado);
+        _mockGestorProyectos.Verify(g => g.EsAdministradorDeProyecto(usuario, idProyecto), Times.Once);
     }
 }
