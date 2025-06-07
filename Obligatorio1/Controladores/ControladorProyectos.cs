@@ -67,4 +67,9 @@ public class ControladorProyectos
     {
         return _gestorProyectos.ObtenerProyectosPorUsuario(idUsuario);
     }
+    
+    public Proyecto ObtenerProyectoDelAdministrador(int idAdministrador)
+    {
+        return _gestorProyectos.ObtenerProyectoDelAdministrador(idAdministrador);
+    }
 }
