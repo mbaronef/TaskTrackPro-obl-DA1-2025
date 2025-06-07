@@ -141,4 +141,18 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.CambiarAdministradorDeProyecto(solicitante, idProyecto, idNuevoAdmin), Times.Once);
     }
+    
+    [TestMethod]
+    public void AgregarMiembroAProyecto_LlamaCorrectamenteAGestor()
+    {
+        var solicitante = new UsuarioDTO { Id = 1 };
+        var nuevoMiembro = new UsuarioDTO { Id = 2 };
+        int idProyecto = 5;
+
+        _mockGestorProyectos.Setup(g => g.AgregarMiembroAProyecto(idProyecto, solicitante, nuevoMiembro));
+
+        _controladorProyectos.AgregarMiembroAProyecto(idProyecto, solicitante, nuevoMiembro);
+
+        _mockGestorProyectos.Verify(g => g.AgregarMiembroAProyecto(idProyecto, solicitante, nuevoMiembro), Times.Once);
+    }
 }
