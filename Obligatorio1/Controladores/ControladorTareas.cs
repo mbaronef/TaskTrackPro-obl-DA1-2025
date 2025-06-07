@@ -66,7 +66,12 @@ public class ControladorTareas
     {
         _gestorTareas.AgregarRecursoATarea(solicitanteDTO, idTarea, idProyecto, nuevoRecursoDTO);
     }
-
+    
+    public void EliminarRecursoDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO)
+    {
+        _gestorTareas.EliminarRecursoDeTarea(solicitanteDTO, idTarea, idProyecto, recursoDTO);
+    }
+    
     public TareaDTO ObtenerTareaPorId(int idProyecto, int idTarea)
     {
         return _gestorTareas.ObtenerTareaPorId(idProyecto, idTarea);
