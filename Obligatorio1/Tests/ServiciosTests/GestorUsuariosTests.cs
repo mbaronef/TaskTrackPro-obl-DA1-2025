@@ -39,7 +39,7 @@ public class GestorUsuariosTests
 
     private UsuarioDTO CrearYAsignarAdminSistema()
     {
-        UsuarioDTO usuario = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        UsuarioDTO usuario = CrearUsuarioDTO("Juan", "Pérez", "unemail@adinet.com.uy", "Contrase#a3");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario);
         _gestorUsuarios.AgregarAdministradorSistema(_adminSistemaDTO, usuario.Id);
         return usuario;
