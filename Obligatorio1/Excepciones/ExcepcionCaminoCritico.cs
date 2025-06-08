@@ -1,4 +1,4 @@
-namespace Servicios.Excepciones
+namespace Excepciones
 {
     public class ExcepcionCaminoCritico : Exception
     {

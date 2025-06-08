@@ -3,7 +3,7 @@ using DTOs;
 using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
 using Excepciones;
-using Servicios.Excepciones;
+using Excepciones.MensajesError;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
@@ -113,7 +113,7 @@ public class GestorTareas : IGestorTareas
         EstadoTarea nuevoEstado = (EstadoTarea)nuevoEstadoDTO;
 
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
+        PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
         
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
@@ -165,7 +165,7 @@ public class GestorTareas : IGestorTareas
         Usuario nuevoMiembro = ObtenerUsuarioPorDTO(nuevoMiembroDTO);
         
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(nuevoMiembro.Id, proyecto);
+        PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(nuevoMiembro.Id, proyecto);
         
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.AsignarUsuario(nuevoMiembro);
@@ -178,7 +178,7 @@ public class GestorTareas : IGestorTareas
         Usuario miembro = ObtenerUsuarioPorDTO(miembroDTO);
         
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
+        PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
         
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.EliminarUsuario(miembro.Id);
@@ -228,8 +228,8 @@ public class GestorTareas : IGestorTareas
     private Proyecto ObtenerProyectoValidandoAdmin(int idProyecto, Usuario solicitante)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
-        PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
+        PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         return proyecto;
     }
 

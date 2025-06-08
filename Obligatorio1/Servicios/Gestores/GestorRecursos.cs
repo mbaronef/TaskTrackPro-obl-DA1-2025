@@ -2,7 +2,7 @@ using Dominio;
 using DTOs;
 using Repositorios.Interfaces;
 using Excepciones;
-using Servicios.Excepciones;
+using Excepciones.MensajesError;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
@@ -30,7 +30,7 @@ public class GestorRecursos : IGestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = recursoDTO.AEntidad();
-        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
+        PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
         if (solicitante.EstaAdministrandoUnProyecto && esExclusivo)
         {
             AsociarRecursoAProyectoQueAdministra(solicitante, recurso);
@@ -43,7 +43,7 @@ public class GestorRecursos : IGestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
-        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
+        PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
         VerificarRecursoEnUso(recurso);
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
         _repositorioRecursos.Eliminar(recurso.Id);
@@ -72,7 +72,7 @@ public class GestorRecursos : IGestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
-        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
+        PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de"); 
         string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
@@ -83,7 +83,7 @@ public class GestorRecursos : IGestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
-        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante,"modificar el tipo de un recurso");
+        PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante,"modificar el tipo de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
         recurso.ModificarTipo(nuevoTipo);
         NotificarModificacion(recurso, recurso.Nombre);
@@ -93,7 +93,7 @@ public class GestorRecursos : IGestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
-        PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
+        PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la descripción de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
         recurso.ModificarDescripcion(nuevaDescripcion);
         NotificarModificacion(recurso, recurso.Nombre);

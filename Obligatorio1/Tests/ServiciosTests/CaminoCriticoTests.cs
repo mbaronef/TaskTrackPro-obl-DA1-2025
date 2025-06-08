@@ -1,7 +1,6 @@
 using Dominio;
+using Excepciones;
 using Servicios.CaminoCritico;
-using Servicios.Excepciones;
-using Servicios.Utilidades;
 
 namespace Tests.ServiciosTests;
 
@@ -16,7 +15,6 @@ public class CaminoCriticoTests
     private Tarea _tarea3;
     private Tarea _tarea4;
     private DateTime _fechaHoy = DateTime.Today;
-    private MockNotificador _mockNotificador;
 
     [TestInitialize]
     public void SetUp()

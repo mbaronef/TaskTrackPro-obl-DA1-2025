@@ -1,5 +1,6 @@
 using Dominio;
-using Servicios.Excepciones;
+using Excepciones;
+using Excepciones.MensajesError;
 using Servicios.Notificaciones;
 
 namespace Servicios.CaminoCritico;

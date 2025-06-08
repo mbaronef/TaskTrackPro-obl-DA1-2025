@@ -1,4 +1,4 @@
-namespace Servicios.Excepciones;
+namespace Excepciones.MensajesError;
 
 public static class MensajesErrorServicios
 {

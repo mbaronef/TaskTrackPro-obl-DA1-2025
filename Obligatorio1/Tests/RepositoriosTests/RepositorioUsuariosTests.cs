@@ -1,6 +1,5 @@
 using Dominio;
 using Repositorios;
-using Servicios.Utilidades;
 
 namespace Tests.RepositoriosTests;
 

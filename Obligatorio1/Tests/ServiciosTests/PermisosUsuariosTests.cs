@@ -1,11 +1,11 @@
 ﻿using Dominio;
-using Servicios.Excepciones;
+using Excepciones;
 using Servicios.Utilidades;
 
-namespace Tests.Servicios
+namespace Tests.ServiciosTests
 {
     [TestClass]
-    public class PermisosUsuariosServicioTests
+    public class PermisosUsuariosTests
     {
         private Usuario adminSistema;
         private Usuario adminProyecto;
@@ -26,138 +26,138 @@ namespace Tests.Servicios
         [TestMethod]
         public void VerificarPermisoAdminSistema_NoLanzaExcepcion_SiEsAdmin()
         {
-            PermisosUsuariosServicio.VerificarPermisoAdminSistema(adminSistema, "realizar una acción");
+            PermisosUsuarios.VerificarPermisoAdminSistema(adminSistema, "realizar una acción");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarPermisoAdminSistema_LanzaExcepcion_SiNoEsAdmin()
         {
-            PermisosUsuariosServicio.VerificarPermisoAdminSistema(usuarioComun, "hacer algo");
+            PermisosUsuarios.VerificarPermisoAdminSistema(usuarioComun, "hacer algo");
         }
 
         [TestMethod]
         public void VerificarUsuarioEsAdminProyectoDeEseProyecto_NoLanzaExcepcion_SiEsAdmin()
         {
-            PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, adminProyecto);
+            PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, adminProyecto);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarUsuarioEsAdminProyectoDeEseProyecto_LanzaExcepcion_SiNoEsAdmin()
         {
-            PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, usuarioComun);
+            PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, usuarioComun);
         }
 
         [TestMethod]
         public void VerificarUsuarioMiembroDelProyecto_NoLanzaExcepcion_SiEsMiembro()
         {
-            PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(usuarioComun.Id, proyecto);
+            PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(usuarioComun.Id, proyecto);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarUsuarioMiembroDelProyecto_LanzaExcepcion_SiNoEsMiembro()
         {
             var otroUsuario = new Usuario { Id = 999 };
-            PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(otroUsuario.Id, proyecto);
+            PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(otroUsuario.Id, proyecto);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarUsuarioNoAdministraOtroProyecto_LanzaExcepcion_SiAdministra()
         {
             var usuario = new Usuario { EstaAdministrandoUnProyecto = true };
-            PermisosUsuariosServicio.VerificarUsuarioNoAdministraOtroProyecto(usuario);
+            PermisosUsuarios.VerificarUsuarioNoAdministraOtroProyecto(usuario);
         }
 
         [TestMethod]
         public void VerificarUsuarioNoAdministraOtroProyecto_NoLanzaExcepcion_SiNoAdministra()
         {
             var usuario = new Usuario { EstaAdministrandoUnProyecto = false };
-            PermisosUsuariosServicio.VerificarUsuarioNoAdministraOtroProyecto(usuario);
+            PermisosUsuarios.VerificarUsuarioNoAdministraOtroProyecto(usuario);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarUsuarioTengaPermisosDeAdminProyecto_LanzaExcepcion_SiNoEsAdmin()
         {
-            PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(usuarioComun, "usuario común");
+            PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(usuarioComun, "usuario común");
         }
 
         [TestMethod]
         public void VerificarUsuarioTengaPermisosDeAdminProyecto_NoLanzaExcepcion_SiEsAdmin()
         {
-            PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(adminProyecto, "admin");
+            PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(adminProyecto, "admin");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto_LanzaExcepcion()
         {
             var usuario = new Usuario { EstaAdministrandoUnProyecto = true };
-            PermisosUsuariosServicio.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(usuario);
+            PermisosUsuarios.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(usuario);
         }
 
         [TestMethod]
         public void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto_NoLanzaExcepcion()
         {
             var usuario = new Usuario { EstaAdministrandoUnProyecto = false };
-            PermisosUsuariosServicio.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(usuario);
+            PermisosUsuarios.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(usuario);
         }
 
         [TestMethod]
         public void VerificarUsuarioPuedaReiniciarOModificarContrasena_NoLanzaExcepcion_SiSolicitanteEsAdmin()
         {
-            PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(adminSistema, usuarioComun, "modificar contraseña");
+            PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(adminSistema, usuarioComun, "modificar contraseña");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarUsuarioPuedaReiniciarOModificarContrasena_LanzaExcepcion_SiNoTienePermisos()
         {
-            PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(usuarioComun, adminSistema, "reiniciar contraseña");
+            PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(usuarioComun, adminSistema, "reiniciar contraseña");
         }
 
         [TestMethod]
         public void VerificarPermisoAdminSistemaOAdminProyecto_NoLanzaExcepcion_SiEsAdminSistema()
         {
-            PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(adminSistema, "acc");
+            PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(adminSistema, "acc");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarPermisoAdminSistemaOAdminProyecto_LanzaExcepcion_SiNoEsNinguno()
         {
-            PermisosUsuariosServicio.VerificarPermisoAdminSistemaOAdminProyecto(usuarioComun, "acc");
+            PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(usuarioComun, "acc");
         }
 
         [TestMethod]
         public void VerificarSolicitantePuedaAutogenerarContrasena_NoLanzaExcepcion_SiTienePermisos()
         {
-            PermisosUsuariosServicio.VerificarSolicitantePuedaAutogenerarContrasena(adminSistema);
+            PermisosUsuarios.VerificarSolicitantePuedaAutogenerarContrasena(adminSistema);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarSolicitantePuedaAutogenerarContrasena_LanzaExcepcion_SiNoTienePermisos()
         {
-            PermisosUsuariosServicio.VerificarSolicitantePuedaAutogenerarContrasena(usuarioComun);
+            PermisosUsuarios.VerificarSolicitantePuedaAutogenerarContrasena(usuarioComun);
         }
 
         [TestMethod]
         public void VerificarUsuarioNoEsMiembroDeProyecto_NoLanzaExcepcion_SiNoTieneProyectos()
         {
             var usuario = new Usuario { CantidadProyectosAsignados = 0 };
-            PermisosUsuariosServicio.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
+            PermisosUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionServicios))]
+        [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarUsuarioNoEsMiembroDeProyecto_LanzaExcepcion_SiTieneProyectos()
         {
             var usuario = new Usuario { CantidadProyectosAsignados = 2 };
-            PermisosUsuariosServicio.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
+            PermisosUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         }
     }
 }

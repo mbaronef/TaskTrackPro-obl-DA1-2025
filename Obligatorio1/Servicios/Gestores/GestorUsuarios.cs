@@ -1,8 +1,8 @@
 using Dominio;
 using DTOs;
 using Excepciones;
+using Excepciones.MensajesError;
 using Repositorios.Interfaces;
-using Servicios.Excepciones;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
@@ -43,7 +43,7 @@ public class GestorUsuarios : IGestorUsuarios
         {
             throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegado);
         }
-        PermisosUsuariosServicio.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
+        PermisosUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         _usuarios.Eliminar(usuario.Id);
         string mensajeNotificacion = MensajesNotificacion.UsuarioEliminado(usuario.Nombre, usuario.Apellido);
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
@@ -63,7 +63,7 @@ public class GestorUsuarios : IGestorUsuarios
     public void AgregarAdministradorSistema(UsuarioDTO solicitanteDTO, int idUsuario)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "asignar un administrador de sistema");
+        PermisosUsuarios.VerificarPermisoAdminSistema(solicitante, "asignar un administrador de sistema");
         Usuario usuario = obtenerUsuarioDominioPorId(idUsuario);
         usuario.EsAdministradorSistema = true;
     }
@@ -71,7 +71,7 @@ public class GestorUsuarios : IGestorUsuarios
     public void AsignarAdministradorProyecto(UsuarioDTO solicitanteDTO, int idUsuario)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "asignar administradores de proyecto");
+        PermisosUsuarios.VerificarPermisoAdminSistema(solicitante, "asignar administradores de proyecto");
         Usuario nuevoAdministradorProyecto = obtenerUsuarioDominioPorId(idUsuario);
         nuevoAdministradorProyecto.EsAdministradorProyecto = true;
     }
@@ -79,10 +79,10 @@ public class GestorUsuarios : IGestorUsuarios
     public void DesasignarAdministradorProyecto(UsuarioDTO solicitanteDTO, int idUsuario)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "desasignar administradores de proyecto");
+        PermisosUsuarios.VerificarPermisoAdminSistema(solicitante, "desasignar administradores de proyecto");
         Usuario administradorProyecto = obtenerUsuarioDominioPorId(idUsuario);
-        PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(administradorProyecto, "solicitante");
-        PermisosUsuariosServicio.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(administradorProyecto);
+        PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(administradorProyecto, "solicitante");
+        PermisosUsuarios.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(administradorProyecto);
         administradorProyecto.EsAdministradorProyecto = false;
     }
 
@@ -90,7 +90,7 @@ public class GestorUsuarios : IGestorUsuarios
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
-        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "reiniciar la contraseña del usuario");
+        PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "reiniciar la contraseña del usuario");
 
         string contrasenaPorDefectoEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
         usuarioObjetivo.EstablecerContrasenaEncriptada(contrasenaPorDefectoEncriptada);
@@ -106,7 +106,7 @@ public class GestorUsuarios : IGestorUsuarios
     public void AutogenerarYAsignarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo) // genera y asigna. Prevee el caso de notificar por mail y no tener que mostrar contraseña en pantalla
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        PermisosUsuariosServicio.VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
+        PermisosUsuarios.VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
         string nuevaContrasena = AutogenerarContrasenaValida();
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         
@@ -120,7 +120,7 @@ public class GestorUsuarios : IGestorUsuarios
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
-        PermisosUsuariosServicio.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "modificar la contraseña del usuario");
+        PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "modificar la contraseña del usuario");
         
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
@@ -164,7 +164,7 @@ public class GestorUsuarios : IGestorUsuarios
 
     private void AgregarUsuario(Usuario solicitante, Usuario usuario)
     {
-        PermisosUsuariosServicio.VerificarPermisoAdminSistema(solicitante, "crear usuarios");
+        PermisosUsuarios.VerificarPermisoAdminSistema(solicitante, "crear usuarios");
         _usuarios.Agregar(usuario);
         string mensajeNotificacion = MensajesNotificacion.UsuarioCreado(usuario.Nombre, usuario.Apellido);
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);

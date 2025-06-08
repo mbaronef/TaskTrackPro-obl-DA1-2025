@@ -1,10 +1,10 @@
-using Dominio;
+﻿using Dominio;
 using Excepciones;
-using Servicios.Excepciones;
+using Excepciones.MensajesError;
 
 namespace Servicios.Utilidades;
 
-public static class PermisosUsuariosServicio
+public static class PermisosUsuarios
 {
     public static void VerificarPermisoAdminSistema(Usuario usuario, string accion)
     {
