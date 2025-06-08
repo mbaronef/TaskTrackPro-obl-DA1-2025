@@ -1,10 +1,10 @@
 @page "/notificaciones"
+@using Controladores
 @using DTOs
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
-@inject GestorUsuarios GestorUsuarios;
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
+@inject ControladorUsuarios ControladorUsuarios
 @rendermode InteractiveServer
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
@@ -66,7 +66,7 @@ else
 
     private async Task EliminarNotificacion(int id)
     {
-        GestorUsuarios.BorrarNotificacion(Sesion.UsuarioLogueado.Id, id);
+        ControladorUsuarios.BorrarNotificacion(Sesion.UsuarioLogueado.Id, id);
         await Sesion.ActualizarSesion(); 
         StateHasChanged(); 
     }

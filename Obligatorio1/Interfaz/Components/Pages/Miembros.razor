@@ -1,13 +1,12 @@
 @page "/proyecto/{id:int}/miembros"
 @using DTOs
-@using Servicios.Gestores
 @using Controladores
-@inject GestorUsuarios GestorUsuarios
 @using Interfaz.ServiciosInterfaz
 @rendermode InteractiveServer
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
 @inject ControladorProyectos ControladorProyectos
+@inject ControladorUsuarios ControladorUsuarios
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
@@ -247,7 +246,7 @@ else
         {
             proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             miembros = proyecto.Miembros;
-            usuariosNoMiembros = GestorUsuarios.ObtenerUsuariosDiferentes(miembros);
+            usuariosNoMiembros = ControladorUsuarios.ObtenerUsuariosDiferentes(miembros);
             esAdminProyecto = ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id);
         }
         catch
@@ -276,7 +275,7 @@ else
             return;
         }
 
-        UsuarioDTO nuevo = GestorUsuarios.ObtenerUsuarioPorId(idNuevoMiembro.Value);
+        UsuarioDTO nuevo = ControladorUsuarios.ObtenerUsuarioPorId(idNuevoMiembro.Value);
         ControladorProyectos.AgregarMiembroAProyecto(id, Sesion.UsuarioLogueado, nuevo);
         usuariosNoMiembros.RemoveAll(u => u.Id == nuevo.Id);
         mostrarModalAgregar = false;
