@@ -1,10 +1,9 @@
 @page "/proyecto/{id:int}/tareas"
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
 @inject ControladorProyectos ControladorProyectos
 @inject ControladorTareas ControladorTareas
-@inject GestorRecursos GestorRecursos
-@inject GestorUsuarios GestorUsuarios
+@inject ControladorUsuarios ControladorUsuarios
+@inject ControladorRecursos ControladorRecursos
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
 @rendermode InteractiveServer
@@ -12,6 +11,7 @@
 @using Controladores
 @using Excepciones
 @using DTOs
+
 
 @if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
@@ -927,7 +927,7 @@ else
     {
         try
         {
-            RecursoDTO nuevoRecurso = GestorRecursos.ObtenerRecursoPorId(recursoAsignacionDto.Id);
+            RecursoDTO nuevoRecurso = ControladorRecursos.ObtenerRecursoPorId(recursoAsignacionDto.Id);
             ControladorTareas.AgregarRecursoATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso);
             mensaje = "Recurso agregado con éxito.";
             // actualizaciones
@@ -951,7 +951,7 @@ else
     {
         try
         {
-            RecursoDTO recurso = GestorRecursos.ObtenerRecursoPorId(idRecurso);
+            RecursoDTO recurso = ControladorRecursos.ObtenerRecursoPorId(idRecurso);
             ControladorTareas.EliminarRecursoDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, recurso);
             mensaje = "Recurso eliminado con éxito.";
             // actualizaciones
@@ -970,7 +970,7 @@ else
     {
         try
         {
-            UsuarioDTO nuevoMiembro = GestorUsuarios.ObtenerUsuarioPorId(usuarioAsignacionDto.Id);
+            UsuarioDTO nuevoMiembro = ControladorUsuarios.ObtenerUsuarioPorId(usuarioAsignacionDto.Id);
             ControladorTareas.AgregarMiembroATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoMiembro);
             mensaje = "Miembro agregado con éxito.";
             // actualizaciones
@@ -994,7 +994,7 @@ else
     {
         try
         {
-            UsuarioDTO miembro = GestorUsuarios.ObtenerUsuarioPorId(idUsuario);
+            UsuarioDTO miembro = ControladorUsuarios.ObtenerUsuarioPorId(idUsuario);
             ControladorTareas.EliminarMiembroDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, miembro);
             mensaje = "Usuario eliminado de la tarea con éxito.";
             // actualizaciones
@@ -1015,8 +1015,8 @@ else
 
     private void ActualizarRecursosDisponibles()
     {
-        List<RecursoDTO> recursosGenerales = GestorRecursos.ObtenerRecursosGenerales();
-        List<RecursoDTO> recursosExclusivos = GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id);
+        List<RecursoDTO> recursosGenerales = ControladorRecursos.ObtenerRecursosGenerales();
+        List<RecursoDTO> recursosExclusivos = ControladorRecursos.ObtenerRecursosExclusivos(proyecto.Id);
         List<RecursoDTO> recursosYaAsignados = tareaActual.RecursosNecesarios;
         List<RecursoDTO> todosLosRecursos = recursosGenerales.Concat(recursosExclusivos).ToList();
         recursosProyecto = todosLosRecursos.Where(r => !recursosYaAsignados.Any(asignado => asignado.Id == r.Id)).ToList();

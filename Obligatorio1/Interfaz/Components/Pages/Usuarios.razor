@@ -1,14 +1,14 @@
 @page "/usuarios"
 @rendermode InteractiveServer
-@inject GestorUsuarios GestorUsuarios
 @using System.ComponentModel.DataAnnotations
+@using Controladores
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
 @using DTOs
 @using Excepciones
 @using Servicios.Utilidades
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
+@inject ControladorUsuarios ControladorUsuarios
 
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
@@ -200,7 +200,7 @@ else
 
 
 
-        @if (GestorUsuarios.ObtenerTodos().Count == 0)
+        @if (ControladorUsuarios.ObtenerTodos().Count == 0)
         {
             <p>No hay usuarios.</p>
         }
@@ -217,7 +217,7 @@ else
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (UsuarioListarDTO usuario in GestorUsuarios.ObtenerTodos())
+                @foreach (UsuarioListarDTO usuario in ControladorUsuarios.ObtenerTodos())
                 {
                     <tr>
                         <td>@usuario.Nombre</td>
@@ -385,7 +385,7 @@ else
 
         try
         {
-            GestorUsuarios.CrearYAgregarUsuario(Sesion.UsuarioLogueado, nuevoUsuario);
+            ControladorUsuarios.CrearYAgregarUsuario(Sesion.UsuarioLogueado, nuevoUsuario);
             mensajeExito = $"Usuario creado exitosamente: {nuevoUsuario.Nombre} {nuevoUsuario.Apellido} ({nuevoUsuario.Email})";
             mostrarExito = true;
             mostrarFormCrear = false;
@@ -429,7 +429,7 @@ else
 
     private void EditarUsuario(int idUsuario)
     {
-        UsuarioDTO usuario = GestorUsuarios.ObtenerUsuarioPorId(idUsuario);
+        UsuarioDTO usuario = ControladorUsuarios.ObtenerUsuarioPorId(idUsuario);
         
         if (usuario != null)
         {
@@ -465,26 +465,26 @@ else
             {
                 if (usuarioAEditar.ContrasenaAutogenerada == "RESET")
                 {
-                    GestorUsuarios.ReiniciarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando);
+                    ControladorUsuarios.ReiniciarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando);
                 }
                 else
                 {
-                    GestorUsuarios.ModificarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando, usuarioAEditar.ContrasenaAutogenerada);
+                    ControladorUsuarios.ModificarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando, usuarioAEditar.ContrasenaAutogenerada);
                 }
             }
 
             if (usuarioAEditar.EsAdministradorProyecto && !usuarioOriginal.EsAdministradorProyecto)
             {
-                GestorUsuarios.AsignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
+                ControladorUsuarios.AsignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
             }
             else if (!usuarioAEditar.EsAdministradorProyecto && usuarioOriginal.EsAdministradorProyecto)
             {
-                GestorUsuarios.DesasignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
+                ControladorUsuarios.DesasignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
             }
 
             if (usuarioAEditar.EsAdministradorSistema && !usuarioOriginal.EsAdministradorSistema)
             {
-                GestorUsuarios.AgregarAdministradorSistema(Sesion.UsuarioLogueado, idUsuarioEditando);
+                ControladorUsuarios.AgregarAdministradorSistema(Sesion.UsuarioLogueado, idUsuarioEditando);
             }
 
             if (Sesion.UsuarioLogueado.Id == idUsuarioEditando)
@@ -512,7 +512,7 @@ else
     {
         try
         {
-            GestorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, idUsuarioEditando);
+            ControladorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, idUsuarioEditando);
 
             mostrarFormEditar = false;
             mensajeExito = "Usuario eliminado exitosamente.";

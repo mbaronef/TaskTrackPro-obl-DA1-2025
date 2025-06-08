@@ -1,13 +1,13 @@
 @page "/perfil"
+@using Controladores
 @using DTOs
 @using Excepciones
 @using Interfaz.ServiciosInterfaz
 @using Servicios.Excepciones
-@using Servicios.Gestores
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
-@inject GestorUsuarios GestorUsuarios
+@inject ControladorUsuarios ControladorUsuarios
 
 @if (Sesion.UsuarioLogueado is not null)
 {
@@ -231,7 +231,7 @@
         try
         {
             UsuarioDTO usuario = Sesion.UsuarioLogueado;
-            GestorUsuarios.ModificarContrasena(usuario, usuario.Id, modeloCambio.NuevaContrasena);
+            ControladorUsuarios.ModificarContrasena(usuario, usuario.Id, modeloCambio.NuevaContrasena);
             mensaje = "Contraseña cambiada con éxito.";
             await Sesion.ActualizarSesion();
             modeloCambio = new ModeloCambioContraseña(); // Limpiar el modelo
@@ -247,7 +247,7 @@
         try
         {
             UsuarioDTO usuario = Sesion.UsuarioLogueado;
-            GestorUsuarios.ReiniciarContrasena(usuario,usuario.Id);
+            ControladorUsuarios.ReiniciarContrasena(usuario,usuario.Id);
             mensaje = "Contraseña reiniciada con éxito. Se ha enviado una notificación con la nueva contraseña.";
             await Sesion.ActualizarSesion();
         }
@@ -287,14 +287,14 @@
             }
             try
             {
-                GestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(Sesion.UsuarioLogueado.Id);
+                ControladorUsuarios.ValidarUsuarioNoEsAdministradorInicial(Sesion.UsuarioLogueado.Id);
             }
             catch (ExcepcionPermisos ex)
             {
                 errorEliminar = "No se puede eliminar al usuario, es el primer administrador.";
                 return;
             }
-            GestorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, Sesion.UsuarioLogueado.Id);
+            ControladorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, Sesion.UsuarioLogueado.Id);
             await CerrarSesion();
         }
         catch

@@ -1,13 +1,12 @@
 @page "/RecursosGenerales"
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
+@using Controladores
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
 @using DTOs
-@inject GestorRecursos GestorRecursos
 @inject NavigationManager NavigationManager
 @inject LogicaSesion Sesion
-
+@inject ControladorRecursos ControladorRecursos
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
@@ -100,7 +99,7 @@ else
         </div>
     }
 
-    @if (GestorRecursos.ObtenerRecursosGenerales().Count == 0)
+    @if (ControladorRecursos.ObtenerRecursosGenerales().Count == 0)
     {
         <p>No hay recursos disponibles.</p>
     }
@@ -120,7 +119,7 @@ else
             </tr>
             </thead>
             <tbody>
-            @foreach (RecursoDTO recurso in GestorRecursos.ObtenerRecursosGenerales())
+            @foreach (RecursoDTO recurso in ControladorRecursos.ObtenerRecursosGenerales())
             {
                 <tr>
                     <td>@recurso.Nombre</td>
@@ -190,7 +189,7 @@ else
 
         try
         {
-            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevoRecurso, esExclusivo);
+            ControladorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevoRecurso, esExclusivo);
             mostrarFormCrearRecurso = false;
             mostrarError = false;
             StateHasChanged();
@@ -217,7 +216,7 @@ else
 
     private void EditarRecurso(int idRecurso)
     {
-        var recurso = GestorRecursos.ObtenerRecursosGenerales().FirstOrDefault(r => r.Id == idRecurso);
+        var recurso = ControladorRecursos.ObtenerRecursosGenerales().FirstOrDefault(r => r.Id == idRecurso);
         if (recurso != null)
         {
             recursoAEditar = new RecursoDTO
@@ -247,9 +246,9 @@ else
 
         try
         {
-            GestorRecursos.ModificarNombreRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Nombre);
-            GestorRecursos.ModificarTipoRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Tipo);
-            GestorRecursos.ModificarDescripcionRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Descripcion);
+            ControladorRecursos.ModificarNombreRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Nombre);
+            ControladorRecursos.ModificarTipoRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Tipo);
+            ControladorRecursos.ModificarDescripcionRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Descripcion);
 
             mostrarFormEditarRecurso = false;
             recursoAEditar = null;
@@ -278,7 +277,7 @@ else
         try
         {
             mostrarErrorEliminar = false;
-            GestorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
+            ControladorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
 
             if (mostrarFormEditarRecurso && recursoAEditar != null && recursoAEditar.Id == idRecurso)
             {

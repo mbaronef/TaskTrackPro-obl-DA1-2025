@@ -3,12 +3,13 @@ using DTOs;
 using Excepciones;
 using Repositorios.Interfaces;
 using Servicios.Excepciones;
+using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
-public class GestorUsuarios
+public class GestorUsuarios : IGestorUsuarios
 {
     private string _contrasenaPorDefecto = "TaskTrackPro@2025";
     public Usuario AdministradorInicial { get; private set; }
@@ -97,7 +98,7 @@ public class GestorUsuarios
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaReiniciada(_contrasenaPorDefecto));
     }
 
-    public void AutogenerarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
+    public string AutogenerarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         PermisosUsuariosServicio.VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
@@ -108,6 +109,7 @@ public class GestorUsuarios
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
         
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
+        return nuevaContrasena;
     }
 
     public void ModificarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo, string nuevaContrasena)
