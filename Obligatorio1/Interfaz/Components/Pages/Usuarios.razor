@@ -5,7 +5,6 @@
 @using Interfaz.ServiciosInterfaz
 @using DTOs
 @using Excepciones
-@using Servicios.Utilidades
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
 @inject ControladorUsuarios ControladorUsuarios
@@ -581,7 +580,7 @@ else
             else if (mostrarFormEditar)
             {
                 usuarioAEditar.ContrasenaAutogenerada = nueva;
-                mensajeExitoContrasenaModal = $"La nueva contraseña generada es: {nueva} .";
+                mensajeExitoContrasenaModal = $"La nueva contraseña generada es: {nueva} . Se cambiará al guardar cambios.";
                 mostrarExitoContrasenaModal = true;
             }
             mostrarErrorEditar = false;
