@@ -30,6 +30,8 @@ public static class MensajesErrorServicios
     public const string UsuarioNoAdministraProyectos = "No se encontró un proyecto administrado por ese usuario.";
 
     public const string NombreRepetido = "Ya existe ese nombre. Debe elegir uno distinto.";
+    public const string EmailRepetido = "Ya existe un usuario registrado con ese email. Debe elegir uno distinto.";
+    
 
     public const string TareaConSucesoras = "No se puede eliminar la tarea porque tiene tareas sucesoras.";
     public const string TareaNoExistente = "La tarea no existe.";

@@ -31,6 +31,14 @@ public class GestorUsuarios : IGestorUsuarios
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         Usuario nuevoUsuario = CrearUsuario(nuevoUsuarioDTO);
+        
+        bool existeOtro = _usuarios.ObtenerTodos().Any(usuario => usuario.Email == nuevoUsuario.Email);
+
+        if (existeOtro)
+        {
+            throw new ExcepcionUsuario(MensajesErrorServicios.EmailRepetido);
+        }
+        
         AgregarUsuario(solicitante, nuevoUsuario);
         nuevoUsuarioDTO.Id = nuevoUsuario.Id;
     }
