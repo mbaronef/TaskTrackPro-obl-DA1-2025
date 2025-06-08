@@ -15,14 +15,16 @@ public class GestorTareas : IGestorTareas
     private GestorProyectos _gestorProyectos;
     private static int _cantidadTareas;
     private IRepositorioUsuarios _repositorioUsuarios;
+    private IRepositorio<Recurso> _repositorioRecursos;
     private readonly INotificador _notificador;
     private readonly ICalculadorCaminoCritico _caminoCritico;
 
-    public GestorTareas(GestorProyectos gestorProyectos, IRepositorioUsuarios repositorioUsuarios,
+    public GestorTareas(GestorProyectos gestorProyectos, IRepositorioUsuarios repositorioUsuarios, IRepositorio<Recurso> repositorioRecursos,
         INotificador notificador, ICalculadorCaminoCritico caminoCritico)
     {
         _gestorProyectos = gestorProyectos;
         _repositorioUsuarios = repositorioUsuarios;
+        _repositorioRecursos = repositorioRecursos;
         _notificador = notificador;
         _caminoCritico = caminoCritico;
     }
@@ -210,7 +212,7 @@ public class GestorTareas : IGestorTareas
     public void EliminarRecursoDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Recurso recurso = recursoDTO.AEntidad();
+        Recurso recurso = ObtenerRecursoPorDTO(recursoDTO);
 
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         ValidarRecursoExistente(recurso, idTarea, idProyecto);
@@ -315,4 +317,17 @@ public class GestorTareas : IGestorTareas
 
         return usuario;
     }
+    
+    private Recurso ObtenerRecursoPorDTO(RecursoDTO recursoDTO)
+    {
+        var recurso = _repositorioRecursos.ObtenerPorId(recursoDTO.Id);
+        if (recurso == null)
+        {
+            throw new ExcepcionRecurso(MensajesErrorServicios.RecursoNoEncontrado);
+        }
+
+        return recurso;
+    }
+    
+    
 }

@@ -14,6 +14,7 @@ public class GestorProyectosTests
 {
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
+    private RepositorioRecursos _repositorioRecursos;
     private GestorProyectos _gestor;
     private Usuario _admin;
     private Usuario _usuarioNoAdmin;
@@ -34,6 +35,7 @@ public class GestorProyectosTests
         _caminoCritico = new CaminoCritico();
         _repositorioUsuarios = new RepositorioUsuarios();
         _repositorioProyectos = new RepositorioProyectos();
+        _repositorioRecursos = new RepositorioRecursos();
         _gestor = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
         _admin = CrearAdminProyecto();
         _adminDTO = UsuarioDTO.DesdeEntidad(_admin);
@@ -650,7 +652,7 @@ public class GestorProyectosTests
     [ExpectedException(typeof(ExcepcionProyecto))]
     public void EliminarMiembroConTareaAsignada_LanzaExcepcion()
     {
-        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios, _notificador, _caminoCritico);
+        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
         TareaDTO tarea = new TareaDTO()
         {
             Titulo = "Tarea", Descripcion = "Descripcion", DuracionEnDias = 2,
@@ -846,7 +848,7 @@ public class GestorProyectosTests
     [TestMethod]
     public void CalcularCaminoCritico_MarcaTareasCriticasCorrectamente()
     {
-        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios, _notificador, _caminoCritico);
+        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
 
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
         _gestor.CrearProyecto(proyecto, _adminDTO);

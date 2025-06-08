@@ -26,7 +26,7 @@ GestorProyectos gestorProyectos =
 GestorRecursos gestorRecursos =
     new GestorRecursos(repositorioRecursos, gestorProyectos, repositorioUsuarios, _notificador);
 GestorTareas gestorTareas =
-    new GestorTareas(gestorProyectos, repositorioUsuarios, _notificador, _calculadorCaminoCritico);
+    new GestorTareas(gestorProyectos, repositorioUsuarios, repositorioRecursos, _notificador, _calculadorCaminoCritico);
 
 ControladorTareas controladorTareas = new ControladorTareas(gestorTareas);
 ControladorProyectos controladorProyectos = new ControladorProyectos(gestorProyectos);

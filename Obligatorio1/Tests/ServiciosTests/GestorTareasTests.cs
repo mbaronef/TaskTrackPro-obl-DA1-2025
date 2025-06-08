@@ -18,6 +18,7 @@ public class GestorTareasTests
     private UsuarioDTO _noAdmin;
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
+    private RepositorioRecursos _repositorioRecursos;
     private Notificador _notificador;
     private CaminoCritico _caminoCritico;
 
@@ -34,9 +35,10 @@ public class GestorTareasTests
         _caminoCritico = new CaminoCritico();
         _repositorioUsuarios = new RepositorioUsuarios();
         _repositorioProyectos = new RepositorioProyectos();
+        _repositorioRecursos = new RepositorioRecursos();
         _gestorProyectos =
             new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
-        _gestorTareas = new GestorTareas(_gestorProyectos, _repositorioUsuarios, _notificador, _caminoCritico);
+        _gestorTareas = new GestorTareas(_gestorProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
         _admin = CrearAdministradorProyecto();
         _noAdmin = CrearUsuarioNoAdmin();
     }
@@ -99,6 +101,13 @@ public class GestorTareasTests
         return proyecto;
     }
 
+    private RecursoDTO CrearYAgregarRecurso(string nombre = "Nombre", string tipo = "Tipo", string descripcion = "Descripción")
+    {
+        Recurso recurso = new Recurso(nombre, tipo, descripcion);
+        _repositorioRecursos.Agregar(recurso);
+        return RecursoDTO.DesdeEntidad(recurso);
+    }
+    
     [TestMethod]
     public void Constructor_CreaGestorValido()
     {
@@ -896,8 +905,7 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeEliminarRecursoNecesarioDeTarea()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        RecursoDTO recursoDTO = CrearYAgregarRecurso();
 
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
@@ -916,8 +924,7 @@ public class GestorTareasTests
     [TestMethod]
     public void NoAdminNoPuedeEliminarRecursoDeTarea()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        RecursoDTO recursoDTO = CrearYAgregarRecurso();
 
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
@@ -933,8 +940,7 @@ public class GestorTareasTests
     [TestMethod]
     public void NoSePuedeEliminarRecursoDeTareaNoExistente()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        RecursoDTO recursoDTO = CrearYAgregarRecurso();
 
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
@@ -947,8 +953,8 @@ public class GestorTareasTests
     [TestMethod]
     public void EliminarRecursoNoExistenteDeTareaDaError()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        RecursoDTO recursoNoExistente = RecursoDTO.DesdeEntidad(recurso);
+        RecursoDTO recursoNoExistente = CrearYAgregarRecurso();
+
 
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         TareaDTO tarea = CrearTarea();
@@ -960,8 +966,7 @@ public class GestorTareasTests
     [TestMethod]
     public void SeNotificaLaEliminacionDeUnRecursoALosMiembrosDeLaTarea()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        RecursoDTO recursoDTO = CrearYAgregarRecurso();
 
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
@@ -974,7 +979,7 @@ public class GestorTareasTests
 
         _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
         string mensajeEsperado =
-            MensajesNotificacion.CampoTareaEliminado($"recurso {recurso.Nombre}", tarea.Id, proyecto.Nombre);
+            MensajesNotificacion.CampoTareaEliminado($"recurso {recursoDTO.Nombre}", tarea.Id, proyecto.Nombre);
         NotificacionDTO ultimaNotificacion = _admin.Notificaciones.Last();
 
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
