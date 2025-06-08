@@ -214,7 +214,7 @@ public class GestorUsuarios : IGestorUsuarios
     }
 
     private void NotificarUsuarioModificacionSiNoEsElMismo(Usuario solicitante, Usuario usuarioObjetivo,
-        String nuevaContrasena)
+        string nuevaContrasena)
     {
         if (!solicitante.Equals(usuarioObjetivo))
         {
