@@ -39,7 +39,7 @@ public class GestorUsuariosTests
 
     private UsuarioDTO CrearYAsignarAdminSistema()
     {
-        UsuarioDTO usuario = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        UsuarioDTO usuario = CrearUsuarioDTO("Juan", "Pérez", "unemail@adinet.com.uy", "Contrase#a3");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario);
         _gestorUsuarios.AgregarAdministradorSistema(_adminSistemaDTO, usuario.Id);
         return usuario;
@@ -64,6 +64,16 @@ public class GestorUsuariosTests
         Assert.AreEqual(3, _gestorUsuarios.ObtenerTodos().Count);
         Assert.AreEqual(usuario1.Id, _gestorUsuarios.ObtenerTodos().ElementAt(1).Id);
         Assert.AreEqual(usuario2.Id, _gestorUsuarios.ObtenerTodos().ElementAt(2).Id);
+    }
+
+    [ExpectedException(typeof(ExcepcionUsuario))]
+    [TestMethod]
+    public void ErrorSiSeCreaUsuarioConEmailRepetido()
+    {
+        UsuarioDTO usuario1 = CrearUsuarioDTO("Juan", "Pérez", "unemail@gmail.com", "Contrase#a3");
+        UsuarioDTO usuario2 = CrearUsuarioDTO("Mateo", "Pérez", "unemail@gmail.com", "Contrase#a9)");
+        _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario1);
+        _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario2);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]

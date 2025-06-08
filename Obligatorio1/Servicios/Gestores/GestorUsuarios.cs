@@ -31,6 +31,7 @@ public class GestorUsuarios : IGestorUsuarios
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         Usuario nuevoUsuario = CrearUsuario(nuevoUsuarioDTO);
+        VerificarEmailNoRepetido(nuevoUsuario.Email);
         AgregarUsuario(solicitante, nuevoUsuario);
         nuevoUsuarioDTO.Id = nuevoUsuario.Id;
     }
@@ -187,16 +188,7 @@ public class GestorUsuarios : IGestorUsuarios
 
         return usuario;
     }
-
-    private void NotificarUsuarioModificacionSiNoEsElMismo(Usuario solicitante, Usuario usuarioObjetivo,
-        String nuevaContrasena)
-    {
-        if (!solicitante.Equals(usuarioObjetivo))
-        {
-            Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
-        }
-    }
-
+    
     private void VerificarUsuarioRegistrado(Usuario usuario)
     {
         if (usuario == null)
@@ -210,6 +202,23 @@ public class GestorUsuarios : IGestorUsuarios
         if (!usuario.Autenticar(contrasena))
         {
             throw new ExcepcionUsuario(MensajesErrorServicios.ContrasenaIncorrecta);
+        }
+    }
+    
+    private void VerificarEmailNoRepetido(string nuevoEmail)
+    {
+        if (_usuarios.ObtenerUsuarioPorEmail(nuevoEmail) != null)
+        {
+            throw new ExcepcionUsuario(MensajesErrorServicios.EmailRepetido);
+        }
+    }
+
+    private void NotificarUsuarioModificacionSiNoEsElMismo(Usuario solicitante, Usuario usuarioObjetivo,
+        string nuevaContrasena)
+    {
+        if (!solicitante.Equals(usuarioObjetivo))
+        {
+            Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
         }
     }
 
