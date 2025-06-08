@@ -12,12 +12,13 @@ public class Proyecto
     public List<Tarea> Tareas { get; }
     public Usuario Administrador { get; set; }
     public List<Usuario> Miembros { get; }
-    
+
     public DateTime FechaInicio { get; set; } = DateTime.Today;
-    
+
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MaxValue;
-    
-    public Proyecto(string nombre, string descripcion,DateTime fechaInicio, Usuario administrador, List<Usuario> miembros) 
+
+    public Proyecto(string nombre, string descripcion, DateTime fechaInicio, Usuario administrador,
+        List<Usuario> miembros)
     {
         ValidarTextoObligatorio(nombre, MensajesErrorDominio.NombreProyectoVacio);
         ValidarTextoObligatorio(descripcion, MensajesErrorDominio.DescripcionVacia);
@@ -25,10 +26,10 @@ public class Proyecto
         ValidarNoNulo(miembros, MensajesErrorDominio.MiembrosProyectoNull);
         ValidarLargoDescripción(descripcion);
         ValidarFechaInicioMayorAActual(fechaInicio);
-        
+
         Miembros = miembros;
         ValidarAdministradorEsteEnMiembros(administrador);
-        
+
         Nombre = nombre;
         Descripcion = descripcion;
         Tareas = new List<Tarea>();
@@ -37,15 +38,15 @@ public class Proyecto
         FechaFinMasTemprana = fechaInicio.AddDays(100000);
         miembros.ForEach(usuario => usuario.CantidadProyectosAsignados++);
     }
-    
+
     public void AgregarTarea(Tarea tarea)
     {
         ValidarNoNulo(tarea, MensajesErrorDominio.TareaNull);
         ValidarTareaNoDuplicada(tarea);
-        
+
         Tareas.Add(tarea);
     }
-    
+
     public void EliminarTarea(int idTarea)
     {
         Tarea tareaAEliminar = BuscarTareaPorId(idTarea);
@@ -59,7 +60,7 @@ public class Proyecto
     {
         ValidarNoNulo(usuario, MensajesErrorDominio.MiembroNull);
         ValidarUsuarioNoSeaMiembro(usuario);
-        
+
         Miembros.Add(usuario);
         usuario.CantidadProyectosAsignados++;
     }
@@ -67,10 +68,10 @@ public class Proyecto
     public void EliminarMiembro(int idUsuario)
     {
         Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsuario);
-        
+
         ValidarNoNulo(usuarioAEliminar, MensajesErrorDominio.UsuarioNoEsMiembroDelProyecto);
         ValidarQueUsuarioAEliminarNoSeaAdministrador(usuarioAEliminar);
-        
+
         Miembros.Remove(usuarioAEliminar);
         usuarioAEliminar.CantidadProyectosAsignados--;
     }
@@ -85,10 +86,10 @@ public class Proyecto
         ValidarFechaInicioMayorAActual(nuevaFecha);
         ValidarFechaInicioNoPosteriorAFechaInicioDeTareas(nuevaFecha);
         ValidarFechaInicioMenorAFechaFinMasTemprana(nuevaFecha, FechaFinMasTemprana);
-        
+
         FechaInicio = nuevaFecha;
     }
-    
+
     public void ModificarFechaFinMasTemprana(DateTime nuevaFecha)
     {
         ValidarFechaFinMayorAInicio(nuevaFecha);
@@ -96,26 +97,26 @@ public class Proyecto
 
         FechaFinMasTemprana = nuevaFecha;
     }
-    
+
     public void ModificarNombre(string nombreNuevo)
     {
-        ValidarTextoObligatorio(nombreNuevo,MensajesErrorDominio.NombreProyectoVacio);
-        
+        ValidarTextoObligatorio(nombreNuevo, MensajesErrorDominio.NombreProyectoVacio);
+
         Nombre = nombreNuevo;
     }
 
     public void ModificarDescripcion(string nuevaDescripcion)
     {
-        ValidarTextoObligatorio(nuevaDescripcion,MensajesErrorDominio.DescripcionVacia);
+        ValidarTextoObligatorio(nuevaDescripcion, MensajesErrorDominio.DescripcionVacia);
         ValidarLargoDescripción(nuevaDescripcion);
-        
+
         Descripcion = nuevaDescripcion;
     }
-    
+
     public void AsignarNuevoAdministrador(Usuario nuevoAdministrador)
     {
         ValidarUsuarioEnMiembros(nuevoAdministrador.Id);
-        
+
         foreach (Usuario usuario in Miembros)
         {
             if (usuario.Equals(nuevoAdministrador))
@@ -131,10 +132,12 @@ public class Proyecto
     {
         return Miembros.Any(u => u.Id == idUsuario);
     }
+
     public bool TieneTareas()
     {
         return Tareas.Any();
     }
+
     private Tarea BuscarTareaPorId(int id)
     {
         return Tareas.FirstOrDefault(t => t.Id == id);
@@ -149,7 +152,8 @@ public class Proyecto
     {
         if (descripcion.Length > _maximoCaracteresDescripcion)
         {
-            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.DescripcionMuyLarga,_maximoCaracteresDescripcion));
+            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.DescripcionMuyLarga,
+                _maximoCaracteresDescripcion));
         }
     }
 
@@ -249,16 +253,15 @@ public class Proyecto
         if (inicio == fin)
         {
             throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoIgualFin);
-
         }
     }
-    
+
     public override bool Equals(object? otro)
     {
         Proyecto otroProyecto = otro as Proyecto;
         return otroProyecto != null && Id == otroProyecto.Id;
     }
-    
+
     public override int GetHashCode()
     {
         return Id.GetHashCode();

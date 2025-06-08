@@ -6,31 +6,32 @@ namespace DTOs;
 public class RecursoDTO
 {
     public int Id { get; set; }
-        
+
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     public string Nombre { get; set; }
-        
+
     [Required(ErrorMessage = "El tipo es obligatorio.")]
     public string Tipo { get; set; }
-        
+
     [Required(ErrorMessage = "La descripción es obligatoria.")]
     public string Descripcion { get; set; }
 
     public ProyectoDTO ProyectoAsociado { get; set; }
-    
+
     public int CantidadDeTareasUsandolo { get; set; } = 0;
-    
+
     public Recurso AEntidad()
     {
         Recurso recurso = new Recurso(Nombre, Tipo, Descripcion);
         recurso.Id = Id;
-        for(int i = 0; i < CantidadDeTareasUsandolo; i++)
+        for (int i = 0; i < CantidadDeTareasUsandolo; i++)
         {
             recurso.IncrementarCantidadDeTareasUsandolo();
         }
+
         return recurso;
     }
-    
+
     public static RecursoDTO DesdeEntidad(Recurso recurso)
     {
         return new RecursoDTO()
@@ -39,7 +40,9 @@ public class RecursoDTO
             Nombre = recurso.Nombre,
             Tipo = recurso.Tipo,
             Descripcion = recurso.Descripcion,
-            ProyectoAsociado = recurso.ProyectoAsociado != null ? ProyectoDTO.DesdeEntidad(recurso.ProyectoAsociado) : null
+            ProyectoAsociado = recurso.ProyectoAsociado != null
+                ? ProyectoDTO.DesdeEntidad(recurso.ProyectoAsociado)
+                : null
         };
     }
 }

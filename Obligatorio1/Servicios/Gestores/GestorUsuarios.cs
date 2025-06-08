@@ -21,8 +21,9 @@ public class GestorUsuarios : IGestorUsuarios
         _usuarios = repositorioUsuarios;
         _notificador = notificador;
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
-        AdministradorInicial = new Usuario("Admin", "Admin", new DateTime(1999, 01, 01), "admin@sistema.com", contrasenaEncriptada);
-        AdministradorInicial.EsAdministradorSistema = true; 
+        AdministradorInicial = new Usuario("Admin", "Admin", new DateTime(1999, 01, 01), "admin@sistema.com",
+            contrasenaEncriptada);
+        AdministradorInicial.EsAdministradorSistema = true;
         _usuarios.Agregar(AdministradorInicial);
     }
 
@@ -43,12 +44,13 @@ public class GestorUsuarios : IGestorUsuarios
         {
             throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegado);
         }
+
         PermisosUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         _usuarios.Eliminar(usuario.Id);
         string mensajeNotificacion = MensajesNotificacion.UsuarioEliminado(usuario.Nombre, usuario.Apellido);
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
     }
-    
+
     public List<UsuarioListarDTO> ObtenerTodos()
     {
         return _usuarios.ObtenerTodos().Select(UsuarioListarDTO.DesdeEntidad).ToList();
@@ -90,11 +92,12 @@ public class GestorUsuarios : IGestorUsuarios
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
-        PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "reiniciar la contraseña del usuario");
+        PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo,
+            "reiniciar la contraseña del usuario");
 
         string contrasenaPorDefectoEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
         usuarioObjetivo.EstablecerContrasenaEncriptada(contrasenaPorDefectoEncriptada);
-        
+
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaReiniciada(_contrasenaPorDefecto));
     }
 
@@ -102,17 +105,19 @@ public class GestorUsuarios : IGestorUsuarios
     {
         return UtilidadesContrasena.AutogenerarContrasenaValida();
     }
-    
-    public void AutogenerarYAsignarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo) // genera y asigna. Prevee el caso de notificar por mail y no tener que mostrar contraseña en pantalla
+
+    public void
+        AutogenerarYAsignarContrasena(UsuarioDTO solicitanteDTO,
+            int idUsuarioObjetivo) // genera y asigna. Prevee el caso de notificar por mail y no tener que mostrar contraseña en pantalla
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         PermisosUsuarios.VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
         string nuevaContrasena = AutogenerarContrasenaValida();
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
-        
+
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
-        
+
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
     }
 
@@ -120,14 +125,15 @@ public class GestorUsuarios : IGestorUsuarios
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
-        PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo, "modificar la contraseña del usuario");
-        
+        PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(solicitante, usuarioObjetivo,
+            "modificar la contraseña del usuario");
+
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
-        
-        NotificarUsuarioModificacionSiNoEsElMismo(solicitante, usuarioObjetivo,  nuevaContrasena);
+
+        NotificarUsuarioModificacionSiNoEsElMismo(solicitante, usuarioObjetivo, nuevaContrasena);
     }
-    
+
     public void BorrarNotificacion(int idUsuario, int idNotificacion)
     {
         Usuario usuario = obtenerUsuarioDominioPorId(idUsuario);
@@ -147,7 +153,7 @@ public class GestorUsuarios : IGestorUsuarios
         List<int> idsAExcluir = usuarios.Select(u => u.Id).ToList();
         return ObtenerTodos().Where(u => !idsAExcluir.Contains(u.Id)).ToList();
     }
-    
+
     public void ValidarUsuarioNoEsAdministradorInicial(int idUsuario)
     {
         if (idUsuario == AdministradorInicial.Id)
@@ -155,11 +161,12 @@ public class GestorUsuarios : IGestorUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.PrimerAdminSistema);
         }
     }
-    
+
     private Usuario CrearUsuario(UsuarioDTO nuevoUsuarioDTO)
     {
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevoUsuarioDTO.Contrasena);
-        return new Usuario(nuevoUsuarioDTO.Nombre, nuevoUsuarioDTO.Apellido, nuevoUsuarioDTO.FechaNacimiento, nuevoUsuarioDTO.Email, contrasenaEncriptada);
+        return new Usuario(nuevoUsuarioDTO.Nombre, nuevoUsuarioDTO.Apellido, nuevoUsuarioDTO.FechaNacimiento,
+            nuevoUsuarioDTO.Email, contrasenaEncriptada);
     }
 
     private void AgregarUsuario(Usuario solicitante, Usuario usuario)
@@ -169,7 +176,7 @@ public class GestorUsuarios : IGestorUsuarios
         string mensajeNotificacion = MensajesNotificacion.UsuarioCreado(usuario.Nombre, usuario.Apellido);
         NotificarAdministradoresSistema(solicitante, mensajeNotificacion);
     }
-    
+
     private Usuario obtenerUsuarioDominioPorId(int idUsuario)
     {
         Usuario usuario = _usuarios.ObtenerPorId(idUsuario);
@@ -177,17 +184,19 @@ public class GestorUsuarios : IGestorUsuarios
         {
             throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);
         }
+
         return usuario;
     }
-    
-    private void NotificarUsuarioModificacionSiNoEsElMismo(Usuario solicitante, Usuario usuarioObjetivo, String nuevaContrasena)
+
+    private void NotificarUsuarioModificacionSiNoEsElMismo(Usuario solicitante, Usuario usuarioObjetivo,
+        String nuevaContrasena)
     {
         if (!solicitante.Equals(usuarioObjetivo))
         {
             Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
         }
     }
-    
+
     private void VerificarUsuarioRegistrado(Usuario usuario)
     {
         if (usuario == null)
@@ -203,13 +212,14 @@ public class GestorUsuarios : IGestorUsuarios
             throw new ExcepcionUsuario(MensajesErrorServicios.ContrasenaIncorrecta);
         }
     }
-    
+
     private void NotificarAdministradoresSistema(Usuario solicitante, string mensajeNotificacion)
     {
-        List<Usuario> administradores = _usuarios.ObtenerTodos().Where(usuario => usuario.EsAdministradorSistema && !usuario.Equals(solicitante)).ToList();
+        List<Usuario> administradores = _usuarios.ObtenerTodos()
+            .Where(usuario => usuario.EsAdministradorSistema && !usuario.Equals(solicitante)).ToList();
         administradores.ForEach(admin => Notificar(admin, mensajeNotificacion));
     }
-    
+
     private void Notificar(Usuario usuario, string mensajeNotificacion)
     {
         _notificador.NotificarUno(usuario, mensajeNotificacion);

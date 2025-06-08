@@ -8,7 +8,8 @@ public class RepositorioUsuarios : IRepositorioUsuarios
     private List<Usuario> _usuarios;
     private static int _cantidadUsuarios;
 
-    public RepositorioUsuarios() {
+    public RepositorioUsuarios()
+    {
         _usuarios = new List<Usuario>();
     }
 
@@ -21,7 +22,6 @@ public class RepositorioUsuarios : IRepositorioUsuarios
     public Usuario ObtenerPorId(int id)
     {
         return _usuarios.Find(usuario => usuario.Id == id);
-
     }
 
     public void Eliminar(int id)
@@ -39,4 +39,3 @@ public class RepositorioUsuarios : IRepositorioUsuarios
         return _usuarios.Find(usuario => usuario.Email == email);
     }
 }
-    

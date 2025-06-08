@@ -194,8 +194,8 @@ public class RecursoTests
     public void EqualsRetornaTrueSiLosIdsSonIguales()
     {
         // por simplicidad se hardcodean los ids, los gestiona el repo.
-        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") {Id = 1};
-        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion"){Id = 1};
+        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
+        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
         bool sonIguales = recurso1.Equals(recurso2);
         Assert.IsTrue(sonIguales);
     }
@@ -204,8 +204,8 @@ public class RecursoTests
     public void EqualsRetornaFalseSiLosIdsNoSonIguales()
     {
         // por simplicidad se hardcodean los ids, los gestiona el repo.
-        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") {Id = 1};
-        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion"){Id = 2};
+        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
+        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 2 };
         bool sonIguales = recurso1.Equals(recurso2);
         Assert.IsFalse(sonIguales);
     }
@@ -231,9 +231,9 @@ public class RecursoTests
     public void GetHashCodeFuncionaOk()
     {
         // por simplicidad se hardcodean los ids, los gestiona el repo.
-        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") {Id = 1};
-        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion"){Id = 1};
-        Recurso recurso3 = new Recurso("Nombre", "Tipo", "Descripcion"){Id = 2};
+        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
+        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
+        Recurso recurso3 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 2 };
         Assert.AreEqual(recurso1.GetHashCode(), recurso2.GetHashCode());
         Assert.AreNotEqual(recurso3.GetHashCode(), recurso1.GetHashCode());
     }
@@ -242,7 +242,8 @@ public class RecursoTests
     public void ToStringFuncionaCorrectamente()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
-        string resultadoEsperado = $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'";
+        string resultadoEsperado =
+            $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'";
         Assert.AreEqual(resultadoEsperado, recurso.ToString());
     }
 }

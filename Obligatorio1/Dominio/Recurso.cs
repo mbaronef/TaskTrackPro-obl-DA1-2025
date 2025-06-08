@@ -21,7 +21,7 @@ public class Recurso
         Tipo = tipo;
         Descripcion = descripcion;
     }
-    
+
     public void ModificarNombre(string nombre)
     {
         ValidarAtributoNoVacio(nombre, "nombre");
@@ -33,21 +33,23 @@ public class Recurso
         ValidarAtributoNoVacio(tipo, "tipo");
         Tipo = tipo;
     }
-    
+
     public void ModificarDescripcion(string descripcion)
     {
         ValidarAtributoNoVacio(descripcion, "descripcion");
         Descripcion = descripcion;
     }
-    
+
     public void AsociarAProyecto(Proyecto proyecto)
     {
         if (ProyectoAsociado != null)
         {
             throw new ExcepcionDominio(MensajesErrorDominio.RecursoYaEsExclusivo);
         }
+
         ProyectoAsociado = proyecto;
     }
+
     public void IncrementarCantidadDeTareasUsandolo()
     {
         CantidadDeTareasUsandolo++;
@@ -60,7 +62,7 @@ public class Recurso
 
         CantidadDeTareasUsandolo--;
     }
-    
+
     public bool EsExclusivo()
     {
         return ProyectoAsociado != null;
@@ -70,7 +72,7 @@ public class Recurso
     {
         return CantidadDeTareasUsandolo > 0;
     }
-    
+
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
         if (string.IsNullOrWhiteSpace(texto))
@@ -78,7 +80,7 @@ public class Recurso
             throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, nombreAtributo));
         }
     }
-    
+
     public override bool Equals(object? otro)
     {
         Recurso otroRecurso = otro as Recurso;
@@ -89,7 +91,7 @@ public class Recurso
     {
         return Id.GetHashCode();
     }
-    
+
     public override string ToString()
     {
         return $"Nombre: '{Nombre}', tipo: '{Tipo}', descripción: '{Descripcion}'";

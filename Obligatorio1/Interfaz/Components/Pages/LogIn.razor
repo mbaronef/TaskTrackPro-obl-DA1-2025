@@ -25,12 +25,14 @@
                     <EditForm Model="modeloSesion" OnSubmit="Login" FormName="loginForm">
                         <div class="form-group mb-4">
                             <label for="email" class="form-label fs-6">Email</label>
-                            <InputText id="email" class="form-control form-control-lg" @bind-Value="modeloSesion.Email" />
+                            <InputText id="email" class="form-control form-control-lg"
+                                       @bind-Value="modeloSesion.Email"/>
                         </div>
 
                         <div class="form-group mb-4">
                             <label for="contraseña" class="form-label fs-6">Contraseña</label>
-                            <InputText id="contraseña" type="password" class="form-control form-control-lg" @bind-Value="modeloSesion.Contraseña" />
+                            <InputText id="contraseña" type="password" class="form-control form-control-lg"
+                                       @bind-Value="modeloSesion.Contraseña"/>
                         </div>
 
                         <button type="submit" class="btn btn-dark w-100 btn-lg">
@@ -59,4 +61,5 @@
             Navigation.NavigateTo("/inicio");
         }
     }
+
 }

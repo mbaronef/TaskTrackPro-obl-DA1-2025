@@ -21,7 +21,7 @@ public class RepositorioProyectos : IRepositorio<Proyecto>
 
     public Proyecto ObtenerPorId(int id)
     {
-        return _proyectos.Find(proyecto=>proyecto.Id == id);
+        return _proyectos.Find(proyecto => proyecto.Id == id);
     }
 
     public void Eliminar(int id)

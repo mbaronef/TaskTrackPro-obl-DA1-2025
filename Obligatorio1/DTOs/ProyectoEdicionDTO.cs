@@ -15,7 +15,7 @@ public class ProyectoEdicionDTO
     [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
     [CustomValidation(typeof(ProyectoEdicionDTO), nameof(ValidarFechaInicio))]
     public DateTime FechaInicio { get; set; } = DateTime.Today;
-    
+
     public static ValidationResult ValidarFechaInicio(DateTime fecha, ValidationContext context)
     {
         if (fecha < DateTime.Today)
@@ -25,7 +25,7 @@ public class ProyectoEdicionDTO
 
         return ValidationResult.Success;
     }
-    
+
     public static ProyectoEdicionDTO DesdeEntidad(Proyecto proyecto)
     {
         return new ProyectoEdicionDTO()

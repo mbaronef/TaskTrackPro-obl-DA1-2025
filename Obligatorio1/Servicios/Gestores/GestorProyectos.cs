@@ -10,14 +10,15 @@ using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
-public class GestorProyectos :  IGestorProyectos
+public class GestorProyectos : IGestorProyectos
 {
     private IRepositorio<Proyecto> _proyectos;
     private IRepositorioUsuarios _repositorioUsuarios;
     private readonly INotificador _notificador;
     private readonly ICalculadorCaminoCritico _caminoCritico;
 
-    public GestorProyectos(IRepositorioUsuarios repositorioUsuarios, IRepositorio<Proyecto> repositorioProyectos, INotificador notificador, ICalculadorCaminoCritico  caminoCritico)
+    public GestorProyectos(IRepositorioUsuarios repositorioUsuarios, IRepositorio<Proyecto> repositorioProyectos,
+        INotificador notificador, ICalculadorCaminoCritico caminoCritico)
     {
         _proyectos = repositorioProyectos;
         _repositorioUsuarios = repositorioUsuarios;
@@ -31,28 +32,27 @@ public class GestorProyectos :  IGestorProyectos
         PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
         Proyecto proyecto = proyectoDTO.AEntidad(solicitante);
-        
+
         PermisosUsuarios.VerificarUsuarioNoAdministraOtroProyecto(solicitante);
 
         VerificarNombreNoRepetido(proyecto.Nombre);
-        
+
         _proyectos.Agregar(proyecto);
 
         solicitante.EstaAdministrandoUnProyecto = true;
 
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.ProyectoCreado(proyecto.Nombre));
         proyectoDTO.Id = proyecto.Id;
-
     }
 
     public void EliminarProyecto(int idProyecto, UsuarioDTO solicitanteDTO)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        
-        Proyecto proyecto =  ObtenerProyectoDominioPorId(idProyecto);
+
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
 
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
+
         solicitante.EstaAdministrandoUnProyecto = false;
         _proyectos.Eliminar(proyecto.Id);
         foreach (Usuario miembro in proyecto.Miembros)
@@ -62,18 +62,18 @@ public class GestorProyectos :  IGestorProyectos
 
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.ProyectoEliminado(proyecto.Nombre));
     }
-    
+
     public List<ProyectoDTO> ObtenerTodos()
     {
         List<Proyecto> proyectos = _proyectos.ObtenerTodos();
         return proyectos.Select(ProyectoDTO.DesdeEntidad).ToList();
     }
-    
+
     public List<Proyecto> ObtenerTodosDominio()
     {
         return _proyectos.ObtenerTodos();
     }
-    
+
     public ProyectoDTO ObtenerProyectoPorId(int id)
     {
         Proyecto proyecto = ObtenerProyectoDominioPorId(id);
@@ -83,114 +83,120 @@ public class GestorProyectos :  IGestorProyectos
     public void ModificarNombreDelProyecto(int idProyecto, string nuevoNombre, UsuarioDTO solicitanteDTO)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        
+
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
 
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
+
         VerificarNombreNoRepetido(nuevoNombre);
-        
+
         string nombreAnterior = proyecto.Nombre;
 
         proyecto.ModificarNombre(nuevoNombre);
 
-        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.NombreProyectoModificado(nombreAnterior, proyecto.Nombre));
+        _notificador.NotificarMuchos(proyecto.Miembros,
+            MensajesNotificacion.NombreProyectoModificado(nombreAnterior, proyecto.Nombre));
     }
 
     public void ModificarDescripcionDelProyecto(int idProyecto, string descripcion, UsuarioDTO solicitanteDTO)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        
-        Proyecto proyecto =  ObtenerProyectoDominioPorId(idProyecto);
+
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
 
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
+
         proyecto.ModificarDescripcion(descripcion);
 
-        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.DescripcionProyectoModificada(proyecto.Nombre, proyecto.Descripcion));
+        _notificador.NotificarMuchos(proyecto.Miembros,
+            MensajesNotificacion.DescripcionProyectoModificada(proyecto.Nombre, proyecto.Descripcion));
     }
 
     public void ModificarFechaDeInicioDelProyecto(int idProyecto, DateTime nuevaFecha, UsuarioDTO solicitanteDTO)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        
-        Proyecto proyecto =  ObtenerProyectoDominioPorId(idProyecto);
+
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
 
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
+
         proyecto.ModificarFechaInicio(nuevaFecha);
-        
+
         _caminoCritico.CalcularCaminoCritico(proyecto);
 
-        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.FechaInicioProyectoModificada(proyecto.Nombre, nuevaFecha));
+        _notificador.NotificarMuchos(proyecto.Miembros,
+            MensajesNotificacion.FechaInicioProyectoModificada(proyecto.Nombre, nuevaFecha));
     }
 
     public void CambiarAdministradorDeProyecto(UsuarioDTO solicitanteDTO, int idProyecto, int idNuevoAdmin)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        
+
         PermisosUsuarios.VerificarPermisoAdminSistema(solicitante, "cambiar el administrador del proyecto");
 
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
 
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(idNuevoAdmin, proyecto);
-        
+
         Usuario nuevoAdmin = ObtenerMiembro(idNuevoAdmin, proyecto);
 
         PermisosUsuarios.VerificarUsuarioNoAdministraOtroProyecto(nuevoAdmin);
 
         PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(nuevoAdmin, "el nuevo administrador");
-        
+
         proyecto.Administrador.EstaAdministrandoUnProyecto = false;
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoUnProyecto = true;
-        
-        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.AdministradorProyectoModificado(proyecto.Nombre, nuevoAdmin.ToString()));
+
+        _notificador.NotificarMuchos(proyecto.Miembros,
+            MensajesNotificacion.AdministradorProyectoModificado(proyecto.Nombre, nuevoAdmin.ToString()));
     }
 
     public void AgregarMiembroAProyecto(int idProyecto, UsuarioDTO solicitanteDTO, UsuarioDTO nuevoMiembroDTO)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        
+
         Usuario nuevoMiembro = ObtenerUsuarioPorDTO(nuevoMiembroDTO);
-        
-        Proyecto proyecto =  ObtenerProyectoDominioPorId(idProyecto);
+
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
 
         PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
+
         proyecto.AsignarMiembro(nuevoMiembro);
 
-        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.MiembroAgregado(proyecto.Nombre, nuevoMiembro.Id));
-
+        _notificador.NotificarMuchos(proyecto.Miembros,
+            MensajesNotificacion.MiembroAgregado(proyecto.Nombre, nuevoMiembro.Id));
     }
-    
+
     public void EliminarMiembroDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idMiembroAEliminar)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        
-        Proyecto proyecto =  ObtenerProyectoDominioPorId(idProyecto);
-        
+
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+
         PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
 
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
-        
+
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(idMiembroAEliminar, proyecto);
 
         VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idMiembroAEliminar);
-        
+
         proyecto.EliminarMiembro(idMiembroAEliminar);
-        
-        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.MiembroEliminado(proyecto.Nombre, idMiembroAEliminar));
+
+        _notificador.NotificarMuchos(proyecto.Miembros,
+            MensajesNotificacion.MiembroEliminado(proyecto.Nombre, idMiembroAEliminar));
     }
 
     public List<ProyectoDTO> ObtenerProyectosPorUsuario(int idUsuario)
     {
-        List<Proyecto> proyectosDelUsuario = _proyectos.ObtenerTodos().Where(proyecto => proyecto.EsMiembro(idUsuario)).ToList();
+        List<Proyecto> proyectosDelUsuario =
+            _proyectos.ObtenerTodos().Where(proyecto => proyecto.EsMiembro(idUsuario)).ToList();
         return proyectosDelUsuario.Select(ProyectoDTO.DesdeEntidad).ToList();
     }
-    
+
     public Proyecto ObtenerProyectoDelAdministrador(int idAdministrador)
     {
         Proyecto proyecto = _proyectos.ObtenerTodos().FirstOrDefault(p => p.Administrador.Id == idAdministrador);
@@ -202,7 +208,7 @@ public class GestorProyectos :  IGestorProyectos
 
         return proyecto;
     }
-    
+
     public void VerificarUsuarioNoTieneTareasAsignadas(int idProyecto, int idMiembroAEliminar)
     {
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
@@ -212,6 +218,7 @@ public class GestorProyectos :  IGestorProyectos
             throw new ExcepcionProyecto(MensajesErrorServicios.UsuarioConTareas);
         }
     }
+
     public void NotificarAdministradoresDeProyectos(List<Proyecto> proyectos, string mensaje)
     {
         proyectos.ForEach(proyecto => _notificador.NotificarUno(proyecto.Administrador, mensaje));
@@ -229,30 +236,31 @@ public class GestorProyectos :  IGestorProyectos
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
         return proyecto.EsAdministrador(usuario);
     }
-    
+
     public bool EsMiembroDeProyecto(int idUsuario, int idProyecto)
     {
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
         return proyecto.EsMiembro(idUsuario);
     }
+
     public Proyecto ObtenerProyectoDominioPorId(int id)
     {
         Proyecto proyecto = _proyectos.ObtenerPorId(id);
-        
-        if(proyecto is null)
+
+        if (proyecto is null)
         {
             throw new ExcepcionProyecto(MensajesErrorServicios.ProyectoNoEncontrado);
         }
 
         return proyecto;
     }
-    
+
     private Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
         Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
         return miembro;
     }
-    
+
     private void VerificarNombreNoRepetido(string nuevoNombre)
     {
         bool existeOtro = _proyectos.ObtenerTodos().Any(proyecto => proyecto.Nombre == nuevoNombre);
@@ -262,7 +270,7 @@ public class GestorProyectos :  IGestorProyectos
             throw new ExcepcionProyecto(MensajesErrorServicios.NombreRepetido);
         }
     }
-    
+
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
     {
         Usuario usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
@@ -270,6 +278,7 @@ public class GestorProyectos :  IGestorProyectos
         {
             throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);
         }
+
         return usuario;
     }
 }

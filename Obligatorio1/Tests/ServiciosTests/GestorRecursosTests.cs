@@ -22,7 +22,7 @@ public class GestorRecursosTests
 
     private Notificador _notificador;
     private CaminoCritico _caminoCritico;
-    
+
     [TestInitialize]
     public void SetUp()
     {
@@ -32,14 +32,16 @@ public class GestorRecursosTests
 
         _notificador = new Notificador();
         _caminoCritico = new CaminoCritico();
-        
+
         _repositorioRecursos = new RepositorioRecursos();
         _repositorioUsuarios = new RepositorioUsuarios();
         _repositorioProyectos = new RepositorioProyectos();
 
-        _gestorProyectos = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
+        _gestorProyectos =
+            new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
 
-        _gestorRecursos = new GestorRecursos(_repositorioRecursos, _gestorProyectos, _repositorioUsuarios, _notificador);
+        _gestorRecursos =
+            new GestorRecursos(_repositorioRecursos, _gestorProyectos, _repositorioUsuarios, _notificador);
 
         _adminSistemaDTO = CrearAdministradorSistemaDTO();
     }
@@ -246,7 +248,7 @@ public class GestorRecursosTests
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
         string mensajeEsperado =
             MensajesNotificacion.RecursoEliminado(recurso.Nombre, recurso.Tipo, recurso.Descripcion);
-        
+
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
@@ -265,7 +267,7 @@ public class GestorRecursosTests
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
         string mensajeEsperado =
             MensajesNotificacion.RecursoEliminado(recurso.Nombre, recurso.Tipo, recurso.Descripcion);
-        
+
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
@@ -496,12 +498,13 @@ public class GestorRecursosTests
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso, true);
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior", $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
-        
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior",
+            $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
+
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
@@ -519,12 +522,13 @@ public class GestorRecursosTests
         proyecto.AgregarTarea(tarea);
 
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior", $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
-        
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior",
+            $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
+
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
@@ -537,12 +541,13 @@ public class GestorRecursosTests
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso, true);
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior", $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
-        
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior",
+            $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
+
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
@@ -560,12 +565,13 @@ public class GestorRecursosTests
         proyecto.AgregarTarea(tarea);
 
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior", $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
-        
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior",
+            $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
+
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
@@ -578,12 +584,13 @@ public class GestorRecursosTests
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(UsuarioDTO.DesdeEntidad(adminProyecto), recurso, true);
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Otra descripción");
-        
+
         recurso = _gestorRecursos.ObtenerRecursoPorId(recurso.Id); // actualización
 
         Notificacion ultimaNotificacion = adminProyecto.Notificaciones.Last();
-        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior", $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
-        
+        string mensajeEsperado = MensajesNotificacion.RecursoModificado("Analista Senior",
+            $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'");
+
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }

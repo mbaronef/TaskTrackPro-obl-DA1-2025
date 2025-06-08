@@ -19,7 +19,8 @@ public class GestorUsuariosTests
     public void SetUp()
     {
         // setup para reiniciar las variables estáticas, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(RepositorioUsuarios).GetField("_cantidadUsuarios", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        typeof(RepositorioUsuarios).GetField("_cantidadUsuarios",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
 
         _notificador = new Notificador();
         _repositorioUsuarios = new RepositorioUsuarios();
@@ -450,7 +451,7 @@ public class GestorUsuariosTests
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
         string mensajeEsperado = MensajesNotificacion.ContrasenaReiniciada("TaskTrackPro@2025");
-        
+
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
@@ -488,7 +489,7 @@ public class GestorUsuariosTests
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
         string mensajeEsperado = MensajesNotificacion.ContrasenaModificada(nuevaContrasena);
-        
+
         Assert.AreEqual(mensajeEsperado,
             ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
@@ -516,7 +517,7 @@ public class GestorUsuariosTests
         Usuario admin2 = _repositorioUsuarios.ObtenerPorId(admin2DTO.Id);
         Notificacion ultimaNotificacion = admin2.Notificaciones.Last();
         string mensajeEsperado = MensajesNotificacion.UsuarioCreado(usuario.Nombre, usuario.Apellido);
-        
+
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
     }
@@ -542,7 +543,7 @@ public class GestorUsuariosTests
         Usuario admin2 = _repositorioUsuarios.ObtenerPorId(admin2DTO.Id);
         Notificacion ultimaNotificacion = admin2.Notificaciones.Last();
         string mensajeEsperado = MensajesNotificacion.UsuarioEliminado(usuario.Nombre, usuario.Apellido);
-        
+
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
     }
@@ -627,4 +628,3 @@ public class GestorUsuariosTests
         Assert.AreEqual(0, usuarioDominio.Notificaciones.Count());
     }
 }
-

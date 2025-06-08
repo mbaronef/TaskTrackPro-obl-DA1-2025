@@ -22,9 +22,9 @@ public class TareaDTO
     public DateTime FechaInicioMasTemprana { get; set; }
 
     public EstadoTareaDTO Estado { get; set; }
-    
+
     public int Holgura { get; set; }
-    
+
     public DateTime FechaFinMasTemprana { get; set; }
 
     public List<UsuarioListarDTO> UsuariosAsignados { get; private set; } = new List<UsuarioListarDTO>();
@@ -38,7 +38,7 @@ public class TareaDTO
         tarea.Id = Id;
         return tarea;
     }
-    
+
     public static TareaDTO DesdeEntidad(Tarea tarea)
     {
         return new TareaDTO()
@@ -56,6 +56,7 @@ public class TareaDTO
             Dependencias = tarea.Dependencias.Select(DependenciaDTO.DesdeEntidad).ToList()
         };
     }
+
     public static ValidationResult ValidarFechaInicio(DateTime fecha, ValidationContext context)
     {
         if (fecha < DateTime.Today)

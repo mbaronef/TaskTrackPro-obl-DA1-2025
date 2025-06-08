@@ -1,4 +1,5 @@
 namespace DTOs;
+
 public enum EstadoTareaDTO
 {
     Bloqueada,

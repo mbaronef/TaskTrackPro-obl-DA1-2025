@@ -20,13 +20,13 @@ public class Usuario
     public bool EsAdministradorSistema { get; set; } = false;
 
     public bool EsAdministradorProyecto { get; set; } = false;
-    
+
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
 
     public int CantidadProyectosAsignados { get; set; } = 0;
 
     public Usuario()
-    { 
+    {
         Notificaciones = new List<Notificacion>();
     }
 
@@ -36,7 +36,7 @@ public class Usuario
         ValidarAtributoNoVacio(apellido, "apellido");
         ValidarEdad(fechaNacimiento);
         ValidarEmail(email);
-        
+
         Nombre = nombre;
         Apellido = apellido;
         FechaNacimiento = fechaNacimiento;
@@ -54,7 +54,7 @@ public class Usuario
     {
         return BCrypt.Net.BCrypt.Verify(contrasenaIngresada, _contrasenaEncriptada);
     }
-    
+
     public void CambiarEmail(string nuevoEmail)
     {
         ValidarEmail(nuevoEmail);
@@ -74,18 +74,18 @@ public class Usuario
         {
             throw new ExcepcionDominio(MensajesErrorDominio.NotificacionNoExiste);
         }
-        Notificaciones.RemoveAt(indice);
 
+        Notificaciones.RemoveAt(indice);
     }
-    
+
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
         if (string.IsNullOrWhiteSpace(texto))
         {
-            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, nombreAtributo));   
+            throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, nombreAtributo));
         }
     }
-    
+
     private void ValidarEdad(DateTime fechaNacimiento)
     {
         if (fechaNacimiento.AddYears(_edadMinima) > DateTime.Today)

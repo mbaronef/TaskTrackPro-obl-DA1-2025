@@ -28,30 +28,35 @@ else
         @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
         {
             <div class="text-center mb-3">
-                <button class="btn btn-primary btn text-white d-flex align-items-center gap-2" @onclick="() => MostrarVentanaCreacion()">
+                <button class="btn btn-primary btn text-white d-flex align-items-center gap-2"
+                        @onclick="() => MostrarVentanaCreacion()">
                     <i class="bi bi-plus-circle"></i> Crear tarea
                 </button>
             </div>
         }
-        @if (proyecto.Tareas.Count == 0 && (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id)||Sesion.EsAdminSistema()))
+
+        @if (proyecto.Tareas.Count == 0 && (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || Sesion.EsAdminSistema()))
         {
             <p>Aún no hay tareas en el proyecto.</p>
-        } else if (proyecto.Tareas.Count == 0 && ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, proyecto.Id))
+        }
+        else if (proyecto.Tareas.Count == 0 && ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, proyecto.Id))
         {
             <p>Aún no tienes tareas asignadas</p>
         }
+
         @if (proyecto.Tareas.Count > 0)
         {
             @foreach (var tarea in proyecto.Tareas)
             {
-                @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || ControladorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id)|| Sesion.EsAdminSistema())
+                @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || ControladorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id) || Sesion.EsAdminSistema())
                 {
                     var collapseId = $"collapseTarea{tarea.Id}";
 
                     <div class="card shadow-sm mb-3">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <span class="fw-bold fs-5">@tarea.Titulo</span>
-                            <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target=@($"#{collapseId}")>
+                            <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="collapse"
+                                    data-bs-target=@($"#{collapseId}")>
                                 Más información
                             </button>
                         </div>
@@ -61,7 +66,9 @@ else
                                 <p><strong>Estado:</strong> @FormatearEstado(tarea.Estado)</p>
                                 @if (tarea.Dependencias.Count > 0)
                                 {
-                                    <p><strong>Depende de:</strong> @string.Join(", ", tarea.Dependencias.Select(d => $"{d.TareaPrevia.Titulo} ({d.Tipo})"))</p>
+                                    <p><strong>Depende
+                                            de:</strong> @string.Join(", ", tarea.Dependencias.Select(d => $"{d.TareaPrevia.Titulo} ({d.Tipo})"))
+                                    </p>
                                 }
                                 else
                                 {
@@ -69,20 +76,25 @@ else
                                 }
                                 @if (tarea.RecursosNecesarios.Count > 0)
                                 {
-                                    <p><strong>Recursos necesarios:</strong> @string.Join(", ", tarea.RecursosNecesarios.Select(r => r.Nombre))</p>
+                                    <p><strong>Recursos
+                                            necesarios:</strong> @string.Join(", ", tarea.RecursosNecesarios.Select(r => r.Nombre))
+                                    </p>
                                 }
                                 else
                                 {
                                     <p><strong>No tiene recursos necesarios</strong></p>
                                 }
                                 <p><strong>Duración:</strong> @tarea.DuracionEnDias día/s</p>
-                                <p><strong>Fecha de inicio:</strong> @tarea.FechaInicioMasTemprana.ToString("dd/MM/yyyy")</p>
+                                <p><strong>Fecha de
+                                        inicio:</strong> @tarea.FechaInicioMasTemprana.ToString("dd/MM/yyyy")</p>
                                 <p><strong>Fecha de fin:</strong> @tarea.FechaFinMasTemprana.ToString("dd/MM/yyyy")</p>
                                 <p><strong>Holgura:</strong> @tarea.Holgura día/s</p>
 
                                 @if (tarea.UsuariosAsignados.Count > 0)
                                 {
-                                    <p><strong>Miembros:</strong> @string.Join(", ", tarea.UsuariosAsignados.Select(u => $"{u.Nombre} {u.Apellido} ({u.Email})"))</p>
+                                    <p>
+                                        <strong>Miembros:</strong> @string.Join(", ", tarea.UsuariosAsignados.Select(u => $"{u.Nombre} {u.Apellido} ({u.Email})"))
+                                    </p>
                                 }
                                 else
                                 {
@@ -92,22 +104,26 @@ else
                             @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
-                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaEdicion(tarea.Id)">
+                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
+                                            @onclick="() => MostrarVentanaEdicion(tarea.Id)">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
 
                                     @if (proyecto.Tareas.Count > 1)
                                     {
-                                        <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaDependencias(tarea.Id)">
+                                        <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+                                                @onclick="() => MostrarVentanaDependencias(tarea.Id)">
                                             <i class="bi bi-diagram-3"></i> Dependencias
                                         </button>
                                     }
 
-                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaRecursos(tarea.Id)">
+                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+                                            @onclick="() => MostrarVentanaRecursos(tarea.Id)">
                                         <i class="bi bi-box-seam"></i> Recursos
                                     </button>
 
-                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaMiembros(tarea.Id)">
+                                    <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+                                            @onclick="() => MostrarVentanaMiembros(tarea.Id)">
                                         <i class="bi bi-people"></i> Miembros
                                     </button>
                                 </div>
@@ -115,20 +131,22 @@ else
                             @if (ControladorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id) && !ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada && tarea.Estado != EstadoTareaDTO.Bloqueada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
-                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" @onclick="() => MostrarVentanaEdicionReducida(tarea.Id)">
+                                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
+                                            @onclick="() => MostrarVentanaEdicionReducida(tarea.Id)">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
                                 </div>
                             }
                         </div>
-                        </div>
+                    </div>
                 }
             }
         }
     }
 }
 
-<div class="modal fade @(mostrarVentanaCreacion ? "show d-block" : "")" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+<div class="modal fade @(mostrarVentanaCreacion ? "show d-block" : "")" tabindex="-1"
+     style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog">
         <div class="modal-content rounded-3 shadow-lg">
             <div class="modal-header">
@@ -140,26 +158,30 @@ else
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                        <div class="alert alert-danger d-flex align-items-center gap-2 text-center justify-content-center">
+                        <div
+                            class="alert alert-danger d-flex align-items-center gap-2 text-center justify-content-center">
                             <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
                             <span class="fw-semibold">@((MarkupString)mensaje)</span>
                         </div>
                     }
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
-                        <InputText id="titulo" class="form-control" @bind-Value="tareaDTO.Titulo" type="text" placeholder="Ingrese el título de la tarea" />
+                        <InputText id="titulo" class="form-control" @bind-Value="tareaDTO.Titulo" type="text"
+                                   placeholder="Ingrese el título de la tarea"/>
                     </div>
                     <div class="mb-3">
                         <label for="descripcion" class="form-label">Descripción</label>
-                        <InputTextArea id="descripcion" class="form-control" @bind-Value="tareaDTO.Descripcion" placeholder="Ingrese una descripción de la tarea" />
+                        <InputTextArea id="descripcion" class="form-control" @bind-Value="tareaDTO.Descripcion"
+                                       placeholder="Ingrese una descripción de la tarea"/>
                     </div>
                     <div class="mb-3">
                         <label for="duracion" class="form-label">Duración en días</label>
-                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaDTO.DuracionEnDias" placeholder="Ingrese la duración en días" />
+                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaDTO.DuracionEnDias"
+                                     placeholder="Ingrese la duración en días"/>
                     </div>
                     <div class="mb-3">
                         <label for="fechaInicio" class="form-label">Fecha de inicio</label>
-                        <InputDate id="fechaInicio" class="form-control" @bind-Value="tareaDTO.FechaInicioMasTemprana" />
+                        <InputDate id="fechaInicio" class="form-control" @bind-Value="tareaDTO.FechaInicioMasTemprana"/>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -174,7 +196,8 @@ else
 
 @if (!string.IsNullOrEmpty(mensaje) && mensaje.StartsWith("Tarea creada con éxito"))
 {
-    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top" style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
+    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top"
+         style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
         <i class="bi bi-check-circle"></i> @((MarkupString)mensaje)
         <button type="button" class="btn-close ms-auto" aria-label="Close" @onclick="CerrarAlerta"></button>
     </div>
@@ -188,13 +211,15 @@ else
                 <h5 class="modal-title">Editar Tarea</h5>
                 <button type="button" class="btn-close" @onclick="CerrarVentanaEdicionReducida"></button>
             </div>
-            <EditForm Model="tareaEdicionEstado" OnValidSubmit="EditarEstadoTarea" OnInvalidSubmit="MostrarErroresValidacion">
+            <EditForm Model="tareaEdicionEstado" OnValidSubmit="EditarEstadoTarea"
+                      OnInvalidSubmit="MostrarErroresValidacion">
                 <DataAnnotationsValidator/>
                 <ValidationSummary class="d-none"/>
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                        <div class="alert alert-danger d-flex align-items-center gap-2 text-center justify-content-center">
+                        <div
+                            class="alert alert-danger d-flex align-items-center gap-2 text-center justify-content-center">
                             <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
                             <span class="fw-semibold">@((MarkupString)mensaje)</span>
                         </div>
@@ -203,14 +228,16 @@ else
                         @if (tareaActual.Estado == EstadoTareaDTO.Pendiente)
                         {
                             <div class="form-check mb-2">
-                                <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="tareaEdicionEstado.EditoEnProceso" />
+                                <InputCheckbox id="enProceso" class="form-check-input"
+                                               @bind-Value="tareaEdicionEstado.EditoEnProceso"/>
                                 <label for="enProceso" class="form-check-label">Marcar como 'En proceso'</label>
                             </div>
                         }
                         @if (tareaActual.Estado == EstadoTareaDTO.EnProceso)
                         {
                             <div class="form-check mb-2">
-                                <InputCheckbox id="completada" class="form-check-input" @bind-Value="tareaEdicionEstado.EditoCompletada" />
+                                <InputCheckbox id="completada" class="form-check-input"
+                                               @bind-Value="tareaEdicionEstado.EditoCompletada"/>
                                 <label for="completada" class="form-check-label">Marcar como 'Completada'</label>
                             </div>
                         }
@@ -226,7 +253,8 @@ else
 
 @if (!string.IsNullOrEmpty(mensaje) && mensaje.StartsWith("Estado editado con éxito"))
 {
-    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top" style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
+    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top"
+         style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
         <i class="bi bi-check-circle"></i> @((MarkupString)mensaje)
         <button type="button" class="btn-close ms-auto" aria-label="Close" @onclick="CerrarAlerta"></button>
     </div>
@@ -241,13 +269,15 @@ else
                 <button type="button" class="btn-close" @onclick="CerrarVentanaEdicion" aria-label="Cerrar"></button>
             </div>
 
-            <EditForm Model="tareaEdicion" OnValidSubmit="GuardarCambiosTarea" OnInvalidSubmit="MostrarErroresValidacion">
-                <DataAnnotationsValidator />
+            <EditForm Model="tareaEdicion" OnValidSubmit="GuardarCambiosTarea"
+                      OnInvalidSubmit="MostrarErroresValidacion">
+                <DataAnnotationsValidator/>
 
                 <div class="modal-body">
                     @if (!string.IsNullOrEmpty(mensaje))
                     {
-                        <div class="alert alert-danger d-flex align-items-center gap-2 text-center justify-content-center">
+                        <div
+                            class="alert alert-danger d-flex align-items-center gap-2 text-center justify-content-center">
                             <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
                             <span class="fw-semibold">@((MarkupString)mensaje)</span>
                         </div>
@@ -264,11 +294,13 @@ else
 
                     <div class="mb-3">
                         <label for="duracion" class="form-label">Duración en días</label>
-                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaEdicion.DuracionEnDias" placeholder="Ingrese la duración en días"/>
+                        <InputNumber id="duracion" class="form-control" @bind-Value="tareaEdicion.DuracionEnDias"
+                                     placeholder="Ingrese la duración en días"/>
                     </div>
                     <div class="mb-3">
                         <label for="fechaInicio" class="form-label">Fecha de inicio</label>
-                        <InputDate id="fechaInicio" class="form-control" @bind-Value="tareaEdicion.FechaInicioMasTemprana"/>
+                        <InputDate id="fechaInicio" class="form-control"
+                                   @bind-Value="tareaEdicion.FechaInicioMasTemprana"/>
                     </div>
 
                     @if (tareaEdicion.Estado == EstadoTareaDTO.Pendiente || tareaEdicion.Estado == EstadoTareaDTO.EnProceso)
@@ -278,14 +310,16 @@ else
                             @if (tareaEdicion.Estado == EstadoTareaDTO.Pendiente)
                             {
                                 <div class="form-check">
-                                    <InputCheckbox id="enProceso" class="form-check-input" @bind-Value="editoEnProceso"/>
+                                    <InputCheckbox id="enProceso" class="form-check-input"
+                                                   @bind-Value="editoEnProceso"/>
                                     <label for="enProceso" class="form-check-label">En proceso</label>
                                 </div>
                             }
                             @if (tareaEdicion.Estado == EstadoTareaDTO.EnProceso)
                             {
                                 <div class="form-check">
-                                    <InputCheckbox id="completada" class="form-check-input" @bind-Value="editoCompletada"/>
+                                    <InputCheckbox id="completada" class="form-check-input"
+                                                   @bind-Value="editoCompletada"/>
                                     <label for="completada" class="form-check-label">Completada</label>
                                 </div>
                             }
@@ -299,7 +333,8 @@ else
 
                     @if (!confirmarEliminacionTarea)
                     {
-                        <button type="button" class="btn btn-outline-danger" @onclick="() => confirmarEliminacionTarea = true">
+                        <button type="button" class="btn btn-outline-danger"
+                                @onclick="() => confirmarEliminacionTarea = true">
                             <i class="bi bi-trash3"></i> Eliminar tarea
                         </button>
                     }
@@ -309,10 +344,12 @@ else
                             <div class="alert alert-warning p-2 mb-2">
                                 <p class="mb-2">¿Estás seguro de que deseas eliminar esta tarea?</p>
                                 <div class="d-flex justify-content-center gap-2">
-                                    <button type="button" class="btn btn-danger" @onclick="() => EliminarTarea(tareaEdicion.Id)">
+                                    <button type="button" class="btn btn-danger"
+                                            @onclick="() => EliminarTarea(tareaEdicion.Id)">
                                         Sí, eliminar
                                     </button>
-                                    <button type="button" class="btn btn-secondary" @onclick="() => confirmarEliminacionTarea = false">
+                                    <button type="button" class="btn btn-secondary"
+                                            @onclick="() => confirmarEliminacionTarea = false">
                                         Cancelar
                                     </button>
                                 </div>
@@ -327,7 +364,8 @@ else
 
 @if (!string.IsNullOrEmpty(mensaje) && mensaje.StartsWith("Tarea editada con éxito"))
 {
-    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top" style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
+    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top"
+         style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
         <i class="bi bi-check-circle"></i> @((MarkupString)mensaje)
         <button type="button" class="btn-close ms-auto" aria-label="Close" @onclick="CerrarAlerta"></button>
     </div>
@@ -335,7 +373,8 @@ else
 
 @if (!string.IsNullOrEmpty(mensaje) && mensaje.StartsWith("Tarea eliminada con éxito"))
 {
-    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top" style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
+    <div class="alert alert-success d-flex align-items-center gap-2 mt-3 fixed-top"
+         style="z-index: 1050; top: 10px; left: 50%; transform: translateX(-30%);">
         <i class="bi bi-check-circle"></i> @((MarkupString)mensaje)
         <button type="button" class="btn-close ms-auto" aria-label="Close" @onclick="CerrarAlerta"></button>
     </div>
@@ -347,7 +386,8 @@ else
         <div class="modal-content rounded-3 shadow-lg">
             <div class="modal-header">
                 <h5 class="modal-title fw-bold">Gestionar Dependencias</h5>
-                <button type="button" class="btn-close" @onclick="CerrarVentanaDependencias" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" @onclick="CerrarVentanaDependencias"
+                        aria-label="Cerrar"></button>
             </div>
 
             <div class="modal-body">
@@ -361,9 +401,10 @@ else
                 }
 
                 <!-- Agregar dependencia -->
-                <EditForm Model="dependenciaDTO" OnValidSubmit="AgregarDependencia" OnInvalidSubmit="MostrarErroresValidacion">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="d-none" />
+                <EditForm Model="dependenciaDTO" OnValidSubmit="AgregarDependencia"
+                          OnInvalidSubmit="MostrarErroresValidacion">
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary class="d-none"/>
 
                     <fieldset class="border rounded-3 p-3 mb-4">
                         <legend class="float-none w-auto px-2 fs-6 text-muted mb-0">Agregar dependencia</legend>
@@ -418,11 +459,15 @@ else
 
                                 @if (dependenciaAConfirmar == $"{dep.TareaPreviaId} {dep.Tipo}")
                                 {
-                                    <div class="alert alert-warning mt-2 mb-0 p-2 d-flex justify-content-between align-items-center">
+                                    <div
+                                        class="alert alert-warning mt-2 mb-0 p-2 d-flex justify-content-between align-items-center">
                                         <span>¿Estás seguro de que querés eliminar esta dependencia?</span>
                                         <div>
-                                            <button class="btn btn-sm btn-danger me-2" @onclick="ConfirmarEliminacion">Sí</button>
-                                            <button class="btn btn-sm btn-secondary" @onclick="CancelarEliminacion">No</button>
+                                            <button class="btn btn-sm btn-danger me-2" @onclick="ConfirmarEliminacion">
+                                                Sí
+                                            </button>
+                                            <button class="btn btn-sm btn-secondary" @onclick="CancelarEliminacion">No
+                                            </button>
                                         </div>
                                     </div>
                                 }
@@ -466,9 +511,10 @@ else
                 }
 
                 <!-- Agregar recurso -->
-                <EditForm Model="recursoAsignacionDto" OnValidSubmit="AgregarRecurso" OnInvalidSubmit="MostrarErroresValidacion">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="d-none" />
+                <EditForm Model="recursoAsignacionDto" OnValidSubmit="AgregarRecurso"
+                          OnInvalidSubmit="MostrarErroresValidacion">
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary class="d-none"/>
 
                     <fieldset class="border rounded-3 p-3 mb-4">
                         <legend class="float-none w-auto px-2 fs-6 text-muted mb-0">Agregar recurso</legend>
@@ -480,7 +526,9 @@ else
                                     <option disabled selected value="0">Seleccione un recurso</option>
                                     @foreach (var r in recursosProyecto)
                                     {
-                                        <option value="@r.Id">Nombre: '@r.Nombre', tipo: '@r.Tipo', descripción: '@r.Descripcion' </option>
+                                        <option value="@r.Id">Nombre: '@r.Nombre', tipo: '@r.Tipo', descripción:
+                                            '@r.Descripcion'
+                                        </option>
                                     }
                                 </select>
                             </div>
@@ -501,8 +549,10 @@ else
                         @foreach (var recurso in tareaActual.RecursosNecesarios)
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="bi bi-box-seam me-1 text-primary"></i>Nombre: '@recurso.Nombre', tipo: '@recurso.Tipo', descripción: '@recurso.Descripcion' </span>
-                                <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarRecursoDeTarea(recurso.Id)">
+                                <span><i
+                                        class="bi bi-box-seam me-1 text-primary"></i>Nombre: '@recurso.Nombre', tipo: '@recurso.Tipo', descripción: '@recurso.Descripcion' </span>
+                                <button class="btn btn-outline-danger btn-sm"
+                                        @onclick="() => EliminarRecursoDeTarea(recurso.Id)">
                                     <i class="bi bi-trash3"></i> Quitar
                                 </button>
                             </li>
@@ -545,9 +595,10 @@ else
                 }
 
                 <!-- Agregar miembro -->
-                <EditForm Model="usuarioAsignacionDto" OnValidSubmit="AgregarMiembro" OnInvalidSubmit="MostrarErroresValidacion">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="d-none" />
+                <EditForm Model="usuarioAsignacionDto" OnValidSubmit="AgregarMiembro"
+                          OnInvalidSubmit="MostrarErroresValidacion">
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary class="d-none"/>
 
                     <fieldset class="border rounded-3 p-3 mb-4">
                         <legend class="float-none w-auto px-2 fs-6 text-muted mb-0">Agregar miembro</legend>
@@ -580,8 +631,10 @@ else
                         @foreach (var miembro in tareaActual.UsuariosAsignados)
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="bi bi-person-circle me-1 text-primary"></i> @miembro.Nombre @miembro.Apellido (@miembro.Email)</span>
-                                <button class="btn btn-outline-danger btn-sm" @onclick="() => EliminarMiembroDeTarea(miembro.Id)">
+                                <span><i
+                                        class="bi bi-person-circle me-1 text-primary"></i> @miembro.Nombre @miembro.Apellido (@miembro.Email)</span>
+                                <button class="btn btn-outline-danger btn-sm"
+                                        @onclick="() => EliminarMiembroDeTarea(miembro.Id)">
                                     <i class="bi bi-trash3"></i> Quitar
                                 </button>
                             </li>
@@ -941,7 +994,7 @@ else
         {
             mensaje = "Seleccione un recurso";
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             mensaje = e.Message;
         }
@@ -981,11 +1034,11 @@ else
             StateHasChanged();
         }
         catch (ExcepcionUsuario)
-        { 
+        {
             mensaje = "Seleccione un usuario";
         }
-        catch(Exception e)
-        { 
+        catch (Exception e)
+        {
             mensaje = e.Message;
         }
     }
@@ -1004,12 +1057,12 @@ else
             StateHasChanged();
         }
         catch (ExcepcionUsuario)
-        {   
+        {
             mensaje = "Seleccione un usuario";
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
-                mensaje = e.Message; 
+            mensaje = e.Message;
         }
     }
 
@@ -1060,4 +1113,5 @@ else
             dependenciaAConfirmar = null;
         }
     }
+
 }

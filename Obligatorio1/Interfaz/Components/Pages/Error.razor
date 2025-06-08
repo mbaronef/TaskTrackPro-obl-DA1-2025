@@ -4,9 +4,11 @@
 <h3>Ocurrió un error, redirigiendo...</h3>
 
 @code {
+
     protected override Task OnInitializedAsync()
     {
         NavigationManager.NavigateTo("/", true);
         return Task.CompletedTask;
     }
+
 }

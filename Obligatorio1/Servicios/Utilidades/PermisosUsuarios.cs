@@ -13,15 +13,15 @@ public static class PermisosUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoAdminSistema);
         }
     }
-    
+
     public static void VerificarUsuarioEsAdminProyectoDeEseProyecto(Proyecto proyecto, Usuario usuario)
     {
         if (!proyecto.EsAdministrador(usuario))
         {
             throw new ExcepcionPermisos(MensajesErrorServicios.NoEsAdminDelProyecto);
-        } 
+        }
     }
-    
+
     public static void VerificarUsuarioMiembroDelProyecto(int idUsuario, Proyecto proyecto)
     {
         Usuario usuario = ObtenerMiembro(idUsuario, proyecto);
@@ -31,7 +31,7 @@ public static class PermisosUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoMiembroDelProyecto);
         }
     }
-    
+
     private static Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
         Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
@@ -53,7 +53,7 @@ public static class PermisosUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPorTipo(tipoUsuario));
         }
     }
-    
+
     public static void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(Usuario usuario)
     {
         if (usuario.EstaAdministrandoUnProyecto)
@@ -62,14 +62,15 @@ public static class PermisosUsuarios
         }
     }
 
-    public static void VerificarUsuarioPuedaReiniciarOModificarContrasena(Usuario solicitante, Usuario usuario, string accion)
+    public static void VerificarUsuarioPuedaReiniciarOModificarContrasena(Usuario solicitante, Usuario usuario,
+        string accion)
     {
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto && !solicitante.Equals(usuario))
         {
             throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPara($"{accion}"));
         }
     }
-    
+
     public static void VerificarPermisoAdminSistemaOAdminProyecto(Usuario usuario, string accion)
     {
         if (!usuario.EsAdministradorSistema && !usuario.EstaAdministrandoUnProyecto)
@@ -77,18 +78,19 @@ public static class PermisosUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPara(accion));
         }
     }
-    
+
     public static void VerificarSolicitantePuedaAutogenerarContrasena(Usuario solicitante)
     {
         if (!solicitante.EsAdministradorSistema && !solicitante.EsAdministradorProyecto)
         {
-            throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPara("autogenerar la contraseña del usuario"));
+            throw new ExcepcionPermisos(
+                MensajesErrorServicios.PermisoDenegadoPara("autogenerar la contraseña del usuario"));
         }
     }
-    
+
     public static void VerificarUsuarioNoEsMiembroDeProyecto(Usuario usuario)
     {
-        if(usuario.CantidadProyectosAsignados > 0)
+        if (usuario.CantidadProyectosAsignados > 0)
         {
             throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoMiembroDelProyecto);
         }

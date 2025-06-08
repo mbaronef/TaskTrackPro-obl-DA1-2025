@@ -21,9 +21,12 @@ builder.Services.AddSingleton<INotificador, Notificador>();
 builder.Services.AddSingleton<ICalculadorCaminoCritico, CaminoCritico>();
 
 GestorUsuarios gestorUsuarios = new GestorUsuarios(repositorioUsuarios, _notificador);
-GestorProyectos gestorProyectos = new GestorProyectos(repositorioUsuarios, repositorioProyectos, _notificador, _calculadorCaminoCritico);
-GestorRecursos gestorRecursos = new GestorRecursos(repositorioRecursos, gestorProyectos, repositorioUsuarios, _notificador);
-GestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuarios, _notificador, _calculadorCaminoCritico);
+GestorProyectos gestorProyectos =
+    new GestorProyectos(repositorioUsuarios, repositorioProyectos, _notificador, _calculadorCaminoCritico);
+GestorRecursos gestorRecursos =
+    new GestorRecursos(repositorioRecursos, gestorProyectos, repositorioUsuarios, _notificador);
+GestorTareas gestorTareas =
+    new GestorTareas(gestorProyectos, repositorioUsuarios, _notificador, _calculadorCaminoCritico);
 
 ControladorTareas controladorTareas = new ControladorTareas(gestorTareas);
 ControladorProyectos controladorProyectos = new ControladorProyectos(gestorProyectos);
@@ -60,11 +63,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
@@ -76,15 +79,15 @@ app.MapRazorComponents<App>()
 app.Run();
 
 /*void InicializarDatosHardcodeados(
-    GestorUsuarios gestorUsuarios, 
-    GestorProyectos gestorProyectos, 
-    GestorRecursos gestorRecursos, 
+    GestorUsuarios gestorUsuarios,
+    GestorProyectos gestorProyectos,
+    GestorRecursos gestorRecursos,
     GestorTareas gestorTareas, IRepositorioUsuarios repositorioUsuarios)
 {
    /* //Usuario admin inicial
     Usuario adminInicial = repositorioUsuarios.ObtenerPorId(0);
     UsuarioDTO adminInicialDTO = UsuarioDTO.DesdeEntidad(adminInicial);
-    
+
     //Usuario admin sistema y admin proyecto a la vez - Juan Pérez
     UsuarioDTO adminProyectoYSistemaDTO = new UsuarioDTO()
     {
@@ -96,7 +99,7 @@ app.Run();
     adminProyectoYSistema.EsAdministradorSistema = true;
     adminProyectoYSistema.EsAdministradorProyecto = true;
 /*
-    // Usuario solo administrador de proyecto 
+    // Usuario solo administrador de proyecto
     Usuario usuarioSoloAdminProyecto = gestorUsuarios.CrearUsuario("Admin", "Proyecto", new DateTime(2000, 5, 20), "adminProyecto@gmail.com", "Contrasena123$");
     usuarioSoloAdminProyecto.EsAdministradorProyecto = true;
     gestorUsuarios.AgregarUsuario(adminProyectoYSistema, usuarioSoloAdminProyecto);
@@ -120,16 +123,7 @@ app.Run();
     gestorTareas.AgregarTareaAlProyecto(proyectoA.Id, adminProyectoYSistema, tarea1);
     Tarea tarea2 = new Tarea("Tarea 2", "Descripcion 2", 2, DateTime.Today.AddDays(2));
     gestorTareas.AgregarTareaAlProyecto(proyectoA.Id, adminProyectoYSistema, tarea2);
-    
+
     // Asignar a Sofía Martínez a la tarea 2
     gestorTareas.AgregarMiembroATarea(adminProyectoYSistema, tarea2.Id, proyectoA.Id , usuarioSinRol);
 } */
-
-
-
-
-
-
-
-
-

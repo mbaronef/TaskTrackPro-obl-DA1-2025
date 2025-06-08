@@ -2,9 +2,10 @@ using Excepciones;
 using Excepciones.MensajesError;
 
 namespace Dominio;
+
 public class Tarea
 {
-    public int Id {get; set;}
+    public int Id { get; set; }
     public string Titulo { get; private set; }
     public string Descripcion { get; private set; }
     public int DuracionEnDias { get; private set; }
@@ -12,7 +13,7 @@ public class Tarea
     public DateTime FechaFinMasTemprana { get; private set; }
     public DateTime FechaDeEjecucion { get; private set; } = DateTime.MinValue;
     public EstadoTarea Estado { get; private set; } = EstadoTarea.Pendiente;
-    public int Holgura {get; set;}
+    public int Holgura { get; set; }
     public List<Usuario> UsuariosAsignados { get; }
     public List<Recurso> RecursosNecesarios { get; }
     public List<Dependencia> Dependencias { get; }
@@ -24,7 +25,7 @@ public class Tarea
         Dependencias = new List<Dependencia>();
     }
 
-    public Tarea(string titulo, string descripcion, int duracionEnDias,  DateTime fechaInicioMasTemprana)
+    public Tarea(string titulo, string descripcion, int duracionEnDias, DateTime fechaInicioMasTemprana)
     {
         ValidarStringNoVacioNiNull(titulo, MensajesErrorDominio.TituloTareaVacio);
         ValidarIntNoNegativoNiCero(duracionEnDias, MensajesErrorDominio.DuracionTareaInvalida);
@@ -33,14 +34,14 @@ public class Tarea
         Titulo = titulo;
         Descripcion = descripcion;
         DuracionEnDias = duracionEnDias;
-        FechaInicioMasTemprana  = fechaInicioMasTemprana;
+        FechaInicioMasTemprana = fechaInicioMasTemprana;
         Estado = EstadoTarea.Pendiente;
         UsuariosAsignados = new List<Usuario>();
         RecursosNecesarios = new List<Recurso>();
         Dependencias = new List<Dependencia>();
         CalcularFechaFinMasTemprana();
     }
-    
+
     public void CambiarEstado(EstadoTarea nuevoEstado)
     {
         ValidarTransicionInvalida(Estado, nuevoEstado);
@@ -57,13 +58,14 @@ public class Tarea
             DuracionEnDias = (int)(FechaFinMasTemprana - FechaInicioMasTemprana).TotalDays + 1;
         }
     }
-    
+
     public void AsignarUsuario(Usuario usuario)
     {
         ValidarObjetoNoNull(usuario, MensajesErrorDominio.UsuarioNullEnAsignacion);
         VerificarUsuarioNoEstaAsignado(usuario);
         UsuariosAsignados.Add(usuario);
     }
+
     public void EliminarUsuario(int idUsuario)
     {
         VerificarMiembrosNoVacia();
@@ -71,7 +73,7 @@ public class Tarea
         ValidarObjetoNoNull(usuarioAEliminar, MensajesErrorDominio.UsuarioNoAsignado);
         UsuariosAsignados.Remove(usuarioAEliminar);
     }
-    
+
     public void AgregarRecurso(Recurso recurso)
     {
         ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullEnTarea);
@@ -79,13 +81,14 @@ public class Tarea
         RecursosNecesarios.Add(recurso);
         recurso.IncrementarCantidadDeTareasUsandolo();
     }
+
     public void EliminarRecurso(int idRecurso)
     {
         Recurso recursoAEliminar = BuscarRecursoPorId(idRecurso);
         ValidarObjetoNoNull(recursoAEliminar, MensajesErrorDominio.RecursoNoNecesario);
         RecursosNecesarios.Remove(recursoAEliminar);
     }
-    
+
     public void AgregarDependencia(Dependencia dependencia)
     {
         ValidarObjetoNoNull(dependencia, MensajesErrorDominio.DependenciaNullEnTarea);
@@ -93,46 +96,46 @@ public class Tarea
         Dependencias.Add(dependencia);
         ActualizarEstadoBloqueadaOPendiente();
     }
-    
+
     public void EliminarDependencia(int idTarea)
     {
         Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
-        ValidarObjetoNoNull(dependenciaAEliminar,MensajesErrorDominio.DependenciaNoExisteEnTarea);
+        ValidarObjetoNoNull(dependenciaAEliminar, MensajesErrorDominio.DependenciaNoExisteEnTarea);
         Dependencias.Remove(dependenciaAEliminar);
         ActualizarEstadoBloqueadaOPendiente();
     }
-    
+
     public void ModificarTitulo(string tituloNuevo)
     {
         ValidarStringNoVacioNiNull(tituloNuevo, MensajesErrorDominio.TituloTareaVacio);
         Titulo = tituloNuevo;
     }
-    
+
     public void ModificarDescripcion(string nuevaDescripcion)
     {
         ValidarStringNoVacioNiNull(nuevaDescripcion, MensajesErrorDominio.DescripcionVacia);
         Descripcion = nuevaDescripcion;
     }
-    
+
     public void ModificarDuracion(int nuevaDuracion)
     {
         DuracionNoMenorACero(nuevaDuracion);
         DuracionEnDias = nuevaDuracion;
         CalcularFechaFinMasTemprana();
     }
-    
+
     public void ModificarFechaInicioMasTemprana(DateTime fechaInicioNueva)
     {
         VerificarFechaNoMenorAHoy(fechaInicioNueva);
         FechaInicioMasTemprana = fechaInicioNueva;
         CalcularFechaFinMasTemprana();
     }
-    
+
     public bool EsCritica()
     {
         return Holgura == 0;
     }
-    
+
     public void ActualizarEstadoBloqueadaOPendiente()
     {
         if (Estado == EstadoTarea.Bloqueada || Estado == EstadoTarea.Pendiente)
@@ -147,7 +150,7 @@ public class Tarea
             }
         }
     }
-    
+
     public bool EsMiembro(Usuario usuario)
     {
         return UsuariosAsignados.Contains(usuario);
@@ -162,19 +165,19 @@ public class Tarea
     {
         FechaFinMasTemprana = FechaInicioMasTemprana.AddDays(DuracionEnDias - 1);
     }
-    
+
     private void VerificarFechaNoMenorAHoy(DateTime fechaNueva)
     {
         if (fechaNueva < DateTime.Now.Date)
             throw new ExcepcionDominio(MensajesErrorDominio.FechaTareaInvalida);
     }
-    
+
     private void DuracionNoMenorACero(int duracion)
     {
         if (duracion <= 0)
             throw new ExcepcionDominio(MensajesErrorDominio.DuracionTareaInvalida);
     }
-    
+
     private void VerificarMiembrosNoVacia()
     {
         if (!UsuariosAsignados.Any())
@@ -182,7 +185,7 @@ public class Tarea
             throw new ExcepcionDominio(MensajesErrorDominio.UsuariosAsignadosVacio);
         }
     }
-    
+
     private void ValidarStringNoVacioNiNull(string valor, string mensajeError)
     {
         if (string.IsNullOrWhiteSpace(valor))
@@ -194,7 +197,7 @@ public class Tarea
         if (valor <= 0)
             throw new ExcepcionDominio(mensajeError);
     }
-    
+
     private void ValidarFechaInicio(DateTime? fechaInicio)
     {
         if (fechaInicio.HasValue && fechaInicio.Value.Date < DateTime.Today)
@@ -202,13 +205,13 @@ public class Tarea
             throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioInvalida);
         }
     }
-    
+
     private void ValidarObjetoNoNull(object objeto, string mensajeError)
     {
         if (objeto is null)
             throw new ExcepcionDominio(mensajeError);
     }
-    
+
     private void ValidarTransicionInvalida(EstadoTarea actual, EstadoTarea nuevo)
     {
         if ((actual == EstadoTarea.Completada && nuevo == EstadoTarea.Pendiente) ||
@@ -218,41 +221,42 @@ public class Tarea
             (actual == EstadoTarea.Pendiente && nuevo == EstadoTarea.Completada) ||
             (actual == EstadoTarea.Bloqueada && nuevo == EstadoTarea.Completada))
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(actual.ToString(), nuevo.ToString()));
+            throw new ExcepcionDominio(
+                MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(actual.ToString(), nuevo.ToString()));
         }
     }
-    
+
     private void VerificarUsuarioNoEstaAsignado(Usuario usuario)
     {
-        if(UsuariosAsignados.Contains(usuario))
+        if (UsuariosAsignados.Contains(usuario))
             throw new ExcepcionDominio(MensajesErrorDominio.UsuarioYaAgregado);
     }
-    
+
     private void VerificarRecursoNoEstaAgregado(Recurso recurso)
     {
-        if(RecursosNecesarios.Contains(recurso))
+        if (RecursosNecesarios.Contains(recurso))
             throw new ExcepcionDominio(MensajesErrorDominio.RecursoYaAgregado);
     }
-    
+
     private void VerificarDependenciaNoEstaAgregada(Dependencia dependencia)
     {
         if (Dependencias.Contains(dependencia))
             throw new ExcepcionDominio(MensajesErrorDominio.DependenciaYaAgregada);
     }
-    
+
     private Usuario BuscarUsuarioPorId(int id)
     {
         return UsuariosAsignados.FirstOrDefault(u => u.Id == id);
     }
-    
+
     private Recurso BuscarRecursoPorId(int id)
     {
         return RecursosNecesarios.FirstOrDefault(r => r.Id == id);
     }
-    
-    private Dependencia BuscarDependenciaPorIdDeTarea (int id)
+
+    private Dependencia BuscarDependenciaPorIdDeTarea(int id)
     {
-        return Dependencias.FirstOrDefault(d =>d.Tarea.Id  == id);
+        return Dependencias.FirstOrDefault(d => d.Tarea.Id == id);
     }
 
     private void LiberarRecursos()

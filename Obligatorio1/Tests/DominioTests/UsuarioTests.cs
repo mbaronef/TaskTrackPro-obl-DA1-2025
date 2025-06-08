@@ -94,7 +94,7 @@ namespace Tests.DominioTests
             Usuario usuario = CrearUsuarioValido();
             Assert.IsFalse(usuario.EsAdministradorProyecto);
         }
-        
+
         [TestMethod]
         public void SePuedeMarcarNuevoUsuarioComoAdministradorDeSistema()
         {
@@ -102,7 +102,7 @@ namespace Tests.DominioTests
             usuario.EsAdministradorSistema = true;
             Assert.IsTrue(usuario.EsAdministradorSistema);
         }
-        
+
         [TestMethod]
         public void SePuedeMarcarNuevoUsuarioComoAdministrandoUnProyecto()
         {
@@ -126,7 +126,7 @@ namespace Tests.DominioTests
             Usuario usuario = CrearUsuarioValido();
             Assert.IsFalse(usuario.Autenticar(contrasenaIngresada));
         }
-        
+
         [ExpectedException(typeof(ExcepcionDominio))]
         [TestMethod]
         public void IngresoDeEmailInvalido()
@@ -221,7 +221,7 @@ namespace Tests.DominioTests
             // se agregan notificaciones con id 1 e id 2
             usuario.BorrarNotificacion(0);
         }
-        
+
         [ExpectedException(typeof(ExcepcionDominio))]
         [TestMethod]
         public void BorrarNotificacionEnListaVaciaDaError()
@@ -235,10 +235,10 @@ namespace Tests.DominioTests
         {
             Usuario usuario1 = CrearUsuarioValido();
             Usuario usuario2 = CrearUsuarioValido();
-            
+
             usuario1.Id = 1; // se hardcodean ids para que ambos usuarios tengan el mismo id
             usuario2.Id = 1;
-            
+
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsTrue(sonIguales);
         }
@@ -248,10 +248,10 @@ namespace Tests.DominioTests
         {
             Usuario usuario1 = CrearUsuarioValido();
             Usuario usuario2 = CrearUsuarioValido();
-            
+
             usuario1.Id = 1; // se hardcodean ids para que ambos usuarios tengan distinto id
             usuario2.Id = 2;
-            
+
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsFalse(sonIguales);
         }
@@ -280,7 +280,8 @@ namespace Tests.DominioTests
             Usuario usuario2 = CrearUsuarioValido();
             //ambos tienen mismo id ya que no hay un gestor que maneje ids
             Usuario usuario3 = CrearUsuarioValido();
-            usuario3.Id = 3; // usuario con id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
+            usuario3.Id =
+                3; // usuario con id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
             Assert.AreEqual(usuario1.GetHashCode(), usuario2.GetHashCode());
             Assert.AreNotEqual(usuario3.GetHashCode(), usuario1.GetHashCode());
         }
@@ -290,7 +291,7 @@ namespace Tests.DominioTests
         {
             Usuario usuario = CrearUsuarioValido();
             string resultadoEsperado = $"{usuario.Nombre} {usuario.Apellido} ({usuario.Email})";
-            Assert.AreEqual(resultadoEsperado,usuario.ToString());
+            Assert.AreEqual(resultadoEsperado, usuario.ToString());
         }
     }
 }

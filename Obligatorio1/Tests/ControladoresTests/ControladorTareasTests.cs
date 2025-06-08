@@ -37,7 +37,7 @@ public class ControladorTareasTests
 
         _mockGestorTareas.Verify(g => g.AgregarTareaAlProyecto(idProyecto, usuario, nuevaTarea), Times.Once);
     }
-    
+
     [TestMethod]
     public void EliminarTareaDelProyecto_LlamaCorrectamenteAGestor()
     {
@@ -66,7 +66,7 @@ public class ControladorTareasTests
         Assert.AreEqual(tareaEsperada.Id, resultado.Id);
         _mockGestorTareas.Verify(g => g.ObtenerTareaPorId(idProyecto, idTarea), Times.Once);
     }
-    
+
     [TestMethod]
     public void ModificarTituloTarea_LlamaCorrectamenteAGestor()
     {
@@ -81,7 +81,7 @@ public class ControladorTareasTests
 
         _mockGestorTareas.Verify(g => g.ModificarTituloTarea(usuario, idTarea, idProyecto, nuevoTitulo), Times.Once);
     }
-    
+
     [TestMethod]
     public void ModificarDescripcionTarea_LlamaCorrectamenteAGestor()
     {
@@ -94,9 +94,10 @@ public class ControladorTareasTests
 
         _controladorTareas.ModificarDescripcionTarea(usuario, idTarea, idProyecto, nuevaDescripcion);
 
-        _mockGestorTareas.Verify(g => g.ModificarDescripcionTarea(usuario, idTarea, idProyecto, nuevaDescripcion), Times.Once);
+        _mockGestorTareas.Verify(g => g.ModificarDescripcionTarea(usuario, idTarea, idProyecto, nuevaDescripcion),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void ModificarDuracionTarea_LlamaCorrectamenteAGestor()
     {
@@ -109,9 +110,10 @@ public class ControladorTareasTests
 
         _controladorTareas.ModificarDuracionTarea(usuario, idTarea, idProyecto, nuevaDuracion);
 
-        _mockGestorTareas.Verify(g => g.ModificarDuracionTarea(usuario, idTarea, idProyecto, nuevaDuracion), Times.Once);
+        _mockGestorTareas.Verify(g => g.ModificarDuracionTarea(usuario, idTarea, idProyecto, nuevaDuracion),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void ModificarFechaInicioTarea_LlamaCorrectamenteAGestor()
     {
@@ -124,9 +126,10 @@ public class ControladorTareasTests
 
         _controladorTareas.ModificarFechaInicioTarea(usuario, idTarea, idProyecto, nuevaFecha);
 
-        _mockGestorTareas.Verify(g => g.ModificarFechaInicioTarea(usuario, idTarea, idProyecto, nuevaFecha), Times.Once);
+        _mockGestorTareas.Verify(g => g.ModificarFechaInicioTarea(usuario, idTarea, idProyecto, nuevaFecha),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void CambiarEstadoTarea_LlamaCorrectamenteAGestor()
     {
@@ -134,14 +137,14 @@ public class ControladorTareasTests
         int idTarea = 1;
         int idProyecto = 1;
         EstadoTareaDTO nuevoEstado = EstadoTareaDTO.EnProceso;
-        
+
         _mockGestorTareas.Setup(g => g.CambiarEstadoTarea(usuario, idTarea, idProyecto, nuevoEstado));
 
         _controladorTareas.CambiarEstadoTarea(usuario, idTarea, idProyecto, nuevoEstado);
 
         _mockGestorTareas.Verify(g => g.CambiarEstadoTarea(usuario, idTarea, idProyecto, nuevoEstado), Times.Once);
     }
-    
+
     [TestMethod]
     public void EsMiembroDeTarea_LLamaCorrectamenteAGestor()
     {
@@ -156,7 +159,7 @@ public class ControladorTareasTests
         Assert.IsTrue(resultado);
         _mockGestorTareas.Verify(g => g.EsMiembroDeTarea(usuario, idTarea, idProyecto), Times.Once);
     }
-    
+
     [TestMethod]
     public void AgregarDependenciaATarea_LlamaCorrectamenteAGestor()
     {
@@ -166,13 +169,16 @@ public class ControladorTareasTests
         int idProyecto = 1;
         string tipoDependencia = "FS";
 
-        _mockGestorTareas.Setup(g => g.AgregarDependenciaATarea(usuario, idTarea, idTareaDependencia, idProyecto, tipoDependencia));
+        _mockGestorTareas.Setup(g =>
+            g.AgregarDependenciaATarea(usuario, idTarea, idTareaDependencia, idProyecto, tipoDependencia));
 
         _controladorTareas.AgregarDependenciaATarea(usuario, idTarea, idTareaDependencia, idProyecto, tipoDependencia);
 
-        _mockGestorTareas.Verify(g => g.AgregarDependenciaATarea(usuario, idTarea, idTareaDependencia, idProyecto, tipoDependencia), Times.Once);
+        _mockGestorTareas.Verify(
+            g => g.AgregarDependenciaATarea(usuario, idTarea, idTareaDependencia, idProyecto, tipoDependencia),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void EliminarDependenciaDeTarea_LlamaCorrectamenteAGestor()
     {
@@ -185,9 +191,10 @@ public class ControladorTareasTests
 
         _controladorTareas.EliminarDependenciaDeTarea(usuario, idTarea, idTareaDependencia, idProyecto);
 
-        _mockGestorTareas.Verify(g => g.EliminarDependenciaDeTarea(usuario, idTarea, idTareaDependencia, idProyecto), Times.Once);
+        _mockGestorTareas.Verify(g => g.EliminarDependenciaDeTarea(usuario, idTarea, idTareaDependencia, idProyecto),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void AgregarMiembroATarea_LlamaCorrectamenteAGestor()
     {
@@ -202,7 +209,7 @@ public class ControladorTareasTests
 
         _mockGestorTareas.Verify(g => g.AgregarMiembroATarea(usuario, idTarea, idProyecto, nuevoMiembro), Times.Once);
     }
-    
+
     [TestMethod]
     public void EliminarMiembroDeTarea_LlamaCorrectamenteAGestor()
     {
@@ -215,9 +222,10 @@ public class ControladorTareasTests
 
         _controladorTareas.EliminarMiembroDeTarea(usuario, idTarea, idProyecto, miembroAEliminar);
 
-        _mockGestorTareas.Verify(g => g.EliminarMiembroDeTarea(usuario, idTarea, idProyecto, miembroAEliminar), Times.Once);
+        _mockGestorTareas.Verify(g => g.EliminarMiembroDeTarea(usuario, idTarea, idProyecto, miembroAEliminar),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void AgregarRecursoATarea_LlamaCorrectamenteAGestor()
     {
@@ -232,7 +240,7 @@ public class ControladorTareasTests
 
         _mockGestorTareas.Verify(g => g.AgregarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso), Times.Once);
     }
-    
+
     [TestMethod]
     public void EliminarRecursoDeTarea_LlamaCorrectamenteAGestor()
     {
@@ -245,6 +253,7 @@ public class ControladorTareasTests
 
         _controladorTareas.EliminarRecursoDeTarea(usuario, idTarea, idProyecto, recursoAEliminar);
 
-        _mockGestorTareas.Verify(g => g.EliminarRecursoDeTarea(usuario, idTarea, idProyecto, recursoAEliminar), Times.Once);
+        _mockGestorTareas.Verify(g => g.EliminarRecursoDeTarea(usuario, idTarea, idProyecto, recursoAEliminar),
+            Times.Once);
     }
 }

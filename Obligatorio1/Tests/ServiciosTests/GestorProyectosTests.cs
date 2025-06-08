@@ -222,7 +222,7 @@ public class GestorProyectosTests
         miembro2 = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(miembro2.Id));
 
         string mensajeEsperado = MensajesNotificacion.ProyectoEliminado(proyecto.Nombre);
-        
+
         Assert.AreEqual(mensajeEsperado, miembro1.Notificaciones.Last().Mensaje);
         Assert.AreEqual(mensajeEsperado, miembro2.Notificaciones.Last().Mensaje);
     }
@@ -287,14 +287,14 @@ public class GestorProyectosTests
 
         proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id); // actualización
 
-        string mensajeEsperado = MensajesNotificacion.NombreProyectoModificado("Proyecto", "Nuevo Nombre"); 
+        string mensajeEsperado = MensajesNotificacion.NombreProyectoModificado("Proyecto", "Nuevo Nombre");
         foreach (UsuarioListarDTO usuario in proyecto.Miembros)
         {
             Assert.AreEqual(2, usuario.Notificaciones.Count);
             Assert.AreEqual(mensajeEsperado, usuario.Notificaciones[1].Mensaje);
         }
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void ModificarDescripcionDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
@@ -599,6 +599,7 @@ public class GestorProyectosTests
         {
             Assert.IsTrue(usuario.Notificaciones.Any(n => n.Mensaje == esperado));
         }
+
         Assert.IsTrue(proyecto.Administrador.Notificaciones.Any(n => n.Mensaje == esperado));
     }
 
@@ -747,7 +748,7 @@ public class GestorProyectosTests
 
         Assert.AreEqual(proyecto.Id, resultado.Id);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionProyecto))]
     public void ObtenerProyectoDelAdministrador_LanzaExcepcionSiNoExisteProyectoConEseAdmin()
@@ -772,7 +773,7 @@ public class GestorProyectosTests
         Assert.AreEqual("notificación", ultimaNotificacionAdmin.Mensaje);
         Assert.AreEqual("notificación", ultimaNotificacionOtroAdmin.Mensaje);
     }
-    
+
     [TestMethod]
     public void EsAdministradorDeProyecto_DevuelveTrueSiEsAdmin()
     {
@@ -782,7 +783,7 @@ public class GestorProyectosTests
         bool esAdmin = _gestor.EsAdministradorDeProyecto(_adminDTO, proyecto.Id);
         Assert.IsTrue(esAdmin);
     }
-    
+
     [TestMethod]
     public void EsAdministradorDeProyecto_DevuelveFalseSiNoEsAdmin()
     {
@@ -792,7 +793,7 @@ public class GestorProyectosTests
         bool esAdmin = _gestor.EsAdministradorDeProyecto(UsuarioDTO.DesdeEntidad(_usuarioNoAdmin), proyecto.Id);
         Assert.IsFalse(esAdmin);
     }
-    
+
     [TestMethod]
     public void EsMiembroDeProyecto_DevuelveTrueSiEsMiembro()
     {
@@ -804,7 +805,7 @@ public class GestorProyectosTests
 
         Assert.IsTrue(esMiembro);
     }
-    
+
     [TestMethod]
     public void EsMiembroDeProyecto_DevuelveFalseSiNoEsMiembro()
     {
@@ -834,7 +835,7 @@ public class GestorProyectosTests
         Assert.IsTrue(proyectos.Any(p => p.Nombre == "Proyecto 1"));
         Assert.IsTrue(proyectos.Any(p => p.Nombre == "Proyecto 2"));
     }
-    
+
     [TestMethod]
     public void ObtenerTodosLosProyectosDevuelveListaVaciaSiNoHayProyectos()
     {
@@ -846,20 +847,32 @@ public class GestorProyectosTests
     public void CalcularCaminoCritico_MarcaTareasCriticasCorrectamente()
     {
         GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios, _notificador, _caminoCritico);
-        
+
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
         _gestor.CrearProyecto(proyecto, _adminDTO);
-        
-        TareaDTO tarea1 = new TareaDTO { Titulo = "Inicio", Descripcion = "desc", DuracionEnDias = 2, FechaInicioMasTemprana = DateTime.Today.AddDays(2)};
-        TareaDTO tarea2 = new TareaDTO { Titulo = "Intermedia", Descripcion = "desc", DuracionEnDias = 3, FechaInicioMasTemprana = DateTime.Today.AddDays(2) };
-        TareaDTO tarea3 = new TareaDTO { Titulo = "Final", Descripcion = "desc", DuracionEnDias = 2, FechaInicioMasTemprana = DateTime.Today.AddDays(2) };
+
+        TareaDTO tarea1 = new TareaDTO
+        {
+            Titulo = "Inicio", Descripcion = "desc", DuracionEnDias = 2,
+            FechaInicioMasTemprana = DateTime.Today.AddDays(2)
+        };
+        TareaDTO tarea2 = new TareaDTO
+        {
+            Titulo = "Intermedia", Descripcion = "desc", DuracionEnDias = 3,
+            FechaInicioMasTemprana = DateTime.Today.AddDays(2)
+        };
+        TareaDTO tarea3 = new TareaDTO
+        {
+            Titulo = "Final", Descripcion = "desc", DuracionEnDias = 2,
+            FechaInicioMasTemprana = DateTime.Today.AddDays(2)
+        };
 
         gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _adminDTO, tarea1);
         gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _adminDTO, tarea2);
         gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _adminDTO, tarea3);
         gestorTareas.AgregarDependenciaATarea(_adminDTO, tarea2.Id, tarea1.Id, proyecto.Id, "FS");
         gestorTareas.AgregarDependenciaATarea(_adminDTO, tarea3.Id, tarea2.Id, proyecto.Id, "FS");
-        
+
         _gestor.CalcularCaminoCritico(proyecto);
 
         Proyecto proyectoActualizadoDominio = _gestor.ObtenerProyectoDominioPorId(proyecto.Id);
@@ -867,5 +880,4 @@ public class GestorProyectosTests
 
         Assert.AreEqual(3, tareasCriticas.Count); // Todas las tareas deberían estar en el camino crítico
     }
-
 }

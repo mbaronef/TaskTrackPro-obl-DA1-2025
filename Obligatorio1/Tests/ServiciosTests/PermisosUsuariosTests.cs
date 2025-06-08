@@ -109,14 +109,16 @@ namespace Tests.ServiciosTests
         [TestMethod]
         public void VerificarUsuarioPuedaReiniciarOModificarContrasena_NoLanzaExcepcion_SiSolicitanteEsAdmin()
         {
-            PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(adminSistema, usuarioComun, "modificar contraseña");
+            PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(adminSistema, usuarioComun,
+                "modificar contraseña");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ExcepcionPermisos))]
         public void VerificarUsuarioPuedaReiniciarOModificarContrasena_LanzaExcepcion_SiNoTienePermisos()
         {
-            PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(usuarioComun, adminSistema, "reiniciar contraseña");
+            PermisosUsuarios.VerificarUsuarioPuedaReiniciarOModificarContrasena(usuarioComun, adminSistema,
+                "reiniciar contraseña");
         }
 
         [TestMethod]

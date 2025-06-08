@@ -7,65 +7,67 @@ namespace Interfaz.ServiciosInterfaz;
 
 public class LogicaSesion
 {
-        public event Action? SesionModificada; // para modificar el main layout (estructura principal) según permisos si se modifica al usuario logueado
-        public UsuarioDTO? UsuarioLogueado { get; private set; }
-        private const string CURRENT_USER = "current_user";
-    
-        private readonly ILocalStorageService _localStorage;
-        private readonly GestorUsuarios _gestorUsuarios;
-        
-        public LogicaSesion(ILocalStorageService localStorage, GestorUsuarios gestorUsuarios)
-        {
-            _localStorage = localStorage;
-            _gestorUsuarios = gestorUsuarios;
-        }
-        
-        public async Task<bool> Login(string email, string contraseña)
-        {
-            try
-            {
-                UsuarioDTO usuarioLogueado = _gestorUsuarios.LogIn(email, contraseña);
-                UsuarioLogueado = usuarioLogueado;
-                await _localStorage.SetItemAsync(CURRENT_USER, usuarioLogueado);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+    public event Action?
+        SesionModificada; // para modificar el main layout (estructura principal) según permisos si se modifica al usuario logueado
 
-        public async Task<bool> HaySesionActiva()
-        {
-            UsuarioDTO? usuario = await _localStorage.GetItemAsync<UsuarioDTO>(CURRENT_USER);
-            UsuarioLogueado = usuario;
+    public UsuarioDTO? UsuarioLogueado { get; private set; }
+    private const string CURRENT_USER = "current_user";
 
-            return usuario is not null;
-        }
+    private readonly ILocalStorageService _localStorage;
+    private readonly GestorUsuarios _gestorUsuarios;
 
-        public async Task LogOut()
-        {
-            UsuarioLogueado = null;
-            await _localStorage.RemoveItemAsync(CURRENT_USER);
-        }
+    public LogicaSesion(ILocalStorageService localStorage, GestorUsuarios gestorUsuarios)
+    {
+        _localStorage = localStorage;
+        _gestorUsuarios = gestorUsuarios;
+    }
 
-        public bool EsAdminSistema()
+    public async Task<bool> Login(string email, string contraseña)
+    {
+        try
         {
-            return UsuarioLogueado.EsAdministradorSistema;
+            UsuarioDTO usuarioLogueado = _gestorUsuarios.LogIn(email, contraseña);
+            UsuarioLogueado = usuarioLogueado;
+            await _localStorage.SetItemAsync(CURRENT_USER, usuarioLogueado);
+            return true;
         }
-        
-        public bool EsAdminProyecto()
+        catch
         {
-            return UsuarioLogueado.EsAdministradorProyecto;
+            return false;
         }
-        
-        public async Task ActualizarSesion()
+    }
+
+    public async Task<bool> HaySesionActiva()
+    {
+        UsuarioDTO? usuario = await _localStorage.GetItemAsync<UsuarioDTO>(CURRENT_USER);
+        UsuarioLogueado = usuario;
+
+        return usuario is not null;
+    }
+
+    public async Task LogOut()
+    {
+        UsuarioLogueado = null;
+        await _localStorage.RemoveItemAsync(CURRENT_USER);
+    }
+
+    public bool EsAdminSistema()
+    {
+        return UsuarioLogueado.EsAdministradorSistema;
+    }
+
+    public bool EsAdminProyecto()
+    {
+        return UsuarioLogueado.EsAdministradorProyecto;
+    }
+
+    public async Task ActualizarSesion()
+    {
+        if (UsuarioLogueado != null)
         {
-            if (UsuarioLogueado != null)
-            {
-                UsuarioLogueado = _gestorUsuarios.ObtenerUsuarioPorId(UsuarioLogueado.Id);
-                await _localStorage.SetItemAsync(CURRENT_USER, UsuarioLogueado);
-                SesionModificada?.Invoke();
-            }
+            UsuarioLogueado = _gestorUsuarios.ObtenerUsuarioPorId(UsuarioLogueado.Id);
+            await _localStorage.SetItemAsync(CURRENT_USER, UsuarioLogueado);
+            SesionModificada?.Invoke();
         }
+    }
 }

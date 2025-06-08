@@ -22,16 +22,18 @@ public class UsuarioDTO
 
     [Required(ErrorMessage = "La contraseña no puede ser vacía.")]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]).{8,}$",
-        ErrorMessage = "La contraseña debe tener al menos 8 caracteres, una minúscula, una mayúscula, un número y un carácter especial.")]
+        ErrorMessage =
+            "La contraseña debe tener al menos 8 caracteres, una minúscula, una mayúscula, un número y un carácter especial.")]
     public string Contrasena { get; set; }
+
     public bool EsAdministradorSistema { get; set; }
     public bool EsAdministradorProyecto { get; set; }
-    
+
     public List<NotificacionDTO> Notificaciones { get; private set; }
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
 
     public int CantidadProyectosAsignados { get; set; } = 0;
-    
+
     public static UsuarioDTO DesdeEntidad(Usuario usuario)
     {
         return new UsuarioDTO
@@ -49,6 +51,7 @@ public class UsuarioDTO
             // la contraseña se omite por seguridad.
         };
     }
+
     public static UsuarioDTO DesdeListarDTO(UsuarioListarDTO dto)
     {
         return new UsuarioDTO

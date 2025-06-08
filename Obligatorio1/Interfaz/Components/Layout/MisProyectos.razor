@@ -16,8 +16,9 @@
     }
     else
     {
-        proyectos = ControladorProyectos.ObtenerProyectosPorUsuario(Sesion.UsuarioLogueado.Id);   
+        proyectos = ControladorProyectos.ObtenerProyectosPorUsuario(Sesion.UsuarioLogueado.Id);
     }
+
     foreach (var proyecto in proyectos)
     {
         <details class="mb-2">
@@ -29,15 +30,33 @@
                 @proyecto.Nombre
             </summary>
             <ul class="list-unstyled ms-3">
-                <li><NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link text-white">Gantt</NavLink></li>
-                <li><NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink></li>
-                <li><NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="nav-link text-white text-nowrap">Recursos Exclusivos</NavLink></li>
-                <li><NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros</NavLink></li>
+                <li>
+                    <NavLink href="@($"/proyecto/{proyecto.Id}/diagrama_de_gantt")" class="nav-link text-white">Gantt
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink href="@($"/proyecto/{proyecto.Id}/tareas")" class="nav-link text-white">Tareas</NavLink>
+                </li>
+                <li>
+                    <NavLink href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")"
+                             class="nav-link text-white text-nowrap">Recursos Exclusivos
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink href="@($"/proyecto/{proyecto.Id}/miembros")" class="nav-link text-white">Miembros
+                    </NavLink>
+                </li>
                 @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
                 {
-                    <li><NavLink href="@($"/proyecto/{proyecto.Id}/editar")" class="nav-link text-white">Editar</NavLink></li>
+                    <li>
+                        <NavLink href="@($"/proyecto/{proyecto.Id}/editar")" class="nav-link text-white">Editar
+                        </NavLink>
+                    </li>
                 }
-                <li><NavLink href="@($"/informacion/proyecto/{proyecto.Id}")" class="nav-link text-white">Información</NavLink></li>
+                <li>
+                    <NavLink href="@($"/informacion/proyecto/{proyecto.Id}")" class="nav-link text-white">Información
+                    </NavLink>
+                </li>
             </ul>
         </details>
     }
@@ -65,7 +84,7 @@
             }
         }
     }
-    
+
     protected override void OnInitialized()
     {
         Sesion.SesionModificada += RefrescarLayout;

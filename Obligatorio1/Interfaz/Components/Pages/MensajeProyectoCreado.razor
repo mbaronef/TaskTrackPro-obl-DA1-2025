@@ -7,7 +7,7 @@
 @inject NavigationManager Navigator
 @inject ControladorProyectos ControladorProyectos
 
-@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+@if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
 else
@@ -25,26 +25,31 @@ else
                         Has creado el proyecto <strong>@proyecto.Nombre</strong> correctamente.
                     </p>
                     <p>
-                        Ahora puedes administrarlo desde el menú lateral o acceder directamente a sus secciones principales:
+                        Ahora puedes administrarlo desde el menú lateral o acceder directamente a sus secciones
+                        principales:
                     </p>
                     <ul class="mt-3 list-unstyled">
                         <li class="mb-2">
-                            <a href="@($"/proyecto/{proyecto.Id}/tareas")" class="btn btn-outline-success w-100 text-start">
+                            <a href="@($"/proyecto/{proyecto.Id}/tareas")"
+                               class="btn btn-outline-success w-100 text-start">
                                 <i class="bi bi-calendar"></i> Crear y gestionar tareas
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")" class="btn btn-outline-success w-100 text-start">
+                            <a href="@($"/proyecto/{proyecto.Id}/recursos_exclusivos")"
+                               class="btn btn-outline-success w-100 text-start">
                                 <i class="bi bi-tools"></i>️ Gestionar recursos exclusivos
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="@($"/proyecto/{proyecto.Id}/miembros")" class="btn btn-outline-success w-100 text-start">
+                            <a href="@($"/proyecto/{proyecto.Id}/miembros")"
+                               class="btn btn-outline-success w-100 text-start">
                                 <i class="bi bi-people-fill"></i> Administrar miembros
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="@($"/proyecto/{proyecto.Id}/editar")" class="btn btn-outline-success w-100 text-start">
+                            <a href="@($"/proyecto/{proyecto.Id}/editar")"
+                               class="btn btn-outline-success w-100 text-start">
                                 <i class="bi bi-pencil"></i> Editar información del proyecto o eliminarlo
                             </a>
                         </li>
@@ -83,4 +88,5 @@ else
             }
         }
     }
+
 }

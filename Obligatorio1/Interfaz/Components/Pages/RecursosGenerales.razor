@@ -8,7 +8,7 @@
 @inject LogicaSesion Sesion
 @inject ControladorRecursos ControladorRecursos
 
-@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+@if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
 else
@@ -48,7 +48,8 @@ else
                     </div>
                     <div class="mb-3">
                         <label>Descripción</label>
-                        <InputText class="form-control" @bind-Value="nuevoRecurso.Descripcion" @oninput="OcultarError"></InputText>
+                        <InputText class="form-control" @bind-Value="nuevoRecurso.Descripcion"
+                                   @oninput="OcultarError"></InputText>
                     </div>
                     <button class="btn btn-success" @onclick="CrearRecurso">Guardar</button>
                     <button class="btn btn-secondary ms-2" @onclick="CancelarCrearRecurso">Cancelar</button>
@@ -75,18 +76,22 @@ else
                 <div class="card-body">
                     <div class="mb-3">
                         <label>Nombre</label>
-                        <InputText class="form-control" @bind-Value="recursoAEditar.Nombre" @oninput="OcultarErrorEditar"/>
+                        <InputText class="form-control" @bind-Value="recursoAEditar.Nombre"
+                                   @oninput="OcultarErrorEditar"/>
                     </div>
                     <div class="mb-3">
                         <label>Tipo</label>
-                        <InputText class="form-control" @bind-Value="recursoAEditar.Tipo" @oninput="OcultarErrorEditar"/>
+                        <InputText class="form-control" @bind-Value="recursoAEditar.Tipo"
+                                   @oninput="OcultarErrorEditar"/>
                     </div>
                     <div class="mb-3">
                         <label>Descripción</label>
-                        <InputText class="form-control" @bind-Value="recursoAEditar.Descripcion" @oninput="OcultarErrorEditar"/>
+                        <InputText class="form-control" @bind-Value="recursoAEditar.Descripcion"
+                                   @oninput="OcultarErrorEditar"/>
                     </div>
                     <button class="btn btn-success" @onclick="GuardarCambiosRecurso">Guardar Cambios</button>
-                    <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEdicionRecurso">Cancelar</button>
+                    <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEdicionRecurso">Cancelar
+                    </button>
                 </div>
             </div>
         </EditForm>
@@ -163,7 +168,7 @@ else
 
     private void MostrarFormularioCrearRecurso()
     {
-        esExclusivo = false; 
+        esExclusivo = false;
         mostrarFormCrearRecurso = true;
         nuevoRecurso = new RecursoDTO();
     }
@@ -271,7 +276,7 @@ else
     {
         mostrarErrorEditar = false;
     }
-    
+
     private async void EliminarRecurso(int idRecurso)
     {
         try
@@ -301,7 +306,7 @@ else
         StateHasChanged();
     }
 
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !sesionCargada)
@@ -317,8 +322,8 @@ else
                 await Sesion.ActualizarSesion();
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
-                
             }
         }
     }
+
 }

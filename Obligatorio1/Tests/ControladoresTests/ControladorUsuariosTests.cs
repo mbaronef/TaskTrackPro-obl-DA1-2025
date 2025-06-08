@@ -67,7 +67,6 @@ public class ControladorUsuariosTests
         Assert.AreEqual("Usuario A", resultado[0].Nombre);
         Assert.AreEqual("Usuario B", resultado[1].Nombre);
         _mockGestorUsuarios.Verify(g => g.ObtenerTodos(), Times.Once);
-
     }
 
     [TestMethod]
@@ -89,24 +88,24 @@ public class ControladorUsuariosTests
     {
         UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         int nuevoAdmin = 2;
-        
+
         _mockGestorUsuarios.Setup(g => g.AgregarAdministradorSistema(solicitante, nuevoAdmin));
 
         _controladorUsuarios.AgregarAdministradorSistema(solicitante, nuevoAdmin);
-        
+
         _mockGestorUsuarios.Verify(g => g.AgregarAdministradorSistema(solicitante, nuevoAdmin), Times.Once);
     }
-    
+
     [TestMethod]
     public void AsignarAdministradorProyecto_LlamaCorrectamenteAGestor()
     {
         UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         int nuevoAdmin = 2;
-        
+
         _mockGestorUsuarios.Setup(g => g.AsignarAdministradorProyecto(solicitante, nuevoAdmin));
 
         _controladorUsuarios.AsignarAdministradorProyecto(solicitante, nuevoAdmin);
-        
+
         _mockGestorUsuarios.Verify(g => g.AsignarAdministradorProyecto(solicitante, nuevoAdmin), Times.Once);
     }
 
@@ -115,11 +114,11 @@ public class ControladorUsuariosTests
     {
         UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         int nuevoAdmin = 2;
-        
+
         _mockGestorUsuarios.Setup(g => g.DesasignarAdministradorProyecto(solicitante, nuevoAdmin));
 
         _controladorUsuarios.DesasignarAdministradorProyecto(solicitante, nuevoAdmin);
-        
+
         _mockGestorUsuarios.Verify(g => g.DesasignarAdministradorProyecto(solicitante, nuevoAdmin), Times.Once);
     }
 
@@ -142,11 +141,11 @@ public class ControladorUsuariosTests
         _mockGestorUsuarios.Setup(g => g.AutogenerarContrasenaValida());
 
         _controladorUsuarios.AutogenerarContrasenaValida();
-        
+
         _mockGestorUsuarios.Verify(g => g.AutogenerarContrasenaValida(), Times.Once);
     }
-    
-    
+
+
     [TestMethod]
     public void AutogenerarYAsignarContrasena_LlamaCorrectamenteAGestor()
     {
@@ -173,7 +172,7 @@ public class ControladorUsuariosTests
 
         _mockGestorUsuarios.Verify(g => g.ModificarContrasena(solicitante, idObjetivo, nuevaPass), Times.Once);
     }
-    
+
     [TestMethod]
     public void BorrarNotificacion_LlamaCorrectamenteAGestor()
     {
@@ -186,7 +185,7 @@ public class ControladorUsuariosTests
 
         _mockGestorUsuarios.Verify(g => g.BorrarNotificacion(idUsuario, idNotificacion), Times.Once);
     }
-    
+
     [TestMethod]
     public void LogIn_LlamaCorrectamenteAGestorYDevuelveUsuario()
     {
@@ -203,7 +202,7 @@ public class ControladorUsuariosTests
         Assert.AreEqual(usuarioEsperado.Email, resultado.Email);
         _mockGestorUsuarios.Verify(g => g.LogIn(email, contrasena), Times.Once);
     }
-    
+
     [TestMethod]
     public void ObtenerUsuariosDiferentes_LlamaCorrectamenteAGestorYDevuelveLista()
     {
@@ -228,7 +227,7 @@ public class ControladorUsuariosTests
         Assert.AreEqual(4, resultado[1].Id);
         _mockGestorUsuarios.Verify(g => g.ObtenerUsuariosDiferentes(entrada), Times.Once);
     }
-    
+
     [TestMethod]
     public void ValidarUsuarioNoEsAdministradorInicial_LlamaCorrectamenteAGestor()
     {
@@ -240,5 +239,4 @@ public class ControladorUsuariosTests
 
         _mockGestorUsuarios.Verify(g => g.ValidarUsuarioNoEsAdministradorInicial(idUsuario), Times.Once);
     }
-
 }

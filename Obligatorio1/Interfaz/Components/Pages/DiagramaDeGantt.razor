@@ -14,7 +14,7 @@
 }
 else
 {
-    <div id="ganttDiagrama"> </div>
+    <div id="ganttDiagrama"></div>
     <p style="margin-top: 1rem; font-style: italic; color: #555;">
         Las tareas del camino crítico están resaltadas en rojo.
     </p>
@@ -38,6 +38,7 @@ else
                 NavigationManager.NavigateTo("/Error");
                 return;
             }
+
             ControladorProyectos.CalcularCaminoCritico(proyecto);
             proyecto = ControladorProyectos.ObtenerProyectoPorId(proyecto.Id);
             StateHasChanged(); // Asegurar que el div se renderice primero
@@ -61,4 +62,5 @@ else
             graficoDibujado = true;
         }
     }
+
 }

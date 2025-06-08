@@ -16,6 +16,7 @@ public class Dependencia
         Tipo = tipo;
         Tarea = tarea;
     }
+
     private void ValidarNoVacio(string valor)
     {
         if (string.IsNullOrWhiteSpace(valor))
@@ -29,13 +30,13 @@ public class Dependencia
             throw new ExcepcionDominio(MensajesErrorDominio.TipoDependenciaInvalido);
         }
     }
-    
+
     private void ValidarTareaNoNula(Tarea tarea)
     {
         if (tarea == null)
             throw new ExcepcionDominio(MensajesErrorDominio.TareaNula);
     }
-    
+
     public override bool Equals(object obj)
     {
         if (obj is Dependencia otra)

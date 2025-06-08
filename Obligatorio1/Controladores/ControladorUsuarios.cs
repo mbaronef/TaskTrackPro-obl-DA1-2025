@@ -37,12 +37,12 @@ public class ControladorUsuarios
     {
         _gestorUsuarios.AgregarAdministradorSistema(solicitante, id);
     }
-    
+
     public void AsignarAdministradorProyecto(UsuarioDTO solicitante, int id)
     {
         _gestorUsuarios.AsignarAdministradorProyecto(solicitante, id);
     }
-    
+
     public void DesasignarAdministradorProyecto(UsuarioDTO solicitante, int id)
     {
         _gestorUsuarios.DesasignarAdministradorProyecto(solicitante, id);
@@ -52,17 +52,17 @@ public class ControladorUsuarios
     {
         _gestorUsuarios.ReiniciarContrasena(solicitanteDTO, idUsuarioObjetivo);
     }
-    
+
     public string AutogenerarContrasenaValida()
     {
         return _gestorUsuarios.AutogenerarContrasenaValida();
     }
-    
+
     public void AutogenerarYAsignarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
     {
         _gestorUsuarios.AutogenerarYAsignarContrasena(solicitanteDTO, idUsuarioObjetivo);
     }
-    
+
     public void ModificarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo, string nuevaPass)
     {
         _gestorUsuarios.ModificarContrasena(solicitanteDTO, idUsuarioObjetivo, nuevaPass);

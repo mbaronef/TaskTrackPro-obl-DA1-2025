@@ -9,7 +9,6 @@ public class UsuarioEditarDTO
     public string Email { get; set; }
     public bool EsAdministradorSistema { get; set; }
     public bool EsAdministradorProyecto { get; set; }
-    
-    public string? ContrasenaAutogenerada { get; set; }
 
+    public string? ContrasenaAutogenerada { get; set; }
 }

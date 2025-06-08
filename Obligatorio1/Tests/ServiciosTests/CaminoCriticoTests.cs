@@ -20,7 +20,7 @@ public class CaminoCriticoTests
     public void SetUp()
     {
         _caminoCritico = new CaminoCritico();
-        
+
         _tarea1 = new Tarea("Tarea 1", "desc", 2, _fechaHoy);
         _tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy.AddDays(3));
         _tarea3 = new Tarea("Tarea 3", "desc", 4, _fechaHoy.AddDays(4));
@@ -45,7 +45,7 @@ public class CaminoCriticoTests
         _proyecto.AgregarTarea(_tarea2);
         _proyecto.AgregarTarea(_tarea3);
         _proyecto.AgregarTarea(_tarea4);
-        
+
         _caminoCritico.CalcularCaminoCritico(_proyecto);
 
         Assert.IsTrue(_tarea1.EsCritica());
@@ -68,7 +68,7 @@ public class CaminoCriticoTests
         _proyecto.AgregarTarea(_tarea2);
         _proyecto.AgregarTarea(_tarea3);
         _proyecto.AgregarTarea(_tarea4);
-        
+
         _tarea3.AgregarDependencia(new Dependencia("SS", _tarea2));
         _caminoCritico.CalcularCaminoCritico(_proyecto);
     }
@@ -106,7 +106,7 @@ public class CaminoCriticoTests
         _proyecto.AgregarTarea(_tarea2);
         _proyecto.AgregarTarea(_tarea3);
         _proyecto.AgregarTarea(_tarea4);
-        
+
         _caminoCritico.CalcularCaminoCritico(_proyecto);
         Assert.IsTrue(_tarea4.Holgura > 0);
     }
@@ -125,19 +125,19 @@ public class CaminoCriticoTests
     [TestMethod]
     public void DependenciasSSOk()
     {
-        Tarea tarea1 = new Tarea("Tarea 1", "desc", 2, _fechaHoy) {Id = 1};
-        Tarea tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy.AddDays(3)) {Id = 2};
-        
+        Tarea tarea1 = new Tarea("Tarea 1", "desc", 2, _fechaHoy) { Id = 1 };
+        Tarea tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy.AddDays(3)) { Id = 2 };
+
         tarea2.AgregarDependencia(new Dependencia("SS", tarea1));
-        
+
         _proyecto.AgregarTarea(tarea1);
         _proyecto.AgregarTarea(tarea2);
-        
+
         _caminoCritico.CalcularCaminoCritico(_proyecto);
-        
+
         Assert.IsTrue(tarea1.EsCritica());
         Assert.IsTrue(tarea2.EsCritica());
-        Assert.AreEqual(tarea1.FechaInicioMasTemprana,tarea2.FechaInicioMasTemprana);
+        Assert.AreEqual(tarea1.FechaInicioMasTemprana, tarea2.FechaInicioMasTemprana);
     }
 
     [ExpectedException(typeof(ExcepcionCaminoCritico))]
@@ -158,7 +158,7 @@ public class CaminoCriticoTests
         Assert.IsFalse(_tarea1.EsCritica());
         Assert.IsFalse(_tarea2.EsCritica());
     }
-    
+
     [TestMethod]
     public void ModificarFechaFinMasTempranaDelProyecto_NotificaAMiembros()
     {
@@ -166,12 +166,13 @@ public class CaminoCriticoTests
         _proyecto.AgregarTarea(_tarea2);
         _proyecto.AgregarTarea(_tarea3);
         _proyecto.AgregarTarea(_tarea4);
-        
+
         _caminoCritico.CalcularCaminoCritico(_proyecto);
 
         DateTime nuevaFechaFin = _proyecto.FechaFinMasTemprana;
 
-        string esperado = $"Se cambió la fecha de fin más temprana del proyecto '{_proyecto.Nombre}' a '{nuevaFechaFin:dd/MM/yyyy}'.";
+        string esperado =
+            $"Se cambió la fecha de fin más temprana del proyecto '{_proyecto.Nombre}' a '{nuevaFechaFin:dd/MM/yyyy}'.";
 
         Notificacion ultimaNoti = _admin.Notificaciones.Last();
         Assert.AreEqual(esperado, ultimaNoti.Mensaje);

@@ -61,6 +61,8 @@ public class UtilidadesContrasenaTests
     public void SeAutogeneraUnaContrasenaValida()
     {
         string contrasenaAutogenerada = UtilidadesContrasena.AutogenerarContrasenaValida();
-        UtilidadesContrasena.ValidarYEncriptarContrasena(contrasenaAutogenerada); // si la contraseña no es válida, se lanza una excepción antes de encriptar
+        UtilidadesContrasena
+            .ValidarYEncriptarContrasena(
+                contrasenaAutogenerada); // si la contraseña no es válida, se lanza una excepción antes de encriptar
     }
 }

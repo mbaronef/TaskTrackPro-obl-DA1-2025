@@ -4,7 +4,7 @@
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
 
-@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+@if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
 else @if (Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnProyecto)
@@ -54,4 +54,5 @@ else @if (Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoU
             }
         }
     }
+
 }

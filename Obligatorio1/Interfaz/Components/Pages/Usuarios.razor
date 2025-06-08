@@ -10,7 +10,7 @@
 @inject ControladorUsuarios ControladorUsuarios
 
 
-@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+@if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
 else
@@ -27,9 +27,11 @@ else
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 @mensajeExito
-                <button type="button" class="btn-close" data-bs-dismiss="alert" @onclick="() => mostrarExito = false"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                        @onclick="() => mostrarExito = false"></button>
             </div>
         }
+
         <div class="d-flex justify-content-end mb-3">
             <button class="btn btn-primary" @onclick="MostrarFormularioCrearUsuario">
                 <i class="bi bi-plus-circle"></i>
@@ -51,24 +53,28 @@ else
                     <div class="card-body">
                         <div class="mb-3">
                             <label>Nombre</label>
-                            <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre" @oninput="OcultarError" placeholder="Ej: Juan"/>
+                            <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre" @oninput="OcultarError"
+                                       placeholder="Ej: Juan"/>
                         </div>
                         <div class="mb-3">
                             <label>Apellido</label>
-                            <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido" @oninput="OcultarError" placeholder="Ej: Pérez"/>
+                            <InputText class="form-control" @bind-Value="nuevoUsuario.Apellido" @oninput="OcultarError"
+                                       placeholder="Ej: Pérez"/>
                         </div>
                         <div class="mb-3">
                             <label>Fecha de nacimiento</label>
-                            <input type="date" class="form-control" @bind="nuevoUsuario.FechaNacimiento" />
+                            <input type="date" class="form-control" @bind="nuevoUsuario.FechaNacimiento"/>
                         </div>
                         <div class="mb-3">
                             <label>Email</label>
-                            <InputText class="form-control" @bind-Value="nuevoUsuario.Email" @oninput="OcultarError" placeholder="Ej: juanperez2005@mail.com"/>
+                            <InputText class="form-control" @bind-Value="nuevoUsuario.Email" @oninput="OcultarError"
+                                       placeholder="Ej: juanperez2005@mail.com"/>
                         </div>
                         <div class="mb-3">
                             <label>Contraseña</label>
                             <div class="input-group">
-                                <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" @oninput="OcultarError" placeholder="Ej: Contra$ena123"/>
+                                <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena"
+                                           @oninput="OcultarError" placeholder="Ej: Contra$ena123"/>
                                 <button type="button" class="btn btn-secondary" @onclick="AutogenerarContrasena">
                                     Autogenerar contraseña
                                 </button>
@@ -77,13 +83,16 @@ else
                             @if (!string.IsNullOrEmpty(nuevoUsuario.Contrasena) && ContrasenaEsValida(nuevoUsuario.Contrasena))
                             {
                                 <div class="alert alert-success mt-3">
-                                    La nueva contraseña generada es: <strong>@nuevoUsuario.Contrasena</strong>. Se aplicará al crear el usuario.
+                                    La nueva contraseña generada es: <strong>@nuevoUsuario.Contrasena</strong>. Se
+                                    aplicará al crear el usuario.
                                 </div>
                             }
                         </div>
                         <div>
                             <button class="btn btn-success" @onclick="CrearUsuario">Crear</button>
-                            <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarCrearUsuario">Cancelar</button>
+                            <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarCrearUsuario">
+                                Cancelar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -95,7 +104,8 @@ else
         {
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 @errorMensajeEditar
-                <button type="button" class="btn-close" data-bs-dismiss="alert" @onclick="() => mostrarErrorEditar = false" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                        @onclick="() => mostrarErrorEditar = false" aria-label="Cerrar"></button>
             </div>
         }
 
@@ -127,9 +137,15 @@ else
                             <div class="mb-3">
                                 <label>Contraseña</label>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-secondary" type="button" @onclick="MostrarModalAutogenerar">Autogenerar</button>
-                                    <button class="btn btn-secondary" type="button" @onclick="MostrarModalCambiarContrasena">Cambiar</button>
-                                    <button class="btn btn-secondary" type="button" @onclick="MostrarModalReiniciar">Reiniciar</button>
+                                    <button class="btn btn-secondary" type="button" @onclick="MostrarModalAutogenerar">
+                                        Autogenerar
+                                    </button>
+                                    <button class="btn btn-secondary" type="button"
+                                            @onclick="MostrarModalCambiarContrasena">Cambiar
+                                    </button>
+                                    <button class="btn btn-secondary" type="button" @onclick="MostrarModalReiniciar">
+                                        Reiniciar
+                                    </button>
                                 </div>
 
                                 @if (mostrarExitoContrasenaModal && !string.IsNullOrEmpty(mensajeExitoContrasenaModal))
@@ -140,16 +156,20 @@ else
                                 @if (!mostrarExitoContrasenaModal && ContrasenaEsValida(usuarioAEditar.ContrasenaAutogenerada))
                                 {
                                     <div class="alert alert-success mt-3">
-                                        La nueva contraseña generada es: <strong>@usuarioAEditar.ContrasenaAutogenerada</strong>. Se aplicará al guardar los cambios del usuario.
+                                        La nueva contraseña generada es:
+                                        <strong>@usuarioAEditar.ContrasenaAutogenerada</strong>. Se aplicará al guardar
+                                        los cambios del usuario.
                                     </div>
                                 }
                             </div>
                         }
                         <div class="mb-3">
                             <label>Roles</label><br/>
-                            <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorSistema" disabled="@usuarioOriginal.EsAdministradorSistema"/>
+                            <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorSistema"
+                                           disabled="@usuarioOriginal.EsAdministradorSistema"/>
                             <label class="me-3">Administrador de sistema</label>
-                            <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto" disabled="@usuarioOriginal.EstaAdministrandoUnProyecto"/>
+                            <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto"
+                                           disabled="@usuarioOriginal.EstaAdministrandoUnProyecto"/>
                             <label class="me-3">Administrador de proyecto</label>
                         </div>
                         <div>
@@ -157,10 +177,14 @@ else
 
                             @if (!usuarioOriginal.EsAdministradorSistema)
                             {
-                                <button class="btn btn-danger ms-2" type="button" @onclick="MostrarModalEliminarUsuario">Eliminar usuario</button>
+                                <button class="btn btn-danger ms-2" type="button"
+                                        @onclick="MostrarModalEliminarUsuario">Eliminar usuario
+                                </button>
                             }
 
-                            <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEditarUsuario">Cancelar</button>
+                            <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEditarUsuario">
+                                Cancelar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -178,7 +202,8 @@ else
                         </div>
                         <div class="modal-body">
                             <label>Nueva contraseña:</label>
-                            <InputText class="form-control" @bind-Value="nuevaContrasenaManual" type="password" @oninput="OcultarErrorModalContrasena"/>
+                            <InputText class="form-control" @bind-Value="nuevaContrasenaManual" type="password"
+                                       @oninput="OcultarErrorModalContrasena"/>
                             @if (mostrarExitoContrasenaModal)
                             {
                                 <div class="alert alert-success mt-3">@mensajeExitoContrasenaModal</div>
@@ -196,7 +221,6 @@ else
                 </div>
             </div>
         }
-
 
 
         @if (ControladorUsuarios.ObtenerTodos().Count == 0)
@@ -318,10 +342,10 @@ else
 
 @code {
     private bool mostrarFormCrear = false;
-    
+
     private bool mostrarExito = false;
     private string mensajeExito = "";
-    
+
     private UsuarioDTO usuarioOriginal;
     private bool mostrarFormEditar = false;
     private bool mostrarError = false;
@@ -331,21 +355,21 @@ else
     private int idUsuarioEditando;
     private bool mostrarErrorEditar = false;
     private string errorMensajeEditar;
-    
+
     private bool mostrarModalCambiarContrasena = false;
     private string nuevaContrasenaManual = "";
-    
+
     private string errorContrasenaModal;
     private bool mostrarErrorContrasenaModal = false;
     private bool mostrarExitoContrasenaModal = false;
 
     private string mensajeExitoContrasenaModal = "";
-    
+
     private bool mostrarModalEliminarUsuario = false;
-    
+
     private bool mostrarModalAutogenerar = false;
     private bool mostrarModalReiniciar = false;
-    
+
     private bool sesionCargada = false;
 
     private void MostrarFormularioCrearUsuario()
@@ -366,7 +390,7 @@ else
     {
         mostrarError = false;
         errorMensaje = "";
-        
+
         List<ValidationResult> errores = ValidarModelo(nuevoUsuario);
         if (errores.Any())
         {
@@ -374,7 +398,7 @@ else
             mostrarError = true;
             return;
         }
-        
+
         if (!ContrasenaEsValida(nuevoUsuario.Contrasena))
         {
             errorMensaje = "La contraseña debe tener al menos 8 caracteres, una minúscula, una mayúscula, un número y un carácter especial.";
@@ -396,12 +420,12 @@ else
             mostrarError = true;
         }
     }
-    
+
     private void OcultarError(ChangeEventArgs e)
     {
         mostrarError = false;
     }
-    
+
     private List<ValidationResult> ValidarModelo(object modelo)
     {
         List<ValidationResult> resultados = new List<ValidationResult>();
@@ -415,9 +439,10 @@ else
                 resultados.Add(new ValidationResult("La edad debe estar entre 18 y 100 años.", new[] { nameof(usuario.FechaNacimiento) }));
             }
         }
+
         return resultados;
     }
-    
+
     private int CalcularEdad(DateTime fechaNacimiento)
     {
         DateTime hoy = DateTime.Today;
@@ -429,7 +454,7 @@ else
     private void EditarUsuario(int idUsuario)
     {
         UsuarioDTO usuario = ControladorUsuarios.ObtenerUsuarioPorId(idUsuario);
-        
+
         if (usuario != null)
         {
             usuarioAEditar = new UsuarioEditarDTO()
@@ -441,16 +466,15 @@ else
                 Email = usuario.Email,
                 EsAdministradorSistema = usuario.EsAdministradorSistema,
                 EsAdministradorProyecto = usuario.EsAdministradorProyecto
-                
             };
-            usuarioOriginal = usuario; 
+            usuarioOriginal = usuario;
             idUsuarioEditando = usuario.Id;
             mostrarFormEditar = true;
             mostrarExitoContrasenaModal = false;
             mensajeExitoContrasenaModal = "";
         }
     }
-    
+
     private void OcultarErrorModalContrasena(ChangeEventArgs e)
     {
         mostrarErrorContrasenaModal = false;
@@ -528,7 +552,7 @@ else
             mostrarErrorEditar = true;
         }
     }
-    
+
     private void MostrarModalEliminarUsuario()
     {
         mostrarModalEliminarUsuario = true;
@@ -541,7 +565,7 @@ else
 
     private void ConfirmarEliminarUsuario()
     {
-        EliminarUsuario(); 
+        EliminarUsuario();
         mostrarModalEliminarUsuario = false;
     }
 
@@ -552,7 +576,7 @@ else
         mostrarExitoContrasenaModal = false;
         mensajeExitoContrasenaModal = "";
     }
-    
+
     private void ReiniciarContrasena()
     {
         try
@@ -567,7 +591,7 @@ else
             mostrarErrorEditar = true;
         }
     }
-    
+
     private void AutogenerarContrasena()
     {
         try
@@ -583,6 +607,7 @@ else
                 mensajeExitoContrasenaModal = $"La nueva contraseña generada es: {nueva} . Se cambiará al guardar cambios.";
                 mostrarExitoContrasenaModal = true;
             }
+
             mostrarErrorEditar = false;
         }
         catch (Exception ex)
@@ -591,7 +616,7 @@ else
             mostrarErrorEditar = true;
         }
     }
-    
+
     private void MostrarModalCambiarContrasena()
     {
         nuevaContrasenaManual = "";
@@ -606,7 +631,7 @@ else
         mostrarModalCambiarContrasena = false;
         nuevaContrasenaManual = "";
     }
-    
+
     private void ConfirmarCambioContrasena()
     {
         mostrarErrorEditar = false;
@@ -618,8 +643,9 @@ else
             mostrarErrorContrasenaModal = true;
             return;
         }
+
         try
-        { 
+        {
             usuarioAEditar.ContrasenaAutogenerada = nuevaContrasenaManual;
             mensajeExitoContrasenaModal = "La nueva contraseña se aplicará al guardar los cambios del usuario.";
             mostrarExitoContrasenaModal = true;
@@ -632,7 +658,7 @@ else
             mostrarErrorEditar = true;
         }
     }
-    
+
     private bool ContrasenaEsValida(string contrasena)
     {
         if (string.IsNullOrWhiteSpace(contrasena)) return false;
@@ -643,19 +669,19 @@ else
                && contrasena.Any(char.IsDigit)
                && contrasena.Any(c => !char.IsLetterOrDigit(c));
     }
-    
+
     private void MostrarModalAutogenerar()
     {
         mostrarModalAutogenerar = true;
         mostrarExitoContrasenaModal = false;
     }
-    
+
     private void MostrarModalReiniciar()
     {
         mostrarModalReiniciar = true;
         mostrarExitoContrasenaModal = false;
     }
-    
+
     private void CancelarConfirmacion()
     {
         mostrarModalAutogenerar = false;
@@ -673,7 +699,7 @@ else
         ReiniciarContrasena();
         mostrarModalReiniciar = false;
     }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !sesionCargada)
@@ -692,4 +718,5 @@ else
             }
         }
     }
+
 }

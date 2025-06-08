@@ -35,11 +35,11 @@
         colors: ['#a4f7ff'],
         tooltip: {
             enabled: true,
-            custom: function({ series, seriesIndex, dataPointIndex, w }) {
+            custom: function ({series, seriesIndex, dataPointIndex, w}) {
                 const data = w.config.series[seriesIndex].data[dataPointIndex].customData;
                 const formatFecha = (fechaStr) => {
                     const [aaaa, mm, dd] = fechaStr.split('-').map(Number);
-                    const fecha = new Date(aaaa, mm-1, dd);
+                    const fecha = new Date(aaaa, mm - 1, dd);
                     const dia = String(fecha.getDate()).padStart(2, '0');
                     const mes = String(fecha.getMonth() + 1).padStart(2, '0');
                     const año = fecha.getFullYear();
@@ -54,6 +54,6 @@
         }
     };
 
-    const chart = new ApexCharts(document.querySelector(selector), { series, ...options });
+    const chart = new ApexCharts(document.querySelector(selector), {series, ...options});
     chart.render();
 };

@@ -16,14 +16,28 @@ public static class MensajesErrorDominio
     // Proyecto
     public const string DescripcionMuyLarga = "La descripción no puede superar los {0} caracteres.";
     public const string TareaYaAgregada = "La tarea ya fue agregada al proyecto.";
-    public const string NoPuedeEliminarAdmin = "No se puede eliminar al administrador actual. Asigne un nuevo administrador antes.";
+
+    public const string NoPuedeEliminarAdmin =
+        "No se puede eliminar al administrador actual. Asigne un nuevo administrador antes.";
+
     public const string MiembroYaEnProyecto = "El miembro ya pertenece al proyecto.";
     public const string FechaInicioProyectoMenorAHoy = "La fecha de inicio no puede ser anterior a hoy.";
-    public const string FechaInicioProyectoMayorQueTareas = "La fecha de inicio no puede ser posterior a la de alguna tarea.";
-    public const string FechaFinProyectoMenorQueInicio = "La fecha de fin más temprana no puede ser anterior a la fecha de inicio del proyecto.";
-    public const string FechaFinProyectoMenorQueTareas = "La fecha de fin más temprana no puede ser menor que la fecha de fin de una tarea.";
-    public const string FechaInicioProyectoMayorQueFin = "La fecha de inicio no puede ser mayor que la fecha de fin más temprana.";
-    public const string FechaInicioProyectoIgualFin = "La fecha de inicio no puede ser la misma que la fecha de fin más temprana.";
+
+    public const string FechaInicioProyectoMayorQueTareas =
+        "La fecha de inicio no puede ser posterior a la de alguna tarea.";
+
+    public const string FechaFinProyectoMenorQueInicio =
+        "La fecha de fin más temprana no puede ser anterior a la fecha de inicio del proyecto.";
+
+    public const string FechaFinProyectoMenorQueTareas =
+        "La fecha de fin más temprana no puede ser menor que la fecha de fin de una tarea.";
+
+    public const string FechaInicioProyectoMayorQueFin =
+        "La fecha de inicio no puede ser mayor que la fecha de fin más temprana.";
+
+    public const string FechaInicioProyectoIgualFin =
+        "La fecha de inicio no puede ser la misma que la fecha de fin más temprana.";
+
     public const string NombreProyectoVacio = "El nombre del proyecto no puede estar vacío o null.";
     public const string DescripcionVacia = "La descripción no puede estar vacía o null.";
     public const string ProyectoSinAdministrador = "El proyecto debe tener un administrador.";
@@ -32,11 +46,13 @@ public static class MensajesErrorDominio
     public const string TareaNoPerteneceAlProyecto = "La tarea no pertenece al proyecto.";
     public const string MiembroNull = "No se puede agregar un miembro null.";
     public const string UsuarioNoEsMiembroDelProyecto = "El usuario no es miembro del proyecto.";
-    
+
 
     // Recurso
     public const string RecursoYaEsExclusivo = "El recurso ya es exclusivo de otro proyecto.";
-    public const string CantidadTareasRecursoNegativa = "La cantidad de tareas usando este recurso no puede ser menor a cero.";
+
+    public const string CantidadTareasRecursoNegativa =
+        "La cantidad de tareas usando este recurso no puede ser menor a cero.";
 
     // Notificación
     public const string MensajeNotificacionVacio = "El mensaje de la notificación no puede estar vacío o null.";
@@ -46,11 +62,11 @@ public static class MensajesErrorDominio
     public const string DuracionTareaInvalida = "La duración de la tarea debe ser mayor a cero días.";
     public const string UsuariosAsignadosVacio = "La lista de usuarios asignados está vacía o no está inicializada.";
     public const string FechaInicioInvalida = "La fecha de inicio debe ser igual o posterior a la fecha de hoy.";
-    
+
     public static string TransicionEstadoInvalidaDesdeHacia(string desde, string hacia)
         => $"No se puede cambiar una tarea de estado {desde} a estado {hacia}.";
 
-    
+
     public const string UsuarioYaAgregado = "El usuario ya fue agregado a la tarea.";
     public const string RecursoYaAgregado = "El recurso ya fue agregado.";
     public const string DependenciaYaAgregada = "La dependencia ya fue agregada.";
@@ -60,5 +76,7 @@ public static class MensajesErrorDominio
     public const string RecursoNullEnTarea = "No se puede agregar un recurso null.";
     public const string RecursoNoNecesario = "El recurso no se encuentra dentro de los recursos necesarios.";
     public const string DependenciaNullEnTarea = "No se puede agregar una dependencia null.";
-    public const string DependenciaNoExisteEnTarea = "La dependencia no se encuentra dentro de la lista de dependencias.";
+
+    public const string DependenciaNoExisteEnTarea =
+        "La dependencia no se encuentra dentro de la lista de dependencias.";
 }

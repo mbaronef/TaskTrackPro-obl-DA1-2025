@@ -538,7 +538,7 @@ public class ProyectoTests
 
         Assert.IsFalse(proyecto.EsMiembro(otro.Id));
     }
-    
+
     //tiene tareas:
     [TestMethod]
     public void TieneTareas_DaTrueSiHayTareas()
@@ -549,7 +549,7 @@ public class ProyectoTests
 
         Assert.IsTrue(_proyecto.TieneTareas());
     }
-    
+
     [TestMethod]
     public void TieneTareas_DaFalseSiNoHayTareas()
     {

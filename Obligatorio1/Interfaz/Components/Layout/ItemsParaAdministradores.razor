@@ -11,6 +11,7 @@
     {
         <NavLink href="/usuarios" class="nav-link text-white">Usuarios</NavLink>
     }
+
     @if (Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnProyecto)
     {
         <NavLink href="/crear-proyecto" class="nav-link text-white">Crear proyecto</NavLink>
@@ -38,7 +39,7 @@
             }
         }
     }
-    
+
     protected override void OnInitialized()
     {
         Sesion.SesionModificada += RefrescarLayout;
@@ -53,4 +54,5 @@
     {
         Sesion.SesionModificada -= RefrescarLayout;
     }
+
 }

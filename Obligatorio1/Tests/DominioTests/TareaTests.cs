@@ -3,8 +3,7 @@ using Excepciones;
 
 namespace Tests.DominioTests;
 
-
-[TestClass] 
+[TestClass]
 public class TareaTests
 {
     private DateTime _fechaInicio = new DateTime(2500, 9, 1);
@@ -22,9 +21,9 @@ public class TareaTests
         string titulo = "Tarea";
         string descripcion = "Prueba de tarea";
         int duracionEnDias = 8;
-        
+
         Tarea tarea = new Tarea(titulo, descripcion, duracionEnDias, _fechaInicio);
-        
+
         Assert.AreEqual(titulo, tarea.Titulo);
         Assert.AreEqual(descripcion, tarea.Descripcion);
         Assert.AreEqual(duracionEnDias, tarea.DuracionEnDias);
@@ -33,73 +32,72 @@ public class TareaTests
         Assert.IsNotNull(tarea.UsuariosAsignados);
         Assert.IsNotNull(tarea.Dependencias);
         Assert.IsNotNull(tarea.RecursosNecesarios);
-
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTituloEsVacio()
-    { 
+    {
         Tarea tarea = new Tarea("", "Descripción válida", 8, _fechaInicio);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTituloEsNull()
     {
-        Tarea tarea = new Tarea(null, "Descripción válida",  8, _fechaInicio);
+        Tarea tarea = new Tarea(null, "Descripción válida", 8, _fechaInicio);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiTituloEsEspacio()
     {
-        Tarea tarea = new Tarea(" ", "Descripción válida",  8, _fechaInicio);
+        Tarea tarea = new Tarea(" ", "Descripción válida", 8, _fechaInicio);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiDuracionEsNegativa()
     {
         Tarea tareaNegativa = new Tarea("Tarea negativa", "Descripción válida", -3, _fechaInicio);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiDuracionEsCero()
     {
         Tarea tareaNegativa = new Tarea("Tarea negativa", "Descripción válida", 0, _fechaInicio);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiDescripcionEsVacia()
-    { 
+    {
         Tarea tarea = new Tarea("Titulo", "", 8, _fechaInicio);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiDescripcionEsNull()
     {
-        Tarea tarea = new Tarea("Titulo", null,  8, _fechaInicio);
+        Tarea tarea = new Tarea("Titulo", null, 8, _fechaInicio);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiDescripcionEsEspacio()
     {
-        Tarea tarea = new Tarea("Titulo", " ",  8, _fechaInicio);
+        Tarea tarea = new Tarea("Titulo", " ", 8, _fechaInicio);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiFechaInicioEsMenorQueHoy()
     {
-        DateTime fechaInicioAnterior = DateTime.Today.AddDays(-1); 
+        DateTime fechaInicioAnterior = DateTime.Today.AddDays(-1);
         Tarea tarea = new Tarea("Titulo", "Descripción válida", 5, fechaInicioAnterior);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstado_NoPermiteVolverAPendienteDesdeCompletada()
@@ -107,9 +105,9 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.CambiarEstado(EstadoTarea.EnProceso);
         tarea.CambiarEstado(EstadoTarea.Completada);
-        tarea.CambiarEstado(EstadoTarea.Pendiente); 
+        tarea.CambiarEstado(EstadoTarea.Pendiente);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstado_NoPermiteVolverAEnProcesoDesdeCompletada()
@@ -117,9 +115,9 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.CambiarEstado(EstadoTarea.EnProceso);
         tarea.CambiarEstado(EstadoTarea.Completada);
-        tarea.CambiarEstado(EstadoTarea.EnProceso); 
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstado_NoPermiteVolverABloqueadaDesdeCompletada()
@@ -127,36 +125,36 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.CambiarEstado(EstadoTarea.EnProceso);
         tarea.CambiarEstado(EstadoTarea.Completada);
-        tarea.CambiarEstado(EstadoTarea.Bloqueada); 
+        tarea.CambiarEstado(EstadoTarea.Bloqueada);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstado_NoPermiteVolverAPendienteDesdeEnProceso()
     {
         Tarea tarea = CrearTareaValida();
         tarea.CambiarEstado(EstadoTarea.EnProceso);
-        tarea.CambiarEstado(EstadoTarea.Pendiente); 
+        tarea.CambiarEstado(EstadoTarea.Pendiente);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstado_NoPermitePasarDePendienteACompletada()
     {
         Tarea tarea = CrearTareaValida();
         tarea.CambiarEstado(EstadoTarea.Pendiente);
-        tarea.CambiarEstado(EstadoTarea.Completada); 
+        tarea.CambiarEstado(EstadoTarea.Completada);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void CambiarEstado_NoPermitePasarDeBloqueadaACompletada()
     {
         Tarea tarea = CrearTareaValida();
         tarea.CambiarEstado(EstadoTarea.Bloqueada);
-        tarea.CambiarEstado(EstadoTarea.Completada); 
+        tarea.CambiarEstado(EstadoTarea.Completada);
     }
-    
+
     [TestMethod]
     public void CambiarEstado_AEnProcesoModificaLaFechaInicioMasTemprana()
     {
@@ -165,7 +163,7 @@ public class TareaTests
         tarea.CambiarEstado(EstadoTarea.EnProceso);
         Assert.AreEqual(DateTime.Today, tarea.FechaInicioMasTemprana);
     }
-    
+
     [TestMethod]
     public void CambiarEstado_ACompletadaDecrementaCantidadDeTareasUsandoYSeteaFecha()
     {
@@ -177,7 +175,7 @@ public class TareaTests
         Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
         Assert.AreEqual(DateTime.Today, tarea.FechaDeEjecucion);
         Assert.AreEqual(DateTime.Today, tarea.FechaFinMasTemprana);
-        Assert.AreEqual(1,tarea.DuracionEnDias);
+        Assert.AreEqual(1, tarea.DuracionEnDias);
     }
 
     [TestMethod]
@@ -189,7 +187,7 @@ public class TareaTests
         tarea.AgregarRecurso(recurso);
         tarea.CambiarEstado(EstadoTarea.Completada);
     }
-    
+
     [TestMethod]
     public void EsCritica_DevuelveTrueCuandoHolguraEsCero()
     {
@@ -198,7 +196,7 @@ public class TareaTests
         bool esCritica = tarea.EsCritica();
         Assert.IsTrue(esCritica);
     }
-    
+
     [TestMethod]
     public void EsMiembro_DevuelveTrueSiElUsuarioEstaAsignado()
     {
@@ -208,7 +206,7 @@ public class TareaTests
         bool resultado = tarea.EsMiembro(usuario);
         Assert.IsTrue(resultado);
     }
-    
+
     [TestMethod]
     public void EsMiembro_DevuelveFalseSiElUsuarioNoEstaAsignado()
     {
@@ -227,7 +225,7 @@ public class TareaTests
         bool resultado = tarea.EsSucesoraDe(dependencia.Tarea.Id);
         Assert.IsTrue(resultado);
     }
-    
+
     [TestMethod]
     public void EsSucesoraDe_DevuelveFalseSiLaTareaDependeDeOtraTarea()
     {
@@ -237,7 +235,7 @@ public class TareaTests
         tarea.Id = 2; //se hardcodean ids por simplicidad de tests. Los maneja el gestor
         otraTarea.Id = 3;
         tarea.AgregarDependencia(dependencia);
-        
+
         bool resultado = tarea.EsSucesoraDe(otraTarea.Id);
         Assert.IsFalse(resultado);
     }
@@ -255,30 +253,30 @@ public class TareaTests
 
     [TestMethod]
     public void FechaDeEjecucionInicializadaConMinValuePorDefecto()
-    { 
+    {
         Tarea tarea = CrearTareaValida();
         Assert.AreEqual(DateTime.MinValue, tarea.FechaDeEjecucion);
     }
-    
+
     [TestMethod]
     public void AsignarUsuario_AsignarUsuarioALista()
     {
         Tarea tarea = CrearTareaValida();
         Usuario usuario = CrearUsuarioValido();
-        tarea.AsignarUsuario(usuario); 
+        tarea.AsignarUsuario(usuario);
         Assert.IsTrue(tarea.UsuariosAsignados.Contains(usuario));
         Assert.AreEqual(1, tarea.UsuariosAsignados.Count);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AsignarUsuario_LanzarExcepcionSiUsuarioEsNull()
     {
         Tarea tarea = CrearTareaValida();
         Usuario usuario = null;
-        tarea.AsignarUsuario(usuario); 
+        tarea.AsignarUsuario(usuario);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AsignarUsuario_LanzarExcepcionSiUsuarioYaEstaEnUsuariosAsignados()
@@ -288,7 +286,7 @@ public class TareaTests
         tarea.AsignarUsuario(usuario);
         tarea.AsignarUsuario(usuario);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarUsuario_LanzaExcepcionSiUsuariosAsignadosEsNull()
@@ -296,7 +294,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.EliminarUsuario(1);
     }
-    
+
     [TestMethod]
     public void EliminarUsuario_EliminarUsuarioDeAsignados()
     {
@@ -307,7 +305,7 @@ public class TareaTests
         tarea.EliminarUsuario(1);
         Assert.IsFalse(tarea.UsuariosAsignados.Any(t => t.Id == 1));
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarUsuario_LanzaExcepcionSiUsuarioNoExiste()
@@ -324,20 +322,20 @@ public class TareaTests
     {
         Tarea tarea = CrearTareaValida();
         Recurso recurso = CrearRecursoValido();
-        tarea.AgregarRecurso(recurso); 
+        tarea.AgregarRecurso(recurso);
         Assert.IsTrue(tarea.RecursosNecesarios.Contains(recurso));
         Assert.AreEqual(1, tarea.RecursosNecesarios.Count);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarRecurso_LanzarExcepcionSiRecursoEsNull()
     {
         Tarea tarea = CrearTareaValida();
         Recurso recurso = null;
-        tarea.AgregarRecurso(recurso); 
+        tarea.AgregarRecurso(recurso);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarRecurso_LanzarExcepcionSiRecursoYaEstaEnRecursosNecesarios()
@@ -347,10 +345,10 @@ public class TareaTests
         tarea.AgregarRecurso(recurso);
         tarea.AgregarRecurso(recurso);
     }
-    
+
     [TestMethod]
     public void EliminarRecurso_EliminarRecursoDeNecesarios()
-    { 
+    {
         Recurso recurso = CrearRecursoValido();
         recurso.Id = 1;
         Tarea tarea = CrearTareaValida();
@@ -358,18 +356,18 @@ public class TareaTests
         tarea.EliminarRecurso(1);
         Assert.IsFalse(tarea.RecursosNecesarios.Any(t => t.Id == 1));
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarRecurso_LanzaExcepcionSiRecursoNoExiste()
-    { 
+    {
         Recurso recurso = CrearRecursoValido();
         recurso.Id = 1;
         Tarea tarea = CrearTareaValida();
         tarea.AgregarRecurso(recurso);
         tarea.EliminarRecurso(3);
     }
-    
+
     [TestMethod]
     public void ModificarTitulo_DeberiaActualizarElTitulo()
     {
@@ -377,7 +375,7 @@ public class TareaTests
         tarea.ModificarTitulo("titulo nuevo");
         Assert.AreEqual("titulo nuevo", tarea.Titulo);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarTitulo_LanzaExcepcionSiTituloEsNull()
@@ -385,7 +383,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.ModificarTitulo(null);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarTitulo_LanzaExcepcionSiTituloEsVacio()
@@ -401,7 +399,7 @@ public class TareaTests
         tarea.ModificarDescripcion("Desc nueva");
         Assert.AreEqual("Desc nueva", tarea.Descripcion);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsNull()
@@ -409,7 +407,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.ModificarDescripcion(null);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarDescripcion_LanzaExcepcionSiDescripcionEsVacia()
@@ -417,16 +415,16 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.ModificarTitulo("");
     }
-    
+
     [TestMethod]
     public void ModificarFechaInicioMasTemprana_ActualizaLaFechaOK()
-    { 
+    {
         Tarea tarea = CrearTareaValida();
         DateTime nuevaFecha = DateTime.Today.AddDays(10);
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
         Assert.AreEqual(nuevaFecha, tarea.FechaInicioMasTemprana);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarFechaInicioMasTemprana_LanzaExcepcionSiFechaEsAnteriorAHoy()
@@ -434,7 +432,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         DateTime fechaPasada = DateTime.Now.AddDays(-1);
         tarea.ModificarFechaInicioMasTemprana(fechaPasada);
-    } 
+    }
 
     [TestMethod]
     public void ModificarDuracion_ActualizaLaDuracionOK()
@@ -443,7 +441,7 @@ public class TareaTests
         tarea.ModificarDuracion(4);
         Assert.AreEqual(4, tarea.DuracionEnDias);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarDuracion_LanzaExcepcionSiEsCeroONegativa()
@@ -452,12 +450,13 @@ public class TareaTests
         tarea.ModificarDuracion(-2);
         tarea.ModificarDuracion(0);
     }
-    
+
     [TestMethod]
     public void DarListaAsignados_DevuelveListaDeUsuariosAsignados()
     {
         Usuario usuario1 = CrearUsuarioValido();
-        Usuario usuario2 = new Usuario("Juana", "Pereza", new DateTime(1996, 2, 2), "juana@test.com", "TaskTrackPro@2025");
+        Usuario usuario2 = new Usuario("Juana", "Pereza", new DateTime(1996, 2, 2), "juana@test.com",
+            "TaskTrackPro@2025");
         usuario1.Id = 1; //se hardcodean ids por simplicidad de tests.
         usuario2.Id = 2;
         Tarea tarea = CrearTareaValida();
@@ -474,7 +473,7 @@ public class TareaTests
     {
         Recurso necesario = CrearRecursoValido();
         necesario.Id = 1;
-        Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion" );
+        Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion");
         necesario2.Id = 2;
         Tarea tarea = CrearTareaValida();
         tarea.AgregarRecurso(necesario);
@@ -492,7 +491,7 @@ public class TareaTests
         DateTime fechaEsperada = tarea.FechaInicioMasTemprana.AddDays(tarea.DuracionEnDias - 1);
         Assert.AreEqual(fechaEsperada, tarea.FechaFinMasTemprana);
     }
-    
+
     [TestMethod]
     public void ModificarDuracionActualizaFechaFinMasTemprana()
     {
@@ -500,7 +499,7 @@ public class TareaTests
         tarea.ModificarDuracion(5);
         Assert.AreEqual(tarea.FechaInicioMasTemprana.AddDays(5 - 1), tarea.FechaFinMasTemprana);
     }
-    
+
     [TestMethod]
     public void ModificarFechaInicioMasTempranaActualizaFechaFinMasTemprana()
     {
@@ -510,48 +509,48 @@ public class TareaTests
         tarea.ModificarFechaInicioMasTemprana(nuevaFechaInicio);
         Assert.AreEqual(nuevaFechaInicio.AddDays(duracion - 1), tarea.FechaFinMasTemprana);
     }
-    
+
     [TestMethod]
     public void AgregarDependencia_AgregarDependenciaALista()
     {
         Tarea tarea = CrearTareaValida();
         Dependencia dependencia = CrearDependenciaSSValida();
-        tarea.AgregarDependencia(dependencia); 
+        tarea.AgregarDependencia(dependencia);
         Assert.IsTrue(tarea.Dependencias.Contains(dependencia));
         Assert.AreEqual(1, tarea.Dependencias.Count);
     }
-    
+
     [TestMethod]
     public void AgregarDependencia_AgregarDependenciaAListaYModificaEstado()
     {
         Tarea tarea = CrearTareaValida();
         Dependencia dependencia = CrearDependenciaFSValida();
-        tarea.AgregarDependencia(dependencia); 
+        tarea.AgregarDependencia(dependencia);
         Assert.AreEqual(EstadoTarea.Bloqueada, tarea.Estado);
     }
-    
+
     [TestMethod]
     public void AgregarDependenciaCompletada_AgregarDependenciaAListaYModificaEstado()
     {
         Tarea tarea = CrearTareaValida();
-        
+
         Dependencia dependencia = CrearDependenciaFSValida();
         dependencia.Tarea.CambiarEstado(EstadoTarea.EnProceso);
         dependencia.Tarea.CambiarEstado(EstadoTarea.Completada);
-        
-        tarea.AgregarDependencia(dependencia); 
+
+        tarea.AgregarDependencia(dependencia);
         Assert.AreEqual(EstadoTarea.Pendiente, tarea.Estado);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarDependencia_LanzarExcepcionSiDependenciaEsNull()
     {
         Tarea tarea = CrearTareaValida();
         Dependencia dependencia = null;
-        tarea.AgregarDependencia(dependencia); 
+        tarea.AgregarDependencia(dependencia);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void AgregarDependencia_LanzarExcepcionSiDependenciaYaEstaEnDependencias()
@@ -572,7 +571,7 @@ public class TareaTests
         Assert.IsFalse(tarea.Dependencias.Any(d => d.Tarea.Id == 1));
     }
 
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarDependencia_LanzaExcepcionSiDepenciaNoExiste()
@@ -580,10 +579,10 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         Dependencia dependencia = CrearDependenciaSSValida();
         tarea.AgregarDependencia(dependencia);
-        
+
         tarea.EliminarDependencia(3);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void VerificarDependenciaNoEstaAgregada_YaExisteLanzaExcepcion()
@@ -593,7 +592,7 @@ public class TareaTests
         tarea.AgregarDependencia(dependencia);
         tarea.AgregarDependencia(dependencia);
     }
-    
+
     [TestMethod]
     public void EqualsRetornaTrueSiLosIdsSonIguales()
     {
@@ -604,7 +603,7 @@ public class TareaTests
         bool sonIguales = tarea1.Equals(tarea2);
         Assert.IsTrue(sonIguales);
     }
-    
+
     [TestMethod]
     public void EqualsRetornaFalseSiLosIdsNoSonIguales()
     {
@@ -618,7 +617,7 @@ public class TareaTests
 
     [TestMethod]
     public void EqualsRetornaFalseSiUnObjetoEsNull()
-    { 
+    {
         Tarea tarea = CrearTareaValida();
         bool sonIguales = tarea.Equals(null);
         Assert.IsFalse(sonIguales);
@@ -633,7 +632,7 @@ public class TareaTests
         Assert.IsFalse(sonIguales);
     }
 
-    [TestMethod] 
+    [TestMethod]
     public void GetHashCodeFuncionaOk()
     {
         Tarea tarea1 = CrearTareaValida();
@@ -644,7 +643,7 @@ public class TareaTests
         Assert.AreEqual(tarea1.GetHashCode(), tarea2.GetHashCode());
         Assert.AreNotEqual(tarea3.GetHashCode(), tarea1.GetHashCode());
     }
-    
+
     // HELPERS
     private Tarea CrearTareaValida()
     {
@@ -654,30 +653,29 @@ public class TareaTests
 
     private Recurso CrearRecursoValido()
     {
-        Recurso recurso = new Recurso("recurso", "tipo", "descripcion" );
+        Recurso recurso = new Recurso("recurso", "tipo", "descripcion");
         return recurso;
     }
 
     private Usuario CrearUsuarioValido()
     {
-        Usuario usuario = new Usuario("Juan", "Perez", new DateTime(1999,2,2), "unemail@gmail.com", "Contrase#a3");
+        Usuario usuario = new Usuario("Juan", "Perez", new DateTime(1999, 2, 2), "unemail@gmail.com", "Contrase#a3");
         return usuario;
     }
 
     private Dependencia CrearDependenciaSSValida()
     {
-        Tarea tareaD = new Tarea("TituloD","DescripciónD",3, _fechaInicio);
+        Tarea tareaD = new Tarea("TituloD", "DescripciónD", 3, _fechaInicio);
         tareaD.Id = 1;
         Dependencia dependencia = new Dependencia("SS", tareaD);
         return dependencia;
     }
-    
+
     private Dependencia CrearDependenciaFSValida()
     {
-        Tarea tareaD = new Tarea("TituloD","DescripciónD",3, _fechaInicio);
+        Tarea tareaD = new Tarea("TituloD", "DescripciónD", 3, _fechaInicio);
         tareaD.Id = 1;
         Dependencia dependencia = new Dependencia("FS", tareaD);
         return dependencia;
     }
-    
 }

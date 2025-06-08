@@ -6,7 +6,6 @@ using Servicios.Gestores.Interfaces;
 
 namespace Tests.ControladoresTests;
 
-
 [TestClass]
 public class ControladorProyectosTests
 {
@@ -19,9 +18,9 @@ public class ControladorProyectosTests
         _mockGestorProyectos = new Mock<IGestorProyectos>();
         _controladorProyectos = new ControladorProyectos(_mockGestorProyectos.Object);
     }
-    
+
     private UsuarioDTO CrearSolicitante(int id = 1) => new UsuarioDTO { Id = id };
-    
+
     private Usuario CrearUsuario(int id = 1, string email = "admin@test.com")
         => new Usuario("Nombre", "Apellido", DateTime.Today.AddYears(-20), email, "Pass123$") { Id = id };
 
@@ -31,11 +30,11 @@ public class ControladorProyectosTests
             "desc",
             DateTime.Today.AddYears(1),
             admin ?? new Usuario(),
-            miembros ?? new List<Usuario>());    
-    
+            miembros ?? new List<Usuario>());
+
     private ProyectoDTO CrearProyectoDTO(int id = 1, string nombre = "Proyecto Test")
         => new ProyectoDTO { Id = id, Nombre = nombre };
-    
+
     private List<ProyectoDTO> CrearListaProyectoDTO()
     {
         return new List<ProyectoDTO>
@@ -44,7 +43,7 @@ public class ControladorProyectosTests
             new ProyectoDTO { Id = 2, Nombre = "Proyecto B" }
         };
     }
-    
+
     [TestMethod]
     public void Constructor_CreaControladorOk()
     {
@@ -64,7 +63,7 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.CrearProyecto(nuevoProyecto, solicitante), Times.Once);
     }
-    
+
     [TestMethod]
     public void EliminarProyecto_LlamaCorrectamenteAGestor()
     {
@@ -77,7 +76,7 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.EliminarProyecto(idProyecto, solicitante), Times.Once);
     }
-    
+
     [TestMethod]
     public void ObtenerTodos_LlamaCorrectamenteAGestorYDevuelveLista()
     {
@@ -92,7 +91,7 @@ public class ControladorProyectosTests
         Assert.AreEqual("Proyecto B", resultado[1].Nombre);
         _mockGestorProyectos.Verify(g => g.ObtenerTodos(), Times.Once);
     }
-    
+
     [TestMethod]
     public void ObtenerProyectoPorId_LlamaCorrectamenteAGestorYDevuelveProyecto()
     {
@@ -107,7 +106,7 @@ public class ControladorProyectosTests
         Assert.AreEqual("Proyecto Test", resultado.Nombre);
         _mockGestorProyectos.Verify(g => g.ObtenerProyectoPorId(idProyecto), Times.Once);
     }
-    
+
     [TestMethod]
     public void ModificarNombreDelProyecto_LlamaCorrectamenteAGestor()
     {
@@ -119,9 +118,10 @@ public class ControladorProyectosTests
 
         _controladorProyectos.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante);
 
-        _mockGestorProyectos.Verify(g => g.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante), Times.Once);
+        _mockGestorProyectos.Verify(g => g.ModificarNombreDelProyecto(idProyecto, nuevoNombre, solicitante),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void ModificarDescripcionDelProyecto_LlamaCorrectamenteAGestor()
     {
@@ -133,9 +133,10 @@ public class ControladorProyectosTests
 
         _controladorProyectos.ModificarDescripcionDelProyecto(idProyecto, nuevaDescripcion, solicitante);
 
-        _mockGestorProyectos.Verify(g => g.ModificarDescripcionDelProyecto(idProyecto, nuevaDescripcion, solicitante), Times.Once);
+        _mockGestorProyectos.Verify(g => g.ModificarDescripcionDelProyecto(idProyecto, nuevaDescripcion, solicitante),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void ModificarFechaDeInicioDelProyecto_LlamaCorrectamenteAGestor()
     {
@@ -147,9 +148,10 @@ public class ControladorProyectosTests
 
         _controladorProyectos.ModificarFechaDeInicioDelProyecto(idProyecto, nuevaFecha, solicitante);
 
-        _mockGestorProyectos.Verify(g => g.ModificarFechaDeInicioDelProyecto(idProyecto, nuevaFecha, solicitante), Times.Once);
+        _mockGestorProyectos.Verify(g => g.ModificarFechaDeInicioDelProyecto(idProyecto, nuevaFecha, solicitante),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void CambiarAdministradorDeProyecto_LlamaCorrectamenteAGestor()
     {
@@ -161,9 +163,10 @@ public class ControladorProyectosTests
 
         _controladorProyectos.CambiarAdministradorDeProyecto(solicitante, idProyecto, idNuevoAdmin);
 
-        _mockGestorProyectos.Verify(g => g.CambiarAdministradorDeProyecto(solicitante, idProyecto, idNuevoAdmin), Times.Once);
+        _mockGestorProyectos.Verify(g => g.CambiarAdministradorDeProyecto(solicitante, idProyecto, idNuevoAdmin),
+            Times.Once);
     }
-    
+
     [TestMethod]
     public void AgregarMiembroAProyecto_LlamaCorrectamenteAGestor()
     {
@@ -177,11 +180,11 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.AgregarMiembroAProyecto(idProyecto, solicitante, nuevoMiembro), Times.Once);
     }
-    
+
     [TestMethod]
     public void EliminarMiembroDelProyecto_LlamaCorrectamenteAGestor()
     {
-        UsuarioDTO solicitante =CrearSolicitante();
+        UsuarioDTO solicitante = CrearSolicitante();
         int idProyecto = 3;
         int idMiembro = 4;
 
@@ -191,7 +194,7 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.EliminarMiembroDelProyecto(idProyecto, solicitante, idMiembro), Times.Once);
     }
-    
+
     [TestMethod]
     public void ObtenerProyectosPorUsuario_LlamaCorrectamenteAGestorYDevuelveLista()
     {
@@ -205,13 +208,13 @@ public class ControladorProyectosTests
         Assert.AreEqual(2, resultado.Count);
         _mockGestorProyectos.Verify(g => g.ObtenerProyectosPorUsuario(idUsuario), Times.Once);
     }
-    
+
     [TestMethod]
     public void ObtenerProyectoDelAdministrador_LlamaCorrectamenteAGestorYDevuelveProyecto()
     {
         int adminId = 0;
         Proyecto proyectoEsperado = CrearProyectoDominio();
-        
+
         _mockGestorProyectos.Setup(g => g.ObtenerProyectoDelAdministrador(adminId)).Returns(proyectoEsperado);
 
         Proyecto resultado = _controladorProyectos.ObtenerProyectoDelAdministrador(adminId);
@@ -220,7 +223,7 @@ public class ControladorProyectosTests
         Assert.AreEqual("P1", resultado.Nombre);
         _mockGestorProyectos.Verify(g => g.ObtenerProyectoDelAdministrador(adminId), Times.Once);
     }
-    
+
     [TestMethod]
     public void VerificarUsuarioNoTieneTareasAsignadas_LlamaCorrectamenteAGestor()
     {
@@ -233,7 +236,7 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idUsuario), Times.Once);
     }
-    
+
     [TestMethod]
     public void NotificarAdministradoresDeProyectos_LlamaCorrectamenteAGestor()
     {
@@ -248,7 +251,7 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.NotificarAdministradoresDeProyectos(proyectos, mensaje), Times.Once);
     }
-    
+
     [TestMethod]
     public void CalcularCaminoCritico_LlamaCorrectamenteAGestor()
     {
@@ -260,7 +263,7 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.CalcularCaminoCritico(proyecto), Times.Once);
     }
-    
+
     [TestMethod]
     public void EsAdministradorDeProyecto_LlamaCorrectamenteAGestorYDevuelveTrue()
     {
@@ -274,7 +277,7 @@ public class ControladorProyectosTests
         Assert.IsTrue(resultado);
         _mockGestorProyectos.Verify(g => g.EsAdministradorDeProyecto(usuario, idProyecto), Times.Once);
     }
-    
+
     [TestMethod]
     public void EsMiembroDeProyecto_LlamaCorrectamenteAGestorYDevuelveTrue()
     {
@@ -288,7 +291,7 @@ public class ControladorProyectosTests
         Assert.IsTrue(resultado);
         _mockGestorProyectos.Verify(g => g.EsMiembroDeProyecto(idUsuario, idProyecto), Times.Once);
     }
-    
+
     [TestMethod]
     public void ObtenerProyectoDominioPorId_LlamaCorrectamenteAGestorYDevuelveProyecto()
     {

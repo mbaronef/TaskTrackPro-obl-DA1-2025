@@ -7,35 +7,36 @@
 @inject NavigationManager Navigation
 @inject ControladorProyectos ControladorProyectos
 
-@if(Sesion.UsuarioLogueado == null || !sesionCargada)
+@if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
-else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnProyecto)
+else if (Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnProyecto)
 {
     <h3 class="text-center mt-4">Crear Proyecto</h3>
 
     <div class="row justify-content-center mt-3">
         <div class="col-md-6">
             @if (!string.IsNullOrEmpty(mensaje))
-            { 
+            {
                 <div class="alert alert-@tipoAlerta d-flex align-items-center gap-2 text-center justify-content-center">
                     <span class="fw-semibold">@((MarkupString)mensaje)</span>
                 </div>
             }
-            <EditForm Model="nuevoProyecto" OnValidSubmit="@CrearNuevoProyecto" OnInvalidSubmit="MostrarErroresValidacion">
-                <DataAnnotationsValidator />
-                <ValidationSummary class="d-none" />
+            <EditForm Model="nuevoProyecto" OnValidSubmit="@CrearNuevoProyecto"
+                      OnInvalidSubmit="MostrarErroresValidacion">
+                <DataAnnotationsValidator/>
+                <ValidationSummary class="d-none"/>
                 <div class="form-group mb-3">
                     <label for="nombre">Nombre</label>
-                    <InputText id="nombre" class="form-control" @bind-Value="nuevoProyecto.Nombre" />
+                    <InputText id="nombre" class="form-control" @bind-Value="nuevoProyecto.Nombre"/>
                 </div>
                 <div class="form-group mb-3">
                     <label for="descripcion">Descripción</label>
-                    <InputTextArea id="descripcion" class="form-control" @bind-Value="nuevoProyecto.Descripcion" />
+                    <InputTextArea id="descripcion" class="form-control" @bind-Value="nuevoProyecto.Descripcion"/>
                 </div>
                 <div class="form-group mb-3">
                     <label for="inicio">Fecha de Inicio</label>
-                    <InputDate id="inicio" class="form-control" @bind-Value="nuevoProyecto.FechaInicio" />
+                    <InputDate id="inicio" class="form-control" @bind-Value="nuevoProyecto.FechaInicio"/>
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-success w-50">Crear Proyecto</button>
@@ -47,7 +48,7 @@ else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnP
 
 @code {
     private bool sesionCargada = false;
-    
+
     private ProyectoDTO nuevoProyecto = new ProyectoDTO();
     private string mensaje;
     private string tipoAlerta;
@@ -70,7 +71,7 @@ else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnP
             }
         }
     }
-    
+
     private async void CrearNuevoProyecto()
     {
         mensaje = String.Empty;
@@ -93,7 +94,7 @@ else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnP
             tipoAlerta = "danger";
         }
     }
-    
+
     private void MostrarErroresValidacion(EditContext editContext)
     {
         var errores = new List<string>();
@@ -114,4 +115,5 @@ else if(Sesion.EsAdminProyecto() && !Sesion.UsuarioLogueado.EstaAdministrandoUnP
         mensaje = $"<ul class='list-unstyled mb-0'>{string.Join("", erroresFormateados)}</ul>";
         tipoAlerta = "danger";
     }
+
 }

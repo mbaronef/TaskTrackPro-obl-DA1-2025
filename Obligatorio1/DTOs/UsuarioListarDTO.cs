@@ -5,20 +5,20 @@ namespace DTOs;
 public class UsuarioListarDTO
 {
     public int Id { get; set; }
-    
+
     public string Nombre { get; set; }
-    
+
     public string Apellido { get; set; }
-    
+
     public DateTime FechaNacimiento { get; set; }
-    
+
     public string Email { get; set; }
-    
+
     public bool EsAdministradorSistema { get; set; }
     public bool EsAdministradorProyecto { get; set; }
-    
+
     public List<NotificacionDTO> Notificaciones { get; private set; }
-    
+
     public static UsuarioListarDTO DesdeEntidad(Usuario usuario)
     {
         return new UsuarioListarDTO
@@ -33,7 +33,7 @@ public class UsuarioListarDTO
             Notificaciones = usuario.Notificaciones.Select(NotificacionDTO.DesdeEntidad).ToList(),
         };
     }
-    
+
     public static UsuarioListarDTO DesdeDTO(UsuarioDTO dto)
     {
         return new UsuarioListarDTO
