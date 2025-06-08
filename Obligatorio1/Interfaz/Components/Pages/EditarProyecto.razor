@@ -10,6 +10,11 @@
 @if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
+else if (proyectoEliminado)
+{
+    <p>Redirigiendo...</p>
+    Navigator.NavigateTo("/exito/proyecto/eliminado");
+}
 else if (!ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, id))
 {
     <p class="text-danger text-center mt-5">No tienes permisos para editar este proyecto.</p>
@@ -75,7 +80,8 @@ else
     private string mensaje;
     private string tipoAlerta;
 
-    bool confirmarEliminacion = false;
+    private bool confirmarEliminacion = false;
+    private bool proyectoEliminado = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -155,9 +161,9 @@ else
         {
             UsuarioDTO solicitante = Sesion.UsuarioLogueado;
             ControladorProyectos.EliminarProyecto(id, solicitante);
+            proyectoEliminado = true;
             await Sesion.ActualizarSesion();
             StateHasChanged();
-            Navigator.NavigateTo("/exito/proyecto/eliminado");
         }
         catch (Exception e)
         {
@@ -186,5 +192,4 @@ else
         mensaje = $"<ul class='list-unstyled mb-0'>{string.Join("", erroresFormateados)}</ul>";
         tipoAlerta = "danger";
     }
-
 }
