@@ -1,10 +1,10 @@
 @page "/informacion/proyecto/{id:int}"
-@using Dominio
+@using DTOs
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
+@using Controladores
 @rendermode InteractiveServer
-@inject GestorProyectos GestorProyectos
 @inject LogicaSesion Sesion
+@inject ControladorProyectos ControladorProyectos
 @inject NavigationManager Navigator
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
@@ -14,7 +14,7 @@ else if (proyecto is null)
 {
     <p>No se encontró el proyecto</p>
 }
-else if(proyecto.EsMiembro(Sesion.UsuarioLogueado.Id) || Sesion.EsAdminSistema())
+else if(ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id,proyecto.Id) || Sesion.EsAdminSistema())
 {
     <div class="container mt-4">
         <div class="d-flex justify-content-center">
@@ -33,7 +33,7 @@ else if(proyecto.EsMiembro(Sesion.UsuarioLogueado.Id) || Sesion.EsAdminSistema()
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4"><strong><i class="bi bi-person-circle"></i> Administrador:</strong></div>
-                        <div class="col-md-8">@proyecto.Administrador.ToString()</div>
+                        <div class="col-md-8">@($"{proyecto.Administrador.Nombre} {proyecto.Administrador.Apellido} ({proyecto.Administrador.Email})")</div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4"><strong><i class="bi bi-calendar-event"></i> Fecha de Inicio:</strong></div>
@@ -64,14 +64,14 @@ else if(proyecto.EsMiembro(Sesion.UsuarioLogueado.Id) || Sesion.EsAdminSistema()
                     <div class="list-group">
                         @foreach (var tarea in proyecto.Tareas)
                         {
-                            if (tarea.EsCritica())
+                            if (tarea.Holgura == 0)
                             {
                                 <div class="list-group-item list-group-item-danger d-flex justify-content-between align-items-center">
                                     <span><i class="bi bi-exclamation-triangle-fill me-2"></i> @tarea.Titulo</span>
                                     <span class="badge bg-danger">Crítica</span>
                                 </div>
                             }
-                            else if(tarea.Estado != EstadoTarea.Completada)
+                            else if(tarea.Estado != EstadoTareaDTO.Completada)
                             {
                                 <div class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
                                     <span><i class="bi bi-hourglass-split me-2"></i> @tarea.Titulo</span>
@@ -99,7 +99,7 @@ else if(proyecto.EsMiembro(Sesion.UsuarioLogueado.Id) || Sesion.EsAdminSistema()
 
 @code {
     [Parameter] public int id { get; set; }
-    private Proyecto proyecto;
+    private ProyectoDTO proyecto;
     private bool sesionCargada = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -115,7 +115,7 @@ else if(proyecto.EsMiembro(Sesion.UsuarioLogueado.Id) || Sesion.EsAdminSistema()
             else
             {
                 await Sesion.ActualizarSesion();
-                proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }

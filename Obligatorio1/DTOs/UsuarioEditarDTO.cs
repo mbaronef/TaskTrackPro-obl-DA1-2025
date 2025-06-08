@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Interfaz.DTOs;
+﻿namespace DTOs;
 
 public class UsuarioEditarDTO
 {
@@ -9,7 +7,6 @@ public class UsuarioEditarDTO
     public string Apellido { get; set; }
     public DateTime FechaNacimiento { get; set; }
     public string Email { get; set; }
-
     public bool EsAdministradorSistema { get; set; }
     public bool EsAdministradorProyecto { get; set; }
     

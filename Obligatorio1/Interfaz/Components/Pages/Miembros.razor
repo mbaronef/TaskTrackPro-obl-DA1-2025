@@ -1,18 +1,18 @@
 @page "/proyecto/{id:int}/miembros"
-@using Dominio
-@using Servicios.Gestores
-@inject GestorProyectos GestorProyectos
-@inject GestorUsuarios GestorUsuarios
+@using DTOs
+@using Controladores
+@using Excepciones
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Excepciones
 @rendermode InteractiveServer
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
+@inject ControladorProyectos ControladorProyectos
+@inject ControladorUsuarios ControladorUsuarios
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
-else if (!Sesion.UsuarioLogueado.EsAdministradorSistema && (GestorProyectos.ObtenerMiembro(Sesion.UsuarioLogueado.Id, GestorProyectos.ObtenerProyectoPorId(id)) == null))
+else if (!Sesion.EsAdminSistema() && !ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, id))
 {
     <p class="text-danger">No tenés acceso a los miembros de este proyecto.</p>
 }
@@ -56,7 +56,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (Usuario miembro in miembros)
+        @foreach (UsuarioListarDTO miembro in miembros)
         {
             <tr>
                 <td>@miembro.Nombre</td>
@@ -195,10 +195,10 @@ else
 @code {
     [Parameter] public int id { get; set; }
     
-    private Proyecto proyecto;
-    private List<Usuario> miembros = new();
-    private List<Usuario> usuariosNoMiembros = new();
-    private Usuario miembroAEliminar;
+    private ProyectoDTO proyecto;
+    private List<UsuarioListarDTO> miembros = new();
+    private List<UsuarioListarDTO> usuariosNoMiembros = new();
+    private UsuarioDTO miembroAEliminar;
     private bool mostrarModalEliminar = false;
     
     private bool mostrarModalAgregar = false;
@@ -245,10 +245,10 @@ else
     {
         try
         {
-            proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             miembros = proyecto.Miembros;
-            usuariosNoMiembros = GestorUsuarios.ObtenerUsuariosDiferentes(miembros);
-            esAdminProyecto = proyecto.Administrador.Id == Sesion.UsuarioLogueado.Id;
+            usuariosNoMiembros = ControladorUsuarios.ObtenerUsuariosDiferentes(miembros);
+            esAdminProyecto = ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id);
         }
         catch
         {
@@ -276,16 +276,17 @@ else
             return;
         }
 
-        Usuario nuevo = GestorUsuarios.ObtenerUsuarioPorId(idNuevoMiembro.Value);
-        GestorProyectos.AgregarMiembroAProyecto(id, Sesion.UsuarioLogueado, nuevo);
-        usuariosNoMiembros.Remove(nuevo);
+        UsuarioDTO nuevo = ControladorUsuarios.ObtenerUsuarioPorId(idNuevoMiembro.Value);
+        ControladorProyectos.AgregarMiembroAProyecto(id, Sesion.UsuarioLogueado, nuevo);
+        usuariosNoMiembros.RemoveAll(u => u.Id == nuevo.Id);
         mostrarModalAgregar = false;
         mostrarMensajeExitoAgregar = true;
+        CargarDatosDelProyecto();
     }
 
-    private void ConfirmarEliminar(Usuario usuario)
+    private void ConfirmarEliminar(UsuarioListarDTO usuario)
     {
-        miembroAEliminar = usuario;
+        miembroAEliminar = UsuarioDTO.DesdeListarDTO(usuario);
         mostrarErrorEliminarMiembro = false;
         errorEliminarMiembro = "";
         mostrarModalEliminar = true;
@@ -305,18 +306,30 @@ else
             mostrarErrorEliminarMiembro = false;
             errorEliminarMiembro = "";
 
-            GestorProyectos.VerificarUsuarioNoTieneTareasAsignadas(id, miembroAEliminar.Id);
+            ControladorProyectos.VerificarUsuarioNoTieneTareasAsignadas(id, miembroAEliminar.Id);
 
-            GestorProyectos.EliminarMiembroDelProyecto(id, Sesion.UsuarioLogueado, miembroAEliminar.Id);
-            miembros.Remove(miembroAEliminar);
-            usuariosNoMiembros.Add(miembroAEliminar);
+            ControladorProyectos.EliminarMiembroDelProyecto(id, Sesion.UsuarioLogueado, miembroAEliminar.Id);
+            miembros.RemoveAll(u => u.Id == miembroAEliminar.Id);
+            usuariosNoMiembros.Add(UsuarioListarDTO.DesdeDTO(miembroAEliminar));
             mostrarModalEliminar = false;
             mostrarMensajeExitoEliminar = true;
+            CargarDatosDelProyecto();
         }
-        catch (ExcepcionServicios ex)
+        catch (ExcepcionProyecto)
         {
             errorEliminarMiembro = "No se puede eliminar al miembro del proyecto, tiene tareas asignadas. Para eliminarlo debe eliminarlo previamente de las tareas que tiene asignadas.";
             mostrarErrorEliminarMiembro = true;
+        }
+        catch (ExcepcionPermisos)
+        {
+            errorEliminarMiembro = "No tiene permisos para eliminar el miembro de este proyecto.";
+            mostrarErrorEliminarMiembro = true;
+        }
+        catch (Exception)
+        {
+            errorEliminarMiembro = "Ocurrió un error inesperado.";
+            mostrarErrorEliminarMiembro = true;
+
         }
     }
     
@@ -346,17 +359,17 @@ else
 
         try
         {
-            GestorProyectos.CambiarAdministradorDeProyecto(Sesion.UsuarioLogueado, id, idNuevoAdmin.Value);
-            proyecto.Administrador = miembros.First(u => u.Id == idNuevoAdmin.Value);
+            ControladorProyectos.CambiarAdministradorDeProyecto(Sesion.UsuarioLogueado, id, idNuevoAdmin.Value);
+            proyecto.Administrador = UsuarioDTO.DesdeListarDTO(miembros.First(u => u.Id == idNuevoAdmin.Value));
             await Sesion.ActualizarSesion();
             StateHasChanged();
             esAdminProyecto = proyecto.Administrador.Id == Sesion.UsuarioLogueado.Id;
             mostrarModalCambioAdmin = false;
             mostrarMensajeExitoCambioAdmin = true;
         }
-        catch (ExcepcionServicios ex)
+        catch (Exception ex)
         {
-            Usuario usuario = miembros.FirstOrDefault(u => u.Id == idNuevoAdmin.Value);
+            UsuarioListarDTO usuario = miembros.FirstOrDefault(u => u.Id == idNuevoAdmin.Value);
             if (usuario != null)
             {
                 errorMensajeCambioAdmin = $"{usuario.Nombre} {usuario.Apellido} ({usuario.Email}) no tiene el permiso de administrar proyectos. Seleccione otro usuario.";
@@ -365,11 +378,6 @@ else
             {
                 errorMensajeCambioAdmin = ex.Message;
             }
-            mostrarErrorCambioAdmin = true;
-        }
-        catch (Exception ex)
-        {
-            errorMensajeCambioAdmin = "Ocurrió un error inesperado al cambiar el administrador.";
             mostrarErrorCambioAdmin = true;
         }
     }

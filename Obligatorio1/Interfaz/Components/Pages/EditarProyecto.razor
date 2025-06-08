@@ -1,17 +1,16 @@
 @page "/proyecto/{id:int}/editar"
-@using Dominio
-@using Interfaz.DTOs
+@using DTOs
+@using Controladores
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
-@inject GestorProyectos GestorProyectos
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
+@inject ControladorProyectos ControladorProyectos
 @rendermode InteractiveServer
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
-else if (!proyecto.EsAdministrador(Sesion.UsuarioLogueado))
+else if (!ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, id))
 {
     <p class="text-danger text-center mt-5">No tienes permisos para editar este proyecto.</p>
 }
@@ -26,20 +25,20 @@ else
                     <span class="fw-semibold">@((MarkupString)mensaje)</span>
                 </div>
             }
-            <EditForm Model="proyectoDTO" OnValidSubmit="@EditarDatosProyecto" OnInvalidSubmit="MostrarErroresValidacion">
+            <EditForm Model="proyectoEdicion" OnValidSubmit="@EditarDatosProyecto" OnInvalidSubmit="MostrarErroresValidacion">
                 <DataAnnotationsValidator />
                 <ValidationSummary class="d-none" />
                 <div class="form-group mb-3">
                     <label for="nombre">Nombre</label>
-                    <InputText id="nombre" class="form-control" @bind-Value="proyectoDTO.Nombre" />
+                    <InputText id="nombre" class="form-control" @bind-Value="proyectoEdicion.Nombre" />
                 </div>
                 <div class="form-group mb-3">
                     <label for="descripcion">Descripción</label>
-                    <InputTextArea id="descripcion" class="form-control" @bind-Value="proyectoDTO.Descripcion" />
+                    <InputTextArea id="descripcion" class="form-control" @bind-Value="proyectoEdicion.Descripcion" />
                 </div>
                 <div class="form-group mb-3">
                     <label for="inicio">Fecha de Inicio</label>
-                    <InputDate id="inicio" class="form-control" @bind-Value="proyectoDTO.FechaInicio" />
+                    <InputDate id="inicio" class="form-control" @bind-Value="proyectoEdicion.FechaInicio" />
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary w-50">Guardar Cambios</button>
@@ -67,9 +66,9 @@ else
     private bool sesionCargada = false;
     
     [Parameter] public int id { get; set; }
-    private Proyecto proyecto;
+    private ProyectoDTO proyecto;
     
-    private ProyectoDTO proyectoDTO = new ProyectoDTO();
+    private ProyectoEdicionDTO proyectoEdicion = new ProyectoEdicionDTO();
     private string mensaje;
     private string tipoAlerta;
     
@@ -89,8 +88,18 @@ else
             {
                 await Sesion.ActualizarSesion();
                 sesionCargada = true;
-                proyecto = GestorProyectos.ObtenerProyectoPorId(id);
-                proyectoDTO = new ProyectoDTO
+                try
+                {
+                    proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
+                }
+                catch (Exception e)
+                {
+                    mensaje = e.Message;
+                    tipoAlerta = "danger";
+                    StateHasChanged();
+                    return;
+                }
+                proyectoEdicion = new ProyectoEdicionDTO
                 {
                     Nombre = proyecto.Nombre,
                     Descripcion = proyecto.Descripcion,
@@ -106,19 +115,20 @@ else
         mensaje = string.Empty;
         try
         {
-            Usuario solicitante = Sesion.UsuarioLogueado;
-            if (!proyectoDTO.Nombre.Equals(proyecto.Nombre))
+            UsuarioDTO solicitante = Sesion.UsuarioLogueado;
+            if (!proyectoEdicion.Nombre.Equals(proyecto.Nombre))
             {
-                GestorProyectos.ModificarNombreDelProyecto(id, proyectoDTO.Nombre, solicitante);
+                ControladorProyectos.ModificarNombreDelProyecto(id, proyectoEdicion.Nombre, solicitante);
             }
-            if (!proyectoDTO.Descripcion.Equals(proyecto.Descripcion))
+            if (!proyectoEdicion.Descripcion.Equals(proyecto.Descripcion))
             {
-                GestorProyectos.ModificarDescripcionDelProyecto(id, proyectoDTO.Descripcion, solicitante);
+                ControladorProyectos.ModificarDescripcionDelProyecto(id, proyectoEdicion.Descripcion, solicitante);
             }
-            if (!proyectoDTO.FechaInicio.Equals(proyecto.FechaInicio))
+            if (!proyectoEdicion.FechaInicio.Equals(proyecto.FechaInicio))
             {
-                GestorProyectos.ModificarFechaDeInicioDelProyecto(id, proyectoDTO.FechaInicio, solicitante);
+                ControladorProyectos.ModificarFechaDeInicioDelProyecto(id, proyectoEdicion.FechaInicio, solicitante);
             }
+            proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
             tipoAlerta = "success";
             mensaje = "Cambios guardados correctamente.";
             await Sesion.ActualizarSesion();
@@ -136,8 +146,8 @@ else
         mensaje = string.Empty;
         try
         {
-            Usuario solicitante = Sesion.UsuarioLogueado;
-            GestorProyectos.EliminarProyecto(id, solicitante);
+            UsuarioDTO solicitante = Sesion.UsuarioLogueado;
+            ControladorProyectos.EliminarProyecto(id, solicitante);
             await Sesion.ActualizarSesion();
             StateHasChanged();
             Navigator.NavigateTo("/exito/proyecto/eliminado");

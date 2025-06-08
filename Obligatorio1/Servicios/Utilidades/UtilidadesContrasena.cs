@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Excepciones;
 using Servicios.Excepciones;
 
 namespace Servicios.Utilidades;
@@ -52,35 +53,36 @@ public static class UtilidadesContrasena
     {
         if (contrasena.Length < _largoMinimoContrasena)
         {
-            throw new ExcepcionServicios(string.Format(MensajesError.ContrasenaMuyCorta, _largoMinimoContrasena));
+            throw new ExcepcionContrasena(MensajesErrorServicios.ContrasenaMuyCorta(_largoMinimoContrasena));
         }
     } 
     private static void ValidarAlgunaMayuscula(string contrasena)
     {
         if (!contrasena.Any(char.IsUpper))
         {
-            throw new ExcepcionServicios(MensajesError.ContrasenaSinMayuscula);
+            throw new ExcepcionContrasena(MensajesErrorServicios.ContrasenaSinMayuscula);
         }
     } 
     private static void ValidarAlgunaMinuscula(string contrasena)
     {
         if (!contrasena.Any(char.IsLower))
         {
-            throw new ExcepcionServicios(MensajesError.ContrasenaSinMinuscula);
+            throw new ExcepcionContrasena(MensajesErrorServicios.ContrasenaSinMinuscula);
         }
     } 
     private static void ValidarAlgunNumero(string contrasena)
     {
         if (!contrasena.Any(char.IsDigit))
         {
-            throw new ExcepcionServicios(MensajesError.ContrasenaSinNumero);
+            throw new ExcepcionContrasena(MensajesErrorServicios.ContrasenaSinNumero);
         }
     } 
     private static void ValidarAlgunCaracterEspecial(string contrasena)
     {
         if (!Regex.IsMatch(contrasena, "[^a-zA-Z0-9]")) // RegEx para que haya algún caracter distinto a minúsuclas, mayúsuclas o números
         {
-            throw new ExcepcionServicios(MensajesError.ContrasenaSinCaracterEspecial);
+            throw new ExcepcionContrasena(
+                MensajesErrorServicios.ContrasenaSinCaracterEspecial);
         }
     } 
     

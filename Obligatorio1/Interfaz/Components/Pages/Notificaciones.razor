@@ -1,8 +1,10 @@
 @page "/notificaciones"
-@using Dominio
+@using Controladores
+@using DTOs
 @using Interfaz.ServiciosInterfaz
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
+@inject ControladorUsuarios ControladorUsuarios
 @rendermode InteractiveServer
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
@@ -19,7 +21,7 @@ else
     else
     {
         <div class="container mt-3">
-            @foreach (Notificacion notificacion in Sesion.UsuarioLogueado.Notificaciones
+            @foreach (NotificacionDTO notificacion in Sesion.UsuarioLogueado.Notificaciones
                      .OrderByDescending(n => n.Fecha).ToList())
             {
                 <div class="card shadow-sm mb-3">
@@ -57,14 +59,15 @@ else
             {
                 await Sesion.ActualizarSesion();
                 sesionCargada = true;
-                StateHasChanged(); // Re-renderiza para mostrar sesión activa
+                StateHasChanged(); 
             }
         }
     }
 
-    private void EliminarNotificacion(int id)
+    private async Task EliminarNotificacion(int id)
     {
-        Sesion.UsuarioLogueado.BorrarNotificacion(id);
-        StateHasChanged(); // Re-renderiza para actualizar la lista
+        ControladorUsuarios.BorrarNotificacion(Sesion.UsuarioLogueado.Id, id);
+        await Sesion.ActualizarSesion(); 
+        StateHasChanged(); 
     }
 }

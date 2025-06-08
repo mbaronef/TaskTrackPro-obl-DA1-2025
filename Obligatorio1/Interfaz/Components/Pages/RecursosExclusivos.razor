@@ -1,16 +1,13 @@
 @page "/proyecto/{id:int}/recursos_exclusivos"
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
-@using Dominio.Excepciones
-@using Dominio
-@using Servicios.Gestores
 @using DTOs
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Excepciones
-@inject GestorProyectos GestorProyectos
-@inject GestorRecursos GestorRecursos
+@using Controladores
+@inject ControladorProyectos ControladorProyectos
 @inject NavigationManager NavigationManager
 @inject LogicaSesion Sesion
+@inject ControladorRecursos ControladorRecursos
 
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
@@ -24,7 +21,7 @@ else
 {
     <h3>Recursos Exclusivos</h3>
 
-    @if (Sesion.UsuarioLogueado.Equals(proyecto.Administrador))
+    @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
     {
         <button class="btn btn-primary mb-3" @onclick="MostrarFormularioCrearRecurso">
             <i class="bi bi-plus-circle"></i> Crear recurso exclusivo
@@ -108,7 +105,7 @@ else
         </div>
     }
 
-    @if (GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id).Count == 0)
+    @if (ControladorRecursos.ObtenerRecursosExclusivos(proyecto.Id).Count == 0)
     {
         <p>No hay recursos disponibles.</p>
     }
@@ -131,7 +128,7 @@ else
             </tr>
             </thead>
             <tbody>
-            @foreach (Recurso recurso in GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id))
+            @foreach (RecursoDTO recurso in ControladorRecursos.ObtenerRecursosExclusivos(proyecto.Id))
             {
                 <tr>
                     <td>@recurso.Nombre</td>
@@ -161,7 +158,7 @@ else
 
     [Parameter] public int Id { get; set; }
     private bool sesionCargada = false;
-    private Proyecto proyecto;
+    private ProyectoDTO proyecto;
     private bool mostrarFormCrearRecurso = false;
     private bool mostrarError = false;
     private string errorMensaje;
@@ -203,19 +200,13 @@ else
 
         try
         {
-            Recurso nuevo = new Recurso(nuevoRecurso.Nombre, nuevoRecurso.Tipo, nuevoRecurso.Descripcion);
-            GestorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevo, esExclusivo);
+            ControladorRecursos.AgregarRecurso(Sesion.UsuarioLogueado, nuevoRecurso, esExclusivo);
             mostrarFormCrearRecurso = false;
             mostrarError = false;
         }
-        catch (ExcepcionDominio ex)
+        catch (Exception ex)
         {
             errorMensaje = $"Error al crear recurso: {ex.Message}";
-            mostrarError = true;
-        }
-        catch (ExcepcionServicios ex)
-        {
-            errorMensaje = "Ocurrió un error inesperado al crear el recurso.";
             mostrarError = true;
         }
     }
@@ -235,17 +226,9 @@ else
 
     private void EditarRecurso(int idRecurso)
     {
-        var recurso = GestorRecursos.ObtenerRecursosExclusivos(proyecto.Id).FirstOrDefault(r => r.Id == idRecurso);
-        if (recurso != null)
+        recursoAEditar = ControladorRecursos.ObtenerRecursoExclusivoPorId(proyecto.Id, idRecurso);
+        if (recursoAEditar != null)
         {
-            recursoAEditar = new RecursoDTO
-            {
-                Id = recurso.Id,
-                Nombre = recurso.Nombre,
-                Tipo = recurso.Tipo,
-                Descripcion = recurso.Descripcion
-            };
-            idRecursoAEditar = recurso.Id;
             mostrarFormEditarRecurso = true;
         }
     }
@@ -265,21 +248,16 @@ else
 
         try
         {
-            GestorRecursos.ModificarNombreRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Nombre);
-            GestorRecursos.ModificarTipoRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Tipo);
-            GestorRecursos.ModificarDescripcionRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Descripcion);
+            ControladorRecursos.ModificarNombreRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Nombre);
+            ControladorRecursos.ModificarTipoRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Tipo);
+            ControladorRecursos.ModificarDescripcionRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Descripcion);
 
             mostrarFormEditarRecurso = false;
             recursoAEditar = null;
         }
-        catch (ExcepcionDominio ex)
+        catch (Exception ex)
         {
             errorMensajeEditar = $"Error al editar recurso: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
-        catch (ExcepcionServicios)
-        {
-            errorMensajeEditar = "Ocurrió un error inesperado al editar el recurso.";
             mostrarErrorEditar = true;
         }
     }
@@ -300,7 +278,7 @@ else
         try
         {
             mostrarErrorEliminar = false;
-            GestorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
+            ControladorRecursos.EliminarRecurso(Sesion.UsuarioLogueado, idRecurso);
 
             if (mostrarFormEditarRecurso && recursoAEditar != null && recursoAEditar.Id == idRecurso)
             {
@@ -308,16 +286,9 @@ else
                 recursoAEditar = null;
             }
         }
-        catch (ExcepcionDominio ex)
+        catch (Exception ex)
         {
             errorMensajeEliminar = $"No se puede eliminar el recurso: {ex.Message}";
-            mostrarErrorEliminar = true;
-            StateHasChanged();
-            await OcultarErrorEliminarAutomaticamente();
-        }
-        catch (ExcepcionServicios ex)
-        {
-            errorMensajeEliminar = "El recurso está en uso, por lo tanto no se puede eliminar.";
             mostrarErrorEliminar = true;
             StateHasChanged();
             await OcultarErrorEliminarAutomaticamente();
@@ -331,8 +302,6 @@ else
         StateHasChanged();
     }
     
-    
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !sesionCargada)
@@ -348,11 +317,11 @@ else
                 await Sesion.ActualizarSesion();
                 try
                 {
-                    proyecto = GestorProyectos.ObtenerProyectoPorId(Id);
+                    proyecto = ControladorProyectos.ObtenerProyectoPorId(Id);
                 }
-                catch (ExcepcionServicios)
+                catch
                 {
-                    NavigationManager.NavigateTo("/not-found");
+                    NavigationManager.NavigateTo("/Error");
                     return;
                 }
                 sesionCargada = true;
@@ -361,5 +330,4 @@ else
             }
         }
     }
-
 }

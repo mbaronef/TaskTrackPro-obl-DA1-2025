@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Controladores\Controladores.csproj" />
       <ProjectReference Include="..\Dominio\Dominio.csproj" />
       <ProjectReference Include="..\Repositorios\Repositorios.csproj" />
       <ProjectReference Include="..\Servicios\Servicios.csproj" />

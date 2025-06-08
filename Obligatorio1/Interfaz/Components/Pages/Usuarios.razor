@@ -1,18 +1,13 @@
 @page "/usuarios"
 @rendermode InteractiveServer
-@inject GestorUsuarios GestorUsuarios
 @using System.ComponentModel.DataAnnotations
-@using System.Text.RegularExpressions
-@using Dominio
-@using Dominio.Excepciones
+@using Controladores
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
 @using DTOs
-@using Interfaz.ServiciosInterfaz
-@using Servicios.Excepciones
-@using Servicios.Utilidades
+@using Excepciones
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
+@inject ControladorUsuarios ControladorUsuarios
 
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
@@ -22,7 +17,7 @@ else
 {
     <h3>Usuarios:</h3>
 
-    @if (!Sesion.UsuarioLogueado.EsAdministradorSistema)
+    @if (!Sesion.EsAdminSistema())
     {
         <p class="text-danger">Acceso denegado. Solo disponible para administradores del sistema.</p>
     }
@@ -204,7 +199,7 @@ else
 
 
 
-        @if (GestorUsuarios.Usuarios.ObtenerTodos().Count == 0)
+        @if (ControladorUsuarios.ObtenerTodos().Count == 0)
         {
             <p>No hay usuarios.</p>
         }
@@ -221,7 +216,7 @@ else
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (Usuario usuario in GestorUsuarios.Usuarios.ObtenerTodos())
+                @foreach (UsuarioListarDTO usuario in ControladorUsuarios.ObtenerTodos())
                 {
                     <tr>
                         <td>@usuario.Nombre</td>
@@ -327,7 +322,7 @@ else
     private bool mostrarExito = false;
     private string mensajeExito = "";
     
-    private Usuario usuarioOriginal;
+    private UsuarioDTO usuarioOriginal;
     private bool mostrarFormEditar = false;
     private bool mostrarError = false;
     private string errorMensaje;
@@ -389,27 +384,15 @@ else
 
         try
         {
-            Usuario nuevo = GestorUsuarios.CrearUsuario(
-                nuevoUsuario.Nombre,
-                nuevoUsuario.Apellido,
-                nuevoUsuario.FechaNacimiento,
-                nuevoUsuario.Email,
-                nuevoUsuario.Contrasena);
-
-            GestorUsuarios.AgregarUsuario(Sesion.UsuarioLogueado, nuevo);
-            mensajeExito = $"Usuario creado exitosamente: {nuevo.Nombre} {nuevo.Apellido} ({nuevo.Email})";
+            ControladorUsuarios.CrearYAgregarUsuario(Sesion.UsuarioLogueado, nuevoUsuario);
+            mensajeExito = $"Usuario creado exitosamente: {nuevoUsuario.Nombre} {nuevoUsuario.Apellido} ({nuevoUsuario.Email})";
             mostrarExito = true;
             mostrarFormCrear = false;
             mostrarError = false;
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensaje = $"Error al crear usuario: {ex.Message}";
-            mostrarError = true;
-        }
         catch (Exception ex)
         {
-            errorMensaje = "Ocurrió un error inesperado al crear el usuario.";
+            errorMensaje = $"Error al crear usuario: {ex.Message}";
             mostrarError = true;
         }
     }
@@ -445,7 +428,7 @@ else
 
     private void EditarUsuario(int idUsuario)
     {
-        Usuario usuario = GestorUsuarios.Usuarios.ObtenerTodos().FirstOrDefault(u => u.Id == idUsuario);
+        UsuarioDTO usuario = ControladorUsuarios.ObtenerUsuarioPorId(idUsuario);
         
         if (usuario != null)
         {
@@ -481,28 +464,28 @@ else
             {
                 if (usuarioAEditar.ContrasenaAutogenerada == "RESET")
                 {
-                    GestorUsuarios.ReiniciarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando);
+                    ControladorUsuarios.ReiniciarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando);
                 }
                 else
                 {
-                    GestorUsuarios.ModificarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando, usuarioAEditar.ContrasenaAutogenerada);
+                    ControladorUsuarios.ModificarContrasena(Sesion.UsuarioLogueado, idUsuarioEditando, usuarioAEditar.ContrasenaAutogenerada);
                 }
             }
-            
+
             if (usuarioAEditar.EsAdministradorProyecto && !usuarioOriginal.EsAdministradorProyecto)
             {
-                GestorUsuarios.AsignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
+                ControladorUsuarios.AsignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
             }
             else if (!usuarioAEditar.EsAdministradorProyecto && usuarioOriginal.EsAdministradorProyecto)
             {
-                GestorUsuarios.DesasignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
+                ControladorUsuarios.DesasignarAdministradorProyecto(Sesion.UsuarioLogueado, idUsuarioEditando);
             }
 
             if (usuarioAEditar.EsAdministradorSistema && !usuarioOriginal.EsAdministradorSistema)
             {
-                GestorUsuarios.AgregarAdministradorSistema(Sesion.UsuarioLogueado, idUsuarioEditando);
+                ControladorUsuarios.AgregarAdministradorSistema(Sesion.UsuarioLogueado, idUsuarioEditando);
             }
-            
+
             if (Sesion.UsuarioLogueado.Id == idUsuarioEditando)
             {
                 await Sesion.ActualizarSesion();
@@ -517,14 +500,9 @@ else
             mostrarExito = true;
             StateHasChanged();
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al editar usuario: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
         catch (Exception ex)
         {
-            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            errorMensajeEditar = $"Error al editar usuario: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }
@@ -533,21 +511,20 @@ else
     {
         try
         {
-            GestorUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(usuarioOriginal);
-            GestorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, idUsuarioEditando);
+            ControladorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, idUsuarioEditando);
 
             mostrarFormEditar = false;
             mensajeExito = "Usuario eliminado exitosamente.";
             mostrarExito = true;
         }
-        catch (ExcepcionServicios ex)
+        catch (ExcepcionPermisos ex)
         {
             errorMensajeEditar = "No se puede eliminar al usuario, es miembro de proyectos. Para eliminarlo debe eliminarlo previamente de los proyectos que tiene asignados.";
             mostrarErrorEditar = true;
         }
         catch (Exception ex)
         {
-            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            errorMensajeEditar = $"Error al eliminar usuario: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }
@@ -584,14 +561,9 @@ else
             mensajeExitoContrasenaModal = "La contraseña se reiniciará al guardar los cambios del usuario.";
             mostrarExitoContrasenaModal = true;
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al reiniciar contraseña: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
         catch (Exception ex)
         {
-            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            errorMensajeEditar = $"Error al reiniciar contraseña: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }
@@ -600,7 +572,7 @@ else
     {
         try
         {
-            string nueva = UtilidadesContrasena.AutogenerarContrasenaValida();
+            string nueva = ControladorUsuarios.AutogenerarContrasenaValida();
             if (mostrarFormCrear)
             {
                 nuevoUsuario.Contrasena = nueva;
@@ -608,7 +580,7 @@ else
             else if (mostrarFormEditar)
             {
                 usuarioAEditar.ContrasenaAutogenerada = nueva;
-                mensajeExitoContrasenaModal = $"La nueva contraseña generada es: {nueva} . Se aplicará al guardar los cambios del usuario.";
+                mensajeExitoContrasenaModal = $"La nueva contraseña generada es: {nueva} . Se cambiará al guardar cambios.";
                 mostrarExitoContrasenaModal = true;
             }
             mostrarErrorEditar = false;
@@ -654,14 +626,9 @@ else
             mostrarModalCambiarContrasena = false;
             nuevaContrasenaManual = "";
         }
-        catch (ExcepcionDominio ex)
-        {
-            errorMensajeEditar = $"Error al modificar contraseña: {ex.Message}";
-            mostrarErrorEditar = true;
-        }
         catch (Exception ex)
         {
-            errorMensajeEditar = $"Error inesperado: {ex.Message}";
+            errorMensajeEditar = $"Error al modificar contraseña: {ex.Message}";
             mostrarErrorEditar = true;
         }
     }

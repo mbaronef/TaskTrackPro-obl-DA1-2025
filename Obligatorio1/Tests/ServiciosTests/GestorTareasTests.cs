@@ -1,8 +1,11 @@
 ﻿using Dominio;
+using DTOs;
 using Repositorios;
-using Servicios.Excepciones;
+using Excepciones;
 using Servicios.Gestores;
 using Servicios.Utilidades;
+using Servicios.CaminoCritico;
+using Servicios.Notificaciones;
 
 namespace Tests.ServiciosTests;
 
@@ -11,57 +14,81 @@ public class GestorTareasTests
 {
     private GestorTareas _gestorTareas;
     private GestorProyectos _gestorProyectos;
-    private Usuario _admin;
-    private Usuario _noAdmin;
-    private MockNotificador _mockNotificador;
+    private UsuarioDTO _admin;
+    private UsuarioDTO _noAdmin;
+    private RepositorioUsuarios _repositorioUsuarios;
+    private RepositorioProyectos _repositorioProyectos;
+    private Notificador _notificador;
+    private CaminoCritico _caminoCritico;
 
     [TestInitialize]
     public void Inicializar()
     {
+        // setup para reiniciar las variables estáticas, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(GestorTareas).GetField("_cantidadTareas", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
         typeof(RepositorioProyectos).GetField("_cantidadProyectos", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-        _mockNotificador = new MockNotificador();
-        _gestorProyectos = new GestorProyectos(_mockNotificador);
-        _gestorTareas = new GestorTareas(_gestorProyectos, _mockNotificador);
+
+        _notificador = new Notificador();
+        _caminoCritico = new CaminoCritico();
+        _repositorioUsuarios = new RepositorioUsuarios();
+        _repositorioProyectos = new RepositorioProyectos();
+        _gestorProyectos = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
+        _gestorTareas = new GestorTareas(_gestorProyectos, _repositorioUsuarios, _notificador, _caminoCritico);
         _admin = CrearAdministradorProyecto();
         _noAdmin = CrearUsuarioNoAdmin();
     }
 
-    private Usuario CrearAdministradorSistema()
+    private UsuarioDTO CrearAdministradorSistema()
     {
+        //simulación del gestor
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
         admin.EsAdministradorSistema = true;
-        return admin;
+        _repositorioUsuarios.Agregar(admin);
+        return UsuarioDTO.DesdeEntidad(admin); //dto
     }
 
-    private Usuario CrearAdministradorProyecto()
+    private UsuarioDTO CrearAdministradorProyecto()
     {
+        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
+        Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
         adminProyecto.EsAdministradorProyecto = true;
-        return adminProyecto;
+        _repositorioUsuarios.Agregar(adminProyecto);
+        return UsuarioDTO.DesdeEntidad(adminProyecto); // dto
     }
 
-    private Usuario CrearUsuarioNoAdmin()
+    private UsuarioDTO CrearUsuarioNoAdmin()
     {
+        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Tomas", "Pérez", new DateTime(2003, 01, 01), "unemail@gmail.com",
-            contrasenaEncriptada);
-        return usuario;
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com", contrasenaEncriptada);
+        _repositorioUsuarios.Agregar(usuario);
+        return UsuarioDTO.DesdeEntidad(usuario); // dto
     }
 
-    private Tarea CrearTarea()
+    private TareaDTO CrearTarea()
     {
-        return new Tarea("Un título", "una descripcion", 3, DateTime.Today.AddDays(10));
+        return new TareaDTO()
+        {
+            Titulo = "tituloTarea",
+            Descripcion = "descripcionTarea",
+            DuracionEnDias = 3,
+            FechaInicioMasTemprana = new DateTime(2026, 01, 01),
+        };
     }
 
-    private Proyecto CrearYAgregarProyecto(Usuario adminProyecto)
+    private ProyectoDTO CrearYAgregarProyecto(UsuarioDTO adminProyecto)
     {
         DateTime fechaInicio = DateTime.Today.AddDays(1);
-        Proyecto proyecto = new Proyecto("Nombre", "Descripción", fechaInicio, adminProyecto, new List<Usuario>());
+        ProyectoDTO proyecto = new ProyectoDTO()
+        {
+            Nombre = "Proyecto",
+            Descripcion = "Descripción",
+            FechaInicio = fechaInicio,
+            Administrador = adminProyecto,
+            Miembros = new List<UsuarioListarDTO>()
+        };
         _gestorProyectos.CrearProyecto(proyecto, adminProyecto);
         return proyecto;
     }
@@ -75,9 +102,9 @@ public class GestorTareasTests
     [TestMethod]
     public void AgregarTareaAlProyecto_IncrementaIdConCadaTarea()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
 
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
@@ -87,20 +114,31 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionPermisos))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void AgregarTareaAlProyecto_LanzaExcepcionSiProyectoNoExiste()
     {
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(1000, _admin, tarea);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionUsuario))]
+    public void AgregarTareaAlProyecto_LanzaExcepcionSiSolicitanteNoExiste()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+
+        UsuarioDTO usuarioNoExistente = new UsuarioDTO() { Id = 9999 };
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, usuarioNoExistente, tarea);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarTareaAlProyecto_LanzaExcepcionSiSolicitanteNoEsAdmin()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _noAdmin, tarea);
     }
 
@@ -108,11 +146,10 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarTareaAlProyecto_LanzaExcepcionSiSolicitanteNoEsAdministradorDelProyecto()
     {
-        Usuario otroAdmin = CrearAdministradorProyecto();
-        otroAdmin.Id = 9;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO otroAdmin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, otroAdmin, tarea);
     }
 
@@ -120,9 +157,9 @@ public class GestorTareasTests
     [TestMethod]
     public void AgregarTareaAlProyecto_LanzaExcepcionSiLaTareaIniciaAntesDelProyecto()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea = CrearTarea();
-        tarea.ModificarFechaInicioMasTemprana(proyecto.FechaInicio.AddDays(-1));
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        tarea.FechaInicioMasTemprana = proyecto.FechaInicio.AddDays(-1);
 
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
     }
@@ -131,37 +168,39 @@ public class GestorTareasTests
     [TestMethod]
     public void AgregarTareaAlProyecto_AgregaTareaConIdOK()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        
+        proyecto = _gestorProyectos.ObtenerProyectoPorId(proyecto.Id); // actualización 
 
         Assert.AreEqual(1, proyecto.Tareas.Count);
-        Assert.IsTrue(proyecto.Tareas.Contains(tarea));
-        Assert.AreEqual(tarea.Id, 1);
+        Assert.IsTrue(proyecto.Tareas.Any(t => t.Id == tarea.Id));
+        Assert.AreEqual(1, tarea.Id);
     }
 
     [TestMethod]
     public void AgregarTareaAlProyecto_NotificaAMiembros()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
-        string esperado = $"Se agregó la tarea (id {tarea.Id}) al proyecto '{proyecto.Nombre}'.";
+        string esperado = MensajesNotificacion.TareaAgregada(tarea.Id, proyecto.Nombre);
 
-        foreach (Usuario miembro in proyecto.Miembros)
+        foreach (UsuarioListarDTO miembro in proyecto.Miembros)
         {
             Assert.AreEqual(esperado, miembro.Notificaciones.Last().Mensaje);
         }
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ExcepcionPermisos))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     public void EliminarTareaDelProyecto_LanzaExcepcionSiProyectoNoExiste()
     {
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.EliminarTareaDelProyecto(1000, _admin, tarea.Id);
     }
 
@@ -169,9 +208,9 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarTareaDelProyectoo_LanzaExcepcionSiSolicitanteNoEsAdmin()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
         _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _noAdmin, tarea.Id);
@@ -179,13 +218,12 @@ public class GestorTareasTests
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionPermisos))]
-    public void EliminarTareaDelProyecto_LanzaExcepcionSiSolicitanteNoElAdministradorDelProyecto()
+    public void EliminarTareaDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdministradorDelProyecto()
     {
-        Usuario otroAdmin = CrearAdministradorProyecto();
-        otroAdmin.Id = 9;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO otroAdmin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
         _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, otroAdmin, tarea.Id);
@@ -195,12 +233,12 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionTarea))]
     public void EliminarTareaDelProyecto_LanzaExcepcionSiOtrasTareasDependenDeElla()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea = CrearTarea();
-        Tarea tareaSucesora = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        TareaDTO tareaSucesora = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaSucesora);
-        tareaSucesora.AgregarDependencia(new Dependencia("FS", tarea));
+        _gestorTareas.AgregarDependenciaATarea(_admin, tareaSucesora.Id, tarea.Id, proyecto.Id, "FS");
         
         _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _admin, tarea.Id);
     }
@@ -208,9 +246,9 @@ public class GestorTareasTests
     [TestMethod]
     public void EliminarTareaDelProyecto_EliminaTareaOK()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _admin, tarea.Id);
 
@@ -221,15 +259,15 @@ public class GestorTareasTests
     [TestMethod]
     public void EliminarTareaDelProyecto_NotificaAMiembros()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _admin, tarea.Id);
 
-        string esperado = $"Se eliminó la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
+        string esperado = MensajesNotificacion.TareaEliminada(tarea.Id, proyecto.Nombre);
 
-        foreach (var miembro in proyecto.Miembros)
+        foreach (UsuarioListarDTO miembro in proyecto.Miembros)
         {
             Assert.AreEqual(esperado, miembro.Notificaciones.Last().Mensaje);
         }
@@ -238,46 +276,48 @@ public class GestorTareasTests
     [TestMethod]
     public void ObtenerTareaPorId_DevuelveLaTareaCorrecta()
     {
-        Usuario admin = CrearAdministradorProyecto();
-        Proyecto proyecto = CrearYAgregarProyecto(admin);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea2);
 
-        Tarea tareaObtenida1 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea1.Id);
-        Tarea tareaObtenida2 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea2.Id);
+        TareaDTO tareaObtenida1 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea1.Id);
+        TareaDTO tareaObtenida2 = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea2.Id);
 
-        Assert.AreEqual(tarea1, tareaObtenida1);
-        Assert.AreEqual(tarea2, tareaObtenida2);
+        Assert.AreEqual(tarea1.Id, tareaObtenida1.Id);
+        Assert.AreEqual(tarea2.Id, tareaObtenida2.Id);
     }
 
     [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
     public void ObtenerTareaPorId_LanzaExcepcionSiNoHayTareaConEseId()
     {
-        Usuario admin = CrearAdministradorProyecto();
-        Proyecto proyecto = CrearYAgregarProyecto(admin);
-        Tarea tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, -1);
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+        TareaDTO tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, -1);
     }
 
-    [ExpectedException(typeof(ExcepcionPermisos))]
+    [ExpectedException(typeof(ExcepcionProyecto))]
     [TestMethod]
     public void ObtenerTareaPorId_LanzaExcepcionSiNoHayProyecto()
     {
-        Tarea tareaParaId = CrearTarea();
-        Tarea tarea = _gestorTareas.ObtenerTareaPorId(4, tareaParaId.Id);
+        TareaDTO tareaParaId = CrearTarea();
+        TareaDTO tarea = _gestorTareas.ObtenerTareaPorId(4, tareaParaId.Id);
     }
 
     [TestMethod]
     public void ModificarTitulo_AdminProyectoModificaTituloTareaOk()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
         _gestorTareas.ModificarTituloTarea(_admin, tarea.Id, proyecto.Id, "Nuevo nombre");
+        
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.AreEqual("Nuevo nombre", tarea.Titulo);
     }
 
@@ -285,9 +325,8 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarTitulo_UsuarioNoAdminNoPuedeModificarlo()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _admin.Id = 50;
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.ModificarTituloTarea(_noAdmin, tarea.Id, proyecto.Id, "Nuevo nombre");
     }
@@ -296,10 +335,9 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarTitulo_UsuarioAdminNoDelProyectoNoPuedeModificarlo()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _admin.Id = 50;
-        Usuario adminSistema = CrearAdministradorSistema();
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO adminSistema = CrearAdministradorSistema();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.ModificarTituloTarea(adminSistema, tarea.Id, proyecto.Id, "Nuevo nombre");
     }
@@ -307,12 +345,14 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarDescripcion_AdminProyectoModificaDescripcionTareaOk()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
         _gestorTareas.ModificarDescripcionTarea(_admin, tarea.Id, proyecto.Id, "Nueva descripcion");
+        
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.AreEqual("Nueva descripcion", tarea.Descripcion);
     }
 
@@ -320,9 +360,8 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarDescripcion_UsuarioNoAdminNoPuedeModificarla()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _admin.Id = 50;
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.ModificarDescripcionTarea(_noAdmin, tarea.Id, proyecto.Id, "Nueva descripcion");
     }
@@ -331,10 +370,9 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarDescripcion_UsuarioAdminNoDelProyectoNoPuedeModificarla()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _admin.Id = 50;
-        Usuario adminSistema = CrearAdministradorSistema();
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO adminSistema = CrearAdministradorSistema();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.ModificarDescripcionTarea(adminSistema, tarea.Id, proyecto.Id, "Nueva descripcion");
     }
@@ -342,12 +380,14 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarDuracion_AdminProyectoModificaDuracionTareaOk()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
         _gestorTareas.ModificarDuracionTarea(_admin, tarea.Id, proyecto.Id, 4);
+        
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.AreEqual(4, tarea.DuracionEnDias);
     }
 
@@ -355,9 +395,8 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarDuracion_UsuarioNoAdminNoPuedeModificarla()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _admin.Id = 50;
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.ModificarDuracionTarea(_noAdmin, tarea.Id, proyecto.Id, 4);
     }
@@ -366,10 +405,9 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarDuracion_UsuarioAdminNoDelProyectoNoPuedeModificarla()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _admin.Id = 50;
-        Usuario adminSistema = CrearAdministradorSistema();
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO adminSistema = CrearAdministradorSistema();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.ModificarDuracionTarea(adminSistema, tarea.Id, proyecto.Id, 4);
     }
@@ -377,14 +415,16 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarFechaInicio_AdminProyectoModificaFechaInicioTareaOk()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         DateTime fechaNueva = new DateTime(2030, 01, 01);
 
         _gestorTareas.ModificarFechaInicioTarea(_admin, tarea.Id, proyecto.Id, fechaNueva);
         // No debería lanzar excepción. Luego se llama a CPM que modifica la fecha de inicio por la del proyecto
+        
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
     }
 
@@ -392,9 +432,8 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarFechaInicio_UsuarioNoAdminNoPuedeModificarla()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _admin.Id = 50;
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         DateTime fechaNueva = new DateTime(2030, 01, 01);
         _gestorTareas.ModificarFechaInicioTarea(_noAdmin, tarea.Id, proyecto.Id, fechaNueva);
@@ -404,10 +443,9 @@ public class GestorTareasTests
     [TestMethod]
     public void ModificarFechaInicio_UsuarioAdminNoDelProyectoNoPuedeModificarla()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _admin.Id = 50;
-        Tarea tarea = CrearTarea();
-        Usuario adminSistema = CrearAdministradorSistema();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        UsuarioDTO adminSistema = CrearAdministradorSistema();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         DateTime fechaNueva = new DateTime(2030, 01, 01);
         _gestorTareas.ModificarFechaInicioTarea(adminSistema, tarea.Id, proyecto.Id, fechaNueva);
@@ -416,138 +454,138 @@ public class GestorTareasTests
     [TestMethod]
     public void CambiarEstadoTarea_AdminProyectoCambiaEstadoOk()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
-        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTarea.EnProceso);
-        Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+        
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        Assert.AreEqual(EstadoTarea.EnProceso.ToString(), tarea.Estado.ToString());
     }
 
     [TestMethod]
     public void CambiarEstadoTarea_MiembroTareaCambiaEstadoOk()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _noAdmin.Id = 40;
-        proyecto.AsignarMiembro(_noAdmin);
-        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.EnProceso);
-        Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+        
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        Assert.AreEqual(EstadoTarea.EnProceso.ToString(), tarea.Estado.ToString());
     }
 
-    [ExpectedException(typeof(ExcepcionProyecto))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void CambiarEstado_UsuarioNoMiembroNoPuedeModificarla()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _noAdmin.Id = 40;
-        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.EnProceso);
-        Assert.AreEqual(tarea.Estado, EstadoTarea.EnProceso);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
     }
 
     [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
     public void MiembroNoPuedeCambiarEstadoABloqueada()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _noAdmin.Id = 40;
-        proyecto.AsignarMiembro(_noAdmin);
-        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.Bloqueada);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.Bloqueada);
     }
     
     [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
     public void MiembroNoPuedeCambiarEstadoAPendiente()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _noAdmin.Id = 40;
-        proyecto.AsignarMiembro(_noAdmin);
-        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTarea.Pendiente);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.Pendiente);
     }
 
     [TestMethod]
     public void TareaConDependenciaSeBloquea()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _noAdmin.Id = 1; // se hardcodea por simplicidad de tests, los ids los maneja el repo.
-        proyecto.AsignarMiembro(_noAdmin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tareaD = CrearTarea();
+        TareaDTO tareaD = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaD);
         
-        Tarea tarea = CrearTarea();
-        tarea.AgregarDependencia(new Dependencia("SS", tareaD));
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea.Id, tareaD.Id, proyecto.Id , "SS");
         
-        Assert.AreEqual(EstadoTarea.Bloqueada, tarea.Estado);
+        Assert.AreEqual(EstadoTarea.Bloqueada.ToString(), tarea.Estado.ToString());
     }
 
     [TestMethod]
     public void SeActualizaEstadoCuandoSeCompletaUnaDependencia()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        _noAdmin.Id = 1; // se hardcodea por simplicidad de tests, los ids los maneja el repo.
-        proyecto.AsignarMiembro(_noAdmin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);       
         
-        Tarea tareaD = CrearTarea();
+        TareaDTO tareaD = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaD);
         
-        Tarea tarea = CrearTarea();
-        tarea.AgregarDependencia(new Dependencia("FS", tareaD));
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea.Id, tareaD.Id, proyecto.Id , "FS");
         
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tareaD.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tareaD.Id, proyecto.Id, EstadoTareaDTO.Completada);
         
-        _gestorTareas.CambiarEstadoTarea(_noAdmin, tareaD.Id, proyecto.Id, EstadoTarea.EnProceso);
-        _gestorTareas.CambiarEstadoTarea(_noAdmin, tareaD.Id, proyecto.Id, EstadoTarea.Completada);
-        Assert.AreEqual(EstadoTarea.Pendiente, tarea.Estado);
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        Assert.AreEqual(EstadoTarea.Pendiente.ToString(), tarea.Estado.ToString());
     }
 
     [TestMethod]
     public void AgregarDependencia_AdminAgregaDependenciaCorrectamente()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tareaPrincipal = CrearTarea();
-        Tarea tareaDependencia = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tareaPrincipal = CrearTarea();
+        TareaDTO tareaDependencia = CrearTarea();
+        
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaPrincipal);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaDependencia);
 
         _gestorTareas.AgregarDependenciaATarea(_admin, tareaPrincipal.Id, tareaDependencia.Id, proyecto.Id, "FS");
-        Dependencia dependencia = new Dependencia("FS", tareaDependencia);
-        Assert.IsTrue(tareaPrincipal.Dependencias.Contains(dependencia));
+        
+        tareaPrincipal = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tareaPrincipal.Id); // actualización
+        Assert.IsTrue(tareaPrincipal.Dependencias.Any(dep => dep.TareaPrevia.Id == tareaDependencia.Id && dep.Tipo == "FS"));
     }
     
     [TestMethod]
     [ExpectedException(typeof(ExcepcionTarea))]
     public void AgregarDependenciaCiclicaLanzaExcepcion()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
         _gestorTareas.AgregarDependenciaATarea(_admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
         _gestorTareas.AgregarDependenciaATarea(_admin, tarea2.Id, tarea1.Id, proyecto.Id, "FS");
-        
     }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarDependencia_MiembroNoAdminNoPuedeAgregarLanzaExcepcion()
     {
-        _noAdmin.Id = 40;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        proyecto.AsignarMiembro(_noAdmin);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
@@ -558,10 +596,9 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarDependencia_UsuarioNoMiembroNoPuedeAgregarLanzaExcepcion()
     {
-        _noAdmin.Id = 40;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
@@ -572,11 +609,10 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarDependencia_UsuarioAdminSistemaNoPuedeAgregarLanzaExcepcion()
     {
-        Usuario adminSistema = CrearAdministradorSistema();
-        adminSistema.Id = 40;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        UsuarioDTO adminSistema = CrearAdministradorSistema();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
@@ -587,12 +623,11 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void AgregarDependencia_UsuarioAdminSistemaPeroMiembroNoPuedeAgregarLanzaExcepcion()
     {
-        Usuario adminSistema = CrearAdministradorSistema();
-        adminSistema.Id = 40;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        proyecto.AsignarMiembro(adminSistema);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        UsuarioDTO adminSistema = CrearAdministradorSistema();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, adminSistema);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
@@ -602,15 +637,17 @@ public class GestorTareasTests
     [TestMethod]
     public void EliminarDependencia_AdminEliminaDependenciaCorrectamente()
     {
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tareaPrincipal = CrearTarea();
-        Tarea tareaDependencia = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tareaPrincipal = CrearTarea();
+        TareaDTO tareaDependenciaDTO = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaPrincipal);
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaDependencia);
-        _gestorTareas.AgregarDependenciaATarea(_admin, tareaPrincipal.Id, tareaDependencia.Id, proyecto.Id, "FS");
-        _gestorTareas.EliminarDependenciaDeTarea(_admin, tareaPrincipal.Id, tareaDependencia.Id, proyecto.Id);
-        Dependencia dependencia = new Dependencia("FS", tareaDependencia);
-        Assert.IsFalse(tareaPrincipal.Dependencias.Contains(dependencia));
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaDependenciaDTO);
+        
+        _gestorTareas.AgregarDependenciaATarea(_admin, tareaPrincipal.Id, tareaDependenciaDTO.Id, proyecto.Id, "FS");
+        _gestorTareas.EliminarDependenciaDeTarea(_admin, tareaPrincipal.Id, tareaDependenciaDTO.Id, proyecto.Id);
+        
+        tareaPrincipal = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tareaPrincipal.Id); // actualización
+        Assert.AreEqual(0, tareaPrincipal.Dependencias.Count);
     }
 
 
@@ -618,11 +655,10 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarDependencia_MiembroNoAdminNoPuedeEliminarLanzaExcepcion()
     {
-        _noAdmin.Id = 40;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        proyecto.AsignarMiembro(_noAdmin);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
@@ -634,10 +670,9 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarDependencia_UsuarioNoMiembroNoPuedeEliminarLanzaExcepcion()
     {
-        _noAdmin.Id = 40;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
@@ -649,11 +684,10 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarDependencia_UsuarioAdminSistemaNoPuedeEliminarLanzaExcepcion()
     {
-        Usuario adminSistema = CrearAdministradorSistema();
-        adminSistema.Id = 40;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        UsuarioDTO adminSistema = CrearAdministradorSistema();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
@@ -665,12 +699,11 @@ public class GestorTareasTests
     [ExpectedException(typeof(ExcepcionPermisos))]
     public void EliminarDependencia_UsuarioAdminSistemaPeroMiembroNoPuedeEliminarLanzaExcepcion()
     {
-        Usuario adminSistema = CrearAdministradorSistema();
-        adminSistema.Id = 40;
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        proyecto.AsignarMiembro(adminSistema);
-        Tarea tarea1 = CrearTarea();
-        Tarea tarea2 = CrearTarea();
+        UsuarioDTO adminSistema = CrearAdministradorSistema();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, adminSistema);
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
@@ -681,46 +714,38 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeAgregarMiembroATarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
 
-        Assert.IsTrue(tarea.UsuariosAsignados.Contains(_noAdmin));
+        Assert.IsTrue(tarea.UsuariosAsignados.Any(u => u.Id == _noAdmin.Id));
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminNoPuedeAgregarMiembroATarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_noAdmin, tarea.Id, proyecto.Id, _noAdmin);
     }
     
-    [ExpectedException(typeof(ExcepcionProyecto))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoSePuedeAgregarMiembroATareaSiNoEsMiembroDelProyecto()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
     }
@@ -728,19 +753,18 @@ public class GestorTareasTests
     [TestMethod]
     public void SeNotificaLaAsignacionDeUnMiembroALosMiembrosDeLaTarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
 
-        string mensajeEsperado = $"Se agregó el miembro {_noAdmin.ToString()} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
-        Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
+        _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
+        
+        string mensajeEsperado = MensajesNotificacion.CampoTareaAgregado($"miembro {_noAdmin.Nombre} {_noAdmin.Apellido} ({_noAdmin.Email})", tarea.Id, proyecto.Nombre);
+        NotificacionDTO ultimaNotificacion = _admin.Notificaciones.Last();
         
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
     }
@@ -748,48 +772,39 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeEliminarMiembroDeTarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
         _gestorTareas.EliminarMiembroDeTarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
 
-        Assert.IsFalse(tarea.UsuariosAsignados.Contains(_noAdmin));
+        Assert.IsFalse(tarea.UsuariosAsignados.Any(u => u.Id == _noAdmin.Id));
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminNoPuedeEliminarMiembroDeTarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
         _gestorTareas.EliminarMiembroDeTarea(_noAdmin, tarea.Id, proyecto.Id, _noAdmin);
     }
     
-    [ExpectedException(typeof(ExcepcionProyecto))]
+    [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoSePuedeEliminarNoMiembroDeTarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
-        
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         
         _gestorTareas.EliminarMiembroDeTarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
@@ -798,20 +813,19 @@ public class GestorTareasTests
     [TestMethod]
     public void SeNotificaLaEliminacionDeUnMiembroALosMiembrosDeLaTarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
         _gestorTareas.EliminarMiembroDeTarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
 
-        string mensajeEsperado = $"Se eliminó el miembro {_noAdmin.ToString()} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
-        Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
+        _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
+        
+        string mensajeEsperado = MensajesNotificacion.CampoTareaEliminado($"miembro {_noAdmin.Nombre} {_noAdmin.Apellido} ({_noAdmin.Email})", tarea.Id, proyecto.Nombre);
+        NotificacionDTO ultimaNotificacion = _admin.Notificaciones.Last();
         
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
     }
@@ -819,56 +833,52 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeAgregarRecursoATarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
-
-        Assert.IsTrue(tarea.RecursosNecesarios.Contains(recurso));
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        Assert.IsTrue(tarea.RecursosNecesarios.Any(recurso => recurso.Id == recursoDTO.Id));
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminNoPuedeAgregarRecursoATarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AgregarRecursoATarea(_noAdmin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.AgregarRecursoATarea(_noAdmin, tarea.Id, proyecto.Id, recursoDTO);
     }
 
     [TestMethod]
     public void SeNotificaElAgregadoDeUnRecursoALosMiembrosDeLaTarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
-        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
 
-        string mensajeEsperado = $"Se agregó el recurso {recurso.Nombre} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
-        Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
+        _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
+        string mensajeEsperado = MensajesNotificacion.CampoTareaAgregado($"recurso {recurso.Nombre}", tarea.Id, proyecto.Nombre);
+        NotificacionDTO ultimaNotificacion = _admin.Notificaciones.Last();
         
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
     }
@@ -876,74 +886,109 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeEliminarRecursoNecesarioDeTarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
-        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
 
-        Assert.IsFalse(tarea.RecursosNecesarios.Contains(recurso));
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        Assert.IsFalse(tarea.RecursosNecesarios.Any(recurso => recurso.Id == recursoDTO.Id));
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
     public void NoAdminNoPuedeEliminarRecursoDeTarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
-        _gestorTareas.EliminarRecursoDeTarea(_noAdmin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.EliminarRecursoDeTarea(_noAdmin, tarea.Id, proyecto.Id, recursoDTO);
     }
     
     [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
     public void NoSePuedeEliminarRecursoDeTareaNoExistente()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
     }
 
+    [ExpectedException(typeof(ExcepcionTarea))]
+    [TestMethod]
+    public void EliminarRecursoNoExistenteDeTareaDaError()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        RecursoDTO recursoNoExistente = RecursoDTO.DesdeEntidad(recurso);
+
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoNoExistente);
+    }
+    
     [TestMethod]
     public void SeNotificaLaEliminacionDeUnRecursoALosMiembrosDeLaTarea()
     {
-        _admin.Id = 1;
-        _noAdmin.Id = 2;
-        
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
-        Proyecto proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         
-        Tarea tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
-        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
 
-        string mensajeEsperado = $"Se eliminó el recurso {recurso.Nombre} de la tarea (id {tarea.Id}) del proyecto '{proyecto.Nombre}'.";
-        Notificacion ultimaNotificacion = _admin.Notificaciones.Last();
+        _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
+        string mensajeEsperado = MensajesNotificacion.CampoTareaEliminado($"recurso {recurso.Nombre}", tarea.Id, proyecto.Nombre);
+        NotificacionDTO ultimaNotificacion = _admin.Notificaciones.Last();
         
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
+    }
+    
+    [TestMethod]
+    public void EsMiembroDeTareaDevuelveTrueSiEsMiembro()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        Assert.IsTrue(_gestorTareas.EsMiembroDeTarea(_noAdmin, tarea.Id, proyecto.Id));
+    }
+    
+    [TestMethod]
+    public void EsMiembroDeTareaDevuelveFalseSiNoEsMiembro()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        Assert.IsFalse(_gestorTareas.EsMiembroDeTarea(_admin, tarea.Id, proyecto.Id));
     }
 }

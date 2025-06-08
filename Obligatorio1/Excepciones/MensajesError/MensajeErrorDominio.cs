@@ -1,4 +1,4 @@
-namespace Dominio.Excepciones;
+namespace Excepciones.MensajesError;
 
 public static class MensajesErrorDominio
 {
@@ -47,7 +47,7 @@ public static class MensajesErrorDominio
     public const string UsuariosAsignadosVacio = "La lista de usuarios asignados está vacía o no está inicializada.";
     public const string FechaInicioInvalida = "La fecha de inicio debe ser igual o posterior a la fecha de hoy.";
     
-    public static string TransicionEstadoInvalidaDesdeHacia(EstadoTarea desde, EstadoTarea hacia)
+    public static string TransicionEstadoInvalidaDesdeHacia(string desde, string hacia)
         => $"No se puede cambiar una tarea de estado {desde} a estado {hacia}.";
 
     
@@ -61,6 +61,4 @@ public static class MensajesErrorDominio
     public const string RecursoNoNecesario = "El recurso no se encuentra dentro de los recursos necesarios.";
     public const string DependenciaNullEnTarea = "No se puede agregar una dependencia null.";
     public const string DependenciaNoExisteEnTarea = "La dependencia no se encuentra dentro de la lista de dependencias.";
-    
-
 }

@@ -1,6 +1,6 @@
 @page "/"
 @rendermode InteractiveServer
-@using System.ComponentModel.DataAnnotations
+@using DTOs
 @using Interfaz.ServiciosInterfaz
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
@@ -48,12 +48,6 @@
 @code {
     private ModeloSesion modeloSesion = new ModeloSesion();
     private bool loginFallido;
-
-    public class ModeloSesion
-    {
-        [EmailAddress] public string Email { get; set; } = string.Empty;
-        public string Contraseña { get; set; } = string.Empty;
-    }
 
     private async Task Login()
     {

@@ -1,6 +1,5 @@
 using Dominio;
-using Dominio.Excepciones;
-using Servicios.Gestores;
+using Excepciones;
 
 namespace Tests.DominioTests;
 
@@ -8,19 +7,13 @@ namespace Tests.DominioTests;
 public class ProyectoTests
 {
     private Proyecto _proyecto;
-    private GestorUsuarios _gestorUsuarios;
     private Usuario _admin;
     private List<Usuario> _miembros;
-    private MockNotificador _notificador;
 
     [TestInitialize]
     public void AntesDeCadaTest()
     {
-        _notificador = new MockNotificador();
-        _gestorUsuarios = new GestorUsuarios(_notificador);
-        Usuario adminSistema = _gestorUsuarios.AdministradorInicial;
         _admin = CrearAdmin(1);
-        _gestorUsuarios.AgregarUsuario(adminSistema, _admin);
         _miembros = new List<Usuario>();
     }
 
@@ -306,10 +299,8 @@ public class ProyectoTests
     [TestMethod]
     public void EsAdministrador_RetornarFalseSiUsuarioNoEsAdministrador()
     {
-        Usuario adminSistema = CrearAdminSistema();
         Usuario otro = CrearMiembro(2);
         _proyecto = CrearProyectoCon(_admin, _miembros);
-        _gestorUsuarios.AgregarUsuario(adminSistema, otro);
         _proyecto.AsignarMiembro(otro);
         bool resultado = _proyecto.EsAdministrador(otro);
         Assert.IsFalse(resultado);

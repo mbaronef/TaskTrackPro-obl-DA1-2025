@@ -1,25 +1,36 @@
 ﻿using Dominio;
-using Dominio.Excepciones;
+using DTOs;
+using Repositorios.Interfaces;
+using Servicios.CaminoCritico;
+using Excepciones;
 using Servicios.Excepciones;
+using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
 
 namespace Servicios.Gestores;
 
-public class GestorTareas
+public class GestorTareas : IGestorTareas
 {
     private GestorProyectos _gestorProyectos;
     private static int _cantidadTareas;
+    private IRepositorioUsuarios _repositorioUsuarios;
     private readonly INotificador _notificador;
+    private readonly ICalculadorCaminoCritico _caminoCritico;
 
-    public GestorTareas(GestorProyectos gestorProyectos, INotificador notificador)
+    public GestorTareas(GestorProyectos gestorProyectos, IRepositorioUsuarios repositorioUsuarios, INotificador notificador, ICalculadorCaminoCritico caminoCritico)
     {
         _gestorProyectos = gestorProyectos;
+        _repositorioUsuarios = repositorioUsuarios;
         _notificador = notificador;
+        _caminoCritico = caminoCritico;
     }
     
-    public void AgregarTareaAlProyecto(int idProyecto, Usuario solicitante, Tarea nuevaTarea)
+    public void AgregarTareaAlProyecto(int idProyecto, UsuarioDTO solicitanteDTO, TareaDTO nuevaTareaDTO)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Tarea nuevaTarea = nuevaTareaDTO.AEntidad();
+        
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         ValidarTareaIniciaDespuesDelProyecto(proyecto, nuevaTarea);
@@ -29,78 +40,86 @@ public class GestorTareas
         
         proyecto.AgregarTarea(nuevaTarea);
 
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.TareaAgregada(nuevaTarea.Id, proyecto.Nombre));
+        nuevaTareaDTO.Id = nuevaTarea.Id;
+
     }
 
-    public void EliminarTareaDelProyecto(int idProyecto, Usuario solicitante, int idTareaAEliminar)
+    public void EliminarTareaDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idTareaAEliminar)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         
         ValidarTareaNoTieneSucesora(proyecto, idTareaAEliminar);
 
         proyecto.EliminarTarea(idTareaAEliminar);
 
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
 
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.TareaEliminada(idTareaAEliminar, proyecto.Nombre));
     }
     
-    public Tarea ObtenerTareaPorId(int idProyecto, int idTarea)
+    public TareaDTO ObtenerTareaPorId(int idProyecto, int idTarea)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
-        if (tarea == null)
-            throw new ExcepcionTarea(MensajesError.TareaNoExistente);
-        return tarea;
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        return TareaDTO.DesdeEntidad(tarea);
     }
 
-    public void ModificarTituloTarea(Usuario solicitante, int idTarea, int idProyecto, string nuevoTitulo)
+    public void ModificarTituloTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, string nuevoTitulo)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
         tarea.ModificarTitulo(nuevoTitulo);
         NotificarCambio("título", idTarea, idProyecto);
     }
 
-    public void ModificarDescripcionTarea(Usuario solicitante, int idTarea, int idProyecto, string nuevaDescripcion)
+    public void ModificarDescripcionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, string nuevaDescripcion)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
         tarea.ModificarDescripcion(nuevaDescripcion);
         NotificarCambio("descripción", idTarea, idProyecto);
     }
 
-    public void ModificarDuracionTarea(Usuario solicitante, int idTarea, int idProyecto, int nuevaDuracion)
+    public void ModificarDuracionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, int nuevaDuracion)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
         tarea.ModificarDuracion(nuevaDuracion);
 
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
 
         NotificarCambio("duración", idTarea, idProyecto);
     }
 
-    public void ModificarFechaInicioTarea(Usuario solicitante, int idTarea, int idProyecto, DateTime nuevaFecha)
+    public void ModificarFechaInicioTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, DateTime nuevaFecha)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
 
         NotificarCambio("fecha de inicio", idTarea, idProyecto);
     }
 
-    public void CambiarEstadoTarea(Usuario solicitante, int idTarea, int idProyecto, EstadoTarea nuevoEstado)
+    public void CambiarEstadoTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, EstadoTareaDTO nuevoEstadoDTO)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        EstadoTarea nuevoEstado = (EstadoTarea)nuevoEstadoDTO;
+
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
         
-        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.CambiarEstado(nuevoEstado);
         
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.EstadoTareaModificado(idTarea, proyecto.Nombre, nuevoEstado));
 
         if (nuevoEstado == EstadoTarea.Completada)
@@ -109,76 +128,106 @@ public class GestorTareas
         }
     }
 
-    public void AgregarDependenciaATarea(Usuario solicitante, int idTarea, int idTareaDependencia, int idProyecto, string tipoDependencia)
+    public void AgregarDependenciaATarea(UsuarioDTO solicitanteDTO, int idTarea, int idTareaDependencia, int idProyecto, string tipoDependencia)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
-        Tarea tareaDependencia = ObtenerTareaPorId(idProyecto, idTareaDependencia);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        Tarea tareaDependencia = ObtenerTareaDominioPorId(idProyecto, idTareaDependencia);
         Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
         tarea.AgregarDependencia(dependencia);
         try
         {
-            CaminoCritico.CalcularCaminoCritico(proyecto);
+            _caminoCritico.CalcularCaminoCritico(proyecto);
         }
-        catch (ExcepcionServicios ex)
+        catch (ExcepcionCaminoCritico)
         {
             tarea.EliminarDependencia(dependencia.Tarea.Id);
-            throw new ExcepcionTarea(MensajesError.GeneraCiclos);
+            throw new ExcepcionTarea(MensajesErrorServicios.GeneraCiclos);
         }
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.DependenciaAgregada(tarea.Id, proyecto.Nombre, tipoDependencia, tareaDependencia.Id));
     }
 
-    public void EliminarDependenciaDeTarea(Usuario solicitante, int idTarea, int idTareaDependencia, int idProyecto)
+    public void EliminarDependenciaDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idTareaDependencia, int idProyecto)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.EliminarDependencia(idTareaDependencia);
-        CaminoCritico.CalcularCaminoCritico(proyecto);
+        _caminoCritico.CalcularCaminoCritico(proyecto);
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.DependenciaEliminada(idTareaDependencia, idTarea, proyecto.Nombre));
     }
 
-    public void AgregarMiembroATarea(Usuario solicitante, int idTarea, int idProyecto, Usuario nuevoMiembro)
+    public void AgregarMiembroATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, UsuarioDTO nuevoMiembroDTO)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Usuario nuevoMiembro = ObtenerUsuarioPorDTO(nuevoMiembroDTO);
+        
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(nuevoMiembro.Id, proyecto);
         
-        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.AsignarUsuario(nuevoMiembro);
         NotificarAgregar($"miembro {nuevoMiembro.ToString()}", idTarea, idProyecto);
     }
 
-    public void EliminarMiembroDeTarea(Usuario solicitante, int idTarea, int idProyecto, Usuario miembro)
+    public void EliminarMiembroDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, UsuarioDTO miembroDTO)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Usuario miembro = ObtenerUsuarioPorDTO(miembroDTO);
+        
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         PermisosUsuariosServicio.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
         
-        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.EliminarUsuario(miembro.Id);
         NotificarEliminar($"miembro {miembro.ToString()}", idTarea, idProyecto);
     }
     
-    public void AgregarRecursoATarea(Usuario solicitante, int idTarea, int idProyecto, Recurso nuevoRecurso)
+    public void AgregarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso nuevoRecurso = nuevoRecursoDTO.AEntidad();
+        
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         
-        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.AgregarRecurso(nuevoRecurso);
         NotificarAgregar($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
     }
 
-    public void EliminarRecursoDeTarea(Usuario solicitante, int idTarea, int idProyecto, Recurso recurso)
+    public void EliminarRecursoDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recurso = recursoDTO.AEntidad();
+        
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         ValidarRecursoExistente(recurso, idTarea, idProyecto);
         
-        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.EliminarRecurso(recurso.Id);
         NotificarEliminar($"recurso {recurso.Nombre}", idTarea, idProyecto);
     }
     
+    public bool EsMiembroDeTarea(UsuarioDTO usuarioDTO, int idTarea, int idProyecto)
+    {
+        Usuario usuario = ObtenerUsuarioPorDTO(usuarioDTO); 
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        return tarea.EsMiembro(usuario);
+    }
+    
+    private Tarea ObtenerTareaDominioPorId(int idProyecto, int idTarea)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
+        if (tarea == null)
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaNoExistente);
+        return tarea;
+    }
     private Proyecto ObtenerProyectoValidandoAdmin(int idProyecto, Usuario solicitante)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         PermisosUsuariosServicio.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
         PermisosUsuariosServicio.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
         return proyecto;
@@ -187,38 +236,38 @@ public class GestorTareas
     private Tarea ObtenerTareaValidandoAdmin(Usuario solicitante, int idProyecto, int idTarea)
     {
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        return ObtenerTareaPorId(proyecto.Id, idTarea);
+        return ObtenerTareaDominioPorId(proyecto.Id, idTarea);
     }
 
     private void NotificarCambio(string campo, int idTarea, int idProyecto)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.CampoTareaModificado(campo, idTarea, proyecto.Nombre));
     }
 
     private void NotificarEliminar(string campo, int idTarea, int idProyecto)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.CampoTareaEliminado(campo, idTarea, proyecto.Nombre));
     }
     
     private void NotificarAgregar(string campo, int idTarea, int idProyecto)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoPorId(idProyecto);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         _notificador.NotificarMuchos(proyecto.Miembros,MensajesNotificacion.CampoTareaAgregado(campo, idTarea, proyecto.Nombre));
     }
 
     private void VerificarEstadoEditablePorUsuario(EstadoTarea estado)
     {
         if (estado != EstadoTarea.EnProceso && estado != EstadoTarea.Completada)
-            throw new ExcepcionTarea(MensajesError.EstadoNoEditable);
+            throw new ExcepcionTarea(MensajesErrorServicios.EstadoNoEditable);
     }
 
     private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
     {
-        Tarea tarea = ObtenerTareaPorId(idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         if (!tarea.RecursosNecesarios.Contains(recurso))
-            throw new ExcepcionTarea(MensajesError.RecursoNoAsignado);
+            throw new ExcepcionTarea(MensajesErrorServicios.RecursoNoAsignado);
     }
 
     private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
@@ -230,7 +279,7 @@ public class GestorTareas
     {
         if (proyecto.Tareas.Any(tarea => tarea.EsSucesoraDe(idTarea)))
         {
-            throw new ExcepcionTarea(MensajesError.TareaConSucesoras);
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaConSucesoras);
         }
     }
 
@@ -238,7 +287,17 @@ public class GestorTareas
     {
         if (nuevaTarea.FechaInicioMasTemprana < proyecto.FechaInicio)
         {
-            throw new ExcepcionTarea(MensajesError.FechaInicioTarea);
+            throw new ExcepcionTarea(MensajesErrorServicios.FechaInicioTarea);
         }
+    }
+    
+    private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
+    {
+        var usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
+        if (usuario == null)
+        {
+            throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);
+        }
+        return usuario;
     }
 }

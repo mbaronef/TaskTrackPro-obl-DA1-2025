@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Dominio.Excepciones;
+using Excepciones;
+using Excepciones.MensajesError;
 
 namespace Dominio;
 

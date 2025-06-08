@@ -1,11 +1,11 @@
 @page "/exito/proyecto/{id:int}/creado"
-@using Dominio
+@using DTOs
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Gestores
+@using Controladores
 @rendermode InteractiveServer
-@inject GestorProyectos GestorProyectos
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigator
+@inject ControladorProyectos ControladorProyectos
 
 @if(Sesion.UsuarioLogueado == null || !sesionCargada)
 {
@@ -61,7 +61,7 @@ else
 
 @code {
     [Parameter] public int id { get; set; }
-    private Proyecto proyecto;
+    private ProyectoDTO proyecto;
     private bool sesionCargada = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -77,7 +77,7 @@ else
             else
             {
                 await Sesion.ActualizarSesion();
-                proyecto = GestorProyectos.ObtenerProyectoPorId(id);
+                proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
                 sesionCargada = true;
                 StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
             }

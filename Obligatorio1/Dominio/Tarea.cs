@@ -1,5 +1,5 @@
-using System.Security.Cryptography;
-using Dominio.Excepciones;
+using Excepciones;
+using Excepciones.MensajesError;
 
 namespace Dominio;
 public class Tarea
@@ -218,7 +218,7 @@ public class Tarea
             (actual == EstadoTarea.Pendiente && nuevo == EstadoTarea.Completada) ||
             (actual == EstadoTarea.Bloqueada && nuevo == EstadoTarea.Completada))
         {
-            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(actual, nuevo));
+            throw new ExcepcionDominio(MensajesErrorDominio.TransicionEstadoInvalidaDesdeHacia(actual.ToString(), nuevo.ToString()));
         }
     }
     

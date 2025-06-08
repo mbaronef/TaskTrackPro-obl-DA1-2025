@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Interfaz.DTOs;
+namespace DTOs;
 
 public class RecursoAsignacionDTO
 {

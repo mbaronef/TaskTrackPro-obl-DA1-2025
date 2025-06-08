@@ -1,14 +1,12 @@
 @page "/perfil"
-@using System.ComponentModel.DataAnnotations
-@using Dominio
-@using Interfaz.DTOs
+@using Controladores
+@using DTOs
+@using Excepciones
 @using Interfaz.ServiciosInterfaz
-@using Servicios.Excepciones
-@using Servicios.Gestores
 @inject LogicaSesion Sesion
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
-@inject GestorUsuarios GestorUsuarios
+@inject ControladorUsuarios ControladorUsuarios
 
 @if (Sesion.UsuarioLogueado is not null)
 {
@@ -231,8 +229,8 @@
     {
         try
         {
-            Usuario usuario = Sesion.UsuarioLogueado;
-            GestorUsuarios.ModificarContrasena(usuario, usuario.Id, modeloCambio.NuevaContrasena);
+            UsuarioDTO usuario = Sesion.UsuarioLogueado;
+            ControladorUsuarios.ModificarContrasena(usuario, usuario.Id, modeloCambio.NuevaContrasena);
             mensaje = "Contraseña cambiada con éxito.";
             await Sesion.ActualizarSesion();
             modeloCambio = new ModeloCambioContraseña(); // Limpiar el modelo
@@ -247,8 +245,8 @@
     {
         try
         {
-            Usuario usuario = Sesion.UsuarioLogueado;
-            GestorUsuarios.ReiniciarContrasena(usuario,usuario.Id);
+            UsuarioDTO usuario = Sesion.UsuarioLogueado;
+            ControladorUsuarios.ReiniciarContrasena(usuario,usuario.Id);
             mensaje = "Contraseña reiniciada con éxito. Se ha enviado una notificación con la nueva contraseña.";
             await Sesion.ActualizarSesion();
         }
@@ -276,26 +274,29 @@
         {
             try
             {
-                GestorUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(Sesion.UsuarioLogueado);
+                if (Sesion.UsuarioLogueado.CantidadProyectosAsignados > 0)
+                {
+                    throw new ExcepcionUsuario("El usuario no puede eliminarse porque está asignado a uno o más proyectos.");
+                }
             }
-            catch (ExcepcionServicios ex)
+            catch (ExcepcionUsuario ex)
             {
                 errorEliminar = "No se puede eliminar al usuario, es miembro de proyectos. Para eliminarlo debe eliminarlo previamente de los proyectos que tiene asignados.";
                 return;
             }
             try
             {
-                GestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(Sesion.UsuarioLogueado.Id);
+                ControladorUsuarios.ValidarUsuarioNoEsAdministradorInicial(Sesion.UsuarioLogueado.Id);
             }
-            catch (ExcepcionServicios ex)
+            catch (ExcepcionPermisos ex)
             {
                 errorEliminar = "No se puede eliminar al usuario, es el primer administrador.";
                 return;
             }
-            GestorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, Sesion.UsuarioLogueado.Id);
+            ControladorUsuarios.EliminarUsuario(Sesion.UsuarioLogueado, Sesion.UsuarioLogueado.Id);
             await CerrarSesion();
         }
-        catch (Exception)
+        catch
         {
             errorEliminar = "Ocurrió un error inesperado al intentar eliminar el usuario.";
         }

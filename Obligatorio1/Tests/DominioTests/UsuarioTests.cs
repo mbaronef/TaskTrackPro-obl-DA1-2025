@@ -1,6 +1,5 @@
 using Dominio;
-using Dominio.Excepciones;
-using Servicios.Gestores;
+using Excepciones;
 using Servicios.Utilidades;
 
 namespace Tests.DominioTests
@@ -10,7 +9,6 @@ namespace Tests.DominioTests
     public class UsuarioTests
     {
         private DateTime _fechaNacimientoValida = new DateTime(2000, 9, 1);
-        private MockNotificador _notificador = new MockNotificador();
 
         private Usuario CrearUsuarioValido()
         {
@@ -95,6 +93,22 @@ namespace Tests.DominioTests
         {
             Usuario usuario = CrearUsuarioValido();
             Assert.IsFalse(usuario.EsAdministradorProyecto);
+        }
+        
+        [TestMethod]
+        public void SePuedeMarcarNuevoUsuarioComoAdministradorDeSistema()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            usuario.EsAdministradorSistema = true;
+            Assert.IsTrue(usuario.EsAdministradorSistema);
+        }
+        
+        [TestMethod]
+        public void SePuedeMarcarNuevoUsuarioComoAdministrandoUnProyecto()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            usuario.EstaAdministrandoUnProyecto = true;
+            Assert.IsTrue(usuario.EstaAdministrandoUnProyecto);
         }
 
         [TestMethod]
@@ -219,11 +233,12 @@ namespace Tests.DominioTests
         [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
-            GestorUsuarios gestor = new GestorUsuarios(_notificador);
-            Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
-            gestor.AgregarUsuario(adminSistema,usuario1);
-            Usuario usuario2 = gestor.ObtenerUsuarioPorId(usuario1.Id);
+            Usuario usuario2 = CrearUsuarioValido();
+            
+            usuario1.Id = 1; // se hardcodean ids para que ambos usuarios tengan el mismo id
+            usuario2.Id = 1;
+            
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsTrue(sonIguales);
         }
@@ -231,12 +246,12 @@ namespace Tests.DominioTests
         [TestMethod]
         public void EqualsRetornaFalseSiLosIdsNoSonIguales()
         {
-            GestorUsuarios gestor = new GestorUsuarios(_notificador);
-            Usuario adminSistema = gestor.AdministradorInicial;
             Usuario usuario1 = CrearUsuarioValido();
-            gestor.AgregarUsuario(adminSistema, usuario1);
             Usuario usuario2 = CrearUsuarioValido();
-            gestor.AgregarUsuario(adminSistema, usuario2);
+            
+            usuario1.Id = 1; // se hardcodean ids para que ambos usuarios tengan distinto id
+            usuario2.Id = 2;
+            
             bool sonIguales = usuario1.Equals(usuario2);
             Assert.IsFalse(sonIguales);
         }

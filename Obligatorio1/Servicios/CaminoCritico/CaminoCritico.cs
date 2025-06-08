@@ -2,12 +2,12 @@ using Dominio;
 using Servicios.Excepciones;
 using Servicios.Notificaciones;
 
-namespace Servicios.Utilidades;
+namespace Servicios.CaminoCritico;
 
-public static class CaminoCritico
+public class CaminoCritico : ICalculadorCaminoCritico
 { 
     private static readonly INotificador _notificador = new Notificador();
-    public static void CalcularCaminoCritico(Proyecto proyecto)
+    public void CalcularCaminoCritico(Proyecto proyecto)
     {
         if (proyecto.TieneTareas())
         {
@@ -59,7 +59,7 @@ public static class CaminoCritico
         
         if (tareasOrdenadas.Count != tareas.Count)
         { // Validación: si hay ciclo, no se procesaron todas
-            throw new ExcepcionServicios(MensajesError.GrafoConCiclos);
+            throw new ExcepcionCaminoCritico(MensajesErrorServicios.GrafoConCiclos);
         }
         
         return tareasOrdenadas;
