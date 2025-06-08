@@ -98,18 +98,22 @@ public class GestorUsuarios : IGestorUsuarios
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaReiniciada(_contrasenaPorDefecto));
     }
 
-    public string AutogenerarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
+    public string AutogenerarContrasenaValida() // solo genera, permite mostrar en pantalla la contraseña
+    {
+        return UtilidadesContrasena.AutogenerarContrasenaValida();
+    }
+    
+    public void AutogenerarYAsignarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo) // genera y asigna. Prevee el caso de notificar por mail y no tener que mostrar contraseña en pantalla
     {
         Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
         PermisosUsuariosServicio.VerificarSolicitantePuedaAutogenerarContrasena(solicitante);
-        string nuevaContrasena = UtilidadesContrasena.AutogenerarContrasenaValida();
+        string nuevaContrasena = AutogenerarContrasenaValida();
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
         
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
-        return nuevaContrasena;
     }
 
     public void ModificarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo, string nuevaContrasena)

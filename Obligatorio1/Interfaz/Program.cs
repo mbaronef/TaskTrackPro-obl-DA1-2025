@@ -7,7 +7,6 @@ using Repositorios;
 using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
 using Servicios.Gestores;
-using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +27,8 @@ GestorTareas gestorTareas = new GestorTareas(gestorProyectos, repositorioUsuario
 
 ControladorTareas controladorTareas = new ControladorTareas(gestorTareas);
 ControladorProyectos controladorProyectos = new ControladorProyectos(gestorProyectos);
+ControladorRecursos controladorRecursos = new ControladorRecursos(gestorRecursos);
+ControladorUsuarios controladorUsuarios = new ControladorUsuarios(gestorUsuarios);
 
 // Add services to the container.
 builder.Services.AddSingleton(repositorioUsuarios);
@@ -42,6 +43,8 @@ builder.Services.AddSingleton(gestorTareas);
 
 builder.Services.AddSingleton(controladorTareas);
 builder.Services.AddSingleton(controladorProyectos);
+builder.Services.AddSingleton(controladorRecursos);
+builder.Services.AddSingleton(controladorUsuarios);
 //builder.Services.AddSingleton<ControladorTareas>();
 
 builder.Services.AddBlazoredLocalStorage();

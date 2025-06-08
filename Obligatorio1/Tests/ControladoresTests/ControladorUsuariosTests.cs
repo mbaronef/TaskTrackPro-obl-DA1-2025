@@ -137,16 +137,27 @@ public class ControladorUsuariosTests
     }
 
     [TestMethod]
-    public void AutogenerarContrasena_LlamaCorrectamenteAGestor()
+    public void AutogenerarContrasenaValida_LlamaCorrectamenteAGestor()
+    {
+        _mockGestorUsuarios.Setup(g => g.AutogenerarContrasenaValida());
+
+        _controladorUsuarios.AutogenerarContrasenaValida();
+        
+        _mockGestorUsuarios.Verify(g => g.AutogenerarContrasenaValida(), Times.Once);
+    }
+    
+    
+    [TestMethod]
+    public void AutogenerarYAsignarContrasena_LlamaCorrectamenteAGestor()
     {
         UsuarioDTO solicitante = new UsuarioDTO { Id = 1 };
         int idObjetivo = 2;
 
-        _mockGestorUsuarios.Setup(g => g.AutogenerarContrasena(solicitante, idObjetivo));
+        _mockGestorUsuarios.Setup(g => g.AutogenerarYAsignarContrasena(solicitante, idObjetivo));
 
-        _controladorUsuarios.AutogenerarContrasena(solicitante, idObjetivo);
+        _controladorUsuarios.AutogenerarYAsignarContrasena(solicitante, idObjetivo);
 
-        _mockGestorUsuarios.Verify(g => g.AutogenerarContrasena(solicitante, idObjetivo), Times.Once);
+        _mockGestorUsuarios.Verify(g => g.AutogenerarYAsignarContrasena(solicitante, idObjetivo), Times.Once);
     }
 
     [TestMethod]

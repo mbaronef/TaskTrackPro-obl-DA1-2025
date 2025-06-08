@@ -310,7 +310,7 @@ public class GestorUsuariosTests
         };
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivoDTO);
 
-        _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id);
+        _gestorUsuarios.AutogenerarYAsignarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id);
 
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
@@ -331,7 +331,7 @@ public class GestorUsuariosTests
         UsuarioDTO usuarioObjetivoDTO = CrearUsuarioDTO("José", "Pérez", "unemail@gmail.com", "Contrase#a9");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivoDTO);
 
-        string contrasenaAutogenerada = _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id);
+        _gestorUsuarios.AutogenerarYAsignarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id);
 
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();
@@ -339,7 +339,6 @@ public class GestorUsuariosTests
             ultimaNotificacion.Mensaje.Replace("Se modificó su contraseña. La nueva contraseña es ", "");
         Assert.IsFalse(usuarioObjetivo.Autenticar("Contrase#a9"));
         Assert.IsTrue(usuarioObjetivo.Autenticar(nuevaContrasena));
-        Assert.AreEqual(contrasenaAutogenerada, nuevaContrasena);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
@@ -351,7 +350,7 @@ public class GestorUsuariosTests
         UsuarioDTO usuarioObjetivo = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivo);
 
-        _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivo.Id);
+        _gestorUsuarios.AutogenerarYAsignarContrasena(usuarioSolicitante, usuarioObjetivo.Id);
     }
 
     [TestMethod]
@@ -464,7 +463,7 @@ public class GestorUsuariosTests
         UsuarioDTO usuarioObjetivoDTO = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuarioObjetivoDTO);
 
-        _gestorUsuarios.AutogenerarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id);
+        _gestorUsuarios.AutogenerarYAsignarContrasena(usuarioSolicitante, usuarioObjetivoDTO.Id);
 
         Usuario usuarioObjetivo = _repositorioUsuarios.ObtenerPorId(usuarioObjetivoDTO.Id);
         Notificacion ultimaNotificacion = usuarioObjetivo.Notificaciones.Last();

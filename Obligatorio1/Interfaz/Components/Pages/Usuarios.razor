@@ -573,7 +573,7 @@ else
     {
         try
         {
-            string nueva = UtilidadesContrasena.AutogenerarContrasenaValida();
+            string nueva = ControladorUsuarios.AutogenerarContrasenaValida();
             if (mostrarFormCrear)
             {
                 nuevoUsuario.Contrasena = nueva;
@@ -581,7 +581,7 @@ else
             else if (mostrarFormEditar)
             {
                 usuarioAEditar.ContrasenaAutogenerada = nueva;
-                mensajeExitoContrasenaModal = $"La nueva contraseña generada es: {nueva} . Se aplicará al guardar los cambios del usuario.";
+                mensajeExitoContrasenaModal = $"La nueva contraseña generada es: {nueva} .";
                 mostrarExitoContrasenaModal = true;
             }
             mostrarErrorEditar = false;

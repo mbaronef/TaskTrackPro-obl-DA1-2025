@@ -1,5 +1,6 @@
 ﻿using DTOs;
 using Servicios.Gestores.Interfaces;
+using Servicios.Utilidades;
 
 namespace Controladores;
 
@@ -52,9 +53,14 @@ public class ControladorUsuarios
         _gestorUsuarios.ReiniciarContrasena(solicitanteDTO, idUsuarioObjetivo);
     }
     
-    public void AutogenerarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
+    public string AutogenerarContrasenaValida()
     {
-        _gestorUsuarios.AutogenerarContrasena(solicitanteDTO, idUsuarioObjetivo);
+        return _gestorUsuarios.AutogenerarContrasenaValida();
+    }
+    
+    public void AutogenerarYAsignarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
+    {
+        _gestorUsuarios.AutogenerarYAsignarContrasena(solicitanteDTO, idUsuarioObjetivo);
     }
     
     public void ModificarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo, string nuevaPass)
@@ -81,5 +87,4 @@ public class ControladorUsuarios
     {
         _gestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(idUsuario);
     }
-
 }
