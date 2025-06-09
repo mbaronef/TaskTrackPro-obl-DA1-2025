@@ -1,4 +1,3 @@
-using Dominio;
 using DTOs;
 using Servicios.Gestores.Interfaces;
 
@@ -68,21 +67,11 @@ public class ControladorProyectos
         return _gestorProyectos.ObtenerProyectosPorUsuario(idUsuario);
     }
 
-    public Proyecto ObtenerProyectoDelAdministrador(int idAdministrador)
-    {
-        return _gestorProyectos.ObtenerProyectoDelAdministrador(idAdministrador);
-    }
-
     public void VerificarUsuarioNoTieneTareasAsignadas(int idProyecto, int idMiembro)
     {
         _gestorProyectos.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idMiembro);
     }
-
-    public void NotificarAdministradoresDeProyectos(List<Proyecto> proyectos, string mensaje)
-    {
-        _gestorProyectos.NotificarAdministradoresDeProyectos(proyectos, mensaje);
-    }
-
+    
     public void CalcularCaminoCritico(ProyectoDTO proyecto)
     {
         _gestorProyectos.CalcularCaminoCritico(proyecto);
@@ -97,9 +86,5 @@ public class ControladorProyectos
     {
         return _gestorProyectos.EsMiembroDeProyecto(idUsuario, idProyecto);
     }
-
-    public Proyecto ObtenerProyectoDominioPorId(int id)
-    {
-        return _gestorProyectos.ObtenerProyectoDominioPorId(id);
-    }
+    
 }

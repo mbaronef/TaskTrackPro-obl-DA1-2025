@@ -12,14 +12,15 @@ namespace Servicios.Gestores;
 
 public class GestorTareas : IGestorTareas
 {
-    private GestorProyectos _gestorProyectos;
     private static int _cantidadTareas;
+    
+    private readonly IGestorProyectos _gestorProyectos;
     private IRepositorioUsuarios _repositorioUsuarios;
     private IRepositorio<Recurso> _repositorioRecursos;
     private readonly INotificador _notificador;
     private readonly ICalculadorCaminoCritico _caminoCritico;
 
-    public GestorTareas(GestorProyectos gestorProyectos, IRepositorioUsuarios repositorioUsuarios, IRepositorio<Recurso> repositorioRecursos,
+    public GestorTareas(IGestorProyectos gestorProyectos, IRepositorioUsuarios repositorioUsuarios, IRepositorio<Recurso> repositorioRecursos,
         INotificador notificador, ICalculadorCaminoCritico caminoCritico)
     {
         _gestorProyectos = gestorProyectos;
@@ -44,15 +45,16 @@ public class GestorTareas : IGestorTareas
         proyecto.AgregarTarea(nuevaTarea);
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
+        
         _notificador.NotificarMuchos(proyecto.Miembros,
             MensajesNotificacion.TareaAgregada(nuevaTarea.Id, proyecto.Nombre));
+        
         nuevaTareaDTO.Id = nuevaTarea.Id;
     }
 
     public void EliminarTareaDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idTareaAEliminar)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         ValidarTareaNoTieneSucesora(proyecto, idTareaAEliminar);
@@ -75,6 +77,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        
         tarea.ModificarTitulo(nuevoTitulo);
         NotificarCambio("título", idTarea, idProyecto);
     }
@@ -84,6 +87,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        
         tarea.ModificarDescripcion(nuevaDescripcion);
         NotificarCambio("descripción", idTarea, idProyecto);
     }
@@ -92,6 +96,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        
         tarea.ModificarDuracion(nuevaDuracion);
 
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
@@ -104,6 +109,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
@@ -117,8 +123,8 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         EstadoTarea nuevoEstado = (EstadoTarea)nuevoEstadoDTO;
-
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
 
@@ -126,6 +132,7 @@ public class GestorTareas : IGestorTareas
         tarea.CambiarEstado(nuevoEstado);
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
+        
         _notificador.NotificarMuchos(proyecto.Miembros,
             MensajesNotificacion.EstadoTareaModificado(idTarea, proyecto.Nombre, nuevoEstado));
 
@@ -139,12 +146,14 @@ public class GestorTareas : IGestorTareas
         string tipoDependencia)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        
         Tarea tareaDependencia = ObtenerTareaDominioPorId(idProyecto, idTareaDependencia);
         Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
+        
         tarea.AgregarDependencia(dependencia);
+        
         try
         {
             _caminoCritico.CalcularCaminoCritico(proyecto);
@@ -165,8 +174,11 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        
         tarea.EliminarDependencia(idTareaDependencia);
+        
         _caminoCritico.CalcularCaminoCritico(proyecto);
+        
         _notificador.NotificarMuchos(proyecto.Miembros,
             MensajesNotificacion.DependenciaEliminada(idTareaDependencia, idTarea, proyecto.Nombre));
     }
@@ -175,12 +187,13 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Usuario nuevoMiembro = ObtenerUsuarioPorDTO(nuevoMiembroDTO);
-
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(nuevoMiembro.Id, proyecto);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.AsignarUsuario(nuevoMiembro);
+        
         NotificarAgregar($"miembro {nuevoMiembro.ToString()}", idTarea, idProyecto);
     }
 
@@ -188,12 +201,13 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Usuario miembro = ObtenerUsuarioPorDTO(miembroDTO);
-
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.EliminarUsuario(miembro.Id);
+        
         NotificarEliminar($"miembro {miembro.ToString()}", idTarea, idProyecto);
     }
 
@@ -206,6 +220,7 @@ public class GestorTareas : IGestorTareas
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.AgregarRecurso(nuevoRecurso);
+        
         NotificarAgregar($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
     }
 
@@ -219,6 +234,7 @@ public class GestorTareas : IGestorTareas
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.EliminarRecurso(recurso.Id);
+        
         NotificarEliminar($"recurso {recurso.Nombre}", idTarea, idProyecto);
     }
 
@@ -233,16 +249,22 @@ public class GestorTareas : IGestorTareas
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
+
         if (tarea == null)
+        {
             throw new ExcepcionTarea(MensajesErrorServicios.TareaNoExistente);
+        }
+
         return tarea;
     }
 
     private Proyecto ObtenerProyectoValidandoAdmin(int idProyecto, Usuario solicitante)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        
         PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        
         return proyecto;
     }
 
@@ -276,14 +298,18 @@ public class GestorTareas : IGestorTareas
     private void VerificarEstadoEditablePorUsuario(EstadoTarea estado)
     {
         if (estado != EstadoTarea.EnProceso && estado != EstadoTarea.Completada)
+        {
             throw new ExcepcionTarea(MensajesErrorServicios.EstadoNoEditable);
+        }
     }
 
     private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
     {
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         if (!tarea.RecursosNecesarios.Contains(recurso))
+        {
             throw new ExcepcionTarea(MensajesErrorServicios.RecursoNoAsignado);
+        }
     }
 
     private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
@@ -309,7 +335,8 @@ public class GestorTareas : IGestorTareas
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
     {
-        var usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
+        Usuario usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
+        
         if (usuario == null)
         {
             throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);
@@ -320,7 +347,7 @@ public class GestorTareas : IGestorTareas
     
     private Recurso ObtenerRecursoPorDTO(RecursoDTO recursoDTO)
     {
-        var recurso = _repositorioRecursos.ObtenerPorId(recursoDTO.Id);
+        Recurso recurso = _repositorioRecursos.ObtenerPorId(recursoDTO.Id);
         if (recurso == null)
         {
             throw new ExcepcionRecurso(MensajesErrorServicios.RecursoNoEncontrado);
@@ -328,6 +355,4 @@ public class GestorTareas : IGestorTareas
 
         return recurso;
     }
-    
-    
 }

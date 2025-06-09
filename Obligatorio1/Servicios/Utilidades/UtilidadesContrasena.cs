@@ -16,7 +16,7 @@ public static class UtilidadesContrasena
     public static string ValidarYEncriptarContrasena(string contrasena)
     {
         ValidarFormatoContrasena(contrasena);
-        return BCrypt.Net.BCrypt.HashPassword(contrasena); //Encripta la contraseña utilizando el algoritmo BCrypt
+        return BCrypt.Net.BCrypt.HashPassword(contrasena);
     }
 
     public static string AutogenerarContrasenaValida()
@@ -40,9 +40,10 @@ public static class UtilidadesContrasena
         contrasenaAutogenerada.Append(GenerarCaracterAleatorio(numeros, generadorDeNumerosAleatorio));
         contrasenaAutogenerada.Append(GenerarCaracterAleatorio(simbolos, generadorDeNumerosAleatorio));
 
-        while (contrasenaAutogenerada.Length < largo)
+        while (contrasenaAutogenerada.Length < largo){
             contrasenaAutogenerada.Append(GenerarCaracterAleatorio(todosLosCaracteres,
-                generadorDeNumerosAleatorio)); // agrega a la contraseña caracteres random hasta cumplir longitud
+                generadorDeNumerosAleatorio));
+        }
         return MezclarCaracteres(contrasenaAutogenerada.ToString(), generadorDeNumerosAleatorio);
     }
 
@@ -100,7 +101,7 @@ public static class UtilidadesContrasena
     private static int GenerarNumeroAleatorio(int min, int max, RandomNumberGenerator generadorDeNumerosAleatorio)
     {
         byte[]
-            buffer = new byte[sizeof(uint)]; // uint: entero de 32 bits sin signo. En el buffer se almacena un número aleatorio.
+            buffer = new byte[sizeof(uint)]; 
         generadorDeNumerosAleatorio.GetBytes(buffer); // llena el buffer con números aleatorios
         uint numero = BitConverter.ToUInt32(buffer, 0); // se convierte el buffer en número de tipo uint
         // asegurar que el número esté en el rango
@@ -118,14 +119,14 @@ public static class UtilidadesContrasena
     {
         char[]
             array = input
-                .ToCharArray(); // Convierte la cadena en un array de caracteres para poder recorrerla char a char
+                .ToCharArray();
         for (int i = array.Length - 1; i > 0; i--)
         {
-            //shuffle
+            // shuffle
             int j = GenerarNumeroAleatorio(0, i, generadorDeNumerosAleatorio);
             (array[i], array[j]) = (array[j], array[i]);
         }
 
-        return new string(array); // Convierte el array de nuevo a una cadena
+        return new string(array);
     }
 }

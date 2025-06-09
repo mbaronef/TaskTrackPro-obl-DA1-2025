@@ -31,6 +31,7 @@ public class Tarea
         ValidarIntNoNegativoNiCero(duracionEnDias, MensajesErrorDominio.DuracionTareaInvalida);
         ValidarStringNoVacioNiNull(descripcion, MensajesErrorDominio.DescripcionVacia);
         ValidarFechaInicio(fechaInicioMasTemprana);
+        
         Titulo = titulo;
         Descripcion = descripcion;
         DuracionEnDias = duracionEnDias;
@@ -39,13 +40,16 @@ public class Tarea
         UsuariosAsignados = new List<Usuario>();
         RecursosNecesarios = new List<Recurso>();
         Dependencias = new List<Dependencia>();
+        
         CalcularFechaFinMasTemprana();
     }
 
     public void CambiarEstado(EstadoTarea nuevoEstado)
     {
         ValidarTransicionInvalida(Estado, nuevoEstado);
+        
         Estado = nuevoEstado;
+        
         if (nuevoEstado == EstadoTarea.EnProceso)
         {
             ModificarFechaInicioMasTemprana(DateTime.Today);
@@ -56,6 +60,7 @@ public class Tarea
             FechaDeEjecucion = DateTime.Today;
             FechaFinMasTemprana = DateTime.Today;
             DuracionEnDias = (int)(FechaFinMasTemprana - FechaInicioMasTemprana).TotalDays + 1;
+            Holgura = 0;
         }
     }
 
@@ -63,13 +68,14 @@ public class Tarea
     {
         ValidarObjetoNoNull(usuario, MensajesErrorDominio.UsuarioNullEnAsignacion);
         VerificarUsuarioNoEstaAsignado(usuario);
+        
         UsuariosAsignados.Add(usuario);
     }
 
     public void EliminarUsuario(int idUsuario)
     {
         VerificarMiembrosNoVacia();
-        Usuario usuarioAEliminar = BuscarUsuarioPorId(idUsuario);
+        Usuario usuarioAEliminar = BuscarMiembroPorId(idUsuario);
         ValidarObjetoNoNull(usuarioAEliminar, MensajesErrorDominio.UsuarioNoAsignado);
         UsuariosAsignados.Remove(usuarioAEliminar);
     }
@@ -78,14 +84,16 @@ public class Tarea
     {
         ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullEnTarea);
         VerificarRecursoNoEstaAgregado(recurso);
+        
         RecursosNecesarios.Add(recurso);
         recurso.IncrementarCantidadDeTareasUsandolo();
     }
 
     public void EliminarRecurso(int idRecurso)
     {
-        Recurso recursoAEliminar = BuscarRecursoPorId(idRecurso);
+        Recurso recursoAEliminar = BuscarRecursoNecesarioPorId(idRecurso);
         ValidarObjetoNoNull(recursoAEliminar, MensajesErrorDominio.RecursoNoNecesario);
+
         recursoAEliminar.DecrementarCantidadDeTareasUsandolo();
         RecursosNecesarios.Remove(recursoAEliminar);
     }
@@ -94,6 +102,7 @@ public class Tarea
     {
         ValidarObjetoNoNull(dependencia, MensajesErrorDominio.DependenciaNullEnTarea);
         VerificarDependenciaNoEstaAgregada(dependencia);
+        
         Dependencias.Add(dependencia);
         ActualizarEstadoBloqueadaOPendiente();
     }
@@ -102,6 +111,7 @@ public class Tarea
     {
         Dependencia dependenciaAEliminar = BuscarDependenciaPorIdDeTarea(idTarea);
         ValidarObjetoNoNull(dependenciaAEliminar, MensajesErrorDominio.DependenciaNoExisteEnTarea);
+        
         Dependencias.Remove(dependenciaAEliminar);
         ActualizarEstadoBloqueadaOPendiente();
     }
@@ -170,13 +180,17 @@ public class Tarea
     private void VerificarFechaNoMenorAHoy(DateTime fechaNueva)
     {
         if (fechaNueva < DateTime.Now.Date)
+        {
             throw new ExcepcionDominio(MensajesErrorDominio.FechaTareaInvalida);
+        }
     }
 
     private void DuracionNoMenorACero(int duracion)
     {
         if (duracion <= 0)
+        {
             throw new ExcepcionDominio(MensajesErrorDominio.DuracionTareaInvalida);
+        }
     }
 
     private void VerificarMiembrosNoVacia()
@@ -230,27 +244,33 @@ public class Tarea
     private void VerificarUsuarioNoEstaAsignado(Usuario usuario)
     {
         if (UsuariosAsignados.Contains(usuario))
+        {
             throw new ExcepcionDominio(MensajesErrorDominio.UsuarioYaAgregado);
+        }
     }
 
     private void VerificarRecursoNoEstaAgregado(Recurso recurso)
     {
         if (RecursosNecesarios.Contains(recurso))
+        {
             throw new ExcepcionDominio(MensajesErrorDominio.RecursoYaAgregado);
+        }
     }
 
     private void VerificarDependenciaNoEstaAgregada(Dependencia dependencia)
     {
         if (Dependencias.Contains(dependencia))
+        {
             throw new ExcepcionDominio(MensajesErrorDominio.DependenciaYaAgregada);
+        }
     }
 
-    private Usuario BuscarUsuarioPorId(int id)
+    private Usuario BuscarMiembroPorId(int id)
     {
         return UsuariosAsignados.FirstOrDefault(u => u.Id == id);
     }
 
-    private Recurso BuscarRecursoPorId(int id)
+    private Recurso BuscarRecursoNecesarioPorId(int id)
     {
         return RecursosNecesarios.FirstOrDefault(r => r.Id == id);
     }
@@ -262,7 +282,7 @@ public class Tarea
 
     private void LiberarRecursos()
     {
-        foreach (var recurso in RecursosNecesarios)
+        foreach (Recurso recurso in RecursosNecesarios)
         {
             recurso.DecrementarCantidadDeTareasUsandolo();
         }
@@ -274,6 +294,7 @@ public class Tarea
             Dependencias.Where(d => d.Tipo == "FS").All(d => d.Tarea.Estado == EstadoTarea.Completada);
         bool dependenciasSSEnProcesoOCompletadas = Dependencias.Where(d => d.Tipo == "SS")
             .All(d => d.Tarea.Estado == EstadoTarea.EnProceso || d.Tarea.Estado == EstadoTarea.Completada);
+        
         return dependenciasFSCompletas && dependenciasSSEnProcesoOCompletadas;
     }
 

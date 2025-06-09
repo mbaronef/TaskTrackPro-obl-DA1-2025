@@ -12,8 +12,8 @@ namespace Servicios.Gestores;
 
 public class GestorProyectos : IGestorProyectos
 {
-    private IRepositorio<Proyecto> _proyectos;
-    private IRepositorioUsuarios _repositorioUsuarios;
+    private readonly IRepositorio<Proyecto> _proyectos;
+    private readonly IRepositorioUsuarios _repositorioUsuarios;
     private readonly INotificador _notificador;
     private readonly ICalculadorCaminoCritico _caminoCritico;
 
@@ -29,19 +29,21 @@ public class GestorProyectos : IGestorProyectos
     public void CrearProyecto(ProyectoDTO proyectoDTO, UsuarioDTO solicitanteDTO)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        
         PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
-
-        Proyecto proyecto = proyectoDTO.AEntidad(solicitante);
 
         PermisosUsuarios.VerificarUsuarioNoAdministraOtroProyecto(solicitante);
 
-        VerificarNombreNoRepetido(proyecto.Nombre);
+        VerificarNombreNoRepetido(proyectoDTO.Nombre);
+        
+        Proyecto proyecto = proyectoDTO.AEntidad(solicitante);
 
         _proyectos.Agregar(proyecto);
 
         solicitante.EstaAdministrandoUnProyecto = true;
 
         _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.ProyectoCreado(proyecto.Nombre));
+        
         proyectoDTO.Id = proyecto.Id;
     }
 
@@ -54,7 +56,9 @@ public class GestorProyectos : IGestorProyectos
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
 
         solicitante.EstaAdministrandoUnProyecto = false;
+        
         _proyectos.Eliminar(proyecto.Id);
+        
         foreach (Usuario miembro in proyecto.Miembros)
         {
             miembro.CantidadProyectosAsignados--;

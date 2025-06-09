@@ -10,7 +10,7 @@ public static class PermisosUsuarios
     {
         if (!usuario.EsAdministradorSistema)
         {
-            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoAdminSistema);
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoAdminSistema(accion));
         }
     }
 
@@ -31,13 +31,7 @@ public static class PermisosUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoMiembroDelProyecto);
         }
     }
-
-    private static Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
-    {
-        Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
-        return miembro;
-    }
-
+    
     public static void VerificarUsuarioNoAdministraOtroProyecto(Usuario usuario)
     {
         if (usuario.EstaAdministrandoUnProyecto)
@@ -92,7 +86,14 @@ public static class PermisosUsuarios
     {
         if (usuario.CantidadProyectosAsignados > 0)
         {
-            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoMiembroDelProyecto);
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioMiembroDeProyecto);
         }
     }
+    
+    private static Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
+    {
+        Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
+        return miembro;
+    }
+
 }

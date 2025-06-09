@@ -210,21 +210,6 @@ public class ControladorProyectosTests
     }
 
     [TestMethod]
-    public void ObtenerProyectoDelAdministrador_LlamaCorrectamenteAGestorYDevuelveProyecto()
-    {
-        int adminId = 0;
-        Proyecto proyectoEsperado = CrearProyectoDominio();
-
-        _mockGestorProyectos.Setup(g => g.ObtenerProyectoDelAdministrador(adminId)).Returns(proyectoEsperado);
-
-        Proyecto resultado = _controladorProyectos.ObtenerProyectoDelAdministrador(adminId);
-
-        Assert.AreEqual(adminId, resultado.Id);
-        Assert.AreEqual("P1", resultado.Nombre);
-        _mockGestorProyectos.Verify(g => g.ObtenerProyectoDelAdministrador(adminId), Times.Once);
-    }
-
-    [TestMethod]
     public void VerificarUsuarioNoTieneTareasAsignadas_LlamaCorrectamenteAGestor()
     {
         int idProyecto = 1;
@@ -235,21 +220,6 @@ public class ControladorProyectosTests
         _controladorProyectos.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idUsuario);
 
         _mockGestorProyectos.Verify(g => g.VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idUsuario), Times.Once);
-    }
-
-    [TestMethod]
-    public void NotificarAdministradoresDeProyectos_LlamaCorrectamenteAGestor()
-    {
-        Usuario admin = CrearUsuario(99, "otroadmin@mail.com");
-        Proyecto proyecto = CrearProyectoDominio(admin: admin);
-        List<Proyecto> proyectos = new List<Proyecto> { proyecto };
-        string mensaje = "Mensaje test";
-
-        _mockGestorProyectos.Setup(g => g.NotificarAdministradoresDeProyectos(proyectos, mensaje));
-
-        _controladorProyectos.NotificarAdministradoresDeProyectos(proyectos, mensaje);
-
-        _mockGestorProyectos.Verify(g => g.NotificarAdministradoresDeProyectos(proyectos, mensaje), Times.Once);
     }
 
     [TestMethod]
@@ -290,19 +260,5 @@ public class ControladorProyectosTests
 
         Assert.IsTrue(resultado);
         _mockGestorProyectos.Verify(g => g.EsMiembroDeProyecto(idUsuario, idProyecto), Times.Once);
-    }
-
-    [TestMethod]
-    public void ObtenerProyectoDominioPorId_LlamaCorrectamenteAGestorYDevuelveProyecto()
-    {
-        int idProyecto = 5;
-        Proyecto proyectoEsperado = CrearProyectoDominio();
-
-        _mockGestorProyectos.Setup(g => g.ObtenerProyectoDominioPorId(idProyecto)).Returns(proyectoEsperado);
-
-        Proyecto resultado = _controladorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-
-        Assert.AreEqual("P1", resultado.Nombre);
-        _mockGestorProyectos.Verify(g => g.ObtenerProyectoDominioPorId(idProyecto), Times.Once);
     }
 }

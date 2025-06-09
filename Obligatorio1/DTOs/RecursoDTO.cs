@@ -16,7 +16,7 @@ public class RecursoDTO
     [Required(ErrorMessage = "La descripción es obligatoria.")]
     public string Descripcion { get; set; }
 
-    //public ProyectoDTO ProyectoAsociado { get; set; }
+    public ProyectoDTO ProyectoAsociado { get; set; }
     public int? IdProyectoAsociado { get; set; }
 
     public int CantidadDeTareasUsandolo { get; set; } = 0;
@@ -42,9 +42,6 @@ public class RecursoDTO
             Tipo = recurso.Tipo,
             Descripcion = recurso.Descripcion,
             IdProyectoAsociado = recurso.ProyectoAsociado?.Id
-            //ProyectoAsociado = recurso.ProyectoAsociado != null
-            //    ? ProyectoDTO.DesdeEntidad(recurso.ProyectoAsociado)
-            //    : null
         };
     }
 }

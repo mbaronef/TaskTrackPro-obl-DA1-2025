@@ -176,6 +176,7 @@ public class TareaTests
         Assert.AreEqual(DateTime.Today, tarea.FechaDeEjecucion);
         Assert.AreEqual(DateTime.Today, tarea.FechaFinMasTemprana);
         Assert.AreEqual(1, tarea.DuracionEnDias);
+        Assert.AreEqual(0, tarea.Holgura);
     }
 
     [TestMethod]
