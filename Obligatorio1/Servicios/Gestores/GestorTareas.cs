@@ -12,14 +12,14 @@ namespace Servicios.Gestores;
 
 public class GestorTareas : IGestorTareas
 {
-    private GestorProyectos _gestorProyectos;
+    private IGestorProyectos _gestorProyectos;
     private static int _cantidadTareas;
     private IRepositorioUsuarios _repositorioUsuarios;
     private IRepositorio<Recurso> _repositorioRecursos;
     private readonly INotificador _notificador;
     private readonly ICalculadorCaminoCritico _caminoCritico;
 
-    public GestorTareas(GestorProyectos gestorProyectos, IRepositorioUsuarios repositorioUsuarios, IRepositorio<Recurso> repositorioRecursos,
+    public GestorTareas(IGestorProyectos gestorProyectos, IRepositorioUsuarios repositorioUsuarios, IRepositorio<Recurso> repositorioRecursos,
         INotificador notificador, ICalculadorCaminoCritico caminoCritico)
     {
         _gestorProyectos = gestorProyectos;

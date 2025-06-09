@@ -904,6 +904,20 @@ public class GestorTareasTests
 
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    public void AgregarRecursoATarea_LanzaExcepcionSiRecursoNoExiste()
+    {
+        TareaDTO tarea = CrearTarea();
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        
+        _gestorTareas.AgregarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+    }
 
     [TestMethod]
     public void AdminDeProyectoPuedeEliminarRecursoNecesarioDeTarea()
