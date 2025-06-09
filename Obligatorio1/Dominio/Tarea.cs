@@ -74,7 +74,7 @@ public class Tarea
         UsuariosAsignados.Remove(usuarioAEliminar);
     }
 
-    public void AgregarRecurso(Recurso recurso)
+    public void AsignarRecurso(Recurso recurso)
     {
         ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullEnTarea);
         VerificarRecursoNoEstaAgregado(recurso);

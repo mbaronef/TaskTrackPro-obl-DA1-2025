@@ -234,11 +234,11 @@ public class ControladorTareasTests
         int idProyecto = 1;
         RecursoDTO nuevoRecurso = new RecursoDTO { Id = 1 };
 
-        _mockGestorTareas.Setup(g => g.AgregarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso));
+        _mockGestorTareas.Setup(g => g.AsignarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso));
 
         _controladorTareas.AgregarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso);
 
-        _mockGestorTareas.Verify(g => g.AgregarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso), Times.Once);
+        _mockGestorTareas.Verify(g => g.AsignarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso), Times.Once);
     }
 
     [TestMethod]

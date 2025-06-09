@@ -169,7 +169,7 @@ public class TareaTests
     {
         Recurso recurso = CrearRecursoValido();
         Tarea tarea = CrearTareaValida();
-        tarea.AgregarRecurso(recurso);
+        tarea.AsignarRecurso(recurso);
         tarea.CambiarEstado(EstadoTarea.EnProceso);
         tarea.CambiarEstado(EstadoTarea.Completada);
         Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
@@ -184,7 +184,7 @@ public class TareaTests
     {
         Recurso recurso = CrearRecursoValido();
         Tarea tarea = CrearTareaValida();
-        tarea.AgregarRecurso(recurso);
+        tarea.AsignarRecurso(recurso);
         tarea.CambiarEstado(EstadoTarea.Completada);
     }
 
@@ -322,7 +322,7 @@ public class TareaTests
     {
         Tarea tarea = CrearTareaValida();
         Recurso recurso = CrearRecursoValido();
-        tarea.AgregarRecurso(recurso);
+        tarea.AsignarRecurso(recurso);
         Assert.IsTrue(tarea.RecursosNecesarios.Contains(recurso));
         Assert.AreEqual(1, tarea.RecursosNecesarios.Count);
     }
@@ -333,7 +333,7 @@ public class TareaTests
     {
         Tarea tarea = CrearTareaValida();
         Recurso recurso = null;
-        tarea.AgregarRecurso(recurso);
+        tarea.AsignarRecurso(recurso);
     }
 
     [TestMethod]
@@ -342,8 +342,8 @@ public class TareaTests
     {
         Recurso recurso = CrearRecursoValido();
         Tarea tarea = CrearTareaValida();
-        tarea.AgregarRecurso(recurso);
-        tarea.AgregarRecurso(recurso);
+        tarea.AsignarRecurso(recurso);
+        tarea.AsignarRecurso(recurso);
     }
 
     [TestMethod]
@@ -352,7 +352,7 @@ public class TareaTests
         Recurso recurso = CrearRecursoValido();
         recurso.Id = 1;
         Tarea tarea = CrearTareaValida();
-        tarea.AgregarRecurso(recurso);
+        tarea.AsignarRecurso(recurso);
         tarea.EliminarRecurso(1);
         Assert.IsFalse(tarea.RecursosNecesarios.Any(t => t.Id == 1));
     }
@@ -364,7 +364,7 @@ public class TareaTests
         Recurso recurso = CrearRecursoValido();
         recurso.Id = 1;
         Tarea tarea = CrearTareaValida();
-        tarea.AgregarRecurso(recurso);
+        tarea.AsignarRecurso(recurso);
         tarea.EliminarRecurso(3);
     }
     
@@ -374,7 +374,7 @@ public class TareaTests
         Recurso recurso = CrearRecursoValido();
         recurso.Id = 1;
         Tarea tarea = CrearTareaValida();
-        tarea.AgregarRecurso(recurso);
+        tarea.AsignarRecurso(recurso);
         Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
 
         tarea.EliminarRecurso(recurso.Id);
@@ -491,8 +491,8 @@ public class TareaTests
         Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion");
         necesario2.Id = 2;
         Tarea tarea = CrearTareaValida();
-        tarea.AgregarRecurso(necesario);
-        tarea.AgregarRecurso(necesario2);
+        tarea.AsignarRecurso(necesario);
+        tarea.AsignarRecurso(necesario2);
         List<Recurso> lista = tarea.RecursosNecesarios;
         Assert.AreEqual(2, lista.Count);
         Assert.IsTrue(lista.Contains(necesario));

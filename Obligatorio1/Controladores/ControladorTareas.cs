@@ -79,7 +79,7 @@ public class ControladorTareas
 
     public void AgregarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO)
     {
-        _gestorTareas.AgregarRecursoATarea(solicitanteDTO, idTarea, idProyecto, nuevoRecursoDTO);
+        _gestorTareas.AsignarRecursoATarea(solicitanteDTO, idTarea, idProyecto, nuevoRecursoDTO);
     }
 
     public void EliminarRecursoDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO)

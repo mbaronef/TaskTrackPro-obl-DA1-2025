@@ -197,7 +197,7 @@ public class GestorTareas : IGestorTareas
         NotificarEliminar($"miembro {miembro.ToString()}", idTarea, idProyecto);
     }
 
-    public void AgregarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO)
+    public void AsignarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso nuevoRecurso = ObtenerRecursoPorDTO(nuevoRecursoDTO);
@@ -205,7 +205,7 @@ public class GestorTareas : IGestorTareas
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
-        tarea.AgregarRecurso(nuevoRecurso);
+        tarea.AsignarRecurso(nuevoRecurso);
         NotificarAgregar($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
     }
 

@@ -518,7 +518,7 @@ public class GestorRecursosTests
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         Tarea tarea = CrearTarea();
-        tarea.AgregarRecurso(recurso.AEntidad());
+        tarea.AsignarRecurso(recurso.AEntidad());
         proyecto.AgregarTarea(tarea);
 
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
@@ -561,7 +561,7 @@ public class GestorRecursosTests
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         Tarea tarea = CrearTarea();
-        tarea.AgregarRecurso(recurso.AEntidad());
+        tarea.AsignarRecurso(recurso.AEntidad());
         proyecto.AgregarTarea(tarea);
 
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
@@ -604,7 +604,7 @@ public class GestorRecursosTests
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
         Tarea tarea = CrearTarea();
-        tarea.AgregarRecurso(recurso.AEntidad());
+        tarea.AsignarRecurso(recurso.AEntidad());
         proyecto.AgregarTarea(tarea);
 
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Otra descripción");
