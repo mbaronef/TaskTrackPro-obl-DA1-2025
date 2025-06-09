@@ -12,7 +12,7 @@ window.dibujarGanttConApex = (selector, tareas) => {
                 x: t.titulo,
                 y: [new Date(t.fechaInicio).getTime(), new Date(t.fechaFin).getTime()],
                 fillColor: t.estado === 3
-                    ? 'rgba(94,255,69,0.57)' // verde
+                    ? 'rgb(113,216,94)' // verde
                     : t.holgura === 0
                         ? '#FF4560' // rojo si crítica
                         : '#0cd2fd', // azul por defecto
