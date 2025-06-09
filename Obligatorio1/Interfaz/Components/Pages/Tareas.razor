@@ -981,8 +981,19 @@ else
         try
         {
             RecursoDTO nuevoRecurso = ControladorRecursos.ObtenerRecursoPorId(recursoAsignacionDto.Id);
-            ControladorTareas.AgregarRecursoATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso);
-            mensaje = "Recurso agregado con éxito.";
+            try
+            {
+                ControladorTareas.AgregarRecursoATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso);
+                mensaje = "Recurso agregado con éxito.";
+            }
+            catch (ExcepcionTarea e)
+            {
+                mensaje = e.Message; // o un mensaje más amigable
+            }
+            catch (Exception e)
+            {
+                mensaje = "Error inesperado al agregar recurso.";
+            }
             // actualizaciones
             recursoAsignacionDto = new RecursoAsignacionDTO();
             proyecto = ControladorProyectos.ObtenerProyectoPorId(id);

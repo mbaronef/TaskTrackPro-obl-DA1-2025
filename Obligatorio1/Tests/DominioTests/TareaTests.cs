@@ -367,6 +367,21 @@ public class TareaTests
         tarea.AgregarRecurso(recurso);
         tarea.EliminarRecurso(3);
     }
+    
+    [TestMethod]
+    public void EliminarRecurso_DecrementaCantidadDeTareasUsandolo()
+    {
+        Recurso recurso = CrearRecursoValido();
+        recurso.Id = 1;
+        Tarea tarea = CrearTareaValida();
+        tarea.AgregarRecurso(recurso);
+        Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
+
+        tarea.EliminarRecurso(recurso.Id);
+
+        Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
+        Assert.IsFalse(tarea.RecursosNecesarios.Any(r => r.Id == recurso.Id));
+    }
 
     [TestMethod]
     public void ModificarTitulo_DeberiaActualizarElTitulo()

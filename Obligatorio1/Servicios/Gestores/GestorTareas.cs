@@ -200,7 +200,7 @@ public class GestorTareas : IGestorTareas
     public void AgregarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Recurso nuevoRecurso = nuevoRecursoDTO.AEntidad();
+        Recurso nuevoRecurso = ObtenerRecursoPorDTO(nuevoRecursoDTO);
 
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 

@@ -70,7 +70,7 @@ public class GestorRecursos : IGestorRecursos
         List<RecursoDTO> todosLosRecursos =
             _repositorioRecursos.ObtenerTodos().Select(RecursoDTO.DesdeEntidad).ToList();
         return todosLosRecursos
-            .Where(recurso => recurso.ProyectoAsociado != null && recurso.ProyectoAsociado.Id == idProyecto).ToList();
+            .Where(recurso => recurso.IdProyectoAsociado != null && recurso.IdProyectoAsociado == idProyecto).ToList();
     }
 
     public void ModificarNombreRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoNombre)

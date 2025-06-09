@@ -89,8 +89,8 @@ public class ControladorRecursosTests
         ProyectoDTO proyecto = new ProyectoDTO { Id = 3 };
         var listaEsperada = new List<RecursoDTO>
         {
-            new RecursoDTO { Id = 1, Nombre = "Recurso A", ProyectoAsociado = proyecto },
-            new RecursoDTO { Id = 2, Nombre = "Recurso B", ProyectoAsociado = proyecto }
+            new RecursoDTO { Id = 1, Nombre = "Recurso A", IdProyectoAsociado = proyecto.Id },
+            new RecursoDTO { Id = 2, Nombre = "Recurso B", IdProyectoAsociado = proyecto.Id }
         };
 
         _mockGestorRecursos.Setup(g => g.ObtenerRecursosExclusivos(3)).Returns(listaEsperada);
@@ -151,7 +151,7 @@ public class ControladorRecursosTests
     {
         int idRecurso = 1;
         ProyectoDTO proyecto = new ProyectoDTO { Id = 2 };
-        RecursoDTO recursoEsperado = new RecursoDTO { Id = idRecurso, ProyectoAsociado = proyecto };
+        RecursoDTO recursoEsperado = new RecursoDTO { Id = idRecurso, IdProyectoAsociado = proyecto.Id };
 
         _mockGestorRecursos.Setup(g => g.ObtenerRecursoExclusivoPorId(proyecto.Id, idRecurso)).Returns(recursoEsperado);
 

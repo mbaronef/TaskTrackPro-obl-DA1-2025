@@ -852,6 +852,7 @@ public class GestorTareasTests
     public void AdminDeProyectoPuedeAgregarRecursoATarea()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        _repositorioRecursos.Agregar(recurso); 
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
@@ -870,6 +871,7 @@ public class GestorTareasTests
     public void NoAdminNoPuedeAgregarRecursoATarea()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        _repositorioRecursos.Agregar(recurso); 
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
@@ -884,6 +886,7 @@ public class GestorTareasTests
     public void SeNotificaElAgregadoDeUnRecursoALosMiembrosDeLaTarea()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        _repositorioRecursos.Agregar(recurso); 
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 

@@ -86,6 +86,7 @@ public class Tarea
     {
         Recurso recursoAEliminar = BuscarRecursoPorId(idRecurso);
         ValidarObjetoNoNull(recursoAEliminar, MensajesErrorDominio.RecursoNoNecesario);
+        recursoAEliminar.DecrementarCantidadDeTareasUsandolo();
         RecursosNecesarios.Remove(recursoAEliminar);
     }
 
