@@ -62,8 +62,7 @@ public static class MensajesNotificacion
 
     public static string CampoTareaEliminado(string campo, int idTarea, string nombreProyecto) =>
         $"Se eliminó el {campo} de la tarea (id {idTarea}) del proyecto '{nombreProyecto}'.";
-
-
+    
     public static string ContrasenaReiniciada(string contrasena) =>
         $"Se reinició su contraseña. La nueva contraseña es {contrasena}";
 

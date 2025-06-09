@@ -2,18 +2,15 @@ namespace Excepciones.MensajesError;
 
 public static class MensajesErrorDominio
 {
-    // Usuario
     public const string NotificacionNoExiste = "No existe la notificación.";
     public const string AtributoVacio = "El atributo {0} no puede ser vacío.";
     public const string EdadMinima = "El usuario debe tener más de {0} años.";
     public const string EdadMaxima = "El usuario debe tener menos de {0} años.";
     public const string EmailInvalido = "El email tiene un formato inválido.";
 
-    // Dependencia
     public const string TipoDependenciaInvalido = "El tipo de dependencia debe ser 'FS' o 'SS'.";
     public const string TareaNula = "Una tarea no puede ser nula.";
 
-    // Proyecto
     public const string DescripcionMuyLarga = "La descripción no puede superar los {0} caracteres.";
     public const string TareaYaAgregada = "La tarea ya fue agregada al proyecto.";
 
@@ -47,17 +44,13 @@ public static class MensajesErrorDominio
     public const string MiembroNull = "No se puede agregar un miembro null.";
     public const string UsuarioNoEsMiembroDelProyecto = "El usuario no es miembro del proyecto.";
 
-
-    // Recurso
     public const string RecursoYaEsExclusivo = "El recurso ya es exclusivo de otro proyecto.";
 
     public const string CantidadTareasRecursoNegativa =
         "La cantidad de tareas usando este recurso no puede ser menor a cero.";
 
-    // Notificación
     public const string MensajeNotificacionVacio = "El mensaje de la notificación no puede estar vacío o null.";
 
-    // Tarea
     public const string FechaTareaInvalida = "La fecha no puede ser anterior a hoy.";
     public const string DuracionTareaInvalida = "La duración de la tarea debe ser mayor a cero días.";
     public const string UsuariosAsignadosVacio = "La lista de usuarios asignados está vacía o no está inicializada.";

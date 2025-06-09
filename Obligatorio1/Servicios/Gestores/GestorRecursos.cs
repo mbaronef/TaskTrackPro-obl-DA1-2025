@@ -11,14 +11,14 @@ namespace Servicios.Gestores;
 
 public class GestorRecursos : IGestorRecursos
 {
-    private IRepositorio<Recurso> _repositorioRecursos;
-    private GestorProyectos _gestorProyectos;
-    private IRepositorioUsuarios _repositorioUsuarios;
+    private readonly IRepositorio<Recurso> _repositorioRecursos;
+    private readonly IGestorProyectos _gestorProyectos;
+    private readonly IRepositorioUsuarios _repositorioUsuarios;
     private readonly INotificador _notificador;
 
     public GestorRecursos(
         IRepositorio<Recurso> repositorioRecursos,
-        GestorProyectos gestorProyectos,
+        IGestorProyectos gestorProyectos,
         IRepositorioUsuarios repositorioUsuarios, INotificador notificador)
     {
         _repositorioRecursos = repositorioRecursos;
@@ -31,7 +31,9 @@ public class GestorRecursos : IGestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = recursoDTO.AEntidad();
+        
         PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "agregar recursos");
+        
         if (solicitante.EstaAdministrandoUnProyecto && esExclusivo)
         {
             AsociarRecursoAProyectoQueAdministra(solicitante, recurso);
@@ -45,9 +47,11 @@ public class GestorRecursos : IGestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
+        
         PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "eliminar un recurso");
         VerificarRecursoEnUso(recurso);
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "eliminar");
+        
         _repositorioRecursos.Eliminar(recurso.Id);
         NotificarEliminacion(recurso);
     }
@@ -67,18 +71,19 @@ public class GestorRecursos : IGestorRecursos
 
     public List<RecursoDTO> ObtenerRecursosExclusivos(int idProyecto)
     {
-        List<RecursoDTO> todosLosRecursos =
-            _repositorioRecursos.ObtenerTodos().Select(RecursoDTO.DesdeEntidad).ToList();
-        return todosLosRecursos
-            .Where(recurso => recurso.IdProyectoAsociado != null && recurso.IdProyectoAsociado == idProyecto).ToList();
+        List<Recurso> recursosExclusivos =
+            _repositorioRecursos.ObtenerTodos().Where(recurso => recurso.EsExclusivo() && recurso.ProyectoAsociado.Id == idProyecto).ToList();
+        return recursosExclusivos.Select(RecursoDTO.DesdeEntidad).ToList();
     }
 
     public void ModificarNombreRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoNombre)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
+        
         PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el nombre de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el nombre de");
+        
         string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
         NotificarModificacion(recurso, nombreAnterior);
@@ -88,8 +93,10 @@ public class GestorRecursos : IGestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
+        
         PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar el tipo de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
+        
         recurso.ModificarTipo(nuevoTipo);
         NotificarModificacion(recurso, recurso.Nombre);
     }
@@ -98,9 +105,11 @@ public class GestorRecursos : IGestorRecursos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
+        
         PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante,
             "modificar la descripción de un recurso");
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
+        
         recurso.ModificarDescripcion(nuevaDescripcion);
         NotificarModificacion(recurso, recurso.Nombre);
     }
@@ -109,6 +118,7 @@ public class GestorRecursos : IGestorRecursos
     {
         List<RecursoDTO> recursosExclusivos = ObtenerRecursosExclusivos(idProyecto);
         RecursoDTO recurso = recursosExclusivos.FirstOrDefault(recurso => recurso.Id == idRecurso);
+        
         if (recurso == null)
         {
             throw new ExcepcionRecurso(MensajesErrorServicios.RecursoNoEncontrado);
@@ -120,6 +130,7 @@ public class GestorRecursos : IGestorRecursos
     private Recurso ObtenerRecursoDominioPorId(int idRecurso)
     {
         Recurso recurso = _repositorioRecursos.ObtenerPorId(idRecurso);
+        
         if (recurso == null)
         {
             throw new ExcepcionRecurso(MensajesErrorServicios.RecursoNoEncontrado);
@@ -156,6 +167,7 @@ public class GestorRecursos : IGestorRecursos
         }
 
         Proyecto proyectoQueAdministra = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
+        
         if (!recurso.EsExclusivo() || !recurso.ProyectoAsociado.Equals(proyectoQueAdministra))
         {
             throw new ExcepcionPermisos(
@@ -195,6 +207,7 @@ public class GestorRecursos : IGestorRecursos
     {
         List<Proyecto> proyectosQueUsanElRecurso = _gestorProyectos.ObtenerTodosDominio()
             .Where(proyecto => RecursosNecesariosPorProyecto(proyecto).Contains(recurso)).ToList();
+        
         _gestorProyectos.NotificarAdministradoresDeProyectos(proyectosQueUsanElRecurso, mensaje);
     }
 
@@ -205,7 +218,8 @@ public class GestorRecursos : IGestorRecursos
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
     {
-        var usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
+        Usuario usuario = _repositorioUsuarios.ObtenerPorId(usuarioDTO.Id);
+        
         if (usuario == null)
         {
             throw new ExcepcionUsuario(MensajesErrorServicios.UsuarioNoEncontrado);

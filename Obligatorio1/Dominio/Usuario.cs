@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.RegularExpressions;
 using Excepciones;
 using Excepciones.MensajesError;
@@ -18,11 +17,8 @@ public class Usuario
     public string Email { get; set; }
     public List<Notificacion> Notificaciones { get; private set; }
     public bool EsAdministradorSistema { get; set; } = false;
-
     public bool EsAdministradorProyecto { get; set; } = false;
-
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
-
     public int CantidadProyectosAsignados { get; set; } = 0;
 
     public Usuario()

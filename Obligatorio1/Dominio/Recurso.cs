@@ -12,11 +12,12 @@ public class Recurso
     public Proyecto? ProyectoAsociado { get; private set; } = null;
     public int CantidadDeTareasUsandolo { get; private set; } = 0;
 
-    public Recurso(string nombre, string tipo, string descripcion) // ctor. recursos no exclusivos
+    public Recurso(string nombre, string tipo, string descripcion)
     {
         ValidarAtributoNoVacio(nombre, "nombre");
         ValidarAtributoNoVacio(tipo, "tipo");
         ValidarAtributoNoVacio(descripcion, "descripcion");
+        
         Nombre = nombre;
         Tipo = tipo;
         Descripcion = descripcion;
@@ -42,11 +43,10 @@ public class Recurso
 
     public void AsociarAProyecto(Proyecto proyecto)
     {
-        if (ProyectoAsociado != null)
+        if (EsExclusivo())
         {
             throw new ExcepcionDominio(MensajesErrorDominio.RecursoYaEsExclusivo);
         }
-
         ProyectoAsociado = proyecto;
     }
 
@@ -58,8 +58,9 @@ public class Recurso
     public void DecrementarCantidadDeTareasUsandolo()
     {
         if (CantidadDeTareasUsandolo <= 0)
+        {
             throw new ExcepcionDominio(MensajesErrorDominio.CantidadTareasRecursoNegativa);
-
+        }
         CantidadDeTareasUsandolo--;
     }
 

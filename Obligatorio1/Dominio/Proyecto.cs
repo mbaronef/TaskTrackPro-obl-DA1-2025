@@ -12,9 +12,7 @@ public class Proyecto
     public List<Tarea> Tareas { get; }
     public Usuario Administrador { get; set; }
     public List<Usuario> Miembros { get; }
-
     public DateTime FechaInicio { get; set; } = DateTime.Today;
-
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MaxValue;
 
     public Proyecto(string nombre, string descripcion, DateTime fechaInicio, Usuario administrador,
