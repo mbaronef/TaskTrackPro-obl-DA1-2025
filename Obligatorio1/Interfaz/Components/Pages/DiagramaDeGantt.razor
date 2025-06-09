@@ -23,7 +23,7 @@ else
 @code {
     [Parameter] public int Id { get; set; }
     private ProyectoDTO proyecto;
-    private bool graficoDibujado = false;
+    //private bool graficoDibujado = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -44,21 +44,23 @@ else
             return; // Esperar hasta el segundo render
         }
 
-        if (proyecto != null && !graficoDibujado)
+        if (proyecto != null) //&& !graficoDibujado)
         {
             ControladorProyectos.CalcularCaminoCritico(proyecto);
             proyecto = ControladorProyectos.ObtenerProyectoPorId(proyecto.Id);
+            
             var tareas = proyecto.Tareas.Select(t => new
             {
                 titulo = t.Titulo,
                 fechaInicio = t.FechaInicioMasTemprana.ToString("yyyy-MM-dd"),
                 fechaFin = t.FechaFinMasTemprana.AddDays(1).ToString("yyyy-MM-dd"), // añadimos un día para representar que la tarea se completa hasta el final del día
                 fechaFinReal = t.FechaFinMasTemprana.ToString("yyyy-MM-dd"),
+                estado = t.Estado,
                 holgura = t.Holgura
             }).ToList();
 
             await JSRuntime.InvokeVoidAsync("dibujarGanttConApex", "#ganttDiagrama", tareas);
-            graficoDibujado = true;
+            //graficoDibujado = true;
         }
     }
 }
