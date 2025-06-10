@@ -14,9 +14,9 @@ public class Tarea
     public DateTime FechaDeEjecucion { get; private set; } = DateTime.MinValue;
     public EstadoTarea Estado { get; private set; } = EstadoTarea.Pendiente;
     public int Holgura { get; set; }
-    public List<Usuario> UsuariosAsignados { get; }
-    public List<Recurso> RecursosNecesarios { get; }
-    public List<Dependencia> Dependencias { get; }
+    public virtual ICollection<Usuario> UsuariosAsignados { get; }
+    public virtual ICollection<Recurso> RecursosNecesarios { get; }
+    public virtual ICollection<Dependencia> Dependencias { get; }
 
     public Tarea()
     {

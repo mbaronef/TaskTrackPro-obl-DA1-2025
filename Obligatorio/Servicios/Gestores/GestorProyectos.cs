@@ -42,7 +42,7 @@ public class GestorProyectos : IGestorProyectos
 
         solicitante.EstaAdministrandoUnProyecto = true;
 
-        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.ProyectoCreado(proyecto.Nombre));
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(), MensajesNotificacion.ProyectoCreado(proyecto.Nombre));
         
         proyectoDTO.Id = proyecto.Id;
     }
@@ -64,7 +64,7 @@ public class GestorProyectos : IGestorProyectos
             miembro.CantidadProyectosAsignados--;
         }
 
-        _notificador.NotificarMuchos(proyecto.Miembros, MensajesNotificacion.ProyectoEliminado(proyecto.Nombre));
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(), MensajesNotificacion.ProyectoEliminado(proyecto.Nombre));
     }
 
     public List<ProyectoDTO> ObtenerTodos()
@@ -98,7 +98,7 @@ public class GestorProyectos : IGestorProyectos
 
         proyecto.ModificarNombre(nuevoNombre);
 
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.NombreProyectoModificado(nombreAnterior, proyecto.Nombre));
     }
 
@@ -112,7 +112,7 @@ public class GestorProyectos : IGestorProyectos
 
         proyecto.ModificarDescripcion(descripcion);
 
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.DescripcionProyectoModificada(proyecto.Nombre, proyecto.Descripcion));
     }
 
@@ -128,7 +128,7 @@ public class GestorProyectos : IGestorProyectos
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
 
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.FechaInicioProyectoModificada(proyecto.Nombre, nuevaFecha));
     }
 
@@ -152,7 +152,7 @@ public class GestorProyectos : IGestorProyectos
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoUnProyecto = true;
 
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.AdministradorProyectoModificado(proyecto.Nombre, nuevoAdmin.ToString()));
     }
 
@@ -170,7 +170,7 @@ public class GestorProyectos : IGestorProyectos
 
         proyecto.AsignarMiembro(nuevoMiembro);
 
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.MiembroAgregado(proyecto.Nombre, nuevoMiembro.Id));
     }
 
@@ -190,7 +190,7 @@ public class GestorProyectos : IGestorProyectos
 
         proyecto.EliminarMiembro(idMiembroAEliminar);
 
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.MiembroEliminado(proyecto.Nombre, idMiembroAEliminar));
     }
 

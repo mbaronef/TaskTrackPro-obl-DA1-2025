@@ -46,7 +46,7 @@ public class GestorTareas : IGestorTareas
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
         
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.TareaAgregada(nuevaTarea.Id, proyecto.Nombre));
         
         nuevaTareaDTO.Id = nuevaTarea.Id;
@@ -64,7 +64,7 @@ public class GestorTareas : IGestorTareas
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
 
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.TareaEliminada(idTareaAEliminar, proyecto.Nombre));
     }
 
@@ -135,7 +135,7 @@ public class GestorTareas : IGestorTareas
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
         
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.EstadoTareaModificado(idTarea, proyecto.Nombre, nuevoEstado));
 
         if (nuevoEstado == EstadoTarea.Completada)
@@ -167,7 +167,7 @@ public class GestorTareas : IGestorTareas
             throw new ExcepcionTarea(MensajesErrorServicios.GeneraCiclos);
         }
 
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.DependenciaAgregada(tarea.Id, proyecto.Nombre, tipoDependencia, tareaDependencia.Id));
     }
 
@@ -182,7 +182,7 @@ public class GestorTareas : IGestorTareas
         
         _caminoCritico.CalcularCaminoCritico(proyecto);
         
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.DependenciaEliminada(idTareaDependencia, idTarea, proyecto.Nombre));
     }
 
@@ -278,21 +278,22 @@ public class GestorTareas : IGestorTareas
     private void NotificarCambio(string campo, int idTarea, int idProyecto)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.CampoTareaModificado(campo, idTarea, proyecto.Nombre));
     }
 
     private void NotificarEliminar(string campo, int idTarea, int idProyecto)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        _notificador.NotificarMuchos(proyecto.Miembros,
-            MensajesNotificacion.CampoTareaEliminado(campo, idTarea, proyecto.Nombre));
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
+
+    MensajesNotificacion.CampoTareaEliminado(campo, idTarea, proyecto.Nombre));
     }
 
     private void NotificarAgregar(string campo, int idTarea, int idProyecto)
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.CampoTareaAgregado(campo, idTarea, proyecto.Nombre));
     }
 
@@ -315,7 +316,7 @@ public class GestorTareas : IGestorTareas
 
     private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
     {
-        proyecto.Tareas.ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
+        proyecto.Tareas.ToList().ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
     }
 
     private void ValidarTareaNoTieneSucesora(Proyecto proyecto, int idTarea)
@@ -357,6 +358,4 @@ public class GestorTareas : IGestorTareas
 
         return recurso;
     }
-    
-    
 }

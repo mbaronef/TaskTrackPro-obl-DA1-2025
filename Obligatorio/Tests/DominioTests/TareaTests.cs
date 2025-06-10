@@ -478,7 +478,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.AsignarUsuario(usuario1);
         tarea.AsignarUsuario(usuario2);
-        List<Usuario> asignados = tarea.UsuariosAsignados;
+        List<Usuario> asignados = tarea.UsuariosAsignados.ToList();
         Assert.AreEqual(2, asignados.Count);
         Assert.IsTrue(asignados.Any(u => u.Id == usuario1.Id));
         Assert.IsTrue(asignados.Any(u => u.Id == usuario2.Id));
@@ -494,7 +494,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.AsignarRecurso(necesario);
         tarea.AsignarRecurso(necesario2);
-        List<Recurso> lista = tarea.RecursosNecesarios;
+        List<Recurso> lista = tarea.RecursosNecesarios.ToList();
         Assert.AreEqual(2, lista.Count);
         Assert.IsTrue(lista.Contains(necesario));
         Assert.IsTrue(lista.Contains(necesario2));
