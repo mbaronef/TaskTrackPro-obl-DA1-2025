@@ -3,52 +3,35 @@ using Controladores;
 using Dominio;
 using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
+using Microsoft.EntityFrameworkCore;
 using Repositorios;
 using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
 using Servicios.Gestores;
+using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 
 var builder = WebApplication.CreateBuilder(args);
 
-INotificador _notificador = new Notificador();
-ICalculadorCaminoCritico _calculadorCaminoCritico = new CaminoCritico();
-IRepositorioUsuarios repositorioUsuarios = new RepositorioUsuarios();
-IRepositorio<Proyecto> repositorioProyectos = new RepositorioProyectos();
-IRepositorio<Recurso> repositorioRecursos = new RepositorioRecursos();
+builder.Services.AddDbContextFactory<SqlContext>(opciones =>
+    opciones.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        providerOptions => providerOptions.EnableRetryOnFailure()));
 
-builder.Services.AddSingleton<INotificador, Notificador>();
-builder.Services.AddSingleton<ICalculadorCaminoCritico, CaminoCritico>();
+builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
+builder.Services.AddScoped<IRepositorio<Proyecto>, RepositorioProyectos>();
+builder.Services.AddScoped<IRepositorio<Recurso>, RepositorioRecursos>();
 
-GestorUsuarios gestorUsuarios = new GestorUsuarios(repositorioUsuarios, _notificador);
-GestorProyectos gestorProyectos =
-    new GestorProyectos(repositorioUsuarios, repositorioProyectos, _notificador, _calculadorCaminoCritico);
-GestorRecursos gestorRecursos =
-    new GestorRecursos(repositorioRecursos, gestorProyectos, repositorioUsuarios, _notificador);
-GestorTareas gestorTareas =
-    new GestorTareas(gestorProyectos, repositorioUsuarios, repositorioRecursos, _notificador, _calculadorCaminoCritico);
+builder.Services.AddScoped<IGestorUsuarios, GestorUsuarios>();
+builder.Services.AddScoped<IGestorProyectos, GestorProyectos>();
+builder.Services.AddScoped<IGestorRecursos, GestorRecursos>();
+builder.Services.AddScoped<IGestorTareas, GestorTareas>();
+builder.Services.AddScoped<INotificador, Notificador>();
+builder.Services.AddScoped<ICalculadorCaminoCritico, CaminoCritico>();
 
-ControladorTareas controladorTareas = new ControladorTareas(gestorTareas);
-ControladorProyectos controladorProyectos = new ControladorProyectos(gestorProyectos);
-ControladorRecursos controladorRecursos = new ControladorRecursos(gestorRecursos);
-ControladorUsuarios controladorUsuarios = new ControladorUsuarios(gestorUsuarios);
-
-// Add services to the container.
-builder.Services.AddSingleton(repositorioUsuarios);
-builder.Services.AddSingleton(repositorioProyectos);
-builder.Services.AddSingleton(repositorioRecursos);
-
-builder.Services.AddSingleton(gestorUsuarios);
-builder.Services.AddSingleton(gestorProyectos);
-builder.Services.AddSingleton(gestorRecursos);
-builder.Services.AddSingleton(gestorTareas);
-//builder.Services.AddSingleton<IGestorTareas, GestorTareas>();
-
-builder.Services.AddSingleton(controladorTareas);
-builder.Services.AddSingleton(controladorProyectos);
-builder.Services.AddSingleton(controladorRecursos);
-builder.Services.AddSingleton(controladorUsuarios);
-//builder.Services.AddSingleton<ControladorTareas>();
+builder.Services.AddScoped<ControladorTareas>();
+builder.Services.AddScoped<ControladorProyectos>();
+builder.Services.AddScoped<ControladorRecursos>();
+builder.Services.AddScoped<ControladorUsuarios>();
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<LogicaSesion>();

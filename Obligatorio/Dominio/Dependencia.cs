@@ -7,7 +7,7 @@ public class Dependencia
 {
     public string Tipo { get; private set; }
     public Tarea Tarea { get; private set; }
-
+    
     public Dependencia(string tipo, Tarea tarea)
     {
         ValidarNoVacio(tipo);

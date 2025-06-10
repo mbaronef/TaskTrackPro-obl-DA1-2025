@@ -5,32 +5,35 @@ namespace Repositorios;
 
 public class RepositorioRecursos : IRepositorio<Recurso>
 {
-    public List<Recurso> _recursos;
+    private SqlContext _contexto;
     private static int _cantidadRecursos;
 
-    public RepositorioRecursos()
+    public RepositorioRecursos(SqlContext contexto)
     {
-        _recursos = new List<Recurso>();
+        _contexto = contexto;
     }
 
     public void Agregar(Recurso objeto)
     {
         objeto.Id = ++_cantidadRecursos;
-        _recursos.Add(objeto);
+        _contexto.Recursos.Add(objeto);
+        _contexto.SaveChanges();
     }
 
     public Recurso ObtenerPorId(int id)
     {
-        return _recursos.Find(recurso => recurso.Id == id);
+        return _contexto.Recursos.FirstOrDefault(recurso => recurso.Id == id);
     }
 
     public void Eliminar(int id)
     {
-        _recursos.Remove(_recursos.Find(recurso => recurso.Id == id));
+        Recurso recursoAEliminar = _contexto.Recursos.FirstOrDefault(recurso => recurso.Id == id);
+        _contexto.Remove(recursoAEliminar);
+        _contexto.SaveChanges();
     }
 
     public List<Recurso> ObtenerTodos()
     {
-        return _recursos;
+        return _contexto.Recursos.ToList();
     }
 }
