@@ -703,4 +703,7 @@ fabric.properties
 
 .idea/
 
+##DOCKER
+data/Entropy.bin
+
 # End of https://www.toptal.com/developers/gitignore/api/rider,macos,csharp,dotnetcore,visualstudio
