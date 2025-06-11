@@ -8,6 +8,8 @@ public class Dependencia
     public string Tipo { get; private set; }
     public Tarea Tarea { get; private set; }
     
+    public int TareaId { get; private set; }
+    
     public Dependencia() { }
     public Dependencia(string tipo, Tarea tarea)
     {
@@ -16,6 +18,7 @@ public class Dependencia
         ValidarTareaNoNula(tarea);
         Tipo = tipo;
         Tarea = tarea;
+        TareaId = tarea.Id;
     }
 
     private void ValidarNoVacio(string valor)

@@ -5,32 +5,33 @@ namespace Repositorios;
 
 public class RepositorioProyectos : IRepositorio<Proyecto>
 {
-    private List<Proyecto> _proyectos;
-    private static int _cantidadProyectos;
+    private SqlContext _contexto;
 
-    public RepositorioProyectos()
+    public RepositorioProyectos(SqlContext contexto)
     {
-        _proyectos = new List<Proyecto>();
+        _contexto = contexto;
     }
 
     public void Agregar(Proyecto objeto)
     {
-        objeto.Id = ++_cantidadProyectos;
-        _proyectos.Add(objeto);
+        _contexto.Proyectos.Add(objeto);
+        _contexto.SaveChanges();
     }
 
     public Proyecto ObtenerPorId(int id)
     {
-        return _proyectos.Find(proyecto => proyecto.Id == id);
+        return _contexto.Proyectos.FirstOrDefault(proyecto => proyecto.Id == id);
     }
 
     public void Eliminar(int id)
     {
-        _proyectos.Remove(_proyectos.Find(proyecto => proyecto.Id == id));
+        Proyecto proyectoAEliminar = _contexto.Proyectos.FirstOrDefault(proyecto => proyecto.Id == id);
+        _contexto.Proyectos.Remove(proyectoAEliminar);
+        _contexto.SaveChanges();
     }
 
     public List<Proyecto> ObtenerTodos()
     {
-        return _proyectos;
+        return _contexto.Proyectos.ToList();
     }
 }

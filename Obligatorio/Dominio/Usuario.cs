@@ -20,7 +20,7 @@ public class Usuario
     public bool EsAdministradorProyecto { get; set; } = false;
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
     public int CantidadProyectosAsignados { get; set; } = 0;
-
+    
     public Usuario()
     {
         Notificaciones = new List<Notificacion>();

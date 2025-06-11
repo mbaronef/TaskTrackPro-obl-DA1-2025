@@ -6,7 +6,6 @@ namespace Repositorios;
 public class RepositorioRecursos : IRepositorio<Recurso>
 {
     private SqlContext _contexto;
-    private static int _cantidadRecursos;
 
     public RepositorioRecursos(SqlContext contexto)
     {
@@ -15,7 +14,6 @@ public class RepositorioRecursos : IRepositorio<Recurso>
 
     public void Agregar(Recurso objeto)
     {
-        objeto.Id = ++_cantidadRecursos;
         _contexto.Recursos.Add(objeto);
         _contexto.SaveChanges();
     }

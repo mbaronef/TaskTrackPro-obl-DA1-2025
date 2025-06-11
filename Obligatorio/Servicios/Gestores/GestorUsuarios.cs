@@ -20,11 +20,6 @@ public class GestorUsuarios : IGestorUsuarios
     {
         _usuarios = repositorioUsuarios;
         _notificador = notificador;
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
-        AdministradorInicial = new Usuario("Admin", "Admin", new DateTime(1999, 01, 01), "admin@sistema.com",
-            contrasenaEncriptada);
-        AdministradorInicial.EsAdministradorSistema = true;
-        _usuarios.Agregar(AdministradorInicial);
     }
 
     public void CrearYAgregarUsuario(UsuarioDTO solicitanteDTO, UsuarioDTO nuevoUsuarioDTO)

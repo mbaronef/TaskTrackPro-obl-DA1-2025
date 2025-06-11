@@ -5,37 +5,38 @@ namespace Repositorios;
 
 public class RepositorioUsuarios : IRepositorioUsuarios
 {
-    private List<Usuario> _usuarios;
-    private static int _cantidadUsuarios;
+    private SqlContext _contexto;
 
-    public RepositorioUsuarios()
+    public RepositorioUsuarios(SqlContext contexto)
     {
-        _usuarios = new List<Usuario>();
+        _contexto = contexto;
     }
 
     public void Agregar(Usuario objeto)
     {
-        objeto.Id = ++_cantidadUsuarios;
-        _usuarios.Add(objeto);
+        _contexto.Usuarios.Add(objeto);
+        _contexto.SaveChanges();
     }
 
     public Usuario ObtenerPorId(int id)
     {
-        return _usuarios.Find(usuario => usuario.Id == id);
+        return _contexto.Usuarios.FirstOrDefault(usuario => usuario.Id == id);
     }
 
     public void Eliminar(int id)
     {
-        _usuarios.Remove(_usuarios.Find(usuario => usuario.Id == id));
+        Usuario usuarioAEliminar = _contexto.Usuarios.FirstOrDefault(usuario => usuario.Id == id);
+        _contexto.Usuarios.Remove(usuarioAEliminar);
+        _contexto.SaveChanges();
     }
 
     public List<Usuario> ObtenerTodos()
     {
-        return _usuarios;
+        return _contexto.Usuarios.ToList();
     }
 
     public Usuario ObtenerUsuarioPorEmail(string email)
     {
-        return _usuarios.Find(usuario => usuario.Email == email);
+        return _contexto.Usuarios.FirstOrDefault(usuario => usuario.Email == email);
     }
 }
