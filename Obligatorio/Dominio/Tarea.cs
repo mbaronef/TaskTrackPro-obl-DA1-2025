@@ -25,6 +25,7 @@ public class Tarea
         Dependencias = new List<Dependencia>();
     }
 
+    
     public Tarea(string titulo, string descripcion, int duracionEnDias, DateTime fechaInicioMasTemprana)
     {
         ValidarStringNoVacioNiNull(titulo, MensajesErrorDominio.TituloTareaVacio);
