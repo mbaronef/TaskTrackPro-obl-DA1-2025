@@ -12,6 +12,7 @@ public class Recurso
     public Proyecto? ProyectoAsociado { get; private set; } = null;
     public int CantidadDeTareasUsandolo { get; private set; } = 0;
 
+    public Recurso() { }
     public Recurso(string nombre, string tipo, string descripcion)
     {
         ValidarAtributoNoVacio(nombre, "nombre");
