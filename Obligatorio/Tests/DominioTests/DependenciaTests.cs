@@ -130,4 +130,12 @@ public class DependenciaTests
         Dependencia dependencia = new Dependencia("SS", _tarea);
         Assert.AreEqual("titulo (SS)", dependencia.ToString());
     }
+    
+    [TestMethod]
+    public void ConstructorSinParametros_Publico_CreaInstanciaCorrectamente()
+    {
+        var dependencia = new Dependencia();
+        Assert.IsNotNull(dependencia);
+    }
+
 }
