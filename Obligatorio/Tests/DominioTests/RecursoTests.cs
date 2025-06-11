@@ -246,4 +246,11 @@ public class RecursoTests
             $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'";
         Assert.AreEqual(resultadoEsperado, recurso.ToString());
     }
+    
+    [TestMethod]
+    public void ConstructorSinParametros_CreaInstanciaCorrectamente()
+    {
+        var recurso = new Recurso();
+        Assert.IsNotNull(recurso);
+    }
 }
