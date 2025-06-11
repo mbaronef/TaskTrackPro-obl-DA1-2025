@@ -694,4 +694,12 @@ public class TareaTests
         Dependencia dependencia = new Dependencia("FS", tareaD);
         return dependencia;
     }
+    
+    [TestMethod]
+    public void ConstructorSinParametros_CreaInstanciaCorrectamente()
+    {
+        var tarea = new Tarea();
+        Assert.IsNotNull(tarea);
+    }
+    
 }
