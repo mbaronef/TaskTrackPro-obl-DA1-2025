@@ -11,7 +11,10 @@ public class SqlContext : DbContext
     
     public SqlContext(DbContextOptions<SqlContext> opciones) : base(opciones)
     { 
-        Database.Migrate();
+        if (Database.IsRelational())
+        {
+            Database.Migrate();
+        }
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,6 +31,15 @@ public class SqlContext : DbContext
             .HasOne(d => d.Tarea)
             .WithMany(t => t.Dependencias)
             .HasForeignKey(d => d.TareaId);
+        
+        modelBuilder.Entity<Proyecto>()
+            .HasOne(p => p.Administrador)
+            .WithMany()
+            .HasForeignKey("AdministradorId") 
+            .OnDelete(DeleteBehavior.Restrict); 
+
+        modelBuilder.Entity<Proyecto>()
+            .Navigation(p => p.Administrador).AutoInclude();
     }
     
 }
