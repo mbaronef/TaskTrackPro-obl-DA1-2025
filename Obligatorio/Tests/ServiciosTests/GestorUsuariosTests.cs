@@ -13,6 +13,7 @@ public class GestorUsuariosTests
     private GestorUsuarios _gestorUsuarios;
     private UsuarioDTO _adminSistemaDTO;
     private RepositorioUsuarios _repositorioUsuarios;
+    private SqlContext _contexto;
     private Notificador _notificador;
 
     [TestInitialize]
@@ -23,7 +24,7 @@ public class GestorUsuariosTests
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
 
         _notificador = new Notificador();
-        _repositorioUsuarios = new RepositorioUsuarios();
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios, _notificador);
         _adminSistemaDTO = UsuarioDTO.DesdeEntidad(_gestorUsuarios.AdministradorInicial);
     }

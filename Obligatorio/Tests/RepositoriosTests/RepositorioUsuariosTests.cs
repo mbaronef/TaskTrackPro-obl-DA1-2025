@@ -1,5 +1,6 @@
 using Dominio;
 using Repositorios;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tests.RepositoriosTests;
 
@@ -7,17 +8,27 @@ namespace Tests.RepositoriosTests;
 public class RepositorioUsuariosTests
 {
     private RepositorioUsuarios _repositorioUsuarios;
+    private SqlContext _contexto;
     private Usuario _usuario;
 
     [TestInitialize]
     public void Setup()
     {
-        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(RepositorioUsuarios).GetField("_cantidadUsuarios",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        var opciones = new DbContextOptionsBuilder<SqlContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // base única para cada test
+            .Options;
 
-        _repositorioUsuarios = new RepositorioUsuarios();
+        _contexto = new SqlContext(opciones);
+
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _usuario = new Usuario("Juan", "Pérez", new DateTime(1998, 7, 6), "unEmail@gmail.com", "uNaC@ntr4seña");
+    }
+    
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
     }
 
     [TestMethod]

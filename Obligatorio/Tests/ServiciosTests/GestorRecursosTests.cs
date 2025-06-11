@@ -6,6 +6,7 @@ using Excepciones;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tests.ServiciosTests;
 
@@ -15,6 +16,8 @@ public class GestorRecursosTests
     private RepositorioRecursos _repositorioRecursos;
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
+
+    private SqlContext _contexto;
 
     private GestorRecursos _gestorRecursos;
     private GestorProyectos _gestorProyectos;
@@ -26,16 +29,18 @@ public class GestorRecursosTests
     [TestInitialize]
     public void SetUp()
     {
-        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(RepositorioRecursos).GetField("_cantidadRecursos",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        var opciones = new DbContextOptionsBuilder<SqlContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // base única para cada test
+            .Options;
+
+        _contexto = new SqlContext(opciones);
 
         _notificador = new Notificador();
         _caminoCritico = new CaminoCritico();
 
-        _repositorioRecursos = new RepositorioRecursos();
-        _repositorioUsuarios = new RepositorioUsuarios();
-        _repositorioProyectos = new RepositorioProyectos();
+        _repositorioRecursos = new RepositorioRecursos(_contexto);
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
+        _repositorioProyectos = new RepositorioProyectos(_contexto);
 
         _gestorProyectos =
             new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
@@ -98,6 +103,13 @@ public class GestorRecursosTests
     {
         return new RecursoDTO()
             { Nombre = "Analista Senior", Tipo = "Humano", Descripcion = "Un analista Senior con experiencia" };
+    }
+    
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
     }
 
     [TestMethod]

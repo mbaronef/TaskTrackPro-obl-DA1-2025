@@ -1,4 +1,5 @@
 using Dominio;
+using Microsoft.EntityFrameworkCore;
 using Repositorios;
 
 namespace Tests.RepositoriosTests;
@@ -7,21 +8,33 @@ namespace Tests.RepositoriosTests;
 public class RepositorioProyectosTest
 {
     private RepositorioProyectos _repositorioProyectos;
+    private SqlContext _contexto;
     private Usuario _usuario;
     private Proyecto _proyecto;
 
     [TestInitialize]
     public void SetUp()
     {
-        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(RepositorioProyectos).GetField("_cantidadProyectos",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        var opciones = new DbContextOptionsBuilder<SqlContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // base única para cada test
+            .Options;
 
-        _repositorioProyectos = new RepositorioProyectos();
+        _contexto = new SqlContext(opciones);
+
+        _repositorioProyectos = new RepositorioProyectos(_contexto);
+
         _usuario = new Usuario("Juan", "Pérez", new DateTime(1998, 7, 6), "unEmail@gmail.com", "uNaC@ntr4seña");
         _usuario.EsAdministradorProyecto = true;
-        List<Usuario> miembros = new List<Usuario>();
+
+        List<Usuario> miembros = new();
         _proyecto = new Proyecto("Proyecto", "hacer algo", DateTime.Today.AddDays(10), _usuario, miembros);
+    }
+
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
     }
 
     [TestMethod]
@@ -42,8 +55,7 @@ public class RepositorioProyectosTest
     public void SeAsignanIdsOk()
     {
         _repositorioProyectos.Agregar(_proyecto);
-        Proyecto proyecto2 = new Proyecto("Proyecto2", "hacer algo2", DateTime.Today.AddDays(10), _usuario,
-            new List<Usuario>());
+        Proyecto proyecto2 = new Proyecto("Proyecto2", "hacer algo2", DateTime.Today.AddDays(10), _usuario, new List<Usuario>());
         _repositorioProyectos.Agregar(proyecto2);
 
         Assert.AreEqual(1, _proyecto.Id);
@@ -62,7 +74,7 @@ public class RepositorioProyectosTest
     public void SeObtieneLaListaDeProyectosOk()
     {
         _repositorioProyectos.Agregar(_proyecto);
-        List<Proyecto> proyectos = _repositorioProyectos.ObtenerTodos();
+        var proyectos = _repositorioProyectos.ObtenerTodos();
         Assert.IsNotNull(proyectos);
         Assert.AreEqual(1, proyectos.Count);
         Assert.AreEqual(_proyecto, proyectos.Last());

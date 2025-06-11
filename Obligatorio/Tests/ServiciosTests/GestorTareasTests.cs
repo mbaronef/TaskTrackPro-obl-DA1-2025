@@ -19,6 +19,7 @@ public class GestorTareasTests
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
     private RepositorioRecursos _repositorioRecursos;
+    private SqlContext _contexto;
     private Notificador _notificador;
     private CaminoCritico _caminoCritico;
 
@@ -33,9 +34,9 @@ public class GestorTareasTests
 
         _notificador = new Notificador();
         _caminoCritico = new CaminoCritico();
-        _repositorioUsuarios = new RepositorioUsuarios();
-        _repositorioProyectos = new RepositorioProyectos();
-        _repositorioRecursos = new RepositorioRecursos();
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
+        _repositorioProyectos = new RepositorioProyectos(_contexto);
+        _repositorioRecursos = new RepositorioRecursos(_contexto);
         _gestorProyectos =
             new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
         _gestorTareas = new GestorTareas(_gestorProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);

@@ -6,6 +6,7 @@ using Excepciones;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tests.ServiciosTests;
 
@@ -15,6 +16,7 @@ public class GestorProyectosTests
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
     private RepositorioRecursos _repositorioRecursos;
+    private SqlContext _contexto;
     private GestorProyectos _gestor;
     private Usuario _admin;
     private Usuario _usuarioNoAdmin;
@@ -27,15 +29,17 @@ public class GestorProyectosTests
     [TestInitialize]
     public void Inicializar()
     {
-        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(RepositorioProyectos).GetField("_cantidadProyectos",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        var opciones = new DbContextOptionsBuilder<SqlContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // base única para cada test
+            .Options;
+
+        _contexto = new SqlContext(opciones);
 
         _notificador = new Notificador();
         _caminoCritico = new CaminoCritico();
-        _repositorioUsuarios = new RepositorioUsuarios();
-        _repositorioProyectos = new RepositorioProyectos();
-        _repositorioRecursos = new RepositorioRecursos();
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
+        _repositorioProyectos = new RepositorioProyectos(_contexto);
+        _repositorioRecursos = new RepositorioRecursos(_contexto);
         _gestor = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
         _admin = CrearAdminProyecto();
         _adminDTO = UsuarioDTO.DesdeEntidad(_admin);
@@ -85,6 +89,13 @@ public class GestorProyectosTests
             FechaInicio = DateTime.Today.AddDays(1),
             Administrador = UsuarioDTO.DesdeEntidad(admin)
         };
+    }
+    
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
     }
 
     [TestMethod]
@@ -184,10 +195,12 @@ public class GestorProyectosTests
     public void EliminarProyecto_EliminaDeListaAlProyecto()
     {
         _gestor.CrearProyecto(_proyecto, _adminDTO);
+        
+        int idProyectoCreado = _gestor.ObtenerTodosDominio().First().Id;
 
         Assert.AreEqual(1, _gestor.ObtenerTodosDominio().Count);
 
-        _gestor.EliminarProyecto(_proyecto.Id, _adminDTO);
+        _gestor.EliminarProyecto(idProyectoCreado, _adminDTO);
 
         Assert.AreEqual(0, _gestor.ObtenerTodosDominio().Count);
     }
