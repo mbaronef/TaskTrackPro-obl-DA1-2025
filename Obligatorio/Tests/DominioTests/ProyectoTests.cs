@@ -651,4 +651,11 @@ public class ProyectoTests
         tarea.ModificarFechaInicioMasTemprana(inicio ?? DateTime.Today);
         return tarea;
     }
+    
+    [TestMethod]
+    public void ConstructorSinParametros_CreaInstanciaCorrectamente()
+    {
+        var proyecto = new Proyecto();
+        Assert.IsNotNull(proyecto);
+    }
 }
