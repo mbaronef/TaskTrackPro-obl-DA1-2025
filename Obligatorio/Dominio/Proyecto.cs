@@ -14,6 +14,12 @@ public class Proyecto
     public virtual ICollection<Usuario> Miembros { get; }
     public DateTime FechaInicio { get; set; } = DateTime.Today;
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MaxValue;
+
+    public Proyecto()
+    {
+        Tareas = new List<Tarea>();
+        Miembros = new List<Usuario>();
+    }
     
     public Proyecto(string nombre, string descripcion, DateTime fechaInicio, Usuario administrador,
         List<Usuario> miembros)
