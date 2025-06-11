@@ -293,5 +293,11 @@ namespace Tests.DominioTests
             string resultadoEsperado = $"{usuario.Nombre} {usuario.Apellido} ({usuario.Email})";
             Assert.AreEqual(resultadoEsperado, usuario.ToString());
         }
+        [TestMethod]
+        public void ConstructorSinParametros_CreaInstanciaCorrectamente()
+        {
+            var usuario = new Usuario();
+            Assert.IsNotNull(usuario);
+        }
     }
 }
