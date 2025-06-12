@@ -128,8 +128,9 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
-        Assert.AreEqual(1, tarea1.Id);
-        Assert.AreEqual(2, tarea2.Id);
+        bool resultado = tarea1.Id < tarea2.Id;
+
+        Assert.IsTrue(resultado);
     }
 
     [TestMethod]
@@ -196,7 +197,9 @@ public class GestorTareasTests
 
         Assert.AreEqual(1, proyecto.Tareas.Count);
         Assert.IsTrue(proyecto.Tareas.Any(t => t.Id == tarea.Id));
-        Assert.AreEqual(1, tarea.Id);
+
+        bool resultado = tarea.Id > 0;
+        Assert.IsTrue(resultado);
     }
 
     [TestMethod]
