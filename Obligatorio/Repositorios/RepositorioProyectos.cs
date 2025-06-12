@@ -26,17 +26,15 @@ public class RepositorioProyectos : IRepositorio<Proyecto>
 
     public void Eliminar(int id)
     {
-        var proyecto = _contexto.Proyectos
-            .Include(p => p.Administrador)
-            .Include(p => p.Miembros)
-            .Include(p => p.Tareas)
-            .FirstOrDefault(p => p.Id == id);
-
-        if (proyecto != null)
-        {
+        //var proyecto = _contexto.Proyectos
+          //  .Include(p => p.Administrador)
+          //  .Include(p => p.Miembros)
+          //  .Include(p => p.Tareas)
+          //  .FirstOrDefault(p => p.Id == id);
+          
+            Proyecto proyecto = _contexto.Proyectos.FirstOrDefault(proyecto => proyecto.Id == id);
             _contexto.Proyectos.Remove(proyecto);
             _contexto.SaveChanges();
-        }
     }
 
     public List<Proyecto> ObtenerTodos()

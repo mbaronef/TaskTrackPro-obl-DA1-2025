@@ -84,7 +84,7 @@ public class GestorProyectosTests
             Nombre = "Proyecto",
             Descripcion = "Descripcion",
             FechaInicio = DateTime.Today.AddDays(1),
-            Administrador = UsuarioDTO.DesdeEntidad(admin)
+            Administrador = UsuarioDTO.DesdeEntidad(admin),
         };
     }
     
