@@ -6,4 +6,6 @@ public interface IRepositorio<T>
     T ObtenerPorId(int id);
     void Eliminar(int id);
     List<T> ObtenerTodos();
+
+    //void GuardarCambios();
 }

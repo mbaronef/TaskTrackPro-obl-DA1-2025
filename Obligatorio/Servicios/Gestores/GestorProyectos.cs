@@ -174,6 +174,9 @@ public class GestorProyectos : IGestorProyectos
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.MiembroAgregado(proyecto.Nombre, nuevoMiembro.Id));
+
+        //_repositorioUsuarios.GuardarCambios();
+        //_proyectos.GuardarCambios();
     }
 
     public void EliminarMiembroDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idMiembroAEliminar)

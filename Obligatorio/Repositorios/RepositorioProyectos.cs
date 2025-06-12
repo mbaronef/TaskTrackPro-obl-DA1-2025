@@ -46,4 +46,9 @@ public class RepositorioProyectos : IRepositorio<Proyecto>
     {
         return _contexto.Proyectos.ToList();
     }
+
+   /*public void GuardarCambios()
+    {
+        _contexto.SaveChanges();
+    }*/
 }

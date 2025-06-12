@@ -39,4 +39,9 @@ public class RepositorioUsuarios : IRepositorioUsuarios
     {
         return _contexto.Usuarios.FirstOrDefault(usuario => usuario.Email == email);
     }
+    
+    /*public void GuardarCambios()
+    {
+        _contexto.SaveChanges();
+    }*/
 }
