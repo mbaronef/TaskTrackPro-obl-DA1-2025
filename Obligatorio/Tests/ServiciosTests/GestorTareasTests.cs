@@ -6,6 +6,7 @@ using Servicios.Gestores;
 using Servicios.Utilidades;
 using Servicios.CaminoCritico;
 using Servicios.Notificaciones;
+using Tests.Contexto;
 
 namespace Tests.ServiciosTests;
 
@@ -32,6 +33,8 @@ public class GestorTareasTests
         typeof(RepositorioProyectos).GetField("_cantidadProyectos",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
 
+        _contexto = SqlContextFactory.CreateMemoryContext();
+        
         _notificador = new Notificador();
         _caminoCritico = new CaminoCritico();
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
@@ -107,6 +110,13 @@ public class GestorTareasTests
         Recurso recurso = new Recurso(nombre, tipo, descripcion);
         _repositorioRecursos.Agregar(recurso);
         return RecursoDTO.DesdeEntidad(recurso);
+    }
+    
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
     }
     
     [TestMethod]

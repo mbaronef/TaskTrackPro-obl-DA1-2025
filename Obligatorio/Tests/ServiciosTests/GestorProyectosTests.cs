@@ -7,6 +7,7 @@ using Servicios.Gestores;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
 using Microsoft.EntityFrameworkCore;
+using Tests.Contexto;
 
 namespace Tests.ServiciosTests;
 
@@ -29,11 +30,7 @@ public class GestorProyectosTests
     [TestInitialize]
     public void Inicializar()
     {
-        var opciones = new DbContextOptionsBuilder<SqlContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // base única para cada test
-            .Options;
-
-        _contexto = new SqlContext(opciones);
+        _contexto = SqlContextFactory.CreateMemoryContext();
 
         _notificador = new Notificador();
         _caminoCritico = new CaminoCritico();

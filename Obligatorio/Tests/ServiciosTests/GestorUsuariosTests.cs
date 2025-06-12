@@ -4,6 +4,7 @@ using Excepciones;
 using Repositorios;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
+using Tests.Contexto;
 
 namespace Tests.ServiciosTests;
 
@@ -22,7 +23,9 @@ public class GestorUsuariosTests
         // setup para reiniciar las variables estáticas, sin agregar un método en la clase que no sea coherente con el diseño
         typeof(RepositorioUsuarios).GetField("_cantidadUsuarios",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-
+        
+        _contexto = SqlContextFactory.CreateMemoryContext();
+        
         _notificador = new Notificador();
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios, _notificador);
@@ -44,6 +47,13 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario);
         _gestorUsuarios.AgregarAdministradorSistema(_adminSistemaDTO, usuario.Id);
         return usuario;
+    }
+    
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
     }
 
     [TestMethod]

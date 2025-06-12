@@ -1,6 +1,7 @@
 using Dominio;
 using Microsoft.EntityFrameworkCore;
 using Repositorios;
+using Tests.Contexto;
 
 namespace Tests.RepositoriosTests;
 
@@ -15,11 +16,7 @@ public class RepositorioProyectosTest
     [TestInitialize]
     public void SetUp()
     {
-        var opciones = new DbContextOptionsBuilder<SqlContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // base única para cada test
-            .Options;
-
-        _contexto = new SqlContext(opciones);
+        _contexto = SqlContextFactory.CreateMemoryContext();
 
         _repositorioProyectos = new RepositorioProyectos(_contexto);
 
