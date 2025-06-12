@@ -27,14 +27,7 @@ public class GestorTareasTests
     [TestInitialize]
     public void Inicializar()
     {
-        // setup para reiniciar las variables estáticas, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(GestorTareas).GetField("_cantidadTareas",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-        typeof(RepositorioProyectos).GetField("_cantidadProyectos",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-
         _contexto = SqlContextFactory.CreateMemoryContext();
-        
         _notificador = new Notificador();
         _caminoCritico = new CaminoCritico();
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
@@ -51,7 +44,7 @@ public class GestorTareasTests
     {
         //simulación del gestor
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+        Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "email@gmail.com",
             contrasenaEncriptada);
         admin.EsAdministradorSistema = true;
         _repositorioUsuarios.Agregar(admin);
@@ -73,7 +66,7 @@ public class GestorTareasTests
     {
         //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "gmail@gmail.com",
             contrasenaEncriptada);
         _repositorioUsuarios.Agregar(usuario);
         return UsuarioDTO.DesdeEntidad(usuario); // dto
