@@ -76,4 +76,19 @@ public class RepositorioProyectosTest
         Assert.AreEqual(1, proyectos.Count);
         Assert.AreEqual(_proyecto, proyectos.Last());
     }
+    
+    [TestMethod]
+    public void SeActualizaProyectoCorrectamente()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        var proyectoOriginal = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+        
+        proyectoOriginal.ModificarNombre("Proyecto actualizado");
+        proyectoOriginal.ModificarDescripcion("Nueva descripción");
+        _repositorioProyectos.Update(proyectoOriginal);
+        
+        var proyectoActualizado = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+        Assert.AreEqual("Proyecto actualizado", proyectoActualizado.Nombre);
+        Assert.AreEqual("Nueva descripción", proyectoActualizado.Descripcion);
+    }
 }

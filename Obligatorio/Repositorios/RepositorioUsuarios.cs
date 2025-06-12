@@ -29,6 +29,23 @@ public class RepositorioUsuarios : IRepositorioUsuarios
         _contexto.Usuarios.Remove(usuarioAEliminar);
         _contexto.SaveChanges();
     }
+    
+    public void Update(Usuario usuario)
+    {
+        var usuarioContexto = _contexto.Usuarios.FirstOrDefault(u => u.Id == usuario.Id);
+        if (usuarioContexto != null)
+        {
+            usuarioContexto.EsAdministradorSistema = usuario.EsAdministradorSistema;
+            usuarioContexto.EsAdministradorProyecto = usuario.EsAdministradorProyecto;
+            usuarioContexto.EstaAdministrandoUnProyecto = usuario.EstaAdministrandoUnProyecto;
+            usuarioContexto.CantidadProyectosAsignados = usuario.CantidadProyectosAsignados;
+            usuarioContexto.Nombre = usuario.Nombre;
+            usuarioContexto.Apellido = usuario.Apellido;
+            usuarioContexto.Email = usuario.Email;
+            usuarioContexto.FechaNacimiento = usuario.FechaNacimiento;
+        }
+    }
+
 
     public List<Usuario> ObtenerTodos()
     {

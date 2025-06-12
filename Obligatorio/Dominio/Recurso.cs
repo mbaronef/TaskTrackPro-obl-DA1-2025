@@ -6,11 +6,11 @@ namespace Dominio;
 public class Recurso
 {
     public int Id { get; set; }
-    public string Nombre { get; private set; }
-    public string Tipo { get; private set; }
-    public string Descripcion { get; private set; }
-    public Proyecto? ProyectoAsociado { get; private set; } = null;
-    public int CantidadDeTareasUsandolo { get; private set; } = 0;
+    public string Nombre { get; set; }
+    public string Tipo { get; set; }
+    public string Descripcion { get; set; }
+    public Proyecto? ProyectoAsociado { get; set; } = null;
+    public int CantidadDeTareasUsandolo { get; set; } = 0;
 
     public Recurso() { }
     public Recurso(string nombre, string tipo, string descripcion)

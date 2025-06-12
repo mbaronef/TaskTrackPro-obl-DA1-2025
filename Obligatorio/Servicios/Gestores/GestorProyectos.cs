@@ -4,6 +4,7 @@ using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
 using Excepciones;
 using Excepciones.MensajesError;
+using Repositorios;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
@@ -16,6 +17,7 @@ public class GestorProyectos : IGestorProyectos
     private readonly IRepositorioUsuarios _repositorioUsuarios;
     private readonly INotificador _notificador;
     private readonly ICalculadorCaminoCritico _caminoCritico;
+    private readonly SqlContext _context;
 
     public GestorProyectos(IRepositorioUsuarios repositorioUsuarios, IRepositorio<Proyecto> repositorioProyectos,
         INotificador notificador, ICalculadorCaminoCritico caminoCritico)
@@ -41,10 +43,14 @@ public class GestorProyectos : IGestorProyectos
         _proyectos.Agregar(proyecto);
 
         solicitante.EstaAdministrandoUnProyecto = true;
+        
+        _repositorioUsuarios.Update(solicitante);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(), MensajesNotificacion.ProyectoCreado(proyecto.Nombre));
         
         proyectoDTO.Id = proyecto.Id;
+
+        _context.SaveChanges();
     }
 
     public void EliminarProyecto(int idProyecto, UsuarioDTO solicitanteDTO)
@@ -61,13 +67,18 @@ public class GestorProyectos : IGestorProyectos
 
         solicitante.EstaAdministrandoUnProyecto = false;
         
+        _repositorioUsuarios.Update(solicitante);
+        
         foreach (Usuario miembro in miembros)
         {
             miembro.CantidadProyectosAsignados--;
         }
 
         _notificador.NotificarMuchos(miembros, MensajesNotificacion.ProyectoEliminado(proyecto.Nombre));
+        
+        _context.SaveChanges();
     }
+
 
     public List<ProyectoDTO> ObtenerTodos()
     {
@@ -99,9 +110,13 @@ public class GestorProyectos : IGestorProyectos
         string nombreAnterior = proyecto.Nombre;
 
         proyecto.ModificarNombre(nuevoNombre);
+        
+        _proyectos.Update(proyecto);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.NombreProyectoModificado(nombreAnterior, proyecto.Nombre));
+        
+        _context.SaveChanges();
     }
 
     public void ModificarDescripcionDelProyecto(int idProyecto, string descripcion, UsuarioDTO solicitanteDTO)
@@ -113,9 +128,13 @@ public class GestorProyectos : IGestorProyectos
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
 
         proyecto.ModificarDescripcion(descripcion);
+        
+        _proyectos.Update(proyecto);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.DescripcionProyectoModificada(proyecto.Nombre, proyecto.Descripcion));
+        
+        _context.SaveChanges();
     }
 
     public void ModificarFechaDeInicioDelProyecto(int idProyecto, DateTime nuevaFecha, UsuarioDTO solicitanteDTO)
@@ -129,9 +148,13 @@ public class GestorProyectos : IGestorProyectos
         proyecto.ModificarFechaInicio(nuevaFecha);
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
+        
+        _proyectos.Update(proyecto);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.FechaInicioProyectoModificada(proyecto.Nombre, nuevaFecha));
+        
+        _context.SaveChanges();
     }
 
     public void CambiarAdministradorDeProyecto(UsuarioDTO solicitanteDTO, int idProyecto, int idNuevoAdmin)
@@ -153,9 +176,14 @@ public class GestorProyectos : IGestorProyectos
         proyecto.Administrador.EstaAdministrandoUnProyecto = false;
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoUnProyecto = true;
+        
+        _proyectos.Update(proyecto);
+        _repositorioUsuarios.Update(solicitante);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.AdministradorProyectoModificado(proyecto.Nombre, nuevoAdmin.ToString()));
+        
+        _context.SaveChanges();
     }
 
     public void AgregarMiembroAProyecto(int idProyecto, UsuarioDTO solicitanteDTO, UsuarioDTO nuevoMiembroDTO)
@@ -171,9 +199,13 @@ public class GestorProyectos : IGestorProyectos
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
 
         proyecto.AsignarMiembro(nuevoMiembro);
+        
+        _proyectos.Update(proyecto);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.MiembroAgregado(proyecto.Nombre, nuevoMiembro.Id));
+        
+        _context.SaveChanges();
     }
 
     public void EliminarMiembroDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idMiembroAEliminar)
@@ -191,9 +223,13 @@ public class GestorProyectos : IGestorProyectos
         VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idMiembroAEliminar);
 
         proyecto.EliminarMiembro(idMiembroAEliminar);
+        
+        _proyectos.Update(proyecto);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.MiembroEliminado(proyecto.Nombre, idMiembroAEliminar));
+        
+        _context.SaveChanges();
     }
 
     public List<ProyectoDTO> ObtenerProyectosPorUsuario(int idUsuario)
