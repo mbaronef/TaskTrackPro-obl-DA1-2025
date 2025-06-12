@@ -55,16 +55,18 @@ public class GestorProyectos : IGestorProyectos
 
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
 
+        List<Usuario> miembros = proyecto.Miembros.ToList();
+        
+        _proyectos.Eliminar(idProyecto);
+
         solicitante.EstaAdministrandoUnProyecto = false;
         
-        _proyectos.Eliminar(proyecto.Id);
-        
-        foreach (Usuario miembro in proyecto.Miembros)
+        foreach (Usuario miembro in miembros)
         {
             miembro.CantidadProyectosAsignados--;
         }
 
-        _notificador.NotificarMuchos(proyecto.Miembros.ToList(), MensajesNotificacion.ProyectoEliminado(proyecto.Nombre));
+        _notificador.NotificarMuchos(miembros, MensajesNotificacion.ProyectoEliminado(proyecto.Nombre));
     }
 
     public List<ProyectoDTO> ObtenerTodos()
