@@ -43,6 +43,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
             usuarioContexto.Apellido = usuario.Apellido;
             usuarioContexto.Email = usuario.Email;
             usuarioContexto.FechaNacimiento = usuario.FechaNacimiento;
+            _contexto.SaveChanges();
         }
     }
 

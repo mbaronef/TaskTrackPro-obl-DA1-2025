@@ -82,9 +82,9 @@ public class RepositorioProyectosTest
     {
         _repositorioProyectos.Agregar(_proyecto);
         var proyectoOriginal = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
-        
         proyectoOriginal.ModificarNombre("Proyecto actualizado");
         proyectoOriginal.ModificarDescripcion("Nueva descripción");
+        
         _repositorioProyectos.Update(proyectoOriginal);
         
         var proyectoActualizado = _repositorioProyectos.ObtenerPorId(_proyecto.Id);

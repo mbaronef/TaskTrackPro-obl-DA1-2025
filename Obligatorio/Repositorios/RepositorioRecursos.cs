@@ -45,6 +45,7 @@ public class RepositorioRecursos : IRepositorio<Recurso>
             recursoContexto.Descripcion = recurso.Descripcion;
             recursoContexto.ProyectoAsociado = recurso.ProyectoAsociado;
             recursoContexto.CantidadDeTareasUsandolo = recurso.CantidadDeTareasUsandolo;
+            _contexto.SaveChanges();
         }
     }
 }
