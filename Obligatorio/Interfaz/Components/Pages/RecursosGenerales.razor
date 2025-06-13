@@ -124,7 +124,7 @@ else
             </tr>
             </thead>
             <tbody>
-            @foreach (var recurso in ControladorRecursos.ObtenerRecursosGenerales())
+            @foreach (RecursoDTO recurso in ControladorRecursos.ObtenerRecursosGenerales())
             {
                 <tr>
                     <td>@recurso.Nombre</td>
@@ -154,9 +154,9 @@ else
     private bool mostrarFormCrearRecurso = false;
     private bool mostrarError = false;
     private string errorMensaje;
-    private RecursoDTO nuevoRecurso = new();
+    private RecursoDTO nuevoRecurso = new RecursoDTO();
     private bool mostrarFormEditarRecurso = false;
-    private RecursoDTO recursoAEditar = new();
+    private RecursoDTO recursoAEditar = new RecursoDTO();
     private int idRecursoAEditar;
     private bool mostrarErrorEditar = false;
     private string errorMensajeEditar;
