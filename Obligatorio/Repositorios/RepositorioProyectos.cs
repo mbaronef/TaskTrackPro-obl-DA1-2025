@@ -75,9 +75,9 @@ public class RepositorioProyectos : IRepositorioProyectos
         {
             tareaContexto.ModificarTitulo(tarea.Titulo);
             tareaContexto.ModificarDescripcion(tarea.Descripcion);
-            tareaContexto.CambiarEstado(tarea.Estado);
-            tareaContexto.ModificarFechaInicioMasTemprana(tarea.FechaInicioMasTemprana);
             tareaContexto.ModificarDuracion(tarea.DuracionEnDias);
+            tareaContexto.ModificarFechaInicioMasTemprana(tarea.FechaInicioMasTemprana); 
+            tareaContexto.CambiarEstado(tarea.Estado); 
             _contexto.SaveChanges();
         }
     }
