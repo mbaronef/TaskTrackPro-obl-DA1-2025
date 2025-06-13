@@ -18,7 +18,11 @@ public static class ConfiguracionRecurso
 
         modelBuilder.Entity<Recurso>().Property(r => r.CantidadDeTareasUsandolo)
             .IsRequired();
-
-
+        
+        modelBuilder.Entity<Recurso>()
+            .HasOne(r => r.ProyectoAsociado)  
+            .WithMany()                     
+            .HasForeignKey("ProyectoAsociadoId")    
+            .IsRequired(false); 
     }
 }

@@ -25,6 +25,12 @@ public static class ConfiguracionUsuario
             .HasColumnName("ContrasenaEncriptada")   
             .IsRequired();
         
+        modelBuilder.Entity<Usuario>()
+            .HasMany(u => u.Notificaciones)
+            .WithOne()
+            .HasForeignKey("UsuarioId") 
+            .IsRequired();
+        
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("TaskTrackPro@2025");
         modelBuilder.Entity<Usuario>().HasData(
             new Usuario

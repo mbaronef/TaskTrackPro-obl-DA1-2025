@@ -26,18 +26,5 @@ public class SqlContext : DbContext
         ConfiguracionRecurso.Configurar(modelBuilder);
         ConfiguracionTarea.Configurar(modelBuilder);
         ConfiguracionUsuario.Configurar(modelBuilder);
-        
-        // TODO
-       // REVISAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        
-        modelBuilder.Entity<Proyecto>()
-            .HasOne(p => p.Administrador)
-            .WithMany()
-            .HasForeignKey("AdministradorId") 
-            .OnDelete(DeleteBehavior.Restrict); 
-
-        modelBuilder.Entity<Proyecto>()
-            .Navigation(p => p.Administrador).AutoInclude();
     }
-    
 }

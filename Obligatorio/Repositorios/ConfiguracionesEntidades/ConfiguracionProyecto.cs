@@ -23,6 +23,22 @@ public static class ConfiguracionProyecto
         modelBuilder.Entity<Proyecto>()
             .Property(p => p.FechaFinMasTemprana)
             .IsRequired();
+        
+        modelBuilder.Entity<Proyecto>()
+            .HasOne(p => p.Administrador)
+            .WithOne()
+            .HasForeignKey<Proyecto>("AdministradorId")
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<Proyecto>()
+            .HasMany(p => p.Miembros)
+            .WithMany();
+        
+        modelBuilder.Entity<Proyecto>()
+            .HasMany(p => p.Tareas)
+            .WithOne()
+            .HasForeignKey("ProyectoId") 
+            .IsRequired();
     }
-    
 }

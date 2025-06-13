@@ -24,5 +24,19 @@ public static class ConfiguracionTarea
 
         modelBuilder.Entity<Tarea>().Property(t => t.FechaFinMasTemprana)
             .IsRequired();
+        
+        modelBuilder.Entity<Tarea>()
+            .HasMany(t => t.UsuariosAsignados)
+            .WithMany();
+
+        modelBuilder.Entity<Tarea>()
+            .HasMany(t => t.RecursosNecesarios)
+            .WithMany();
+        
+        modelBuilder.Entity<Tarea>()
+            .HasMany(t => t.Dependencias)
+            .WithOne(d => d.Tarea)
+            .HasForeignKey("TareaId")
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

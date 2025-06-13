@@ -24,7 +24,6 @@ public class Tarea
         RecursosNecesarios = new List<Recurso>();
         Dependencias = new List<Dependencia>();
     }
-
     
     public Tarea(string titulo, string descripcion, int duracionEnDias, DateTime fechaInicioMasTemprana)
     {
