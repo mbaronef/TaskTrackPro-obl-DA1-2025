@@ -11,18 +11,17 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class GestorUsuariosTests
 {
-    private GestorUsuarios _gestorUsuarios;
-    private UsuarioDTO _adminSistemaDTO;
+    private Notificador _notificador = new Notificador();
+    
+    private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioUsuarios _repositorioUsuarios;
-    private SqlContext _contexto;
-    private Notificador _notificador;
-
+    private GestorUsuarios _gestorUsuarios;
+    
+    private UsuarioDTO _adminSistemaDTO;
+    
     [TestInitialize]
     public void SetUp()
     {
-        _contexto = SqlContextFactory.CreateMemoryContext();
-        
-        _notificador = new Notificador();
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios, _notificador);
         

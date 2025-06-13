@@ -14,30 +14,31 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class GestorProyectosTests
 {
+    private Notificador _notificador = new Notificador();
+    private CaminoCritico _caminoCritico = new CaminoCritico();
+    
+    private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
     private RepositorioRecursos _repositorioRecursos;
-    private SqlContext _contexto;
+    
     private GestorProyectos _gestor;
+    
     private Usuario _admin;
     private Usuario _usuarioNoAdmin;
     private UsuarioDTO _adminDTO;
     private UsuarioDTO _adminSistema;
     private ProyectoDTO _proyecto;
-    private Notificador _notificador;
-    private CaminoCritico _caminoCritico;
 
     [TestInitialize]
     public void Inicializar()
     {
-        _contexto = SqlContextFactory.CreateMemoryContext();
-
-        _notificador = new Notificador();
-        _caminoCritico = new CaminoCritico();
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _repositorioProyectos = new RepositorioProyectos(_contexto);
         _repositorioRecursos = new RepositorioRecursos(_contexto);
+        
         _gestor = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
+        
         _admin = CrearAdminProyecto();
         _adminDTO = UsuarioDTO.DesdeEntidad(_admin);
         _adminSistema = CrearAdminSistema();
@@ -47,7 +48,7 @@ public class GestorProyectosTests
 
     private Usuario CrearAdminProyecto()
     {
-        //simulación del gestor 
+        //simulación de gestorUsuarios 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
@@ -58,7 +59,7 @@ public class GestorProyectosTests
 
     private UsuarioDTO CrearAdminSistema()
     {
-        //simulación del gestor 
+        //simulación de gestorUsuarios 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
@@ -69,7 +70,7 @@ public class GestorProyectosTests
 
     private Usuario CrearMiembro()
     {
-        //simulación del gestor 
+        //simulación de gestorUsuarios 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario miembro = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);

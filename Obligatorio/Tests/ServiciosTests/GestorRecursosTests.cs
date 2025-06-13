@@ -13,27 +13,21 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class GestorRecursosTests
 {
+    private Notificador _notificador = new Notificador();
+    private CaminoCritico _caminoCritico = new CaminoCritico();
+    
+    private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioRecursos _repositorioRecursos;
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
-
-    private SqlContext _contexto;
 
     private GestorRecursos _gestorRecursos;
     private GestorProyectos _gestorProyectos;
     private UsuarioDTO _adminSistemaDTO;
 
-    private Notificador _notificador;
-    private CaminoCritico _caminoCritico;
-
     [TestInitialize]
     public void SetUp()
     {
-        _contexto = SqlContextFactory.CreateMemoryContext();
-
-        _notificador = new Notificador();
-        _caminoCritico = new CaminoCritico();
-
         _repositorioRecursos = new RepositorioRecursos(_contexto);
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _repositorioProyectos = new RepositorioProyectos(_contexto);
@@ -49,7 +43,6 @@ public class GestorRecursosTests
 
     private UsuarioDTO CrearAdministradorSistemaDTO()
     {
-        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
@@ -70,7 +63,6 @@ public class GestorRecursosTests
 
     private UsuarioDTO CrearUsuarioNoAdminDTO()
     {
-        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
@@ -395,10 +387,8 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarTipoDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
         Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción", DateTime.Today.AddDays(1), otroAdminProyecto,
             new List<Usuario>());
         _gestorProyectos.CrearProyecto(ProyectoDTO.DesdeEntidad(otroProyecto),
@@ -467,11 +457,9 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarDescripciónDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
 
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
         Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción", DateTime.Today.AddDays(1), otroAdminProyecto,
             new List<Usuario>());
         _gestorProyectos.CrearProyecto(ProyectoDTO.DesdeEntidad(otroProyecto),
