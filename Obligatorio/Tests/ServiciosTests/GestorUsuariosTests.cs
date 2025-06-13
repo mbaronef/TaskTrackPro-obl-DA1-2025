@@ -4,7 +4,6 @@ using Excepciones;
 using Repositorios;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
-using Utilidades;
 using Tests.Contexto;
 
 namespace Tests.ServiciosTests;
@@ -27,12 +26,7 @@ public class GestorUsuariosTests
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios, _notificador);
         
-        var contrasena = UtilidadesContrasena.ValidarYEncriptarContrasena("Contrase#a3");
-        var admin = new Usuario("Admin", "Sistema", new DateTime(1990, 01, 01), "admin@tasktrack.com", contrasena);
-        admin.EsAdministradorSistema = true;
-        _repositorioUsuarios.Agregar(admin);
-        _contexto.SaveChanges();
-        _adminSistemaDTO = UsuarioDTO.DesdeEntidad(admin);
+        _adminSistemaDTO = UsuarioDTO.DesdeEntidad(_gestorUsuarios.AdministradorInicial);
     }
 
     private UsuarioDTO CrearUsuarioDTO(string nombre, string apellido, string email, string contrasena)
@@ -85,7 +79,7 @@ public class GestorUsuariosTests
     public void ErrorSiSeCreaUsuarioConEmailRepetido()
     {
         UsuarioDTO usuario1 = CrearUsuarioDTO("Juan", "Pérez", "unemail3@gmail.com", "Contrase#a3");
-        UsuarioDTO usuario2 = CrearUsuarioDTO("Mateo", "Pérez", "unemail4@gmail.com", "Contrase#a9)");
+        UsuarioDTO usuario2 = CrearUsuarioDTO("Mateo", "Pérez", "unemail3@gmail.com", "Contrase#a9)");
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario1);
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario2);
     }
@@ -109,7 +103,7 @@ public class GestorUsuariosTests
         _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, usuario2);
 
         _gestorUsuarios.EliminarUsuario(_adminSistemaDTO, usuario2.Id);
-        Assert.AreEqual(2, _gestorUsuarios.ObtenerTodos().Count);
+        Assert.AreEqual(2, _gestorUsuarios.ObtenerTodos().Count); //se cuenta al admin inicial
         Assert.AreEqual(usuario1.Id, _gestorUsuarios.ObtenerTodos().ElementAt(1).Id);
     }
 
@@ -635,7 +629,8 @@ public class GestorUsuariosTests
     [TestMethod]
     public void ValidarQueUnUsuarioNoEsPrimerAdminLanzaExcepcionConElPrimerAdmin()
     {
-        _gestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(_adminSistemaDTO.Id);
+        Usuario admin = _gestorUsuarios.AdministradorInicial;
+        _gestorUsuarios.ValidarUsuarioNoEsAdministradorInicial(admin.Id);
     }
 
     [TestMethod]
