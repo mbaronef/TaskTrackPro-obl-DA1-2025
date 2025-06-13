@@ -4,7 +4,7 @@ using Repositorios.Interfaces;
 
 namespace Repositorios;
 
-public class RepositorioProyectos : IRepositorio<Proyecto>
+public class RepositorioProyectos : IRepositorioProyectos
 {
     private SqlContext _contexto;
 
@@ -60,12 +60,27 @@ public class RepositorioProyectos : IRepositorio<Proyecto>
 
         if (proyectoContexto != null)
         {
-            proyectoContexto.Nombre = proyecto.Nombre;
-            proyectoContexto.Descripcion = proyecto.Descripcion;
-            proyectoContexto.FechaInicio = proyecto.FechaInicio;
-            proyectoContexto.FechaFinMasTemprana = proyecto.FechaFinMasTemprana;
+            proyectoContexto.ModificarNombre(proyecto.Nombre);
+            proyectoContexto.ModificarDescripcion(proyecto.Descripcion);
+            proyectoContexto.ModificarFechaFinMasTemprana(proyecto.FechaFinMasTemprana);
+            proyectoContexto.ModificarFechaInicio(proyecto.FechaInicio);
             _contexto.SaveChanges();
         }
     }
+    
+    public void UpdateTarea(Tarea tarea)
+    {
+        var tareaContexto = _contexto.Set<Tarea>().FirstOrDefault(t => t.Id == tarea.Id);
+        if (tareaContexto != null)
+        {
+            tareaContexto.ModificarTitulo(tarea.Titulo);
+            tareaContexto.ModificarDescripcion(tarea.Descripcion);
+            tareaContexto.CambiarEstado(tarea.Estado);
+            tareaContexto.ModificarFechaInicioMasTemprana(tarea.FechaInicioMasTemprana);
+            tareaContexto.ModificarDuracion(tarea.DuracionEnDias);
+            _contexto.SaveChanges();
+        }
+    }
+
 
 }

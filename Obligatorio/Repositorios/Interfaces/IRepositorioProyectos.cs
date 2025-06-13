@@ -1,6 +1,8 @@
-﻿namespace Repositorios.Interfaces;
+﻿using Dominio;
 
-public interface IRepositorioProyectos
+namespace Repositorios.Interfaces;
+
+public interface IRepositorioProyectos : IRepositorio<Proyecto>
 {
-    
+    void UpdateTarea(Tarea tarea);
 }
