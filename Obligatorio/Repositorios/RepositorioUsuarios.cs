@@ -35,14 +35,11 @@ public class RepositorioUsuarios : IRepositorioUsuarios
         var usuarioContexto = _contexto.Usuarios.FirstOrDefault(u => u.Id == usuario.Id);
         if (usuarioContexto != null)
         {
-            usuarioContexto.EsAdministradorSistema = usuario.EsAdministradorSistema;
+            usuarioContexto.CambiarEmail(usuario.Email);
             usuarioContexto.EsAdministradorProyecto = usuario.EsAdministradorProyecto;
+            usuarioContexto.EsAdministradorSistema = usuario.EsAdministradorSistema;
             usuarioContexto.EstaAdministrandoUnProyecto = usuario.EstaAdministrandoUnProyecto;
-            usuarioContexto.CantidadProyectosAsignados = usuario.CantidadProyectosAsignados;
-            usuarioContexto.Nombre = usuario.Nombre;
-            usuarioContexto.Apellido = usuario.Apellido;
-            usuarioContexto.Email = usuario.Email;
-            usuarioContexto.FechaNacimiento = usuario.FechaNacimiento;
+            usuarioContexto.EstablecerContrasenaEncriptada(usuario.ObtenerContrasenaEncriptada());
             _contexto.SaveChanges();
         }
     }

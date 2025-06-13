@@ -103,7 +103,12 @@ public class Usuario
             throw new ExcepcionDominio(MensajesErrorDominio.EmailInvalido);
         }
     }
-
+    
+    public string ObtenerContrasenaEncriptada()
+    {
+        return _contrasenaEncriptada;
+    }
+    
     public override bool Equals(object? otro)
     {
         Usuario otroUsuario = otro as Usuario;
