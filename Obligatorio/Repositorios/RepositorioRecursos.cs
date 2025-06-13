@@ -34,9 +34,4 @@ public class RepositorioRecursos : IRepositorio<Recurso>
     {
         return _contexto.Recursos.ToList();
     }
-    
-    /*public void GuardarCambios()
-    {
-        _contexto.SaveChanges();
-    }*/
 }
