@@ -5,7 +5,7 @@ using Servicios.CaminoCritico;
 using Excepciones;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
-using Servicios.Utilidades;
+using Utilidades;
 using Microsoft.EntityFrameworkCore;
 using Tests.Contexto;
 

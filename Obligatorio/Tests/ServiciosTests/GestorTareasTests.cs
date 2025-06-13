@@ -3,7 +3,7 @@ using DTOs;
 using Repositorios;
 using Excepciones;
 using Servicios.Gestores;
-using Servicios.Utilidades;
+using Utilidades;
 using Servicios.CaminoCritico;
 using Servicios.Notificaciones;
 using Tests.Contexto;

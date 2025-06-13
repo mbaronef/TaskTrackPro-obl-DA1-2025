@@ -14,6 +14,7 @@
         <ProjectReference Include="..\Dominio\Dominio.csproj"/>
         <ProjectReference Include="..\DTOs\DTOs.csproj"/>
         <ProjectReference Include="..\Repositorios\Repositorios.csproj"/>
+        <ProjectReference Include="..\Utilidades\Utilidades.csproj" />
     </ItemGroup>
 
     <ItemGroup>

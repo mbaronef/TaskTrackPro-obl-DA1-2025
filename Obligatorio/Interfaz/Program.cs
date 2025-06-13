@@ -10,7 +10,6 @@ using Servicios.CaminoCritico;
 using Servicios.Gestores;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
-using Servicios.Utilidades;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,11 +43,9 @@ builder.Services.AddRazorComponents()
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -60,29 +57,4 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-using (var scope = app.Services.CreateScope())
-{
-    var servicios = scope.ServiceProvider;
-    IRepositorioUsuarios repositorioUsuarios = servicios.GetRequiredService<IRepositorioUsuarios>();
-    
-    InicializarAdministradorSiNoExiste(repositorioUsuarios);
-}
-
 app.Run();
-
-
-static void InicializarAdministradorSiNoExiste(IRepositorioUsuarios repositorioUsuarios)
-{
-    const string emailAdmin = "admin@sistema.com";
-
-    var adminExistente = repositorioUsuarios.ObtenerUsuarioPorEmail(emailAdmin);
-    if (adminExistente == null)
-    {
-        string contrasenaPorDefecto = "TaskTrackPro@2025";
-        string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(contrasenaPorDefecto);
-
-        var adminInicial = new Usuario("Admin", "Admin", new DateTime(1999, 01, 01), emailAdmin, contrasenaEncriptada);
-        adminInicial.EsAdministradorSistema = true;
-        repositorioUsuarios.Agregar(adminInicial);
-    }
-}

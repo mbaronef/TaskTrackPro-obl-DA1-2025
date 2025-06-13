@@ -5,7 +5,7 @@ using Excepciones.MensajesError;
 using Repositorios.Interfaces;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
-using Servicios.Utilidades;
+using Utilidades;
 
 namespace Servicios.Gestores;
 

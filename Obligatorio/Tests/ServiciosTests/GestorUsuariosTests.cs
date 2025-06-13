@@ -4,7 +4,7 @@ using Excepciones;
 using Repositorios;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
-using Servicios.Utilidades;
+using Utilidades;
 using Tests.Contexto;
 
 namespace Tests.ServiciosTests;

@@ -1,6 +1,6 @@
 using Dominio;
 using Excepciones;
-using Servicios.Utilidades;
+using Utilidades;
 
 namespace Tests.DominioTests
 
