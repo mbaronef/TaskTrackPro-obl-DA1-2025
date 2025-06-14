@@ -70,7 +70,10 @@ public class Proyecto
 
         ValidarNoNulo(usuarioAEliminar, MensajesErrorDominio.UsuarioNoEsMiembroDelProyecto);
         ValidarQueUsuarioAEliminarNoSeaAdministrador(usuarioAEliminar);
-
+        if (Lider != null && Lider.Id == usuarioAEliminar.Id)
+        {
+            Lider = null;
+        }
         Miembros.Remove(usuarioAEliminar);
         usuarioAEliminar.CantidadProyectosAsignados--;
     }
