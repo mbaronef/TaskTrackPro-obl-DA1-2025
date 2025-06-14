@@ -676,7 +676,7 @@ public class ProyectoTests
     
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
-    public void AsignarLider_LanzaExcepcion_SiUsuarioNoEsMiembro()
+    public void AsignarLider_LanzaExcepcionSiUsuarioNoEsMiembro()
     {
         Usuario noMiembro = CrearMiembro(99);
         Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
@@ -686,10 +686,22 @@ public class ProyectoTests
     
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
-    public void AsignarLider_LanzaExcepcion_SiUsuarioEsNull()
+    public void AsignarLider_LanzaExcepcionSiUsuarioEsNull()
     {
         Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
         proyecto.AsignarLider(null);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AsignarLider_LanzaExcepcionSiUsuarioYaEsLider()
+    {
+        Usuario miembro = CrearMiembro(2);
+        _miembros.Add(miembro);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+
+        proyecto.AsignarLider(miembro);
+        proyecto.AsignarLider(miembro); 
     }
 }
 
