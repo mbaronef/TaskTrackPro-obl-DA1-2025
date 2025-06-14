@@ -51,5 +51,7 @@ public static class MensajesErrorServicios
     
     public const string UsuarioNoEsAdminNiLider = "El usuario no tiene permisos para realizar esta acción (debe ser administrador o líder del proyecto).";
     public static string UsuarioNoAsignadoALaTarea => "El usuario no tiene la tarea asignada.";
+    
+    public static string PermisoParaCambiarDeEstado => "El usuario debe tener la tarea asignada o ser administrador del proyecto o ser lider del proyecto para realizar esta acción.";
 
 }
