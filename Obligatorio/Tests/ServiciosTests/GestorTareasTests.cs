@@ -337,7 +337,7 @@ public class GestorTareasTests
     }
     
     [TestMethod]
-    public void LiderProyectoPuedeModificarTituloTarea()
+    public void ModificarTitulo_LiderProyectoModificaTituloTareaOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         UsuarioDTO lider = CrearUsuarioNoAdmin();
@@ -400,7 +400,7 @@ public class GestorTareasTests
         _gestorTareas.ModificarDescripcionTarea(lider, tarea.Id, proyecto.Id, "Nueva descripción por líder");
 
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
-        Assert.AreEqual("Nueva descripción por líder", tarea.Titulo);
+        Assert.AreEqual("Nueva descripción por líder", tarea.Descripcion);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
