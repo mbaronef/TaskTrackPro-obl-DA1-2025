@@ -129,6 +129,7 @@ public class Proyecto
     
     public void AsignarLider(Usuario usuario)
     {
+        ValidarNoNulo(usuario, MensajesErrorDominio.LiderNull);
         ValidarUsuarioEnMiembros(usuario.Id);
         Lider = usuario;
         Lider.AsignarRolLider();
