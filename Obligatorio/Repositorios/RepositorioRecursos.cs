@@ -1,4 +1,6 @@
+using System.Security.Cryptography;
 using Dominio;
+using Microsoft.EntityFrameworkCore;
 using Repositorios.Interfaces;
 
 namespace Repositorios;
@@ -20,7 +22,9 @@ public class RepositorioRecursos : IRepositorio<Recurso>
 
     public Recurso ObtenerPorId(int id)
     {
-        return _contexto.Recursos.FirstOrDefault(recurso => recurso.Id == id);
+        return _contexto.Recursos.
+            Include(r => r.ProyectoAsociado).
+            FirstOrDefault(recurso => recurso.Id == id);
     }
 
     public void Eliminar(int id)
@@ -32,18 +36,32 @@ public class RepositorioRecursos : IRepositorio<Recurso>
 
     public List<Recurso> ObtenerTodos()
     {
-        return _contexto.Recursos.ToList();
+        return _contexto.Recursos.
+            Include(r=> r.ProyectoAsociado)
+            .ToList();
     }
     
     public void Actualizar(Recurso recurso)
     {
-        var recursoContexto = _contexto.Recursos.FirstOrDefault(r=> r.Id == recurso.Id);
+        Recurso recursoContexto = ObtenerPorId(recurso.Id);
+        
         if (recursoContexto != null)
         {
+            if (recurso.ProyectoAsociado != null)
+            {
+                Proyecto proyectoAsociadoContexto = _contexto.Proyectos
+                    .FirstOrDefault(p => p.Id == recurso.ProyectoAsociado.Id);
+    
+                recursoContexto.ProyectoAsociado = proyectoAsociadoContexto;
+            }
+            else
+            {
+                recursoContexto.ProyectoAsociado = null;
+            }
+            
             recursoContexto.Nombre = recurso.Nombre;
             recursoContexto.Tipo = recurso.Tipo;
             recursoContexto.Descripcion = recurso.Descripcion;
-            recursoContexto.ProyectoAsociado = recurso.ProyectoAsociado;
             recursoContexto.CantidadDeTareasUsandolo = recurso.CantidadDeTareasUsandolo;
             _contexto.SaveChanges();
         }

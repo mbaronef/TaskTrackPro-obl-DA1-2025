@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repositorios;
 
@@ -11,9 +12,11 @@ using Repositorios;
 namespace Repositorios.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    partial class SqlContextModelSnapshot : ModelSnapshot
+    [Migration("20250614201401_metodoActualizarv1")]
+    partial class metodoActualizarv1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,9 +27,6 @@ namespace Repositorios.Migrations
 
             modelBuilder.Entity("Dominio.Dependencia", b =>
                 {
-                    b.Property<int>("TareaDueñaId")
-                        .HasColumnType("int");
-
                     b.Property<int>("TareaId")
                         .HasColumnType("int");
 
@@ -34,9 +34,7 @@ namespace Repositorios.Migrations
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
 
-                    b.HasKey("TareaDueñaId", "TareaId", "Tipo");
-
-                    b.HasIndex("TareaId");
+                    b.HasKey("TareaId", "Tipo");
 
                     b.ToTable("Dependencia", t =>
                         {
@@ -242,7 +240,7 @@ namespace Repositorios.Migrations
                             EstaAdministrandoUnProyecto = false,
                             FechaNacimiento = new DateTime(1999, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Admin",
-                            _contrasenaEncriptada = "$2a$11$qzN.0MvFRu05/HsgDHERFe6nbH8lCQ3NGpFar4aCDKTqyomMLoYRi"
+                            _contrasenaEncriptada = "$2a$11$kNTg.z2xOzKB07Tfi3oZn..ZBWnfLblHGu.46lPFCJEofsDPfWqqG"
                         });
                 });
 
@@ -293,16 +291,10 @@ namespace Repositorios.Migrations
 
             modelBuilder.Entity("Dominio.Dependencia", b =>
                 {
-                    b.HasOne("Dominio.Tarea", null)
-                        .WithMany("Dependencias")
-                        .HasForeignKey("TareaDueñaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Dominio.Tarea", "Tarea")
-                        .WithMany()
+                        .WithMany("Dependencias")
                         .HasForeignKey("TareaId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Tarea");
