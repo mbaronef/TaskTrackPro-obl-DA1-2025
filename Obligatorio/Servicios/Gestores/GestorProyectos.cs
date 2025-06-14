@@ -4,7 +4,6 @@ using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
 using Excepciones;
 using Excepciones.MensajesError;
-using Repositorios;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 using Servicios.Utilidades;
@@ -17,8 +16,7 @@ public class GestorProyectos : IGestorProyectos
     private readonly IRepositorioUsuarios _repositorioUsuarios;
     private readonly INotificador _notificador;
     private readonly ICalculadorCaminoCritico _caminoCritico;
-    private readonly SqlContext _context;
-
+    
     public GestorProyectos(IRepositorioUsuarios repositorioUsuarios, IRepositorio<Proyecto> repositorioProyectos,
         INotificador notificador, ICalculadorCaminoCritico caminoCritico)
     {

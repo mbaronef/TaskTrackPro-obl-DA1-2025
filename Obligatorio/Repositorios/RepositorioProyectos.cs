@@ -25,24 +25,10 @@ public class RepositorioProyectos : IRepositorioProyectos
     }
 
     public void Eliminar(int id)
-    {
-        //var proyecto = _contexto.Proyectos
-          //  .Include(p => p.Administrador)
-          //  .Include(p => p.Miembros)
-          //  .Include(p => p.Tareas)
-          //  .FirstOrDefault(p => p.Id == id);
-          
-            Proyecto proyecto = _contexto.Proyectos.FirstOrDefault(proyecto => proyecto.Id == id);
-            _contexto.Proyectos.Remove(proyecto);
-            
-            // debug
-            Console.WriteLine("Estado del proyecto antes del SaveChanges:");
-            Console.WriteLine($"- ID: {proyecto.Id}");
-            Console.WriteLine($"- Admin: {proyecto.Administrador?.Id}, Trackeado: {_contexto.Entry(proyecto.Administrador!).State}");
-            Console.WriteLine($"- Miembros: {string.Join(", ", proyecto.Miembros.Select(m => $"{m.Id} ({_contexto.Entry(m).State})"))}");
-            Console.WriteLine($"- Tareas: {string.Join(", ", proyecto.Tareas.Select(t => $"{t.Id} ({_contexto.Entry(t).State})"))}");
-            
-            _contexto.SaveChanges();
+    { 
+        Proyecto proyecto = _contexto.Proyectos.FirstOrDefault(proyecto => proyecto.Id == id);
+        _contexto.Proyectos.Remove(proyecto);
+        _contexto.SaveChanges();
     }
 
     public List<Proyecto> ObtenerTodos()
@@ -81,6 +67,4 @@ public class RepositorioProyectos : IRepositorioProyectos
             _contexto.SaveChanges();
         }
     }
-
-
 }

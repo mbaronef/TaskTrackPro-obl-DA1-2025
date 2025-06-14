@@ -44,7 +44,6 @@ public class RepositorioUsuarios : IRepositorioUsuarios
         }
     }
 
-
     public List<Usuario> ObtenerTodos()
     {
         return _contexto.Usuarios.ToList();
