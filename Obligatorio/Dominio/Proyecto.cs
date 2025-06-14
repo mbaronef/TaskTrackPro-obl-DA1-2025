@@ -72,6 +72,7 @@ public class Proyecto
         ValidarQueUsuarioAEliminarNoSeaAdministrador(usuarioAEliminar);
         if (Lider != null && Lider.Id == usuarioAEliminar.Id)
         {
+            usuarioAEliminar.RemoverRolLider();
             Lider = null;
         }
         Miembros.Remove(usuarioAEliminar);
