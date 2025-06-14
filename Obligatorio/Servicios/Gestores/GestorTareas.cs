@@ -175,7 +175,7 @@ public class GestorTareas : IGestorTareas
         int idProyecto)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         
         tarea.EliminarDependencia(idTareaDependencia);
