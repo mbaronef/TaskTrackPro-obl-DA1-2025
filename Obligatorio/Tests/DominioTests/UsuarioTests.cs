@@ -156,6 +156,16 @@ namespace Tests.DominioTests
             usuario.AsignarRolLider();
             Assert.IsTrue(usuario.EsLider);
         }
+        
+        
+        [TestMethod]
+        public void RemoverComoLiderMarcaUsuarioComoNoLider()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            usuario.AsignarRolLider();
+            usuario.RemoverRolLider();
+            Assert.IsFalse(usuario.EsLider);
+        }
 
         [TestMethod]
         public void SeCambiaContrasenaCorrectamente()
