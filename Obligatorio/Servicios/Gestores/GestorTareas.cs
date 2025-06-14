@@ -204,7 +204,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Usuario miembro = ObtenerUsuarioPorDTO(miembroDTO);
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
 
