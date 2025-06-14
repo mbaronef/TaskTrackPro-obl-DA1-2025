@@ -18,7 +18,7 @@ builder.Services.AddDbContextFactory<SqlContext>(opciones =>
         providerOptions => providerOptions.EnableRetryOnFailure()));
 
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
-builder.Services.AddScoped<IRepositorio<Proyecto>, RepositorioProyectos>();
+builder.Services.AddScoped<IRepositorioProyectos, RepositorioProyectos>();
 builder.Services.AddScoped<IRepositorio<Recurso>, RepositorioRecursos>();
 
 builder.Services.AddScoped<IGestorUsuarios, GestorUsuarios>();
