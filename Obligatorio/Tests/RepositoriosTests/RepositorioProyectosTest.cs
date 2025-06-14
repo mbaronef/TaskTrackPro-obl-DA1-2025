@@ -76,4 +76,42 @@ public class RepositorioProyectosTest
         Assert.AreEqual(1, proyectos.Count);
         Assert.AreEqual(_proyecto, proyectos.Last());
     }
+    
+    [TestMethod]
+    public void SeActualizaProyectoCorrectamente()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        var proyectoOriginal = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+        proyectoOriginal.ModificarNombre("Proyecto actualizado");
+        proyectoOriginal.ModificarDescripcion("Nueva descripción");
+        
+        _repositorioProyectos.Actualizar(proyectoOriginal);
+        
+        var proyectoActualizado = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+        Assert.AreEqual("Proyecto actualizado", proyectoActualizado.Nombre);
+        Assert.AreEqual("Nueva descripción", proyectoActualizado.Descripcion);
+    }
+    
+    [TestMethod]
+    public void SeActualizaTareaCorrectamente()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        Tarea tarea = new Tarea("Título original", "Descripción original", 5, DateTime.Today.AddDays(11));
+        _proyecto.AgregarTarea(tarea);
+        _repositorioProyectos.Actualizar(_proyecto);
+        
+        tarea.ModificarTitulo("Título actualizado");
+        tarea.ModificarDescripcion("Descripción actualizada");
+        tarea.ModificarDuracion(10);
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
+
+        _repositorioProyectos.ActualizarTarea(tarea);
+        
+        var tareaActualizada = _contexto.Set<Tarea>().FirstOrDefault(t => t.Id == tarea.Id);
+        Assert.AreEqual("Título actualizado", tareaActualizada.Titulo);
+        Assert.AreEqual("Descripción actualizada", tareaActualizada.Descripcion);
+        Assert.AreEqual(DateTime.Today, tareaActualizada.FechaInicioMasTemprana); // Como la tarea ahora está en proceso, la fechaInicioMasTemprana cambia a hoy.
+        Assert.AreEqual(10, tareaActualizada.DuracionEnDias);
+        Assert.AreEqual(EstadoTarea.EnProceso, tareaActualizada.Estado);
+    }
 }

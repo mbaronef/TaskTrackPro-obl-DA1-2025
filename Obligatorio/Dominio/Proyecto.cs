@@ -7,8 +7,8 @@ public class Proyecto
 {
     private static int _maximoCaracteresDescripcion = 400;
     public int Id { get; set; }
-    public string Nombre { get; set; }
-    public string Descripcion { get; set; }
+    public string Nombre { get; private set; }
+    public string Descripcion { get; private set; }
     public virtual ICollection<Tarea> Tareas { get; }
     public Usuario Administrador { get; set; }
     public virtual ICollection<Usuario> Miembros { get; }

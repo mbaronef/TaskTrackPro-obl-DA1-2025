@@ -73,4 +73,26 @@ public class RepositorioUsuariosTests
         Usuario obtenidoPorEmail = _repositorioUsuarios.ObtenerUsuarioPorEmail("admin@sistema.com");
         Assert.AreEqual(admin, obtenidoPorEmail);
     }
+    
+    [TestMethod]
+    public void SeActualizaUsuarioCorrectamente()
+    {
+        _repositorioUsuarios.Agregar(_usuario);
+        var usuarioOriginal = _repositorioUsuarios.ObtenerPorId(_usuario.Id);
+        usuarioOriginal.Nombre = "Pedro";
+        usuarioOriginal.Apellido = "Rodriguez";
+        usuarioOriginal.Email = "pedro@gmail.com";
+        usuarioOriginal.EstaAdministrandoUnProyecto = true;
+        usuarioOriginal.CantidadProyectosAsignados = 5;
+
+        _repositorioUsuarios.Actualizar(usuarioOriginal);
+        
+        var usuarioActualizado = _repositorioUsuarios.ObtenerPorId(_usuario.Id);
+        Assert.AreEqual("Pedro", usuarioActualizado.Nombre);
+        Assert.AreEqual("Rodriguez", usuarioActualizado.Apellido);
+        Assert.AreEqual("pedro@gmail.com", usuarioActualizado.Email);
+        Assert.IsTrue(usuarioActualizado.EstaAdministrandoUnProyecto);
+        Assert.AreEqual(5, usuarioActualizado.CantidadProyectosAsignados);
+    }
+
 }

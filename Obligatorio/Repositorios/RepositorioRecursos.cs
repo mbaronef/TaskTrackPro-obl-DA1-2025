@@ -34,4 +34,18 @@ public class RepositorioRecursos : IRepositorio<Recurso>
     {
         return _contexto.Recursos.ToList();
     }
+    
+    public void Actualizar(Recurso recurso)
+    {
+        var recursoContexto = _contexto.Recursos.FirstOrDefault(r=> r.Id == recurso.Id);
+        if (recursoContexto != null)
+        {
+            recursoContexto.Nombre = recurso.Nombre;
+            recursoContexto.Tipo = recurso.Tipo;
+            recursoContexto.Descripcion = recurso.Descripcion;
+            recursoContexto.ProyectoAsociado = recurso.ProyectoAsociado;
+            recursoContexto.CantidadDeTareasUsandolo = recurso.CantidadDeTareasUsandolo;
+            _contexto.SaveChanges();
+        }
+    }
 }

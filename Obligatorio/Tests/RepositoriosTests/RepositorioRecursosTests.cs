@@ -80,4 +80,26 @@ public class RepositorioRecursosTests
         Assert.AreEqual(1, recursos.Count);
         Assert.AreEqual(_recurso, recursos.Last());
     }
+    
+    [TestMethod]
+    public void SeActualizaRecursoCorrectamente()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+        
+        var recursoOriginal = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        recursoOriginal.Nombre = "Recurso Actualizado";
+        recursoOriginal.Tipo = "Nuevo Tipo";
+        recursoOriginal.Descripcion = "Descripción actualizada";
+        recursoOriginal.CantidadDeTareasUsandolo = 10;
+        recursoOriginal.ProyectoAsociado = _proyecto;
+        _repositorioRecursos.Actualizar(recursoOriginal);
+        
+        var recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual("Recurso Actualizado", recursoActualizado.Nombre);
+        Assert.AreEqual("Nuevo Tipo", recursoActualizado.Tipo);
+        Assert.AreEqual("Descripción actualizada", recursoActualizado.Descripcion);
+        Assert.AreEqual(10, recursoActualizado.CantidadDeTareasUsandolo);
+        Assert.AreEqual(_proyecto, recursoActualizado.ProyectoAsociado);
+    }
+
 }
