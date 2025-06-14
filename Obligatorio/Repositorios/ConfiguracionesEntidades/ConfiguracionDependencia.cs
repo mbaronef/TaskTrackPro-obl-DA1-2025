@@ -13,11 +13,21 @@ public static class ConfiguracionDependencia
         modelBuilder.Entity<Dependencia>().HasCheckConstraint("CK_Dependencia_Tipo", "[Tipo] IN ('SS', 'FS')");
         
         modelBuilder.Entity<Dependencia>()
-            .HasKey("TareaId", "Tipo");  // clave compuesta con shadow property para TareaId
+            .Property<int>("TareaDueñaId");  
         
         modelBuilder.Entity<Dependencia>()
-            .HasOne(d => d.Tarea)
-            .WithMany(t => t.Dependencias)
-            .HasForeignKey("TareaId");
+            .HasKey("TareaDueñaId", "TareaId", "Tipo");
+
+        modelBuilder.Entity<Dependencia>()
+            .HasOne<Tarea>()              
+            .WithMany(t => t.Dependencias)    
+            .HasForeignKey("TareaDueñaId")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Dependencia>()
+            .HasOne(d => d.Tarea)             
+            .WithMany()                       
+            .HasForeignKey("TareaId")
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
