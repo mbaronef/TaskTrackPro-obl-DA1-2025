@@ -218,7 +218,7 @@ else
                     <label><strong>Nuevo Líder:</strong></label>
                     <select class="form-select" @bind="idNuevoLider">
                         <option value="">Seleccione un miembro</option>
-                        @foreach (var miembro in miembros.Where(m => m.Id != proyecto.Administrador.Id))
+                        @foreach (var miembro in miembros)
                         {
                             <option value="@miembro.Id">@miembro.Nombre @miembro.Apellido (@miembro.Email)</option>
                         }

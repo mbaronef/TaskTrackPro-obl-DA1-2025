@@ -284,6 +284,19 @@ public class ProyectoTests
         _proyecto.AsignarMiembro(miembro);
         _proyecto.EliminarMiembro(_admin.Id); // Intenta eliminar al admin
     }
+    
+    [TestMethod]
+    public void EliminarMiembro_QueEsLider_DejaLiderEnNull()
+    {
+        Usuario lider = CrearMiembro(3);
+        _miembros.Add(lider);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(lider);
+
+        proyecto.EliminarMiembro(lider.Id);
+
+        Assert.IsNull(proyecto.Lider);
+    }
 
     //EsAdministrador
     [TestMethod]
