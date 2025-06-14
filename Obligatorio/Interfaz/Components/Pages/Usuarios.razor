@@ -255,6 +255,10 @@ else
                             {
                                 <span class="badge bg-info text-dark ms-1">Administrador de proyecto</span>
                             }
+                            @if (usuario.EsLider)
+                            {
+                                <span class="badge bg-success text-dark ms-1">Líder de proyecto</span>
+                            }
                         </td>
                         <td>
                             <button class="btn btn-sm btn-outline-secondary" @onclick="() => EditarUsuario(usuario.Id)">

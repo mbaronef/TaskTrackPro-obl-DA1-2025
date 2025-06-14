@@ -69,6 +69,10 @@ else
                     {
                         <span class="badge bg-info text-dark">Administrador de proyecto</span>
                     }
+                    @if (miembro.EsLider)
+                    {
+                        <span class="badge bg-success text-white ms-1">Líder de proyecto</span>
+                    }
                 </td>
                 @if (esAdminProyecto && miembro.Id != proyecto.Administrador.Id)
                 {

@@ -16,6 +16,8 @@ public class UsuarioListarDTO
 
     public bool EsAdministradorSistema { get; set; }
     public bool EsAdministradorProyecto { get; set; }
+    
+    public bool EsLider { get; set; }
 
     public List<NotificacionDTO> Notificaciones { get; private set; }
 
@@ -30,6 +32,7 @@ public class UsuarioListarDTO
             Email = usuario.Email,
             EsAdministradorSistema = usuario.EsAdministradorSistema,
             EsAdministradorProyecto = usuario.EsAdministradorProyecto,
+            EsLider = usuario.EsLider,
             Notificaciones = usuario.Notificaciones.Select(NotificacionDTO.DesdeEntidad).ToList(),
         };
     }
