@@ -50,4 +50,6 @@ public static class MensajesErrorServicios
         "La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).";
     
     public const string UsuarioNoEsAdminNiLider = "El usuario no tiene permisos para realizar esta acción (debe ser administrador o líder del proyecto).";
+    public static string UsuarioNoAsignadoALaTarea => "El usuario no tiene la tarea asignada.";
+
 }

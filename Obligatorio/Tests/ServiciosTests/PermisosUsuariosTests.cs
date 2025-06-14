@@ -182,5 +182,18 @@ namespace Tests.ServiciosTests
 
             PermisosUsuarios.VerificarUsuarioEsAdminOLiderDelProyecto(proyecto, usuario);
         }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionPermisos))]
+        public void VerificarUsuarioMiembroDeLaTarea_LanzaExcepcion_SiNoEsMiembro()
+        {
+            Usuario usuario = new Usuario { Id = 1 };
+            Usuario otroUsuario = new Usuario { Id = 2 };
+
+            Tarea tarea = new Tarea("Tarea", "Descripción", 3, DateTime.Today.AddDays(1));
+            tarea.AsignarUsuario(otroUsuario); // este sí es miembro
+
+            PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignada(usuario, tarea);
+        }
     }
 }

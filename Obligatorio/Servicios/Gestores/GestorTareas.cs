@@ -128,6 +128,7 @@ public class GestorTareas : IGestorTareas
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
+        PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignada(solicitante, tarea);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);

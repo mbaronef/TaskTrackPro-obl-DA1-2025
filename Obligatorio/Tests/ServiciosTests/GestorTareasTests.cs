@@ -544,6 +544,23 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.AreEqual(EstadoTarea.EnProceso.ToString(), tarea.Estado.ToString());
     }
+    
+    [TestMethod]
+    public void CambiarEstadoTarea_LiderProyectoCambiaEstadoOk()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _gestorTareas.CambiarEstadoTarea(lider, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        Assert.AreEqual(EstadoTarea.EnProceso.ToString(), tarea.Estado.ToString());
+    }
 
     [TestMethod]
     public void CambiarEstadoTarea_MiembroTareaCambiaEstadoOk()
