@@ -703,5 +703,21 @@ public class ProyectoTests
         proyecto.AsignarLider(miembro);
         proyecto.AsignarLider(miembro); 
     }
+    
+    [TestMethod]
+    public void AsignarLider_CambiaLiderYActualizaRoles()
+    {
+        Usuario miembro1 = CrearMiembro(2);
+        Usuario miembro2 = CrearMiembro(3);
+        _miembros.AddRange(new[] { miembro1, miembro2 });
+
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(miembro1); // primer líder
+        proyecto.AsignarLider(miembro2); // cambio
+
+        Assert.AreEqual(miembro2, proyecto.Lider);
+        Assert.IsTrue(miembro2.EsLider);
+        Assert.IsFalse(miembro1.EsLider); 
+    }
 }
 
