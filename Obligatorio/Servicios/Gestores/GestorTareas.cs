@@ -128,10 +128,9 @@ public class GestorTareas : IGestorTareas
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignada(solicitante, tarea);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
-
-        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.CambiarEstado(nuevoEstado);
 
         _caminoCritico.CalcularCaminoCritico(proyecto);

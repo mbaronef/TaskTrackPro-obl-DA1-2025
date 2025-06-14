@@ -98,6 +98,14 @@ public static class PermisosUsuarios
         }
     }
     
+    public static void VerificarUsuarioTengaLaTareaAsignada(Usuario usuario, Tarea tarea)
+    {
+        if (!tarea.EsMiembro(usuario))
+        {
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoAsignadoALaTarea);
+        }
+    }
+    
     private static Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
         Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);
