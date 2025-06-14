@@ -348,13 +348,13 @@ public class GestorTareasTests
 
         _gestorTareas.ModificarTituloTarea(lider, tarea.Id, proyecto.Id, "Nuevo título por líder");
 
-        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
         Assert.AreEqual("Nuevo título por líder", tarea.Titulo);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
-    public void ModificarTitulo_UsuarioNoAdminNoPuedeModificarlo()
+    public void ModificarTitulo_UsuarioNoAdminNiLiderNoPuedeModificarlo()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         TareaDTO tarea = CrearTarea();
@@ -385,6 +385,22 @@ public class GestorTareasTests
 
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.AreEqual("Nueva descripcion", tarea.Descripcion);
+    }
+    
+    [TestMethod]
+    public void ModificarDescripcion_LiderProyectoModificaDescripcionTareaOk()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _gestorTareas.ModificarDescripcionTarea(lider, tarea.Id, proyecto.Id, "Nueva descripción por líder");
+
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
+        Assert.AreEqual("Nueva descripción por líder", tarea.Titulo);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
