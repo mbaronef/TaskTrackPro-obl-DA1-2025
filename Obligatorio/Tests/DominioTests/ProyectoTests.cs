@@ -732,5 +732,20 @@ public class ProyectoTests
 
         Assert.IsTrue(resultado);
     }
+    
+    [TestMethod]
+    public void EsLider_DevuelveFalseSiUsuarioNoEsElLider()
+    {
+        Usuario miembro1 = CrearMiembro(2);
+        Usuario miembro2 = CrearMiembro(3);
+        _miembros.AddRange(new[] { miembro1, miembro2 });
+
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(miembro1);
+
+        bool resultado = proyecto.EsLider(miembro2);
+
+        Assert.IsFalse(resultado);
+    }
 }
 
