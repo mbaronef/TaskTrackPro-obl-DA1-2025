@@ -882,4 +882,21 @@ public class GestorProyectosTests
 
         Assert.AreEqual(3, tareasCriticas.Count); // Todas las tareas deberían estar en el camino crítico
     }
+    
+    [TestMethod]
+    public void AsignarLider_AsignaCorrectamenteElLider()
+    {
+        Usuario nuevoLider = CrearMiembro(); 
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(nuevoLider));
+
+        _gestor.AsignarLider(proyecto.Id, _adminDTO, nuevoLider.Id);
+
+        Proyecto proyectoActualizado = _gestor.ObtenerProyectoDominioPorId(proyecto.Id);
+
+        Assert.AreEqual(nuevoLider.Id, proyectoActualizado.Lider.Id);
+        Assert.IsTrue(proyectoActualizado.Lider.EsLider);
+    }
 }
