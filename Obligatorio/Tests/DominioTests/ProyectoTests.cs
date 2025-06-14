@@ -298,6 +298,19 @@ public class ProyectoTests
         Assert.IsNull(proyecto.Lider);
     }
 
+    [TestMethod]
+    public void EliminarMiembro_QueEsLider_ActualizaEsLiderFalse()
+    {
+        Usuario lider = CrearMiembro(3);
+        _miembros.Add(lider);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(lider);
+
+        proyecto.EliminarMiembro(lider.Id);
+
+        Assert.IsFalse(lider.EsLider);
+    }
+
     //EsAdministrador
     [TestMethod]
     public void EsAdministrador_RetornaTrueSiUsuarioEsAdministrador()
