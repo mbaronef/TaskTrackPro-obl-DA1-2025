@@ -48,6 +48,11 @@ public class Usuario
     {
         EsLider = true;
     }
+    
+    public void RemoverRolLider()
+    {
+        EsLider = false;
+    }
 
     public void EstablecerContrasenaEncriptada(string contrasenaEncriptada)
     {
