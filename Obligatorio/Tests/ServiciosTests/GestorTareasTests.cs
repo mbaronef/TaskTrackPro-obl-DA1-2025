@@ -757,6 +757,25 @@ public class GestorTareasTests
     public void EliminarDependencia_AdminEliminaDependenciaCorrectamente()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        TareaDTO tareaPrincipal = CrearTarea();
+        TareaDTO tareaDependenciaDTO = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaPrincipal);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaDependenciaDTO);
+
+        _gestorTareas.AgregarDependenciaATarea(lider, tareaPrincipal.Id, tareaDependenciaDTO.Id, proyecto.Id, "FS");
+        _gestorTareas.EliminarDependenciaDeTarea(lider, tareaPrincipal.Id, tareaDependenciaDTO.Id, proyecto.Id);
+
+        tareaPrincipal = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tareaPrincipal.Id); // actualización
+        Assert.AreEqual(0, tareaPrincipal.Dependencias.Count);
+    }
+    
+    [TestMethod]
+    public void EliminarDependencia_LiderEliminaDependenciaCorrectamente()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         TareaDTO tareaPrincipal = CrearTarea();
         TareaDTO tareaDependenciaDTO = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaPrincipal);
