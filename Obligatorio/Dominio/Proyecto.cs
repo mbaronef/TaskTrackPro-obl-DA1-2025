@@ -129,18 +129,34 @@ public class Proyecto
     
     public void AsignarLider(Usuario usuario)
     {
+        ValidarLiderCandidato(usuario);
+        RemoverRolLiderAnteriorSiExiste();
+        Lider = usuario;
+        Lider.AsignarRolLider();
+    }
+    
+    private void ValidarLiderCandidato(Usuario usuario)
+    {
         ValidarNoNulo(usuario, MensajesErrorDominio.LiderNull);
         ValidarUsuarioEnMiembros(usuario.Id);
+        ValidarLiderDistintoAlAnterior(usuario);
+    }
+
+    private void ValidarLiderDistintoAlAnterior(Usuario usuario)
+    {
         if (Lider != null && Lider.Equals(usuario))
         {
             throw new ExcepcionDominio(MensajesErrorDominio.UsuarioYaEsLider);
         }
+    }
+
+
+    private void RemoverRolLiderAnteriorSiExiste()
+    {
         if (Lider != null)
         {
             Lider.RemoverRolLider();
         }
-        Lider = usuario;
-        Lider.AsignarRolLider();
     }
 
     public bool EsMiembro(int idUsuario)
