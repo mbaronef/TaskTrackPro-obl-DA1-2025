@@ -899,4 +899,17 @@ public class GestorProyectosTests
         Assert.AreEqual(nuevoLider.Id, proyectoActualizado.Lider.Id);
         Assert.IsTrue(proyectoActualizado.Lider.EsLider);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionPermisos))]
+    public void AsignarLider_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto()
+    {
+        Usuario nuevoLider = CrearMiembro();
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(nuevoLider));
+
+        _gestor.AsignarLider(proyecto.Id, UsuarioDTO.DesdeEntidad(nuevoLider), nuevoLider.Id);
+    }
 }
