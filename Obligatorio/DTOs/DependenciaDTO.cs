@@ -19,9 +19,13 @@ public class DependenciaDTO
     {
         return new DependenciaDTO
         {
-            TareaPrevia = TareaDTO.DesdeEntidad(dependencia.Tarea),
             TareaPreviaId = dependencia.Tarea.Id,
-            Tipo = dependencia.Tipo.ToString()
+            Tipo = dependencia.Tipo,
+            TareaPrevia = new TareaDTO
+            {
+                Id = dependencia.Tarea.Id,
+                Titulo = dependencia.Tarea.Titulo,
+            }
         };
     }
 }
