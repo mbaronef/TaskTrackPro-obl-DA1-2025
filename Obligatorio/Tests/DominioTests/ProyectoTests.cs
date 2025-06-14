@@ -651,4 +651,13 @@ public class ProyectoTests
         tarea.ModificarFechaInicioMasTemprana(inicio ?? DateTime.Today);
         return tarea;
     }
+    
+    [TestMethod]
+    public void Proyecto_SeCreaSinLiderPorDefecto()
+    {
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto proyecto = new Proyecto("Proyecto", "Descripcion", fechaInicio, _admin, _miembros);
+
+        Assert.IsNull(proyecto.Lider);
+    }
 }
