@@ -53,6 +53,14 @@ public class GestorTareasTests
         _repositorioUsuarios.Agregar(admin);
         return UsuarioDTO.DesdeEntidad(admin); //dto
     }
+    
+    private UsuarioDTO CrearYLiderarProyecto(ProyectoDTO proyecto)
+    {
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        return lider;
+    }
 
     private UsuarioDTO CrearAdministradorProyecto()
     {
@@ -340,9 +348,7 @@ public class GestorTareasTests
     public void ModificarTitulo_LiderProyectoModificaTituloTareaOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        UsuarioDTO lider = CrearUsuarioNoAdmin();
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
-        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
@@ -391,9 +397,7 @@ public class GestorTareasTests
     public void ModificarDescripcion_LiderProyectoModificaDescripcionTareaOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        UsuarioDTO lider = CrearUsuarioNoAdmin();
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
-        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
@@ -442,9 +446,7 @@ public class GestorTareasTests
     public void ModificarDuracion_LiderProyectoModificaDuracionTareaOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        UsuarioDTO lider = CrearUsuarioNoAdmin();
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
-        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
@@ -495,9 +497,7 @@ public class GestorTareasTests
     public void ModificarFechaInicio_LiderProyectoModificaDuracionTareaOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        UsuarioDTO lider = CrearUsuarioNoAdmin();
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
-        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         DateTime fechaNueva = new DateTime(2030, 01, 01);
@@ -549,9 +549,7 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_LiderProyectoCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        UsuarioDTO lider = CrearUsuarioNoAdmin();
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
-        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
@@ -634,6 +632,7 @@ public class GestorTareasTests
 
         TareaDTO tareaD = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaD);
+        _gestorTareas.AgregarMiembroATarea(_admin, tareaD.Id, proyecto.Id, _noAdmin);
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
@@ -667,9 +666,7 @@ public class GestorTareasTests
     public void AgregarDependencia_LiderAgregaDependenciaCorrectamente()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        UsuarioDTO lider = CrearUsuarioNoAdmin();
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
-        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
         TareaDTO tareaPrincipal = CrearTarea();
         TareaDTO tareaDependencia = CrearTarea();
 
@@ -757,9 +754,7 @@ public class GestorTareasTests
     public void EliminarDependencia_LiderEliminaDependenciaCorrectamente()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        UsuarioDTO lider = CrearUsuarioNoAdmin();
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
-        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
         TareaDTO tareaPrincipal = CrearTarea();
         TareaDTO tareaDependenciaDTO = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaPrincipal);
@@ -867,9 +862,7 @@ public class GestorTareasTests
     public void LiderDeProyectoPuedeAgregarMiembroATarea()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        UsuarioDTO lider = CrearUsuarioNoAdmin();
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
-        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
 
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
 
@@ -944,9 +937,7 @@ public class GestorTareasTests
     public void LiderDeProyectoPuedeEliminarMiembroDeTarea()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        UsuarioDTO lider = CrearUsuarioNoAdmin();
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
-        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
 
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
 
