@@ -175,7 +175,7 @@ namespace Tests.ServiciosTests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionPermisos))]
-        public void VerificarUsuarioEsAdminOLiderDelProyecto_LanzaExcepcion_SiNoEsAdminNiLider()
+        public void VerificarUsuarioEsAdminOLiderDelProyecto_LanzaExcepcionSiNoEsAdminNiLider()
         {
             var usuario = new Usuario { Id = 5 };
             proyecto.Miembros.Add(usuario);
@@ -184,26 +184,52 @@ namespace Tests.ServiciosTests
         }
         
         [TestMethod]
-        [ExpectedException(typeof(ExcepcionPermisos))]
-        public void VerificarUsuarioTengaLaTareaAsignada_LanzaExcepcion_SiNoEsMiembro()
+        public void VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLider_NoLanzaSiUsuarioEsMiembroDeTarea()
         {
-            Usuario usuario = new Usuario { Id = 1 };
-            Usuario otroUsuario = new Usuario { Id = 2 };
+            Usuario usuario = new Usuario { Id = 10 };
+            Tarea tarea = new Tarea("Tarea", "Desc", 3, DateTime.Today.AddDays(1));
+            tarea.AsignarUsuario(usuario);
+    
+            Proyecto proyecto = new Proyecto("nombre", "desc", DateTime.Now, new Usuario { Id = 1 }, new List<Usuario> { usuario });
 
-            Tarea tarea = new Tarea("Tarea", "Descripción", 3, DateTime.Today.AddDays(1));
-            tarea.AsignarUsuario(otroUsuario); // este sí es miembro
+            PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(usuario, tarea, proyecto);
+        }
+        
+        [TestMethod]
+        public void VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLider_NoLanza_SiUsuarioEsAdminDelProyecto()
+        {
+            Usuario usuario = new Usuario { Id = 20 };
+            Tarea tarea = new Tarea("Tarea", "Desc", 3, DateTime.Today.AddDays(1));
 
-            PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignada(usuario, tarea);
+            Proyecto proyecto = new Proyecto("nombre", "desc", DateTime.Now, usuario, new List<Usuario> { usuario });
+
+            PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(usuario, tarea, proyecto);
+        }
+        
+        [TestMethod]
+        public void VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLider_NoLanza_SiUsuarioEsLiderDelProyecto()
+        {
+            Usuario usuario = new Usuario { Id = 30 };
+            Tarea tarea = new Tarea("Tarea", "Desc", 3, DateTime.Today.AddDays(1));
+
+            Usuario admin = new Usuario { Id = 99 }; // otro admin
+            Proyecto proyecto = new Proyecto("nombre", "desc", DateTime.Now, admin, new List<Usuario> { usuario, admin });
+            proyecto.AsignarLider(usuario);
+
+            PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(usuario, tarea, proyecto);
         }
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionPermisos))]
-        public void VerificarUsuarioMiembroDeLaTarea_LanzaExcepcion_SiNoEsMiembro()
+        public void VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLider_Lanza_SiNoTienePermisos()
         {
-            Usuario usuario = new Usuario { Id = 99 };
-            Tarea tarea = new Tarea("Tarea", "Desc", 2, DateTime.Today.AddDays(1));
-    
-            PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignada(usuario, tarea);
+            Usuario usuario = new Usuario { Id = 40 };
+            Tarea tarea = new Tarea("Tarea", "Desc",  3, DateTime.Today.AddDays(1));
+
+            Usuario admin = new Usuario { Id = 99 };
+            Proyecto proyecto = new Proyecto("nombre", "desc", DateTime.Now, admin, new List<Usuario> { admin });
+
+            PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(usuario, tarea, proyecto);
         }
     }
 }

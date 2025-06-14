@@ -97,14 +97,6 @@ public static class PermisosUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioMiembroDeProyecto);
         }
     }
-    
-    public static void VerificarUsuarioTengaLaTareaAsignada(Usuario usuario, Tarea tarea)
-    {
-        if (!tarea.EsMiembro(usuario))
-        {
-            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoAsignadoALaTarea);
-        }
-    }
 
     public static void VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(Usuario usuario, Tarea tarea, Proyecto proyecto)
     {
