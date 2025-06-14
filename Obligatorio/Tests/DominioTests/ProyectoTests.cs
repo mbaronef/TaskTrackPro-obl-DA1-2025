@@ -683,5 +683,13 @@ public class ProyectoTests
 
         proyecto.AsignarLider(noMiembro);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AsignarLider_LanzaExcepcion_SiUsuarioEsNull()
+    {
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(null);
+    }
 }
 
