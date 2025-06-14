@@ -126,6 +126,12 @@ public class Proyecto
             }
         }
     }
+    
+    public void AsignarLider(Usuario usuario)
+    {
+        Lider = usuario;
+        Lider.AsignarRolLider();
+    }
 
     public bool EsMiembro(int idUsuario)
     {
