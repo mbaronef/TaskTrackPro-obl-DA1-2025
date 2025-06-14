@@ -47,6 +47,10 @@
                     {
                         <span class="badge bg-info text-dark me-1">Administrador de proyecto</span>
                     }
+                    @if (Sesion.UsuarioLogueado.EsLider)
+                    {
+                        <span class="badge bg-success text-white me-1">Líder de proyecto</span>
+                    }
                     @if (!Sesion.EsAdminSistema() && !Sesion.EsAdminProyecto())
                     {
                         <span class="text-muted">Sin rol administrativo</span>
