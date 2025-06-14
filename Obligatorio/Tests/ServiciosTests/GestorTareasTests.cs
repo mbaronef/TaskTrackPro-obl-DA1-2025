@@ -502,14 +502,15 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         DateTime fechaNueva = new DateTime(2030, 01, 01);
         _gestorTareas.ModificarFechaInicioTarea(lider, tarea.Id, proyecto.Id, fechaNueva);
+        // No debería lanzar excepción. Luego se llama a CPM que modifica la fecha de inicio por la del proyecto
 
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
-        Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
+        Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
-    public void ModificarFechaInicio_UsuarioNoAdminNoPuedeModificarla()
+    public void ModificarFechaInicio_UsuarioNoAdminNiLiderNoPuedeModificarla()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         TareaDTO tarea = CrearTarea();
