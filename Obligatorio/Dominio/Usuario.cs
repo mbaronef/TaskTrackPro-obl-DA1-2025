@@ -43,6 +43,11 @@ public class Usuario
         _contrasenaEncriptada = contrasenaEncriptada;
         Notificaciones = new List<Notificacion>();
     }
+    
+    public void AsignarRolLider()
+    {
+        EsLider = true;
+    }
 
     public void EstablecerContrasenaEncriptada(string contrasenaEncriptada)
     {
