@@ -912,4 +912,27 @@ public class GestorProyectosTests
 
         _gestor.AsignarLider(proyecto.Id, UsuarioDTO.DesdeEntidad(nuevoLider), nuevoLider.Id);
     }
+    
+    [TestMethod]
+    public void AsignarLider_NotificaATodosLosMiembrosDelProyecto()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+
+        Usuario nuevoLider = CrearMiembro();
+        UsuarioDTO nuevoLiderDTO = UsuarioDTO.DesdeEntidad(nuevoLider);
+
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, nuevoLiderDTO);
+
+        _gestor.AsignarLider(proyecto.Id, _adminDTO, nuevoLider.Id);
+
+        string mensajeEsperado = MensajesNotificacion.LiderAsignado(proyecto.Nombre, nuevoLider.ToString());
+
+        proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id);
+
+        foreach (var m in proyecto.Miembros)
+        {
+            Assert.IsTrue(m.Notificaciones.Any(n => n.Mensaje == mensajeEsperado));
+        }
+    }
 }
