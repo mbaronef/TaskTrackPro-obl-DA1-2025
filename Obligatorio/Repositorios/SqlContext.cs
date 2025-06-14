@@ -1,5 +1,6 @@
 using Dominio;
 using Microsoft.EntityFrameworkCore;
+using Repositorios.ConfiguracionesEntidades;
 
 namespace Repositorios;
 
@@ -19,27 +20,11 @@ public class SqlContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Usuario>()
-            .Property<string>("_contrasenaEncriptada") 
-            .HasColumnName("ContrasenaEncriptada")   
-            .IsRequired();
-        
-        modelBuilder.Entity<Dependencia>()
-            .HasKey(d => new { d.TareaId, d.Tipo });
-        
-        modelBuilder.Entity<Dependencia>()
-            .HasOne(d => d.Tarea)
-            .WithMany(t => t.Dependencias)
-            .HasForeignKey(d => d.TareaId);
-        
-        modelBuilder.Entity<Proyecto>()
-            .HasOne(p => p.Administrador)
-            .WithMany()
-            .HasForeignKey("AdministradorId") 
-            .OnDelete(DeleteBehavior.Restrict); 
-
-        modelBuilder.Entity<Proyecto>()
-            .Navigation(p => p.Administrador).AutoInclude();
+        ConfiguracionDependencia.Configurar(modelBuilder);
+        ConfiguracionNotificacion.Configurar(modelBuilder);
+        ConfiguracionProyecto.Configurar(modelBuilder);
+        ConfiguracionRecurso.Configurar(modelBuilder);
+        ConfiguracionTarea.Configurar(modelBuilder);
+        ConfiguracionUsuario.Configurar(modelBuilder);
     }
-    
 }

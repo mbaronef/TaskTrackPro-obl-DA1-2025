@@ -17,7 +17,7 @@ public class RepositorioRecursosTests
     [TestInitialize]
     public void SetUp()
     {
-        _contexto = SqlContextFactory.CreateMemoryContext();
+        _contexto = SqlContextFactory.CrearContextoEnMemoria();
 
         _repositorioRecursos = new RepositorioRecursos(_contexto);
         _recurso = new Recurso("nombre", "tipo", "descripcion");

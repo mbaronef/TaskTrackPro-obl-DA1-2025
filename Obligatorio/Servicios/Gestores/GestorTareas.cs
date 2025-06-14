@@ -6,7 +6,7 @@ using Excepciones;
 using Excepciones.MensajesError;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
-using Servicios.Utilidades;
+using Utilidades;
 
 namespace Servicios.Gestores;
 

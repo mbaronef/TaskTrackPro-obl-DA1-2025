@@ -2,7 +2,7 @@
 using Excepciones;
 using Excepciones.MensajesError;
 
-namespace Servicios.Utilidades;
+namespace Utilidades;
 
 public static class PermisosUsuarios
 {

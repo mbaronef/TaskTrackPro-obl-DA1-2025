@@ -16,7 +16,7 @@ public class RepositorioProyectosTest
     [TestInitialize]
     public void SetUp()
     {
-        _contexto = SqlContextFactory.CreateMemoryContext();
+        _contexto = SqlContextFactory.CrearContextoEnMemoria();
 
         _repositorioProyectos = new RepositorioProyectos(_contexto);
 

@@ -24,13 +24,12 @@ public class Tarea
         RecursosNecesarios = new List<Recurso>();
         Dependencias = new List<Dependencia>();
     }
-
     
     public Tarea(string titulo, string descripcion, int duracionEnDias, DateTime fechaInicioMasTemprana)
     {
         ValidarStringNoVacioNiNull(titulo, MensajesErrorDominio.TituloTareaVacio);
-        ValidarIntNoNegativoNiCero(duracionEnDias, MensajesErrorDominio.DuracionTareaInvalida);
         ValidarStringNoVacioNiNull(descripcion, MensajesErrorDominio.DescripcionVacia);
+        ValidarIntNoNegativoNiCero(duracionEnDias, MensajesErrorDominio.DuracionTareaInvalida);
         ValidarFechaInicio(fechaInicioMasTemprana);
         
         Titulo = titulo;

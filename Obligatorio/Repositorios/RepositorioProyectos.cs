@@ -1,5 +1,4 @@
 using Dominio;
-using Microsoft.EntityFrameworkCore;
 using Repositorios.Interfaces;
 
 namespace Repositorios;
@@ -25,7 +24,7 @@ public class RepositorioProyectos : IRepositorioProyectos
     }
 
     public void Eliminar(int id)
-    { 
+    {
         Proyecto proyecto = _contexto.Proyectos.FirstOrDefault(proyecto => proyecto.Id == id);
         _contexto.Proyectos.Remove(proyecto);
         _contexto.SaveChanges();

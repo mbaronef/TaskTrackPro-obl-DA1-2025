@@ -15,7 +15,7 @@ public class RepositorioUsuariosTests
     [TestInitialize]
     public void Setup()
     {
-        _contexto = SqlContextFactory.CreateMemoryContext();
+        _contexto = SqlContextFactory.CrearContextoEnMemoria();
 
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _usuario = new Usuario("Juan", "Pérez", new DateTime(1998, 7, 6), "unEmail@gmail.com", "uNaC@ntr4seña");

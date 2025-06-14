@@ -13,7 +13,6 @@ namespace Repositorios.Migrations
     [DbContext(typeof(SqlContext))]
     partial class SqlContextModelSnapshot : ModelSnapshot
     {
-        
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
@@ -29,11 +28,15 @@ namespace Repositorios.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Tipo")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
                     b.HasKey("TareaId", "Tipo");
 
-                    b.ToTable("Dependencia");
+                    b.ToTable("Dependencia", t =>
+                        {
+                            t.HasCheckConstraint("CK_Dependencia_Tipo", "[Tipo] IN ('SS', 'FS')");
+                        });
                 });
 
             modelBuilder.Entity("Dominio.Notificacion", b =>
@@ -51,7 +54,7 @@ namespace Repositorios.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UsuarioId")
+                    b.Property<int>("UsuarioId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -74,7 +77,8 @@ namespace Repositorios.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
 
                     b.Property<DateTime>("FechaFinMasTemprana")
                         .HasColumnType("datetime2");
@@ -88,7 +92,8 @@ namespace Repositorios.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdministradorId");
+                    b.HasIndex("AdministradorId")
+                        .IsUnique();
 
                     b.ToTable("Proyectos");
                 });
@@ -115,9 +120,6 @@ namespace Repositorios.Migrations
                     b.Property<int?>("ProyectoAsociadoId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TareaId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Tipo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -125,8 +127,6 @@ namespace Repositorios.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProyectoAsociadoId");
-
-                    b.HasIndex("TareaId");
 
                     b.ToTable("Recursos");
                 });
@@ -161,7 +161,7 @@ namespace Repositorios.Migrations
                     b.Property<int>("Holgura")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProyectoId")
+                    b.Property<int>("ProyectoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Titulo")
@@ -172,7 +172,10 @@ namespace Repositorios.Migrations
 
                     b.HasIndex("ProyectoId");
 
-                    b.ToTable("Tarea");
+                    b.ToTable("Tarea", t =>
+                        {
+                            t.HasCheckConstraint("CK_Tarea_DuracionMayorACero", "[DuracionEnDias] > 0");
+                        });
                 });
 
             modelBuilder.Entity("Dominio.Usuario", b =>
@@ -192,7 +195,7 @@ namespace Repositorios.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("EsAdministradorProyecto")
                         .HasColumnType("bit");
@@ -210,12 +213,6 @@ namespace Repositorios.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProyectoId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TareaId")
-                        .HasColumnType("int");
-
                     b.Property<string>("_contrasenaEncriptada")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -223,11 +220,70 @@ namespace Repositorios.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Apellido = "Sistema",
+                            CantidadProyectosAsignados = 0,
+                            Email = "admin@sistema.com",
+                            EsAdministradorProyecto = false,
+                            EsAdministradorSistema = true,
+                            EstaAdministrandoUnProyecto = false,
+                            FechaNacimiento = new DateTime(1999, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Nombre = "Admin",
+                            _contrasenaEncriptada = "$2a$11$pmFUfeEmBLWPl4OjY7eJm.do471hYa/sI6NXwF0EAxgTsnBON9Adu"
+                        });
+                });
+
+            modelBuilder.Entity("ProyectoUsuario", b =>
+                {
+                    b.Property<int>("MiembrosId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProyectoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MiembrosId", "ProyectoId");
+
                     b.HasIndex("ProyectoId");
+
+                    b.ToTable("ProyectoUsuario");
+                });
+
+            modelBuilder.Entity("RecursoTarea", b =>
+                {
+                    b.Property<int>("RecursosNecesariosId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TareaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RecursosNecesariosId", "TareaId");
 
                     b.HasIndex("TareaId");
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("RecursoTarea");
+                });
+
+            modelBuilder.Entity("TareaUsuario", b =>
+                {
+                    b.Property<int>("TareaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuariosAsignadosId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TareaId", "UsuariosAsignadosId");
+
+                    b.HasIndex("UsuariosAsignadosId");
+
+                    b.ToTable("TareaUsuario");
                 });
 
             modelBuilder.Entity("Dominio.Dependencia", b =>
@@ -245,15 +301,17 @@ namespace Repositorios.Migrations
                 {
                     b.HasOne("Dominio.Usuario", null)
                         .WithMany("Notificaciones")
-                        .HasForeignKey("UsuarioId");
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Dominio.Proyecto", b =>
                 {
                     b.HasOne("Dominio.Usuario", "Administrador")
-                        .WithMany()
-                        .HasForeignKey("AdministradorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne()
+                        .HasForeignKey("Dominio.Proyecto", "AdministradorId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Administrador");
@@ -265,10 +323,6 @@ namespace Repositorios.Migrations
                         .WithMany()
                         .HasForeignKey("ProyectoAsociadoId");
 
-                    b.HasOne("Dominio.Tarea", null)
-                        .WithMany("RecursosNecesarios")
-                        .HasForeignKey("TareaId");
-
                     b.Navigation("ProyectoAsociado");
                 });
 
@@ -276,34 +330,64 @@ namespace Repositorios.Migrations
                 {
                     b.HasOne("Dominio.Proyecto", null)
                         .WithMany("Tareas")
-                        .HasForeignKey("ProyectoId");
+                        .HasForeignKey("ProyectoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("Dominio.Usuario", b =>
+            modelBuilder.Entity("ProyectoUsuario", b =>
                 {
+                    b.HasOne("Dominio.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("MiembrosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Dominio.Proyecto", null)
-                        .WithMany("Miembros")
-                        .HasForeignKey("ProyectoId");
+                        .WithMany()
+                        .HasForeignKey("ProyectoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RecursoTarea", b =>
+                {
+                    b.HasOne("Dominio.Recurso", null)
+                        .WithMany()
+                        .HasForeignKey("RecursosNecesariosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Dominio.Tarea", null)
-                        .WithMany("UsuariosAsignados")
-                        .HasForeignKey("TareaId");
+                        .WithMany()
+                        .HasForeignKey("TareaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TareaUsuario", b =>
+                {
+                    b.HasOne("Dominio.Tarea", null)
+                        .WithMany()
+                        .HasForeignKey("TareaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dominio.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UsuariosAsignadosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Dominio.Proyecto", b =>
                 {
-                    b.Navigation("Miembros");
-
                     b.Navigation("Tareas");
                 });
 
             modelBuilder.Entity("Dominio.Tarea", b =>
                 {
                     b.Navigation("Dependencias");
-
-                    b.Navigation("RecursosNecesarios");
-
-                    b.Navigation("UsuariosAsignados");
                 });
 
             modelBuilder.Entity("Dominio.Usuario", b =>
