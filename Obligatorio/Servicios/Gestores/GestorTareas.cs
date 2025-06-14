@@ -277,12 +277,6 @@ public class GestorTareas : IGestorTareas
         
         return proyecto;
     }
-
-    private Tarea ObtenerTareaValidandoAdmin(Usuario solicitante, int idProyecto, int idTarea)
-    {
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        return ObtenerTareaDominioPorId(proyecto.Id, idTarea);
-    }
     
     private Tarea ObtenerTareaValidandoAdminOLider(Usuario solicitante, int idProyecto, int idTarea)
     {
