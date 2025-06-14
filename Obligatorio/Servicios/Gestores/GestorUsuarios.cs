@@ -5,7 +5,7 @@ using Excepciones.MensajesError;
 using Repositorios.Interfaces;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
-using Servicios.Utilidades;
+using Utilidades;
 
 namespace Servicios.Gestores;
 
@@ -20,6 +20,7 @@ public class GestorUsuarios : IGestorUsuarios
     {
         _usuarios = repositorioUsuarios;
         _notificador = notificador;
+        AdministradorInicial = _usuarios.ObtenerPorId(1); // Por diseño, al crear la BDD el usuario con ID 1 es el administrador inicial.
     }
 
     public void CrearYAgregarUsuario(UsuarioDTO solicitanteDTO, UsuarioDTO nuevoUsuarioDTO)

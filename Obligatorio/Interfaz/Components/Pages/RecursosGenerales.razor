@@ -214,8 +214,8 @@ else
     private List<ValidationResult> ValidarModelo(object modelo)
     {
         var resultados = new List<ValidationResult>();
-        var contexto = new ValidationContext(modelo, serviceProvider: null, items: null);
-        Validator.TryValidateObject(modelo, contexto, resultados, validateAllProperties: true);
+        var contexto = new ValidationContext(modelo, null, null);
+        Validator.TryValidateObject(modelo, contexto, resultados, true);
         return resultados;
     }
 
@@ -277,7 +277,7 @@ else
         mostrarErrorEditar = false;
     }
 
-    private async void EliminarRecurso(int idRecurso)
+    private async Task EliminarRecurso(int idRecurso)
     {
         try
         {
@@ -306,7 +306,6 @@ else
         StateHasChanged();
     }
 
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !sesionCargada)
@@ -321,9 +320,8 @@ else
             {
                 await Sesion.ActualizarSesion();
                 sesionCargada = true;
-                StateHasChanged(); // Vuelve a renderizar para mostrar la sesión activa
+                StateHasChanged();
             }
         }
     }
-
 }

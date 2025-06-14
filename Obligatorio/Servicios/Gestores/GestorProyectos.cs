@@ -6,7 +6,7 @@ using Excepciones;
 using Excepciones.MensajesError;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
-using Servicios.Utilidades;
+using Utilidades;
 
 namespace Servicios.Gestores;
 
@@ -174,6 +174,9 @@ public class GestorProyectos : IGestorProyectos
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.MiembroAgregado(proyecto.Nombre, nuevoMiembro.Id));
+
+        //_repositorioUsuarios.GuardarCambios();
+        //_proyectos.GuardarCambios();
     }
 
     public void EliminarMiembroDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idMiembroAEliminar)

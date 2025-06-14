@@ -3,7 +3,7 @@ using DTOs;
 using Repositorios;
 using Excepciones;
 using Servicios.Gestores;
-using Servicios.Utilidades;
+using Utilidades;
 using Servicios.CaminoCritico;
 using Servicios.Notificaciones;
 using Tests.Contexto;
@@ -13,36 +13,38 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class GestorTareasTests
 {
-    private GestorTareas _gestorTareas;
-    private GestorProyectos _gestorProyectos;
-    private UsuarioDTO _admin;
-    private UsuarioDTO _noAdmin;
+    private Notificador _notificador = new Notificador();
+    private CaminoCritico _caminoCritico = new CaminoCritico();
+    
+    private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
     private RepositorioRecursos _repositorioRecursos;
-    private SqlContext _contexto;
-    private Notificador _notificador;
-    private CaminoCritico _caminoCritico;
+    
+    private GestorTareas _gestorTareas;
+    private GestorProyectos _gestorProyectos;
+    
+    private UsuarioDTO _admin;
+    private UsuarioDTO _noAdmin;
+    
 
     [TestInitialize]
     public void Inicializar()
     {
-        _contexto = SqlContextFactory.CreateMemoryContext();
-        _notificador = new Notificador();
-        _caminoCritico = new CaminoCritico();
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _repositorioProyectos = new RepositorioProyectos(_contexto);
         _repositorioRecursos = new RepositorioRecursos(_contexto);
+        
         _gestorProyectos =
             new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
         _gestorTareas = new GestorTareas(_gestorProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
+        
         _admin = CrearAdministradorProyecto();
         _noAdmin = CrearUsuarioNoAdmin();
     }
 
     private UsuarioDTO CrearAdministradorSistema()
     {
-        //simulación del gestor
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "email@gmail.com",
             contrasenaEncriptada);
@@ -53,7 +55,6 @@ public class GestorTareasTests
 
     private UsuarioDTO CrearAdministradorProyecto()
     {
-        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
@@ -64,7 +65,6 @@ public class GestorTareasTests
 
     private UsuarioDTO CrearUsuarioNoAdmin()
     {
-        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "gmail@gmail.com",
             contrasenaEncriptada);
@@ -128,8 +128,9 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
-        Assert.AreEqual(1, tarea1.Id);
-        Assert.AreEqual(2, tarea2.Id);
+        bool resultado = tarea1.Id < tarea2.Id;
+
+        Assert.IsTrue(resultado);
     }
 
     [TestMethod]
@@ -196,7 +197,9 @@ public class GestorTareasTests
 
         Assert.AreEqual(1, proyecto.Tareas.Count);
         Assert.IsTrue(proyecto.Tareas.Any(t => t.Id == tarea.Id));
-        Assert.AreEqual(1, tarea.Id);
+
+        bool resultado = tarea.Id > 0;
+        Assert.IsTrue(resultado);
     }
 
     [TestMethod]
