@@ -148,6 +148,14 @@ namespace Tests.DominioTests
             DateTime fechaNacimiento = new DateTime(2020, 1, 6);
             Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "xxxxx");
         }
+        
+        [TestMethod]
+        public void AsignarRolLiderMarcaAlUsuarioComoLider()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            usuario.AsignarRolLider();
+            Assert.IsTrue(usuario.EsLider);
+        }
 
         [TestMethod]
         public void SeCambiaContrasenaCorrectamente()
