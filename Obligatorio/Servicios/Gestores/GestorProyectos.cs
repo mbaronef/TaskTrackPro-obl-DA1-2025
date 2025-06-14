@@ -236,7 +236,10 @@ public class GestorProyectos : IGestorProyectos
     
     public void AsignarLider(int idProyecto, UsuarioDTO solicitanteDTO, int idNuevoLider)
     {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+        PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+
         Usuario nuevoLider = ObtenerUsuarioPorDTO(new UsuarioDTO { Id = idNuevoLider });
 
         proyecto.AsignarLider(nuevoLider);
