@@ -490,6 +490,22 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
     }
+    
+    [TestMethod]
+    public void ModificarFechaInicio_LiderProyectoModificaDuracionTareaOk()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        DateTime fechaNueva = new DateTime(2030, 01, 01);
+        _gestorTareas.ModificarFechaInicioTarea(lider, tarea.Id, proyecto.Id, fechaNueva);
+
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
+        Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
