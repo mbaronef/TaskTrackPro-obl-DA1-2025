@@ -171,5 +171,16 @@ namespace Tests.ServiciosTests
 
             PermisosUsuarios.VerificarUsuarioEsAdminOLiderDelProyecto(proyecto, lider);
         }
+        
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionPermisos))]
+        public void VerificarUsuarioEsAdminOLiderDelProyecto_LanzaExcepcion_SiNoEsAdminNiLider()
+        {
+            var usuario = new Usuario { Id = 5 };
+            proyecto.Miembros.Add(usuario);
+
+            PermisosUsuarios.VerificarUsuarioEsAdminOLiderDelProyecto(proyecto, usuario);
+        }
     }
 }
