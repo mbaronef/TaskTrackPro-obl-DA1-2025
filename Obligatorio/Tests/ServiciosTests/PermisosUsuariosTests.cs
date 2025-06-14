@@ -161,5 +161,15 @@ namespace Tests.ServiciosTests
             var usuario = new Usuario { CantidadProyectosAsignados = 2 };
             PermisosUsuarios.VerificarUsuarioNoEsMiembroDeProyecto(usuario);
         }
+        
+        [TestMethod]
+        public void VerificarUsuarioEsAdminOLiderDelProyecto_NoLanzaExcepcion_SiEsLider()
+        {
+            var lider = new Usuario { Id = 4 };
+            proyecto.AsignarLider(lider);
+            proyecto.Miembros.Add(lider);
+
+            PermisosUsuarios.VerificarUsuarioEsAdminOLiderDelProyecto(proyecto, lider);
+        }
     }
 }

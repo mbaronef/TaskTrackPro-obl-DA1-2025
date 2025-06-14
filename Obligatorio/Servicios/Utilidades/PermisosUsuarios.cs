@@ -47,6 +47,8 @@ public static class PermisosUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPorTipo(tipoUsuario));
         }
     }
+    
+    
 
     public static void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(Usuario usuario)
     {
