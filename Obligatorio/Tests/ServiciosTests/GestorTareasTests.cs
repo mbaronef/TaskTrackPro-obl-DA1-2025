@@ -875,8 +875,8 @@ public class GestorTareasTests
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
-        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        _gestorTareas.AgregarMiembroATarea(lider, tarea.Id, proyecto.Id, _noAdmin);
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
 
         Assert.IsTrue(tarea.UsuariosAsignados.Any(u => u.Id == _noAdmin.Id));
     }
