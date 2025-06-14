@@ -660,4 +660,18 @@ public class ProyectoTests
 
         Assert.IsNull(proyecto.Lider);
     }
+    
+    [TestMethod]
+    public void AsignarLider_AsignaCorrectamente()
+    {
+        Usuario miembro = CrearMiembro(2);
+        _miembros.Add(miembro);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+
+        proyecto.AsignarLider(miembro);
+
+        Assert.AreEqual(miembro, proyecto.Lider);
+        Assert.IsTrue(miembro.EsLider);
+    }
 }
+
