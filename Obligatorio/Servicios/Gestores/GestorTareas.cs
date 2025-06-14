@@ -268,12 +268,28 @@ public class GestorTareas : IGestorTareas
         
         return proyecto;
     }
+    
+    private Proyecto ObtenerProyectoValidandoAdminOLider(int idProyecto, Usuario solicitante)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+
+        PermisosUsuarios.VerificarUsuarioEsAdminOLiderDelProyecto(proyecto, solicitante);
+        
+        return proyecto;
+    }
 
     private Tarea ObtenerTareaValidandoAdmin(Usuario solicitante, int idProyecto, int idTarea)
     {
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         return ObtenerTareaDominioPorId(proyecto.Id, idTarea);
     }
+    
+    private Tarea ObtenerTareaValidandoAdminOLider(Usuario solicitante, int idProyecto, int idTarea)
+    {
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
+        return ObtenerTareaDominioPorId(proyecto.Id, idTarea);
+    }
+    
 
     private void NotificarCambio(string campo, int idTarea, int idProyecto)
     {

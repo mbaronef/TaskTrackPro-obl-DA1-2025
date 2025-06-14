@@ -48,7 +48,13 @@ public static class PermisosUsuarios
         }
     }
     
-    
+    public static void VerificarUsuarioEsAdminOLiderDelProyecto(Proyecto proyecto, Usuario usuario)
+    {
+        if (proyecto.Administrador.Id != usuario.Id && (proyecto.Lider == null || proyecto.Lider.Id != usuario.Id))
+        {
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoEsAdminNiLider);
+        }
+    }
 
     public static void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(Usuario usuario)
     {

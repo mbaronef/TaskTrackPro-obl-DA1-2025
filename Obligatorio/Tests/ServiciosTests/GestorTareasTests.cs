@@ -335,6 +335,22 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.AreEqual("Nuevo nombre", tarea.Titulo);
     }
+    
+    [TestMethod]
+    public void LiderProyectoPuedeModificarTituloTarea()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _gestorTareas.ModificarTituloTarea(lider, tarea.Id, proyecto.Id, "Nuevo título por líder");
+
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        Assert.AreEqual("Nuevo título por líder", tarea.Titulo);
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]

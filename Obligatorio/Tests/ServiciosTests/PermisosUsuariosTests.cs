@@ -166,8 +166,8 @@ namespace Tests.ServiciosTests
         public void VerificarUsuarioEsAdminOLiderDelProyecto_NoLanzaExcepcion_SiEsLider()
         {
             var lider = new Usuario { Id = 4 };
-            proyecto.AsignarLider(lider);
             proyecto.Miembros.Add(lider);
+            proyecto.AsignarLider(lider);
 
             PermisosUsuarios.VerificarUsuarioEsAdminOLiderDelProyecto(proyecto, lider);
         }
