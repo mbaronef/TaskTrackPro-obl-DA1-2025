@@ -86,5 +86,10 @@ public class ControladorProyectos
     {
         return _gestorProyectos.EsMiembroDeProyecto(idUsuario, idProyecto);
     }
-    
+
+    public void AsignarLider(int idProyecto, UsuarioDTO solicitante, int idNuevoLider)
+    {
+        _gestorProyectos.AsignarLider(idProyecto, solicitante, idNuevoLider);
+    }
+
 }

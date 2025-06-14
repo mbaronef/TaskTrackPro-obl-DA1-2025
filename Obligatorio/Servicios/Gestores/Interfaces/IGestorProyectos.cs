@@ -42,4 +42,6 @@ public interface IGestorProyectos
     bool EsMiembroDeProyecto(int idUsuario, int idProyecto);
     
     Proyecto ObtenerProyectoDominioPorId(int id);
+
+    void AsignarLider(int idProyecto, UsuarioDTO solicitanteDTO, int idNuevoLider);
 }
