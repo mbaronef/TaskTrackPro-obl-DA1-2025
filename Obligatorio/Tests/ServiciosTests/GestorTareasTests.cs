@@ -939,6 +939,24 @@ public class GestorTareasTests
 
         Assert.IsFalse(tarea.UsuariosAsignados.Any(u => u.Id == _noAdmin.Id));
     }
+    
+    [TestMethod]
+    public void LiderDeProyectoPuedeEliminarMiembroDeTarea()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(lider, tarea.Id, proyecto.Id, _noAdmin);
+        _gestorTareas.EliminarMiembroDeTarea(lider, tarea.Id, proyecto.Id, _noAdmin);
+
+        Assert.IsFalse(tarea.UsuariosAsignados.Any(u => u.Id == _noAdmin.Id));
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
