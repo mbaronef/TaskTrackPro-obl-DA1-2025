@@ -135,6 +135,10 @@ public class Proyecto
         {
             throw new ExcepcionDominio(MensajesErrorDominio.UsuarioYaEsLider);
         }
+        if (Lider != null)
+        {
+            Lider.RemoverRolLider();
+        }
         Lider = usuario;
         Lider.AsignarRolLider();
     }
