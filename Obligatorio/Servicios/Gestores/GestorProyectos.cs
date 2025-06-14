@@ -243,6 +243,9 @@ public class GestorProyectos : IGestorProyectos
         Usuario nuevoLider = ObtenerUsuarioPorDTO(new UsuarioDTO { Id = idNuevoLider });
 
         proyecto.AsignarLider(nuevoLider);
+        
+        string mensaje = MensajesNotificacion.LiderAsignado(proyecto.Nombre, nuevoLider.ToString());
+        _notificador.NotificarMuchos(proyecto.Miembros, mensaje);
     }
 
     public bool EsAdministradorDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)
