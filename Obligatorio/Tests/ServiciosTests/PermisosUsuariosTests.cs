@@ -185,7 +185,7 @@ namespace Tests.ServiciosTests
         
         [TestMethod]
         [ExpectedException(typeof(ExcepcionPermisos))]
-        public void VerificarUsuarioMiembroDeLaTarea_LanzaExcepcion_SiNoEsMiembro()
+        public void VerificarUsuarioTengaLaTareaAsignada_LanzaExcepcion_SiNoEsMiembro()
         {
             Usuario usuario = new Usuario { Id = 1 };
             Usuario otroUsuario = new Usuario { Id = 2 };
@@ -193,6 +193,16 @@ namespace Tests.ServiciosTests
             Tarea tarea = new Tarea("Tarea", "Descripción", 3, DateTime.Today.AddDays(1));
             tarea.AsignarUsuario(otroUsuario); // este sí es miembro
 
+            PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignada(usuario, tarea);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ExcepcionPermisos))]
+        public void VerificarUsuarioMiembroDeLaTarea_LanzaExcepcion_SiNoEsMiembro()
+        {
+            Usuario usuario = new Usuario { Id = 99 };
+            Tarea tarea = new Tarea("Tarea", "Desc", 2, DateTime.Today.AddDays(1));
+    
             PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignada(usuario, tarea);
         }
     }
