@@ -673,5 +673,15 @@ public class ProyectoTests
         Assert.AreEqual(miembro, proyecto.Lider);
         Assert.IsTrue(miembro.EsLider);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AsignarLider_LanzaExcepcion_SiUsuarioNoEsMiembro()
+    {
+        Usuario noMiembro = CrearMiembro(99);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+
+        proyecto.AsignarLider(noMiembro);
+    }
 }
 
