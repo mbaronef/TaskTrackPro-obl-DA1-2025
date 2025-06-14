@@ -754,7 +754,7 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    public void EliminarDependencia_AdminEliminaDependenciaCorrectamente()
+    public void EliminarDependencia_LiderEliminaDependenciaCorrectamente()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         UsuarioDTO lider = CrearUsuarioNoAdmin();
@@ -773,7 +773,7 @@ public class GestorTareasTests
     }
     
     [TestMethod]
-    public void EliminarDependencia_LiderEliminaDependenciaCorrectamente()
+    public void EliminarDependencia_AdminEliminaDependenciaCorrectamente()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         TareaDTO tareaPrincipal = CrearTarea();
@@ -852,7 +852,24 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeAgregarMiembroATarea()
     {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin); 
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+
+        Assert.IsTrue(tarea.UsuariosAsignados.Any(u => u.Id == _noAdmin.Id));
+    }
+    
+    [TestMethod]
+    public void LiderDeProyectoPuedeAgregarMiembroATarea()
+    {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
 
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
 
