@@ -96,7 +96,7 @@ public class GestorTareas : IGestorTareas
     public void ModificarDuracionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, int nuevaDuracion)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
         tarea.ModificarDuracion(nuevaDuracion);
 
