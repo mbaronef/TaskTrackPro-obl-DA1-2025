@@ -405,7 +405,7 @@ public class GestorTareasTests
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
-    public void ModificarDescripcion_UsuarioNoAdminNoPuedeModificarla()
+    public void ModificarDescripcion_UsuarioNoAdminNiLiderNoPuedeModificarla()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         TareaDTO tarea = CrearTarea();
@@ -437,10 +437,26 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.AreEqual(4, tarea.DuracionEnDias);
     }
+    
+    [TestMethod]
+    public void ModificarDuracion_LiderProyectoModificaDuracionTareaOk()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _gestorTareas.ModificarDuracionTarea(lider, tarea.Id, proyecto.Id, 99);
+
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
+        Assert.AreEqual(99, tarea.DuracionEnDias);
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
-    public void ModificarDuracion_UsuarioNoAdminNoPuedeModificarla()
+    public void ModificarDuracion_UsuarioNoAdminNiLiderNoPuedeModificarla()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         TareaDTO tarea = CrearTarea();
