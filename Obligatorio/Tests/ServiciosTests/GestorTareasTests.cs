@@ -662,6 +662,26 @@ public class GestorTareasTests
         Assert.IsTrue(tareaPrincipal.Dependencias.Any(dep =>
             dep.TareaPrevia.Id == tareaDependencia.Id && dep.Tipo == "FS"));
     }
+    
+    [TestMethod]
+    public void AgregarDependencia_LiderAgregaDependenciaCorrectamente()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, lider);
+        _gestorProyectos.AsignarLider(proyecto.Id, _admin, lider.Id);
+        TareaDTO tareaPrincipal = CrearTarea();
+        TareaDTO tareaDependencia = CrearTarea();
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaPrincipal);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tareaDependencia);
+
+        _gestorTareas.AgregarDependenciaATarea(lider, tareaPrincipal.Id, tareaDependencia.Id, proyecto.Id, "FS");
+
+        tareaPrincipal = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tareaPrincipal.Id); 
+        Assert.IsTrue(tareaPrincipal.Dependencias.Any(dep =>
+            dep.TareaPrevia.Id == tareaDependencia.Id && dep.Tipo == "FS"));
+    }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionTarea))]
