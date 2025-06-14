@@ -233,6 +233,14 @@ public class GestorProyectos : IGestorProyectos
         Proyecto proyecto = ObtenerProyectoDominioPorId(proyectoDTO.Id);
         _caminoCritico.CalcularCaminoCritico(proyecto);
     }
+    
+    public void AsignarLider(int idProyecto, UsuarioDTO solicitanteDTO, int idNuevoLider)
+    {
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+        Usuario nuevoLider = ObtenerUsuarioPorDTO(new UsuarioDTO { Id = idNuevoLider });
+
+        proyecto.AsignarLider(nuevoLider);
+    }
 
     public bool EsAdministradorDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)
     {
