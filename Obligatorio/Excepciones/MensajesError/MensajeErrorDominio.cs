@@ -43,6 +43,7 @@ public static class MensajesErrorDominio
     public const string TareaNoPerteneceAlProyecto = "La tarea no pertenece al proyecto.";
     public const string MiembroNull = "No se puede agregar un miembro null.";
     public const string LiderNull = "No se puede asignar un líder null.";
+    public const string UsuarioYaEsLider = "El usuario ya es líder del proyecto.";
     public const string UsuarioNoEsMiembroDelProyecto = "El usuario no es miembro del proyecto.";
 
     public const string RecursoYaEsExclusivo = "El recurso ya es exclusivo de otro proyecto.";

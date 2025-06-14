@@ -131,6 +131,10 @@ public class Proyecto
     {
         ValidarNoNulo(usuario, MensajesErrorDominio.LiderNull);
         ValidarUsuarioEnMiembros(usuario.Id);
+        if (Lider != null && Lider.Equals(usuario))
+        {
+            throw new ExcepcionDominio(MensajesErrorDominio.UsuarioYaEsLider);
+        }
         Lider = usuario;
         Lider.AsignarRolLider();
     }
