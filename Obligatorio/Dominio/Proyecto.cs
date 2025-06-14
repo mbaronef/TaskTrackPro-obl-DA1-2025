@@ -135,6 +135,11 @@ public class Proyecto
         Lider.AsignarRolLider();
     }
     
+    public bool EsLider(Usuario usuario)
+    {
+        return Lider != null && Lider.Equals(usuario);
+    }
+    
     private void ValidarLiderCandidato(Usuario usuario)
     {
         ValidarNoNulo(usuario, MensajesErrorDominio.LiderNull);

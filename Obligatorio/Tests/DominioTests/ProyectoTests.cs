@@ -721,7 +721,7 @@ public class ProyectoTests
     }
     
     [TestMethod]
-    public void EsLider_DevuelveTrue_SiUsuarioEsElLider()
+    public void EsLider_DevuelveTrueSiUsuarioEsElLider()
     {
         Usuario miembro = CrearMiembro(2);
         _miembros.Add(miembro);
