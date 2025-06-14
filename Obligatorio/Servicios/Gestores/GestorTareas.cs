@@ -77,7 +77,7 @@ public class GestorTareas : IGestorTareas
     public void ModificarTituloTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, string nuevoTitulo)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
         tarea.ModificarTitulo(nuevoTitulo);
         NotificarCambio("título", idTarea, idProyecto);
