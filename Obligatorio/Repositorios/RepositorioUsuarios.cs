@@ -30,7 +30,7 @@ public class RepositorioUsuarios : IRepositorioUsuarios
         _contexto.SaveChanges();
     }
     
-    public void Update(Usuario usuario)
+    public void Actualizar(Usuario usuario)
     {
         var usuarioContexto = _contexto.Usuarios.FirstOrDefault(u => u.Id == usuario.Id);
         if (usuarioContexto != null)

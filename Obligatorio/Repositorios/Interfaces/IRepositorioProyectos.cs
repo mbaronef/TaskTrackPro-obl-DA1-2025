@@ -4,5 +4,5 @@ namespace Repositorios.Interfaces;
 
 public interface IRepositorioProyectos : IRepositorio<Proyecto>
 {
-    void UpdateTarea(Tarea tarea);
+    void ActualizarTarea(Tarea tarea);
 }

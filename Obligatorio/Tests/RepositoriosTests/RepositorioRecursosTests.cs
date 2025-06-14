@@ -92,7 +92,7 @@ public class RepositorioRecursosTests
         recursoOriginal.Descripcion = "Descripción actualizada";
         recursoOriginal.CantidadDeTareasUsandolo = 10;
         recursoOriginal.ProyectoAsociado = _proyecto;
-        _repositorioRecursos.Update(recursoOriginal);
+        _repositorioRecursos.Actualizar(recursoOriginal);
         
         var recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
         Assert.AreEqual("Recurso Actualizado", recursoActualizado.Nombre);

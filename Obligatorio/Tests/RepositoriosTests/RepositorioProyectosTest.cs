@@ -85,7 +85,7 @@ public class RepositorioProyectosTest
         proyectoOriginal.ModificarNombre("Proyecto actualizado");
         proyectoOriginal.ModificarDescripcion("Nueva descripción");
         
-        _repositorioProyectos.Update(proyectoOriginal);
+        _repositorioProyectos.Actualizar(proyectoOriginal);
         
         var proyectoActualizado = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
         Assert.AreEqual("Proyecto actualizado", proyectoActualizado.Nombre);
@@ -98,14 +98,14 @@ public class RepositorioProyectosTest
         _repositorioProyectos.Agregar(_proyecto);
         Tarea tarea = new Tarea("Título original", "Descripción original", 5, DateTime.Today.AddDays(11));
         _proyecto.AgregarTarea(tarea);
-        _repositorioProyectos.Update(_proyecto);
+        _repositorioProyectos.Actualizar(_proyecto);
         
         tarea.ModificarTitulo("Título actualizado");
         tarea.ModificarDescripcion("Descripción actualizada");
         tarea.ModificarDuracion(10);
         tarea.CambiarEstado(EstadoTarea.EnProceso);
 
-        _repositorioProyectos.UpdateTarea(tarea);
+        _repositorioProyectos.ActualizarTarea(tarea);
         
         var tareaActualizada = _contexto.Set<Tarea>().FirstOrDefault(t => t.Id == tarea.Id);
         Assert.AreEqual("Título actualizado", tareaActualizada.Titulo);

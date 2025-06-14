@@ -85,7 +85,7 @@ public class RepositorioUsuariosTests
         usuarioOriginal.EstaAdministrandoUnProyecto = true;
         usuarioOriginal.CantidadProyectosAsignados = 5;
 
-        _repositorioUsuarios.Update(usuarioOriginal);
+        _repositorioUsuarios.Actualizar(usuarioOriginal);
         
         var usuarioActualizado = _repositorioUsuarios.ObtenerPorId(_usuario.Id);
         Assert.AreEqual("Pedro", usuarioActualizado.Nombre);

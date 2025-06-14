@@ -86,7 +86,7 @@ public class GestorRecursos : IGestorRecursos
         
         string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
-        _repositorioRecursos.Update(recurso);
+        _repositorioRecursos.Actualizar(recurso);
         NotificarModificacion(recurso, nombreAnterior);
     }
 
@@ -99,7 +99,7 @@ public class GestorRecursos : IGestorRecursos
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar el tipo de");
         
         recurso.ModificarTipo(nuevoTipo);
-        _repositorioRecursos.Update(recurso);
+        _repositorioRecursos.Actualizar(recurso);
         NotificarModificacion(recurso, recurso.Nombre);
     }
 
@@ -113,7 +113,7 @@ public class GestorRecursos : IGestorRecursos
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
         
         recurso.ModificarDescripcion(nuevaDescripcion);
-        _repositorioRecursos.Update(recurso);
+        _repositorioRecursos.Actualizar(recurso);
         NotificarModificacion(recurso, recurso.Nombre);
     }
 
@@ -146,7 +146,7 @@ public class GestorRecursos : IGestorRecursos
     {
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDelAdministrador(administradorProyecto.Id);
         recurso.AsociarAProyecto(proyecto);
-        _repositorioRecursos.Update(recurso);
+        _repositorioRecursos.Actualizar(recurso);
     }
 
     private void VerificarRecursoEnUso(Recurso recurso)

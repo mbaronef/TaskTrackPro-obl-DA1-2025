@@ -50,7 +50,7 @@ public class RepositorioProyectos : IRepositorioProyectos
         return _contexto.Proyectos.ToList();
     }
     
-    public void Update(Proyecto proyecto)
+    public void Actualizar(Proyecto proyecto)
     {
         var proyectoContexto = _contexto.Proyectos
             .Include(p => p.Administrador)
@@ -68,7 +68,7 @@ public class RepositorioProyectos : IRepositorioProyectos
         }
     }
     
-    public void UpdateTarea(Tarea tarea)
+    public void ActualizarTarea(Tarea tarea)
     {
         var tareaContexto = _contexto.Set<Tarea>().FirstOrDefault(t => t.Id == tarea.Id);
         if (tareaContexto != null)

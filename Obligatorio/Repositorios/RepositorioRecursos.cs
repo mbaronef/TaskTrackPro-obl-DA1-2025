@@ -35,7 +35,7 @@ public class RepositorioRecursos : IRepositorio<Recurso>
         return _contexto.Recursos.ToList();
     }
     
-    public void Update(Recurso recurso)
+    public void Actualizar(Recurso recurso)
     {
         var recursoContexto = _contexto.Recursos.FirstOrDefault(r=> r.Id == recurso.Id);
         if (recursoContexto != null)

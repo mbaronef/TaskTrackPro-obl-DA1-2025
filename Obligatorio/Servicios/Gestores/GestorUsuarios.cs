@@ -64,7 +64,7 @@ public class GestorUsuarios : IGestorUsuarios
         PermisosUsuarios.VerificarPermisoAdminSistema(solicitante, "asignar un administrador de sistema");
         Usuario usuario = obtenerUsuarioDominioPorId(idUsuario);
         usuario.EsAdministradorSistema = true;
-        _usuarios.Update(usuario);
+        _usuarios.Actualizar(usuario);
     }
 
     public void AsignarAdministradorProyecto(UsuarioDTO solicitanteDTO, int idUsuario)
@@ -73,7 +73,7 @@ public class GestorUsuarios : IGestorUsuarios
         PermisosUsuarios.VerificarPermisoAdminSistema(solicitante, "asignar administradores de proyecto");
         Usuario nuevoAdministradorProyecto = obtenerUsuarioDominioPorId(idUsuario);
         nuevoAdministradorProyecto.EsAdministradorProyecto = true;
-        _usuarios.Update(solicitante);
+        _usuarios.Actualizar(solicitante);
     }
 
     public void DesasignarAdministradorProyecto(UsuarioDTO solicitanteDTO, int idUsuario)
@@ -84,7 +84,7 @@ public class GestorUsuarios : IGestorUsuarios
         PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(administradorProyecto, "solicitante");
         PermisosUsuarios.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(administradorProyecto);
         administradorProyecto.EsAdministradorProyecto = false;
-        _usuarios.Update(solicitante);
+        _usuarios.Actualizar(solicitante);
     }
 
     public void ReiniciarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
@@ -96,7 +96,7 @@ public class GestorUsuarios : IGestorUsuarios
 
         string contrasenaPorDefectoEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(_contrasenaPorDefecto);
         usuarioObjetivo.EstablecerContrasenaEncriptada(contrasenaPorDefectoEncriptada);
-        _usuarios.Update(solicitante);
+        _usuarios.Actualizar(solicitante);
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaReiniciada(_contrasenaPorDefecto));
     }
 
@@ -114,7 +114,7 @@ public class GestorUsuarios : IGestorUsuarios
 
         Usuario usuarioObjetivo = obtenerUsuarioDominioPorId(idUsuarioObjetivo);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
-        _usuarios.Update(solicitante);
+        _usuarios.Actualizar(solicitante);
         Notificar(usuarioObjetivo, MensajesNotificacion.ContrasenaModificada(nuevaContrasena));
     }
 
@@ -127,7 +127,7 @@ public class GestorUsuarios : IGestorUsuarios
 
         string nuevaContrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(nuevaContrasena);
         usuarioObjetivo.EstablecerContrasenaEncriptada(nuevaContrasenaEncriptada);
-        _usuarios.Update(solicitante);
+        _usuarios.Actualizar(solicitante);
         NotificarUsuarioModificacionSiNoEsElMismo(solicitante, usuarioObjetivo, nuevaContrasena);
     }
 
