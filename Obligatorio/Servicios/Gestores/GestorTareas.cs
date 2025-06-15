@@ -130,11 +130,8 @@ public class GestorTareas : IGestorTareas
         
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
-        
-        if (proyecto.FechaInicio > DateTime.Today)
-        {
-            throw new ExcepcionTarea(MensajesErrorServicios.ProyectoNoComenzado);
-        }
+
+        VerificarProyectoHayaComenzado(proyecto);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.CambiarEstado(nuevoEstado);
@@ -152,7 +149,6 @@ public class GestorTareas : IGestorTareas
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.EstadoTareaModificado(idTarea, proyecto.Nombre, nuevoEstado));
     }
-
     public void AgregarDependenciaATarea(UsuarioDTO solicitanteDTO, int idTarea, int idTareaDependencia, int idProyecto,
         string tipoDependencia)
     {
@@ -373,6 +369,14 @@ public class GestorTareas : IGestorTareas
             throw new ExcepcionTarea(MensajesErrorServicios.FechaInicioTarea);
         }
     }
+    
+    private void VerificarProyectoHayaComenzado(Proyecto proyecto)
+    {
+        if (proyecto.FechaInicio > DateTime.Today)
+        {
+            throw new ExcepcionTarea(MensajesErrorServicios.ProyectoNoComenzado);
+        }
+    }
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
     {
@@ -397,4 +401,5 @@ public class GestorTareas : IGestorTareas
 
         return recurso;
     }
+
 }
