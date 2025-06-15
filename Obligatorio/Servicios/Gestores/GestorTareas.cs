@@ -130,6 +130,11 @@ public class GestorTareas : IGestorTareas
         
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
+        
+        if (proyecto.FechaInicio > DateTime.Today)
+        {
+            throw new ExcepcionTarea(MensajesErrorServicios.ProyectoNoComenzado);
+        }
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.CambiarEstado(nuevoEstado);
