@@ -203,53 +203,56 @@ else
     </div>
 }
 
-<div class="modal fade @(mostrarVentanaEdicionReducida ? "show d-block" : "")" tabindex="-1"
-     style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content rounded-3 shadow-lg">
-            <div class="modal-header">
-                <h5 class="modal-title">Editar Tarea</h5>
-                <button type="button" class="btn-close" @onclick="CerrarVentanaEdicionReducida"></button>
-            </div>
-            <EditForm Model="tareaEdicionEstado" OnValidSubmit="EditarEstadoTarea"
-                      OnInvalidSubmit="MostrarErroresValidacion">
-                <DataAnnotationsValidator/>
-                <ValidationSummary class="d-none"/>
-                <div class="modal-body">
-                    @if (!string.IsNullOrEmpty(mensaje))
-                    {
-                        <div
-                            class="alert alert-danger d-flex align-items-center gap-2 text-center justify-content-center">
-                            <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
-                            <span class="fw-semibold">@((MarkupString)mensaje)</span>
+@if (proyectoComenzado)
+{
+    <div class="modal fade @(mostrarVentanaEdicionReducida ? "show d-block" : "")" tabindex="-1"
+         style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content rounded-3 shadow-lg">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Tarea</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarVentanaEdicionReducida"></button>
+                </div>
+                <EditForm Model="tareaEdicionEstado" OnValidSubmit="EditarEstadoTarea"
+                          OnInvalidSubmit="MostrarErroresValidacion">
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary class="d-none"/>
+                    <div class="modal-body">
+                        @if (!string.IsNullOrEmpty(mensaje))
+                        {
+                            <div
+                                class="alert alert-danger d-flex align-items-center gap-2 text-center justify-content-center">
+                                <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+                                <span class="fw-semibold">@((MarkupString)mensaje)</span>
+                            </div>
+                        }
+                        <div class="form-check mb-3">
+                            @if (tareaActual.Estado == EstadoTareaDTO.Pendiente)
+                            {
+                                <div class="form-check mb-2">
+                                    <InputCheckbox id="enProceso" class="form-check-input"
+                                                   @bind-Value="tareaEdicionEstado.EditoEnProceso"/>
+                                    <label for="enProceso" class="form-check-label">Marcar como 'En proceso'</label>
+                                </div>
+                            }
+                            @if (tareaActual.Estado == EstadoTareaDTO.EnProceso)
+                            {
+                                <div class="form-check mb-2">
+                                    <InputCheckbox id="completada" class="form-check-input"
+                                                   @bind-Value="tareaEdicionEstado.EditoCompletada"/>
+                                    <label for="completada" class="form-check-label">Marcar como 'Completada'</label>
+                                </div>
+                            }
                         </div>
-                    }
-                    <div class="form-check mb-3">
-                        @if (tareaActual.Estado == EstadoTareaDTO.Pendiente)
-                        {
-                            <div class="form-check mb-2">
-                                <InputCheckbox id="enProceso" class="form-check-input"
-                                               @bind-Value="tareaEdicionEstado.EditoEnProceso"/>
-                                <label for="enProceso" class="form-check-label">Marcar como 'En proceso'</label>
-                            </div>
-                        }
-                        @if (tareaActual.Estado == EstadoTareaDTO.EnProceso)
-                        {
-                            <div class="form-check mb-2">
-                                <InputCheckbox id="completada" class="form-check-input"
-                                               @bind-Value="tareaEdicionEstado.EditoCompletada"/>
-                                <label for="completada" class="form-check-label">Marcar como 'Completada'</label>
-                            </div>
-                        }
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Guardar cambio</button>
-                </div>
-            </EditForm>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Guardar cambio</button>
+                    </div>
+                </EditForm>
+            </div>
         </div>
     </div>
-</div>
+}
 
 @if (!string.IsNullOrEmpty(mensaje) && mensaje.StartsWith("Estado editado con éxito"))
 {
@@ -303,7 +306,7 @@ else
                                    @bind-Value="tareaEdicion.FechaInicioMasTemprana"/>
                     </div>
 
-                    @if (tareaEdicion.Estado == EstadoTareaDTO.Pendiente || tareaEdicion.Estado == EstadoTareaDTO.EnProceso)
+                    @if (proyectoComenzado && tareaEdicion.Estado == EstadoTareaDTO.Pendiente || tareaEdicion.Estado == EstadoTareaDTO.EnProceso)
                     {
                         <fieldset class="border rounded p-3 mb-3">
                             <legend class="float-none w-auto px-2 fs-6 text-muted">Cambiar estado</legend>
@@ -661,6 +664,7 @@ else
 @code {
     [Parameter] public int id { get; set; }
     private ProyectoDTO proyecto;
+    private bool proyectoComenzado => proyecto != null && proyecto.FechaInicio <= DateTime.Today;
     private bool sesionCargada = false;
     private bool mostrarVentanaCreacion = false;
     private bool mostrarVentanaEdicion = false;
