@@ -39,7 +39,7 @@ else
         {
             <p>Aún no hay tareas en el proyecto.</p>
         }
-        else if (proyecto.Tareas.Count > 0 && ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, proyecto.Id) && !proyecto.Tareas.Any(t => t.UsuariosAsignados.Any(u => u.Id == Sesion.UsuarioLogueado.Id && !ControladorProyectos.EsLiderDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))))
+        else if (proyecto.Tareas.Count > 0 && ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, proyecto.Id) && !proyecto.Tareas.Any(t => t.UsuariosAsignados.Any(u => u.Id == Sesion.UsuarioLogueado.Id)))
         {
             <p>Aún no tienes tareas asignadas</p>
         }
