@@ -37,7 +37,7 @@ public class NotificadorTests
     [TestMethod]
     public void NotificarUno_NotificaCorrectamente()
     {
-        Usuario usuario = new Usuario("Juan", "Perez", new DateTime(1999, 19, 19), "juanperez@adinet.com.uy",
+        Usuario usuario = new Usuario("Juan", "Perez", new DateTime(1999, 10, 19), "juanperez@adinet.com.uy",
             "hashxxx12389");
         _repositorioUsuarios.Agregar(usuario);
         
@@ -50,9 +50,9 @@ public class NotificadorTests
     [TestMethod]
     public void NotificarMuchos_NotificaCorrectamente()
     {
-        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(1999, 19, 19), "juanperez@adinet.com.uy",
+        Usuario usuario1 = new Usuario("Juan", "Perez", new DateTime(1999, 10, 19), "juanperez@adinet.com.uy",
             "hashxxx12389");
-        Usuario usuario2 = new Usuario("José", "Perez", new DateTime(1999, 19, 19), "joseperez@adinet.com.uy",
+        Usuario usuario2 = new Usuario("José", "Perez", new DateTime(1999, 10, 19), "joseperez@adinet.com.uy",
             "hashxxx12389");
         _repositorioUsuarios.Agregar(usuario1);
         _repositorioUsuarios.Agregar(usuario2);

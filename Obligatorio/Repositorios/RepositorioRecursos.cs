@@ -58,6 +58,14 @@ public class RepositorioRecursos : IRepositorio<Recurso>
         {
             Proyecto proyectoAsociadoContexto = _contexto.Proyectos
                 .FirstOrDefault(p => p.Id == recurso.ProyectoAsociado.Id);
+            AsociarRecursoAProyectoSiNoEsExclusivo(recursoContexto, proyectoAsociadoContexto);
+        }
+    }
+    
+    private void AsociarRecursoAProyectoSiNoEsExclusivo(Recurso recursoContexto, Proyecto proyectoAsociadoContexto)
+    {
+        if (!recursoContexto.EsExclusivo())
+        {
             recursoContexto.AsociarAProyecto(proyectoAsociadoContexto);
         }
     }
