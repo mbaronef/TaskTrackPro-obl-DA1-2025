@@ -11,9 +11,9 @@ public class Usuario
     private static readonly int _edadMaxima = 100;
 
     public int Id { get; set; }
-    public string Nombre { get; set; }
-    public string Apellido { get; set; }
-    public DateTime FechaNacimiento { get; set; }
+    public string Nombre { get;  set; }
+    public string Apellido { get;  set; }
+    public DateTime FechaNacimiento { get;  set; }
     public string Email { get; set; }
     public string ContrasenaEncriptada //Propiedad expuesta solo para el mapeo con EF; el get es privado para proteger la contraseña. 
     {
@@ -78,6 +78,12 @@ public class Usuario
 
         Notificaciones.Remove(notificacionABorrar);
     }
+    
+    //CONTDD
+    public void Actualizar(Usuario usuarioActualizado)
+    {
+        CambiarEmail(usuarioActualizado.Email);
+    }
 
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
@@ -109,11 +115,10 @@ public class Usuario
         }
     }
     
-    public string ObtenerContrasenaEncriptada()
+    private string ObtenerContrasenaEncriptada()
     {
         return _contrasenaEncriptada;
     }
-    
     public override bool Equals(object? otro)
     {
         Usuario otroUsuario = otro as Usuario;
