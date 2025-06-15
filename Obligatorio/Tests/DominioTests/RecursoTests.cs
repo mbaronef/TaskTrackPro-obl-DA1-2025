@@ -15,6 +15,7 @@ public class RecursoTests
         Assert.AreEqual("Descripción", recurso.Descripcion);
         Assert.IsNull(recurso.ProyectoAsociado);
         Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
+        Assert.IsNotNull(recurso.RangosEnUso);
     }
 
     [TestMethod]
