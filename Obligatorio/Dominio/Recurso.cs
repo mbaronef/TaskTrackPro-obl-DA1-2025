@@ -11,7 +11,13 @@ public class Recurso
     public string Descripcion { get; private set; }
     public Proyecto? ProyectoAsociado { get; private set; } = null;
     public int CantidadDeTareasUsandolo { get; private set; } = 0;
+    
+    public List<RangoDeUso> RangosEnUso { get; private set; }
 
+    public Recurso()
+    {
+        RangosEnUso = new List<RangoDeUso>();
+    }
     public Recurso(string nombre, string tipo, string descripcion)
     {
         ValidarAtributoNoVacio(nombre, "nombre");
@@ -21,6 +27,7 @@ public class Recurso
         Nombre = nombre;
         Tipo = tipo;
         Descripcion = descripcion;
+        RangosEnUso = new List<RangoDeUso>();
     }
 
     public void ModificarNombre(string nombre)
