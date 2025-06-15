@@ -77,7 +77,8 @@ public class Recurso
 
     public void Actualizar(Recurso recursoActualizado)
     {
-
+        ValidarIdentidad(recursoActualizado);
+        
         ModificarNombre(recursoActualizado.Nombre);
         ModificarTipo(recursoActualizado.Tipo);
         ModificarDescripcion(recursoActualizado.Descripcion);
@@ -85,9 +86,14 @@ public class Recurso
         CantidadDeTareasUsandolo = recursoActualizado.CantidadDeTareasUsandolo;
     }
     
-   
-
-
+    private void ValidarIdentidad(Recurso otroRecurso)
+    {
+        if (!Equals(otroRecurso))
+        {
+            throw new ExcepcionUsuario(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
+        }
+    }
+    
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
         if (string.IsNullOrWhiteSpace(texto))

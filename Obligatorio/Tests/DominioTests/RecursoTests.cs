@@ -250,6 +250,16 @@ public class RecursoTests
         recurso.Actualizar(otroRecurso);
         Assert.AreEqual(5, recurso.CantidadDeTareasUsandolo);
     }
+    
+    [ExpectedException(typeof(ExcepcionUsuario))]
+    [TestMethod]
+    public void NoSePuedeActualizarRecursoConIdDiferente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
+        Recurso otroRecurso = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 2 };
+        
+        recurso.Actualizar(otroRecurso);
+    }
 
     [TestMethod]
     public void EqualsRetornaTrueSiLosIdsSonIguales()
