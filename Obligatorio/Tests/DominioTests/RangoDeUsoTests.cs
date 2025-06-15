@@ -3,12 +3,12 @@ using Dominio;
 namespace Tests.DominioTests;
 
 [TestClass]
-public class RangoEnUsoTests
+public class RangoDeUsoTests
 {
     [TestMethod]
     public void Constructor_InicializaUnRango()
     {
-        RangoEnUso rango = new RangoEnUso();
+        RangoDeUso rango = new RangoDeUso();
         Assert.IsNotNull(rango);
     }
 }
