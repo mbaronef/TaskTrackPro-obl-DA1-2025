@@ -171,6 +171,20 @@ public class Tarea
     {
         return Dependencias.Any(d => d.Tarea.Id == idTarea);
     }
+    
+    public void Actualizar(Tarea tareaActualizada)
+    {
+        ValidarIdentidad(tareaActualizada);
+        
+        ModificarTitulo(tareaActualizada.Titulo);
+        ModificarDescripcion(tareaActualizada.Descripcion);
+        ModificarDuracion(tareaActualizada.DuracionEnDias);
+        FechaInicioMasTemprana = tareaActualizada.FechaInicioMasTemprana; // se evita la validación para poder editar tareas que ya iniciaron. Las validaciones al crear/actualizar se hacen en interfaz/servicios
+        FechaFinMasTemprana = tareaActualizada.FechaFinMasTemprana;
+        FechaDeEjecucion = tareaActualizada.FechaDeEjecucion;
+        Holgura = tareaActualizada.Holgura;
+        CambiarEstado(tareaActualizada.Estado);
+    }
 
     private void CalcularFechaFinMasTemprana()
     {
@@ -297,7 +311,13 @@ public class Tarea
         
         return dependenciasFSCompletas && dependenciasSSEnProcesoOCompletadas;
     }
-
+    private void ValidarIdentidad(Tarea otraTarea)
+    {
+        if (!Equals(otraTarea))
+        {
+            throw new ExcepcionTarea(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
+        }
+    }
     public override bool Equals(object obj)
     {
         if (obj is not Tarea otra) return false;
