@@ -1,3 +1,5 @@
+using Dominio;
+
 namespace Tests.DominioTests;
 
 [TestClass]
