@@ -231,6 +231,16 @@ namespace Tests.DominioTests
         }
 
         [TestMethod]
+        public void SeActualizaElEmailDeUnUsuarioCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario usuarioConOtroEmail = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxxxx");
+            
+            usuario.Actualizar(usuarioConOtroEmail);
+            Assert.AreEqual("otroemail@gmail.com", usuario.Email);
+        }
+
+        [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
             Usuario usuario1 = CrearUsuarioValido();
@@ -293,6 +303,7 @@ namespace Tests.DominioTests
             string resultadoEsperado = $"{usuario.Nombre} {usuario.Apellido} ({usuario.Email})";
             Assert.AreEqual(resultadoEsperado, usuario.ToString());
         }
+        
         [TestMethod]
         public void ConstructorSinParametros_CreaInstanciaCorrectamente()
         {
