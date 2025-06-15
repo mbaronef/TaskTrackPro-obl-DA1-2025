@@ -7,7 +7,12 @@ namespace Servicios.CaminoCritico;
 
 public class CaminoCritico : ICalculadorCaminoCritico
 {
-    private static readonly INotificador _notificador = new Notificador();
+    private readonly INotificador _notificador;
+    
+    public CaminoCritico(INotificador notificador)
+    {
+        _notificador = notificador;
+    }
 
     public void CalcularCaminoCritico(Proyecto proyecto)
     {
