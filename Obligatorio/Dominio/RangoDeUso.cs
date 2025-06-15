@@ -19,6 +19,10 @@ public class RangoDeUso
     {
         ValidarFechaInicioMenorAFin(fechaInicio, fechaFin);
         ValidarCantidadDeUsosMayorACero(cantidadDeUsos);
+        if (tarea == null)
+        {
+            throw new ExcepcionRangoDeUso(MensajesErrorDominio.TareaNoPuedeSerNula);
+        }
 
         FechaInicio = fechaInicio;
         FechaFin = fechaFin;
