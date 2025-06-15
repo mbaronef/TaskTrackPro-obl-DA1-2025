@@ -22,9 +22,10 @@ public class RangoDeUsoTests
         Tarea tareaQueHaceUso = new Tarea();
             
         RangoDeUso rango = new RangoDeUso(fechaInicio, fechaFin, capacidadEnUso, tareaQueHaceUso);
+        Assert.AreEqual(0, rango.Id);
         Assert.AreEqual(fechaInicio, rango.FechaInicio);
         Assert.AreEqual(fechaFin, rango.FechaFin);
         Assert.AreEqual(capacidadEnUso, rango.CantidadDeUsos);
-        Assert.AreEqual(tareaQueHaceUso, rango.TareaQueHaceUso);
+        Assert.AreEqual(tareaQueHaceUso, rango.Tarea);
     }
 }
