@@ -75,6 +75,13 @@ public class Recurso
         return CantidadDeTareasUsandolo > 0;
     }
 
+    public void Actualizar(Recurso recursoActualizado)
+    {
+
+        ModificarNombre(recursoActualizado.Nombre);
+    }
+
+
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
         if (string.IsNullOrWhiteSpace(texto))
