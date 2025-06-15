@@ -12,12 +12,12 @@ namespace Servicios.Gestores;
 
 public class GestorProyectos : IGestorProyectos
 {
-    private readonly IRepositorio<Proyecto> _proyectos;
+    private readonly IRepositorioProyectos _proyectos;
     private readonly IRepositorioUsuarios _repositorioUsuarios;
     private readonly INotificador _notificador;
     private readonly ICalculadorCaminoCritico _caminoCritico;
     
-    public GestorProyectos(IRepositorioUsuarios repositorioUsuarios, IRepositorio<Proyecto> repositorioProyectos,
+    public GestorProyectos(IRepositorioUsuarios repositorioUsuarios, IRepositorioProyectos repositorioProyectos,
         INotificador notificador, ICalculadorCaminoCritico caminoCritico)
     {
         _proyectos = repositorioProyectos;
@@ -59,6 +59,8 @@ public class GestorProyectos : IGestorProyectos
 
         List<Usuario> miembros = proyecto.Miembros.ToList();
         
+        BorrarDependencias(proyecto); // Permite borrar seguramente el proyecto de la base de datos
+        
         _proyectos.Eliminar(idProyecto);
 
         solicitante.EstaAdministrandoUnProyecto = false;
@@ -68,6 +70,7 @@ public class GestorProyectos : IGestorProyectos
         foreach (Usuario miembro in miembros)
         {
             miembro.CantidadProyectosAsignados--;
+            _repositorioUsuarios.Actualizar(miembro);
         }
 
         _notificador.NotificarMuchos(miembros, MensajesNotificacion.ProyectoEliminado(proyecto.Nombre));
@@ -161,12 +164,15 @@ public class GestorProyectos : IGestorProyectos
 
         PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(nuevoAdmin, "el nuevo administrador");
 
-        proyecto.Administrador.EstaAdministrandoUnProyecto = false;
+        Usuario adminAnterior = proyecto.Administrador;
+        
+        adminAnterior.EstaAdministrandoUnProyecto = false;
         proyecto.Administrador = nuevoAdmin;
         nuevoAdmin.EstaAdministrandoUnProyecto = true;
         
         _proyectos.Actualizar(proyecto);
-        _repositorioUsuarios.Actualizar(solicitante);
+        _repositorioUsuarios.Actualizar(adminAnterior);
+        _repositorioUsuarios.Actualizar(nuevoAdmin);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.AdministradorProyectoModificado(proyecto.Nombre, nuevoAdmin.ToString()));
@@ -187,12 +193,10 @@ public class GestorProyectos : IGestorProyectos
         proyecto.AsignarMiembro(nuevoMiembro);
         
         _proyectos.Actualizar(proyecto);
+        _repositorioUsuarios.Actualizar(nuevoMiembro);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.MiembroAgregado(proyecto.Nombre, nuevoMiembro.Id));
-
-        //_repositorioUsuarios.GuardarCambios();
-        //_proyectos.GuardarCambios();
     }
 
     public void EliminarMiembroDelProyecto(int idProyecto, UsuarioDTO solicitanteDTO, int idMiembroAEliminar)
@@ -209,9 +213,12 @@ public class GestorProyectos : IGestorProyectos
 
         VerificarUsuarioNoTieneTareasAsignadas(idProyecto, idMiembroAEliminar);
 
+        Usuario miembroAEliminar = ObtenerMiembro(idMiembroAEliminar, proyecto);
+        
         proyecto.EliminarMiembro(idMiembroAEliminar);
         
         _proyectos.Actualizar(proyecto);
+        _repositorioUsuarios.Actualizar(miembroAEliminar);
 
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.MiembroEliminado(proyecto.Nombre, idMiembroAEliminar));
@@ -255,6 +262,8 @@ public class GestorProyectos : IGestorProyectos
     {
         Proyecto proyecto = ObtenerProyectoDominioPorId(proyectoDTO.Id);
         _caminoCritico.CalcularCaminoCritico(proyecto);
+        _proyectos.Actualizar(proyecto);
+        proyecto.Tareas.ToList().ForEach(tarea => _proyectos.ActualizarTarea(tarea: tarea));
     }
 
     public bool EsAdministradorDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)
@@ -280,6 +289,15 @@ public class GestorProyectos : IGestorProyectos
         }
 
         return proyecto;
+    }
+    
+    private void BorrarDependencias(Proyecto proyecto)
+    {
+        foreach (Tarea tarea in proyecto.Tareas)
+        {
+            tarea.Dependencias.Clear();
+            _proyectos.ActualizarTarea(tarea);
+        }
     }
 
     private Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)

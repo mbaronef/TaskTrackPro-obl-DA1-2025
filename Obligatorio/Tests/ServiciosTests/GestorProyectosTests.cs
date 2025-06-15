@@ -6,7 +6,6 @@ using Excepciones;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
 using Utilidades;
-using Microsoft.EntityFrameworkCore;
 using Tests.Contexto;
 
 namespace Tests.ServiciosTests;
@@ -14,8 +13,8 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class GestorProyectosTests
 {
-    private Notificador _notificador = new Notificador();
-    private CaminoCritico _caminoCritico = new CaminoCritico();
+    private Notificador _notificador;
+    private CaminoCritico _caminoCritico;
     
     private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioUsuarios _repositorioUsuarios;
@@ -36,6 +35,9 @@ public class GestorProyectosTests
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _repositorioProyectos = new RepositorioProyectos(_contexto);
         _repositorioRecursos = new RepositorioRecursos(_contexto);
+
+        _notificador = new Notificador(_repositorioUsuarios);
+        _caminoCritico = new CaminoCritico(_notificador);
         
         _gestor = new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
         
@@ -663,7 +665,7 @@ public class GestorProyectosTests
     [ExpectedException(typeof(ExcepcionProyecto))]
     public void EliminarMiembroConTareaAsignada_LanzaExcepcion()
     {
-        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
+        GestorTareas gestorTareas = new GestorTareas(_repositorioProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
         TareaDTO tarea = new TareaDTO()
         {
             Titulo = "Tarea", Descripcion = "Descripcion", DuracionEnDias = 2,
@@ -859,7 +861,7 @@ public class GestorProyectosTests
     [TestMethod]
     public void CalcularCaminoCritico_MarcaTareasCriticasCorrectamente()
     {
-        GestorTareas gestorTareas = new GestorTareas(_gestor, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
+        GestorTareas gestorTareas = new GestorTareas(_repositorioProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
 
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
         _gestor.CrearProyecto(proyecto, _adminDTO);
