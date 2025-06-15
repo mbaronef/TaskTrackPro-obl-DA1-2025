@@ -89,31 +89,6 @@ public class Usuario
         EsAdministradorSistema = usuarioActualizado.EsAdministradorSistema;
         EstaAdministrandoUnProyecto = usuarioActualizado.EstaAdministrandoUnProyecto;
         CantidadProyectosAsignados = usuarioActualizado.CantidadProyectosAsignados;
-        ActualizarNotificaciones(usuarioActualizado.Notificaciones.ToList());
-    }
-    
-    private void ActualizarNotificaciones(List<Notificacion> nuevasNotificaciones)
-    {
-        EliminarNotificacionesNoIncluidas(nuevasNotificaciones);
-        AgregarNotificacionesNuevas(nuevasNotificaciones);
-    }
-    
-    private void EliminarNotificacionesNoIncluidas(List<Notificacion> nuevasNotificaciones)
-    {
-        List<Notificacion> notificacionesAEliminar = Notificaciones.Where(notificacion => !nuevasNotificaciones.Any(nueva => nueva.Id == notificacion.Id)).ToList();
-        foreach (Notificacion notificacionAEliminar in notificacionesAEliminar)
-        {
-            Notificaciones.Remove(notificacionAEliminar);
-        }
-    }
-    
-    private void AgregarNotificacionesNuevas(List<Notificacion> nuevasNotificaciones)
-    {
-        List<Notificacion> notificacionesAAgregar = nuevasNotificaciones.Where(nuevaNotificacion => !Notificaciones.Any(notificacion => notificacion.Id == nuevaNotificacion.Id)).ToList();
-        foreach (Notificacion notificacionAAgregar in notificacionesAAgregar)
-        {
-            Notificaciones.Add(notificacionAAgregar);
-        }
     }
     
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)

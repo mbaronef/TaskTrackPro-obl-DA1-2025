@@ -305,21 +305,6 @@ namespace Tests.DominioTests
             Assert.AreEqual(10, usuario.CantidadProyectosAsignados);
         }
         
-        [TestMethod]
-        public void SeActualizanNotificacionesCoorrectamente()
-        {
-            Usuario usuario = CrearUsuarioValido();
-            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
-            nuevoUsuario.Id = usuario.Id;
-            
-            nuevoUsuario.RecibirNotificacion("mensaje");
-            
-            usuario.Actualizar(nuevoUsuario);
-            
-            Assert.AreEqual(1, usuario.Notificaciones.Count);
-            Assert.AreEqual("mensaje", usuario.Notificaciones.Last().Mensaje);
-        }
-        
         [ExpectedException(typeof(ExcepcionUsuario))]
         [TestMethod]
         public void NoSePuedeActualizarUnUsuarioConIdDiferente()
