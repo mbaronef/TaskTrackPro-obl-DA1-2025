@@ -224,23 +224,6 @@ public class RecursoTests
     }
     
     [TestMethod]
-    public void SeActualizaProyectoAsociadoCorrectamente()
-    {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
-        
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
-        DateTime fechaInicio = DateTime.Today.AddDays(1);
-        Proyecto proyecto = new Proyecto("Nombre", "Descripcion", fechaInicio, usuario, new List<Usuario>());
-        Recurso otroRecurso = new Recurso("Nombre", "Tipo", "Nueva descripción");
-        otroRecurso.AsociarAProyecto(proyecto);
-        
-        otroRecurso.Id = recurso.Id;
-        
-        recurso.Actualizar(otroRecurso);
-        Assert.AreEqual(proyecto, recurso.ProyectoAsociado);
-    }
-    
-    [TestMethod]
     public void SeActualizaCantidadDeTareasUsandoloCorrectamente()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
@@ -251,7 +234,7 @@ public class RecursoTests
         Assert.AreEqual(5, recurso.CantidadDeTareasUsandolo);
     }
     
-    [ExpectedException(typeof(ExcepcionUsuario))]
+    [ExpectedException(typeof(ExcepcionRecurso))]
     [TestMethod]
     public void NoSePuedeActualizarRecursoConIdDiferente()
     {

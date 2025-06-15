@@ -82,16 +82,7 @@ public class Recurso
         ModificarNombre(recursoActualizado.Nombre);
         ModificarTipo(recursoActualizado.Tipo);
         ModificarDescripcion(recursoActualizado.Descripcion);
-        ProyectoAsociado = recursoActualizado.ProyectoAsociado;
         CantidadDeTareasUsandolo = recursoActualizado.CantidadDeTareasUsandolo;
-    }
-    
-    private void ValidarIdentidad(Recurso otroRecurso)
-    {
-        if (!Equals(otroRecurso))
-        {
-            throw new ExcepcionUsuario(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
-        }
     }
     
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
@@ -99,6 +90,14 @@ public class Recurso
         if (string.IsNullOrWhiteSpace(texto))
         {
             throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, nombreAtributo));
+        }
+    }
+    
+    private void ValidarIdentidad(Recurso otroRecurso)
+    {
+        if (!Equals(otroRecurso))
+        {
+            throw new ExcepcionRecurso(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
         }
     }
 
