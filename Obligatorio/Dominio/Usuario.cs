@@ -88,22 +88,27 @@ public class Usuario
         EsAdministradorSistema = usuarioActualizado.EsAdministradorSistema;
         EstaAdministrandoUnProyecto = usuarioActualizado.EstaAdministrandoUnProyecto;
         CantidadProyectosAsignados = usuarioActualizado.CantidadProyectosAsignados;
-        List<Notificacion> nuevasNotificaciones = usuarioActualizado.Notificaciones.ToList();
-        List<Notificacion> notificacionesAEliminar = Notificaciones
-            .Where(notificacion => 
-                !nuevasNotificaciones.Any(nuevaNotificacion => nuevaNotificacion.Id == notificacion.Id))
-            .ToList();
-
+        ActualizarNotificaciones(usuarioActualizado.Notificaciones.ToList());
+    }
+    
+    private void ActualizarNotificaciones(List<Notificacion> nuevasNotificaciones)
+    {
+        EliminarNotificacionesNoIncluidas(nuevasNotificaciones);
+        AgregarNotificacionesNuevas(nuevasNotificaciones);
+    }
+    
+    private void EliminarNotificacionesNoIncluidas(List<Notificacion> nuevasNotificaciones)
+    {
+        List<Notificacion> notificacionesAEliminar = Notificaciones.Where(notificacion => !nuevasNotificaciones.Any(nueva => nueva.Id == notificacion.Id)).ToList();
         foreach (Notificacion notificacionAEliminar in notificacionesAEliminar)
         {
             Notificaciones.Remove(notificacionAEliminar);
         }
-
-
-        List<Notificacion> notificacionesAAgregar = nuevasNotificaciones
-            .Where(nuevaNotificacion => 
-                !Notificaciones.Any(notificacion => notificacion.Id == nuevaNotificacion.Id)).ToList();
-
+    }
+    
+    private void AgregarNotificacionesNuevas(List<Notificacion> nuevasNotificaciones)
+    {
+        List<Notificacion> notificacionesAAgregar = nuevasNotificaciones.Where(nuevaNotificacion => !Notificaciones.Any(notificacion => notificacion.Id == nuevaNotificacion.Id)).ToList();
         foreach (Notificacion notificacionAAgregar in notificacionesAAgregar)
         {
             Notificaciones.Add(notificacionAAgregar);
