@@ -235,6 +235,7 @@ namespace Tests.DominioTests
         {
             Usuario usuario = CrearUsuarioValido();
             Usuario usuarioConOtroEmail = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxxxx");
+            usuarioConOtroEmail.Id = usuario.Id;
             
             usuario.Actualizar(usuarioConOtroEmail);
             Assert.AreEqual("otroemail@gmail.com", usuario.Email);
@@ -244,9 +245,9 @@ namespace Tests.DominioTests
         public void SeActualizaLaContrasenaDeUnUsuarioCorrectamente()
         {
             Usuario usuario = CrearUsuarioValido();
-
             string nuevaContrasena = UtilidadesContrasena.ValidarYEncriptarContrasena("Admin123$");
             Usuario usuarioConOtraContrasena = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", nuevaContrasena);
+            usuarioConOtraContrasena.Id = usuario.Id;
             
             usuario.Actualizar(usuarioConOtraContrasena);
             Assert.IsTrue(usuario.Autenticar("Admin123$"));
@@ -257,6 +258,8 @@ namespace Tests.DominioTests
         {
             Usuario usuario = CrearUsuarioValido();
             Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.Id = usuario.Id;
+            
             nuevoUsuario.EsAdministradorProyecto = true;
             
             usuario.Actualizar(nuevoUsuario);
@@ -268,6 +271,8 @@ namespace Tests.DominioTests
         {
             Usuario usuario = CrearUsuarioValido();
             Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.Id = usuario.Id;
+            
             nuevoUsuario.EsAdministradorSistema = true;
             
             usuario.Actualizar(nuevoUsuario);
@@ -279,6 +284,8 @@ namespace Tests.DominioTests
         {
             Usuario usuario = CrearUsuarioValido();
             Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.Id = usuario.Id;
+            
             nuevoUsuario.EstaAdministrandoUnProyecto = true;
             
             usuario.Actualizar(nuevoUsuario);
@@ -290,6 +297,8 @@ namespace Tests.DominioTests
         {
             Usuario usuario = CrearUsuarioValido();
             Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.Id = usuario.Id;
+            
             nuevoUsuario.CantidadProyectosAsignados = 10;
             
             usuario.Actualizar(nuevoUsuario);
@@ -301,12 +310,25 @@ namespace Tests.DominioTests
         {
             Usuario usuario = CrearUsuarioValido();
             Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.Id = usuario.Id;
+            
             nuevoUsuario.RecibirNotificacion("mensaje");
             
             usuario.Actualizar(nuevoUsuario);
             
             Assert.AreEqual(1, usuario.Notificaciones.Count);
             Assert.AreEqual("mensaje", usuario.Notificaciones.Last().Mensaje);
+        }
+        
+        [ExpectedException(typeof(ExcepcionUsuario))]
+        [TestMethod]
+        public void NoSePuedeActualizarUnUsuarioConIdDiferente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario usuarioConIdDiferente = CrearUsuarioValido();
+            usuarioConIdDiferente.Id = 2;
+            
+            usuario.Actualizar(usuarioConIdDiferente);
         }
         
         [TestMethod]
