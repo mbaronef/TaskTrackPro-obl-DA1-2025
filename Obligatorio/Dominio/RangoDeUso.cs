@@ -18,7 +18,7 @@ public class RangoDeUso
     public RangoDeUso(DateTime fechaInicio, DateTime fechaFin, int cantidadDeUsos, Tarea tarea)
     {
         ValidarFechaInicioMenorAFin(fechaInicio, fechaFin);
-        if(cantidadDeUsos == 0)
+        if(cantidadDeUsos <= 0)
         {
             throw new ExcepcionRangoDeUso(MensajesErrorDominio.RangoDeUsoNoPuedeSerCeroOMenos);
         }
