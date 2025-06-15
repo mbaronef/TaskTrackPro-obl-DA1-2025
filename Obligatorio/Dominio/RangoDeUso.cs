@@ -17,14 +17,19 @@ public class RangoDeUso
     
     public RangoDeUso(DateTime fechaInicio, DateTime fechaFin, int cantidadDeUsos, Tarea tarea)
     {
-        if (fechaFin < fechaInicio)
-        {
-            throw new ExcepcionRangoDeUso(MensajesErrorDominio.FechaInicioRangoMayorQueFin);
-        }
+        ValidarFechaInicioMenorAFin(fechaInicio, fechaFin);
 
         FechaInicio = fechaInicio;
         FechaFin = fechaFin;
         CantidadDeUsos = cantidadDeUsos;
         Tarea = tarea;
+    }
+    
+    private void ValidarFechaInicioMenorAFin(DateTime fechaInicio, DateTime fechaFin)
+    {
+        if (fechaFin < fechaInicio)
+        {
+            throw new ExcepcionRangoDeUso(MensajesErrorDominio.FechaInicioRangoMayorQueFin);
+        }
     }
 }
