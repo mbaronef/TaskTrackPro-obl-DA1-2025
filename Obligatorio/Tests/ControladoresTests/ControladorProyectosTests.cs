@@ -275,4 +275,18 @@ public class ControladorProyectosTests
 
         _mockGestorProyectos.Verify(g => g.AsignarLider(idProyecto, solicitante, idNuevoLider), Times.Once);
     }
+    
+    [TestMethod]
+    public void EsLiderDeProyecto_LlamaCorrectamenteAGestorYDevuelveTrue()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idProyecto = 3;
+
+        _mockGestorProyectos.Setup(g => g.EsLiderDeProyecto(usuario, idProyecto)).Returns(true);
+
+        bool resultado = _controladorProyectos.EsLiderDeProyecto(usuario, idProyecto);
+
+        Assert.IsTrue(resultado);
+        _mockGestorProyectos.Verify(g => g.EsLiderDeProyecto(usuario, idProyecto), Times.Once);
+    }
 }
