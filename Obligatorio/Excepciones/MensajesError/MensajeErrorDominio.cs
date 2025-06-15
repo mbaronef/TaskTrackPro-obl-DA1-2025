@@ -72,4 +72,7 @@ public static class MensajesErrorDominio
 
     public const string DependenciaNoExisteEnTarea =
         "La dependencia no se encuentra dentro de la lista de dependencias.";
+    
+    public const string FechaInicioRangoMayorQueFin =
+        "La fecha de inicio no puede ser mayor que la fecha de fin.";
 }

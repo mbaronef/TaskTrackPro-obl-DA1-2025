@@ -1,4 +1,5 @@
 using Dominio;
+using Excepciones;
 
 namespace Tests.DominioTests;
 
@@ -27,5 +28,16 @@ public class RangoDeUsoTests
         Assert.AreEqual(fechaFin, rango.FechaFin);
         Assert.AreEqual(capacidadEnUso, rango.CantidadDeUsos);
         Assert.AreEqual(tareaQueHaceUso, rango.Tarea);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRangoDeUso))]
+    [TestMethod]
+    public void ConstructorConParametros_LanzaExcepcionSiFechaInicioEsMayorQueFechaFin()
+    {
+        DateTime fechaInicio = DateTime.Today.AddDays(10);
+        DateTime fechaFin = DateTime.Today;
+        Tarea tareaQueHaceUso = new Tarea();
+            
+        RangoDeUso rango = new RangoDeUso(fechaInicio, fechaFin, 10, tareaQueHaceUso);
     }
 }
