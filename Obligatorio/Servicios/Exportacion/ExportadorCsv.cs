@@ -23,7 +23,7 @@ public class ExportadorCsv : IExportadorProyectos
         var proyectos = _repositorio.ObtenerTodos();
 
         var sb = new StringBuilder();
-        sb.AppendLine("Id,Nombre,Descripcion,FechaInicio");
+        sb.AppendLine("Id,Nombre,Descripcion,FechaInicio"); // Cambiar según lo que necesito tener en el archivo por proyecto
 
         foreach (var p in proyectos)
         {
