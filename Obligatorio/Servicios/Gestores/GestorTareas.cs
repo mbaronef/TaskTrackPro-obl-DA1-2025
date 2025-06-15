@@ -56,7 +56,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
 
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
 
         ValidarTareaNoTieneSucesora(proyecto, idTareaAEliminar);
 
