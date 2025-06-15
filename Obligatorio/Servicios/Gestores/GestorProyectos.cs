@@ -263,7 +263,9 @@ public class GestorProyectos : IGestorProyectos
 
     public bool EsLiderDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)
     {
-        throw new NotImplementedException();
+        Usuario usuario = ObtenerUsuarioPorDTO(usuarioDTO);
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+        return proyecto.EsLider(usuario);
     }
 
 
