@@ -512,6 +512,22 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void CambiarEstadoTarea_LanzaExcepcionSiProyectoNoHaComenzado()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin); // con fecha de inicio hoy +1
+        TareaDTO tarea = CrearTarea();
+        tarea.FechaInicioMasTemprana = proyecto.FechaInicio; 
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+    }
 
     [ExpectedException(typeof(ExcepcionTarea))]
     [TestMethod]
