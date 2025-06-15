@@ -142,6 +142,16 @@ public class Proyecto
         return Tareas.Any();
     }
 
+    public void Actualizar(Proyecto proyectoActualizado)
+    {
+        ValidarIdentidad(proyectoActualizado);
+
+        ModificarNombre(proyectoActualizado.Nombre);
+        ModificarDescripcion(proyectoActualizado.Descripcion);
+        FechaInicio = proyectoActualizado.FechaInicio; // se evita la validación para poder editar proyectos que ya iniciaron. Las validaciones al crear/actualizar se hacen en interfaz/servicios
+        FechaFinMasTemprana = proyectoActualizado.FechaFinMasTemprana;
+    }
+
     private Tarea BuscarTareaPorId(int id)
     {
         return Tareas.FirstOrDefault(t => t.Id == id);
@@ -257,6 +267,14 @@ public class Proyecto
         if (inicio == fin)
         {
             throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoIgualFin);
+        }
+    }
+    
+    private void ValidarIdentidad(Proyecto otroProyecto)
+    {
+        if (!Equals(otroProyecto))
+        {
+            throw new ExcepcionProyecto(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
         }
     }
 

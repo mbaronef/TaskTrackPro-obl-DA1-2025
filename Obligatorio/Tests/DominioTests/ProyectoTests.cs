@@ -16,8 +16,7 @@ public class ProyectoTests
         _admin = CrearAdmin(1);
         _miembros = new List<Usuario>();
     }
-
-    //Constructor
+    
     [TestMethod]
     public void Constructor_ConParametrosAsignadosCorrectamente()
     {
@@ -142,8 +141,6 @@ public class ProyectoTests
         _proyecto = new Proyecto("Nombre", "Descripción", fechaInicio, _admin, null);
     }
 
-    //Asignar ID
-
     [TestMethod]
     public void AsignarID_DeberiaAsignarCorrectamenteElId()
     {
@@ -152,8 +149,6 @@ public class ProyectoTests
         proyecto.Id = 42;
         Assert.AreEqual(42, proyecto.Id);
     }
-
-    //AgregarTarea (En GESTOR: solo admin proyecto puede)
 
     [TestMethod]
     public void AgregarTarea_AgregarUnaTareaALaLista()
@@ -186,8 +181,6 @@ public class ProyectoTests
         _proyecto.AgregarTarea(tarea1);
     }
 
-    //eliminarTarea (En GESTOR: solo admin proyecto puede)
-
     [TestMethod]
     public void EliminarTarea_EliminaTareaDeLaLista()
     {
@@ -210,10 +203,7 @@ public class ProyectoTests
         _proyecto.AgregarTarea(tarea);
         _proyecto.EliminarTarea(2); // ID que no existe
     }
-
-
-    //AsignarMiembro (En GESTOR: solo admin proyecto puede)
-
+    
     [TestMethod]
     public void AsignarMiembro_AgregarUsuarioALaListaDeMiembros()
     {
@@ -244,9 +234,7 @@ public class ProyectoTests
 
         _proyecto.AsignarMiembro(_admin);
     }
-
-    //EliminarMiembro (En GESTOR: solo admin proyecto puede)
-
+    
     [TestMethod]
     public void EliminarMiembro_EliminaUsuarioCorrectamenteDeLaLista()
     {
@@ -260,8 +248,7 @@ public class ProyectoTests
         Assert.AreEqual(1, _proyecto.Miembros.Count);
         Assert.AreEqual(0, miembro.CantidadProyectosAsignados);
     }
-
-
+    
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void EliminarMiembro_LanzaExcepcionSiElUsuarioNoExisteEnMiembros()
@@ -285,7 +272,6 @@ public class ProyectoTests
         _proyecto.EliminarMiembro(_admin.Id); // Intenta eliminar al admin
     }
 
-    //EsAdministrador
     [TestMethod]
     public void EsAdministrador_RetornaTrueSiUsuarioEsAdministrador()
     {
@@ -305,10 +291,6 @@ public class ProyectoTests
         bool resultado = _proyecto.EsAdministrador(otro);
         Assert.IsFalse(resultado);
     }
-
-    //MODIFICACIONES
-
-    //modificarFechaDeInicio (EN GESTOR: puede ser modificada por admin sistema o por admin proyecto)
 
     [TestMethod]
     public void ModificarFechaInicio_ActualizaLaFechaOK()
@@ -367,9 +349,6 @@ public class ProyectoTests
         _proyecto.ModificarFechaInicio(fechaInicioInvalida);
     }
 
-
-    //modificar fecha de fin mas temprana
-
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void ModificarFechaFinMasTemprana_LanzaExcepcionSiEsAnteriorALaFechaInicio()
@@ -402,8 +381,7 @@ public class ProyectoTests
 
         Assert.AreEqual(fecha, _proyecto.FechaFinMasTemprana);
     }
-
-    // modificationNombre (En GESTOR: solo admin proyecto puede)
+    
 
     [TestMethod]
     public void ModificarNombre_DeberiaActualizarElNombre()
@@ -432,9 +410,7 @@ public class ProyectoTests
 
         _proyecto.ModificarNombre("");
     }
-
-    // modificarDescripcion (En GESTOR: solo admin proyecto puede)
-
+    
     [TestMethod]
     public void ModificarDescripcion_ActualizaLaDescripcion()
     {
@@ -474,8 +450,6 @@ public class ProyectoTests
         _proyecto.ModificarDescripcion(descripcionLarga);
     }
 
-    // reasignar el administrador de proyecto a otro
-
     [TestMethod]
     public void AsignarNuevoAdministrador_CambiaElAdministradorDelProyecto()
     {
@@ -500,7 +474,6 @@ public class ProyectoTests
         _proyecto.AsignarNuevoAdministrador(miembro);
     }
 
-    //es miembro por id
 
     [TestMethod]
     public void EsMiembro_PorId_DevuelveTrueSiUsuarioPertenece()
@@ -538,8 +511,7 @@ public class ProyectoTests
 
         Assert.IsFalse(proyecto.EsMiembro(otro.Id));
     }
-
-    //tiene tareas:
+    
     [TestMethod]
     public void TieneTareas_DaTrueSiHayTareas()
     {
@@ -557,9 +529,63 @@ public class ProyectoTests
 
         Assert.IsFalse(_proyecto.TieneTareas());
     }
+    
+    [TestMethod]
+    public void SeActualizaNombreCorrectamente()
+    {
+        _proyecto = CrearProyectoCon(_admin);
+        Proyecto nuevoProyecto = new Proyecto("Proyecto nuevo", "Descripción", DateTime.Today, _admin, new List<Usuario>());
 
-    //equals:
+        _proyecto.Actualizar(nuevoProyecto);
+        Assert.AreEqual("Proyecto nuevo", _proyecto.Nombre);
+    }
+    
+    [TestMethod]
+    public void SeActualizaDescripcionCorrectamente()
+    {
+        _proyecto = CrearProyectoCon(_admin);
+        Proyecto nuevoProyecto = new Proyecto("Proyecto", "Descripción nueva", DateTime.Today, _admin, new List<Usuario>());
 
+        _proyecto.Actualizar(nuevoProyecto);
+        Assert.AreEqual("Descripción nueva", _proyecto.Descripcion);
+    }
+    
+    [TestMethod]
+    public void SeActualizaFechaInicioCorrectamente()
+    {
+        _proyecto = CrearProyectoCon(_admin);
+        DateTime nuevaFecha = DateTime.Today.AddDays(5);
+        Proyecto nuevoProyecto = new Proyecto("Proyecto", "Descripción", nuevaFecha, _admin, new List<Usuario>());
+
+        _proyecto.Actualizar(nuevoProyecto);
+        Assert.AreEqual(nuevaFecha, _proyecto.FechaInicio);
+    }
+    
+    [TestMethod]
+    public void SeActualizaFechaFinCorrectamente()
+    {
+        _proyecto = CrearProyectoCon(_admin);
+        DateTime nuevaFechaFin = DateTime.Today.AddDays(10);
+        Proyecto nuevoProyecto = new Proyecto("Proyecto", "Descripción", DateTime.Today, _admin, new List<Usuario>())
+        {
+            FechaFinMasTemprana = nuevaFechaFin
+        };
+
+        _proyecto.Actualizar(nuevoProyecto);
+        Assert.AreEqual(nuevaFechaFin, _proyecto.FechaFinMasTemprana);
+    }
+
+    [ExpectedException(typeof(ExcepcionProyecto))]
+    [TestMethod]
+    public void Actualizar_LanzaExcepcionSiElProyectoNoEsElMismo()
+    {
+        _proyecto = CrearProyectoCon(_admin);
+        Proyecto proyectoDiferente = new Proyecto("Otro Proyecto", "Descripción", DateTime.Today, _admin, new List<Usuario>());
+        proyectoDiferente.Id = 999; // Id diferente para simular un proyecto distinto
+
+        _proyecto.Actualizar(proyectoDiferente);
+    }
+    
     [TestMethod]
     public void Equals_RetornaTrueSiLosIdsNoSonIguales()
     {
@@ -609,15 +635,6 @@ public class ProyectoTests
             3; // proyecto con id distinto a los otros 2 (se hardcodea en vez de llamar al gestor por simplicidad)
         Assert.AreEqual(proyecto1.GetHashCode(), proyecto2.GetHashCode());
         Assert.AreNotEqual(proyecto3.GetHashCode(), proyecto1.GetHashCode());
-    }
-
-    //HELPERS
-    private Usuario CrearAdminSistema()
-    {
-        Usuario adminSistema =
-            new Usuario("Juan", "Perez", new DateTime(1999, 2, 2), "unemail@gmail.com", "Contrase#a3");
-        adminSistema.EsAdministradorSistema = true;
-        return adminSistema;
     }
 
     private Usuario CrearAdmin(int id)
