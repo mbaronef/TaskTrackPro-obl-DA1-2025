@@ -79,7 +79,6 @@ public class Usuario
         Notificaciones.Remove(notificacionABorrar);
     }
     
-    //CONTDD
     public void Actualizar(Usuario usuarioActualizado)
     {
         CambiarEmail(usuarioActualizado.Email);
