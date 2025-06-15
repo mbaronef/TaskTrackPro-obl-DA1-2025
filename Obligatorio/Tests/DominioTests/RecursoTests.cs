@@ -9,7 +9,7 @@ public class RecursoTests
     [TestMethod]
     public void ConstructorCreaRecursoYAsignaOk()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción", 1);
         Assert.AreEqual("Nombre", recurso.Nombre);
         Assert.AreEqual("Tipo", recurso.Tipo);
         Assert.AreEqual("Descripción", recurso.Descripcion);
