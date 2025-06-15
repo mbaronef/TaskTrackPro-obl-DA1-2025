@@ -935,4 +935,30 @@ public class GestorProyectosTests
             Assert.IsTrue(m.Notificaciones.Any(n => n.Mensaje == mensajeEsperado));
         }
     }
+    
+    [TestMethod]
+    public void EsLiderDeProyecto_DevuelveTrueSiEsLider()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        Usuario lider = CrearMiembro();
+        UsuarioDTO liderDTO = UsuarioDTO.DesdeEntidad(lider);
+
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, liderDTO);
+
+        _gestor.AsignarLider(proyecto.Id, _adminDTO, lider.Id);
+
+        bool esLider = _gestor.EsLiderDeProyecto(liderDTO, proyecto.Id);
+        Assert.IsTrue(esLider);
+    }
+
+    [TestMethod]
+    public void EsLiderDeProyecto_DevuelveFalseSiNoEsLider()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+
+        bool esLider = _gestor.EsLiderDeProyecto(UsuarioDTO.DesdeEntidad(_admin), proyecto.Id);
+        Assert.IsFalse(esLider);
+    }
 }

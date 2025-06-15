@@ -261,6 +261,12 @@ public class GestorProyectos : IGestorProyectos
         return proyecto.EsMiembro(idUsuario);
     }
 
+    public bool EsLiderDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)
+    {
+        throw new NotImplementedException();
+    }
+
+
     public Proyecto ObtenerProyectoDominioPorId(int id)
     {
         Proyecto proyecto = _proyectos.ObtenerPorId(id);
