@@ -12,8 +12,8 @@ using Repositorios;
 namespace Repositorios.Migrations
 {
     [DbContext(typeof(SqlContext))]
-    [Migration("20250614201401_metodoActualizarv1")]
-    partial class metodoActualizarv1
+    [Migration("20250615053826_metodoActualizarv5")]
+    partial class metodoActualizarv5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,6 +27,9 @@ namespace Repositorios.Migrations
 
             modelBuilder.Entity("Dominio.Dependencia", b =>
                 {
+                    b.Property<int>("TareaDueñaId")
+                        .HasColumnType("int");
+
                     b.Property<int>("TareaId")
                         .HasColumnType("int");
 
@@ -34,7 +37,9 @@ namespace Repositorios.Migrations
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
 
-                    b.HasKey("TareaId", "Tipo");
+                    b.HasKey("TareaDueñaId", "TareaId", "Tipo");
+
+                    b.HasIndex("TareaId");
 
                     b.ToTable("Dependencia", t =>
                         {
@@ -240,7 +245,7 @@ namespace Repositorios.Migrations
                             EstaAdministrandoUnProyecto = false,
                             FechaNacimiento = new DateTime(1999, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Admin",
-                            _contrasenaEncriptada = "$2a$11$kNTg.z2xOzKB07Tfi3oZn..ZBWnfLblHGu.46lPFCJEofsDPfWqqG"
+                            _contrasenaEncriptada = "$2a$11$uVXK5.NABpLzG7ueVTVdIuH.zhjycb0C65p84Q6kNZN2PgHKrsgFK"
                         });
                 });
 
@@ -291,10 +296,16 @@ namespace Repositorios.Migrations
 
             modelBuilder.Entity("Dominio.Dependencia", b =>
                 {
-                    b.HasOne("Dominio.Tarea", "Tarea")
+                    b.HasOne("Dominio.Tarea", null)
                         .WithMany("Dependencias")
-                        .HasForeignKey("TareaId")
+                        .HasForeignKey("TareaDueñaId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dominio.Tarea", "Tarea")
+                        .WithMany()
+                        .HasForeignKey("TareaId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Tarea");

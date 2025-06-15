@@ -44,11 +44,21 @@ public class RepositorioRecursos : IRepositorio<Recurso>
     public void Actualizar(Recurso recurso)
     {
         Recurso recursoContexto = ObtenerPorId(recurso.Id);
-        
         if (recursoContexto != null)
         {
             recursoContexto.Actualizar(recurso);
+            SincronizarProyectoAsociado(recurso, recursoContexto);
             _contexto.SaveChanges();
+        }
+    }
+    
+    private void SincronizarProyectoAsociado(Recurso recurso, Recurso recursoContexto)
+    {
+        if (recurso.ProyectoAsociado != null)
+        {
+            Proyecto proyectoAsociadoContexto = _contexto.Proyectos
+                .FirstOrDefault(p => p.Id == recurso.ProyectoAsociado.Id);
+            recursoContexto.AsociarAProyecto(proyectoAsociadoContexto);
         }
     }
 }

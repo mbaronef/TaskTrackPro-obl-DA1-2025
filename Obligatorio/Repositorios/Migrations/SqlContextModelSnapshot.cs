@@ -242,7 +242,7 @@ namespace Repositorios.Migrations
                             EstaAdministrandoUnProyecto = false,
                             FechaNacimiento = new DateTime(1999, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Admin",
-                            _contrasenaEncriptada = "$2a$11$qzN.0MvFRu05/HsgDHERFe6nbH8lCQ3NGpFar4aCDKTqyomMLoYRi"
+                            _contrasenaEncriptada = "$2a$11$uVXK5.NABpLzG7ueVTVdIuH.zhjycb0C65p84Q6kNZN2PgHKrsgFK"
                         });
                 });
 

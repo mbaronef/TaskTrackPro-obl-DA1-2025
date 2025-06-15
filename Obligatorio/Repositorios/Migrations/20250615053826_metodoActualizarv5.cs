@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Repositorios.Migrations
 {
     /// <inheritdoc />
-    public partial class migracionActualizada : Migration
+    public partial class metodoActualizarv5 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -155,18 +155,25 @@ namespace Repositorios.Migrations
                 columns: table => new
                 {
                     Tipo = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
+                    TareaDueñaId = table.Column<int>(type: "int", nullable: false),
                     TareaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Dependencia", x => new { x.TareaId, x.Tipo });
+                    table.PrimaryKey("PK_Dependencia", x => new { x.TareaDueñaId, x.TareaId, x.Tipo });
                     table.CheckConstraint("CK_Dependencia_Tipo", "[Tipo] IN ('SS', 'FS')");
+                    table.ForeignKey(
+                        name: "FK_Dependencia_Tarea_TareaDueñaId",
+                        column: x => x.TareaDueñaId,
+                        principalTable: "Tarea",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Dependencia_Tarea_TareaId",
                         column: x => x.TareaId,
                         principalTable: "Tarea",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -220,7 +227,12 @@ namespace Repositorios.Migrations
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "Id", "Apellido", "CantidadProyectosAsignados", "Email", "EsAdministradorProyecto", "EsAdministradorSistema", "EstaAdministrandoUnProyecto", "FechaNacimiento", "Nombre", "ContrasenaEncriptada" },
-                values: new object[] { 1, "Sistema", 0, "admin@sistema.com", false, true, false, new DateTime(1999, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Admin", "$2a$11$pmFUfeEmBLWPl4OjY7eJm.do471hYa/sI6NXwF0EAxgTsnBON9Adu" });
+                values: new object[] { 1, "Sistema", 0, "admin@sistema.com", false, true, false, new DateTime(1999, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Admin", "$2a$11$uVXK5.NABpLzG7ueVTVdIuH.zhjycb0C65p84Q6kNZN2PgHKrsgFK" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Dependencia_TareaId",
+                table: "Dependencia",
+                column: "TareaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notificacion_UsuarioId",

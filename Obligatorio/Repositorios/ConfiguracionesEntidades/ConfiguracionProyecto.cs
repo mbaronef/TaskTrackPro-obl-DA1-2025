@@ -38,7 +38,8 @@ public static class ConfiguracionProyecto
         modelBuilder.Entity<Proyecto>()
             .HasMany(p => p.Tareas)
             .WithOne()
-            .HasForeignKey("ProyectoId") 
-            .IsRequired();
+            .HasForeignKey("ProyectoId")
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

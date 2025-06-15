@@ -50,10 +50,40 @@ public class RepositorioUsuarios : IRepositorioUsuarios
     public void Actualizar(Usuario usuario)
     {
         Usuario usuarioContexto = ObtenerPorId(usuario.Id);
+        
         if (usuarioContexto != null)
         {
             usuarioContexto.Actualizar(usuario);
+            SincronizarNotificaciones(usuarioContexto, usuario);
             _contexto.SaveChanges();
+        }
+    }
+    
+    private void SincronizarNotificaciones(Usuario usuarioContexto, Usuario usuario)
+    {
+        EliminarNotificacionesNoIncluidas(usuarioContexto, usuario);
+        AgregarNotificacionesNuevas(usuarioContexto, usuario);
+    }
+    
+    private void EliminarNotificacionesNoIncluidas(Usuario usuarioContexto, Usuario usuario)
+    {
+        foreach (Notificacion notificacionExistente in usuarioContexto.Notificaciones.ToList())
+        {
+            if (!usuario.Notificaciones.Any(n => n.Id == notificacionExistente.Id))
+            {
+                usuarioContexto.Notificaciones.Remove(notificacionExistente);
+            }
+        }
+    }
+    
+    private void AgregarNotificacionesNuevas(Usuario usuarioContexto, Usuario usuario)
+    {
+        foreach (Notificacion notificacionNueva in usuario.Notificaciones)
+        {
+            if (!usuarioContexto.Notificaciones.Any(n => n.Id == notificacionNueva.Id))
+            {
+                usuarioContexto.Notificaciones.Add(notificacionNueva);
+            }
         }
     }
 }

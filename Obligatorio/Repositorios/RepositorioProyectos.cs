@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using Dominio;
 using Microsoft.EntityFrameworkCore;
 using Repositorios.Interfaces;
@@ -56,7 +57,7 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     public void Actualizar(Proyecto proyecto)
     {
-        var proyectoContexto = _contexto.Proyectos
+        Proyecto proyectoContexto = _contexto.Proyectos
             .Include(p => p.Administrador)
             .Include(p => p.Miembros)
             .Include(p => p.Tareas)
@@ -64,164 +65,205 @@ public class RepositorioProyectos : IRepositorioProyectos
 
         if (proyectoContexto != null)
         {
-            // Atributos escalares
-            proyectoContexto.ModificarNombre(proyecto.Nombre);
-            proyectoContexto.ModificarDescripcion(proyecto.Descripcion);
-            proyectoContexto.ModificarFechaFinMasTemprana(proyecto.FechaFinMasTemprana);
-            proyectoContexto.ModificarFechaInicio(proyecto.FechaInicio);
+            proyectoContexto.Actualizar(proyecto);
+            SincronizarAdministradorDelProyecto(proyecto, proyectoContexto);
+            SincronizarMiembros(proyecto, proyectoContexto);
+            SincronizarTareas(proyecto, proyectoContexto);
+            _contexto.SaveChanges();
+        }
+    }
+    
+    private void SincronizarAdministradorDelProyecto(Proyecto proyecto, Proyecto proyectoContexto)
+    {
+        if (!proyecto.Administrador.Equals(proyectoContexto.Administrador))
+        {
+            Usuario nuevoAdmin = _contexto.Usuarios.FirstOrDefault(u => u.Id == proyecto.Administrador.Id);
+            proyectoContexto.AsignarNuevoAdministrador(nuevoAdmin);
+        }
+    }
+    
+    private void SincronizarMiembros(Proyecto proyecto, Proyecto proyectoContexto)
+    {
+        EliminarMiembrosNoIncluidos(proyecto, proyectoContexto);
+        AgregarMiembrosNuevos(proyecto, proyectoContexto);
+    }
 
-            // ✅ Cambiar administrador si es diferente
-            if (proyecto.Administrador.Id != proyectoContexto.Administrador.Id)
+    private void EliminarMiembrosNoIncluidos(Proyecto proyecto, Proyecto proyectoContexto)
+    {
+        List<Usuario> miembrosAEliminar = proyectoContexto.Miembros
+            .Where(m => !proyecto.Miembros.Contains(m))
+            .ToList();
+        
+        foreach (Usuario miembro in miembrosAEliminar)
+        {
+            proyectoContexto.Miembros.Remove(miembro);
+        }
+    }
+    
+    private void AgregarMiembrosNuevos(Proyecto proyecto, Proyecto proyectoContexto)
+    {
+        foreach (Usuario miembro in proyecto.Miembros)
+        {
+            if (!proyectoContexto.Miembros.Contains(miembro))
             {
-                var nuevoAdmin = _contexto.Usuarios.FirstOrDefault(u => u.Id == proyecto.Administrador.Id);
-                proyectoContexto.Administrador = nuevoAdmin;
-            }
-
-            // ✅ Actualizar Miembros (agregar/eliminar)
-            var miembrosContextoIds = proyectoContexto.Miembros.Select(m => m.Id).ToHashSet();
-            var nuevosMiembrosIds = proyecto.Miembros.Select(m => m.Id).ToHashSet();
-
-            // eliminar miembros que ya no están
-            var miembrosAEliminar = proyectoContexto.Miembros
-                .Where(m => !nuevosMiembrosIds.Contains(m.Id))
-                .ToList(); // hacemos copia para evitar modificar la colección mientras iteramos
-
-            foreach (var miembro in miembrosAEliminar)
-            {
-                proyectoContexto.Miembros.Remove(miembro);
-            }
-
-            // Agregar miembros nuevos
-            foreach (var miembro in proyecto.Miembros)
-            {
-                if (!miembrosContextoIds.Contains(miembro.Id))
+                Usuario miembroContexto = _contexto.Usuarios.FirstOrDefault(u => u.Id == miembro.Id);
+                if (miembroContexto != null)
                 {
-                    var miembroDb = _contexto.Usuarios.FirstOrDefault(u => u.Id == miembro.Id);
-                    if (miembroDb != null)
-                        proyectoContexto.Miembros.Add(miembroDb);
+                    proyectoContexto.Miembros.Add(miembroContexto);
                 }
             }
+        }
+    }
+    
+    private void SincronizarTareas(Proyecto proyecto, Proyecto proyectoContexto) 
+    {
+        EliminarTareasNoIncluidas(proyecto, proyectoContexto);
+        AgregarTareasNuevas(proyecto, proyectoContexto);
+    }
+    
+    private void EliminarTareasNoIncluidas(Proyecto proyecto, Proyecto proyectoContexto)
+    {
+        List<Tarea> tareasAEliminar = proyectoContexto.Tareas
+            .Where(t => !proyecto.Tareas.Contains(t))
+            .ToList();
 
-            // ✅ Actualizar Tareas (agregar/eliminar)
-            var tareasContextoIds = proyectoContexto.Tareas.Select(t => t.Id).ToHashSet();
-            var nuevasTareasIds = proyecto.Tareas.Select(t => t.Id).ToHashSet();
-
-            var tareasAEliminar = proyectoContexto.Tareas
-                .Where(t => !nuevasTareasIds.Contains(t.Id))
-                .ToList();
-
-            foreach (var tarea in tareasAEliminar)
+        foreach (Tarea tarea in tareasAEliminar)
+        {
+            proyectoContexto.Tareas.Remove(tarea);
+            _contexto.Set<Tarea>().Remove(tarea);
+        }
+    }
+    
+    private void AgregarTareasNuevas(Proyecto proyecto, Proyecto proyectoContexto)
+    {
+        foreach (Tarea tarea in proyecto.Tareas)
+        {
+            if (!proyectoContexto.Tareas.Contains(tarea))
             {
-                proyectoContexto.Tareas.Remove(tarea);
+                proyectoContexto.Tareas.Add(tarea);
             }
-            
-
-            _contexto.SaveChanges();
         }
     }
 
     public void ActualizarTarea(Tarea tarea)
     {
-        var tareaContexto = _contexto.Set<Tarea>()
+        Tarea tareaContexto = _contexto.Set<Tarea>()
             .Include(t => t.RecursosNecesarios)
             .Include(t => t.UsuariosAsignados)
             .Include(t => t.Dependencias)
             .FirstOrDefault(t => t.Id == tarea.Id);
+        
         if (tareaContexto != null)
         {
-            // Atributos escalares
-            tareaContexto.ModificarTitulo(tarea.Titulo);
-            tareaContexto.ModificarDescripcion(tarea.Descripcion);
-            tareaContexto.ModificarDuracion(tarea.DuracionEnDias);
-            tareaContexto.ModificarFechaInicioMasTemprana(tarea.FechaInicioMasTemprana);
-            tareaContexto.CambiarEstado(tarea.Estado);
-
-            // ✅ Actualizar usuarios asignados
-            var usuariosActualesIds = tareaContexto.UsuariosAsignados.Select(u => u.Id).ToHashSet();
-            var nuevosUsuariosIds = tarea.UsuariosAsignados.Select(u => u.Id).ToHashSet();
-
-            // Eliminar
-            var usuariosAEliminar = tareaContexto.UsuariosAsignados
-                .Where(u => !nuevosUsuariosIds.Contains(u.Id))
-                .ToList();
-
-            foreach (var usuario in usuariosAEliminar)
-                tareaContexto.UsuariosAsignados.Remove(usuario);
-
-            // Agregar
-            foreach (var usuario in tarea.UsuariosAsignados)
-            {
-                if (!usuariosActualesIds.Contains(usuario.Id))
-                {
-                    var usuarioDb = _contexto.Usuarios.FirstOrDefault(u => u.Id == usuario.Id);
-                    if (usuarioDb != null)
-                        tareaContexto.UsuariosAsignados.Add(usuarioDb);
-                }
-            }
-
-            // ✅ Actualizar recursos necesarios
-            var recursosActualesIds = tareaContexto.RecursosNecesarios.Select(r => r.Id).ToHashSet();
-            var nuevosRecursosIds = tarea.RecursosNecesarios.Select(r => r.Id).ToHashSet();
-
-            var recursosAEliminar = tareaContexto.RecursosNecesarios
-                .Where(r => !nuevosRecursosIds.Contains(r.Id))
-                .ToList();
-
-            foreach (var recurso in recursosAEliminar)
-                tareaContexto.RecursosNecesarios.Remove(recurso);
-
-            foreach (var recurso in tarea.RecursosNecesarios)
-            {
-                if (!recursosActualesIds.Contains(recurso.Id))
-                {
-                    var recursoDb = _contexto.Recursos.FirstOrDefault(r => r.Id == recurso.Id);
-                    if (recursoDb != null)
-                        tareaContexto.RecursosNecesarios.Add(recursoDb);
-                }
-            }
-
-            // ✅ Actualizar dependencias
-            var dependenciasActualesIds = tareaContexto.Dependencias.Select(d => d.Tarea.Id).ToHashSet();
-            var nuevasDependenciasIds = tarea.Dependencias.Select(d => d.Tarea.Id).ToHashSet();
-
-            var depsAEliminar = tareaContexto.Dependencias
-                .Where(d => !nuevasDependenciasIds.Contains(d.Tarea.Id))
-                .ToList();
-
-            foreach (var dep in depsAEliminar)
-                tareaContexto.Dependencias.Remove(dep);
-
-            foreach (var dependenciaNueva in tarea.Dependencias)
-            {
-                if (!tareaContexto.Dependencias.Any(d => d.Tarea.Id == dependenciaNueva.Tarea.Id))
-                {
-                    // Primero obtenemos la tarea dependiente del contexto (bd)
-                    var tareaDep = _contexto.Set<Tarea>().FirstOrDefault(t => t.Id == dependenciaNueva.Tarea.Id);
-                    if (tareaDep != null)
-                    {
-                        // Agregamos una nueva instancia de Dependencia para crear la relación
-                        tareaContexto.Dependencias.Add(new Dependencia
-                        {
-                            Tipo = dependenciaNueva.Tipo,
-                            Tarea = tareaDep
-                        });
-                    }
-                }
-            }
+            tareaContexto.Actualizar(tarea);
+            SincronizarUsuariosAsignados(tarea, tareaContexto);
+            SincronizarRecursosNecesarios(tarea, tareaContexto);
+            SincronizarDependencias(tarea, tareaContexto);
             _contexto.SaveChanges();
         }
     }
-    
-    public void AgregarTarea(Proyecto proyecto, Tarea nuevaTarea)
-    {
-        var proyectoDb = _contexto.Proyectos
-            .Include(p => p.Tareas)
-            .FirstOrDefault(p => p.Id == proyecto.Id);
 
-        if (proyectoDb != null)
+    private void SincronizarUsuariosAsignados(Tarea tarea, Tarea tareaContexto)
+    {
+        EliminarUsuariosAsignadosNoIncluidos(tarea, tareaContexto);
+        AgregarUsuariosAsignadosNuevos(tarea, tareaContexto);
+    }
+
+    private void EliminarUsuariosAsignadosNoIncluidos(Tarea tarea, Tarea tareaContexto)
+    {
+        List<Usuario> usuariosAEliminar = tareaContexto.UsuariosAsignados
+            .Where(u => !tarea.UsuariosAsignados.Contains(u))
+            .ToList();
+        
+        foreach (Usuario usuario in usuariosAEliminar)
         {
-            _contexto.Set<Tarea>().Add(nuevaTarea);
-            _contexto.SaveChanges();
+            tareaContexto.UsuariosAsignados.Remove(usuario);
+        }
+    }
+    
+    private void AgregarUsuariosAsignadosNuevos(Tarea tarea, Tarea tareaContexto)
+    {
+        foreach (Usuario usuario in tarea.UsuariosAsignados)
+        {
+            if (!tareaContexto.UsuariosAsignados.Contains(usuario))
+            {
+                Usuario usuarioContexto = _contexto.Usuarios.FirstOrDefault(u => u.Id == usuario.Id);
+                if (usuarioContexto != null)
+                {
+                    tareaContexto.UsuariosAsignados.Add(usuarioContexto);
+                }
+            }
+        }
+    }
+    
+    private void SincronizarRecursosNecesarios(Tarea tarea, Tarea tareaContexto)
+    {
+        EliminarRecursosNoIncluidos(tarea, tareaContexto);
+        AgregarRecursosNuevos(tarea, tareaContexto);
+    }
+    
+    private void EliminarRecursosNoIncluidos(Tarea tarea, Tarea tareaContexto)
+    {
+        List<Recurso> recursosAEliminar = tareaContexto.RecursosNecesarios
+            .Where(r => !tarea.RecursosNecesarios.Contains(r))
+            .ToList();
+        
+        foreach (Recurso recurso in recursosAEliminar)
+        {
+            tareaContexto.RecursosNecesarios.Remove(recurso);
+        }
+    }
+
+    private void AgregarRecursosNuevos(Tarea tarea, Tarea tareaContexto)
+    {
+        foreach (Recurso recurso in tarea.RecursosNecesarios)
+        {
+            if (!tareaContexto.RecursosNecesarios.Contains(recurso))
+            {
+                Recurso recursoContexto = _contexto.Recursos.FirstOrDefault(r => r.Id == recurso.Id);
+                if (recursoContexto != null)
+                {
+                    tareaContexto.RecursosNecesarios.Add(recursoContexto);
+                }
+            }
+        }
+    }
+    
+    private void SincronizarDependencias(Tarea tarea, Tarea tareaContexto)
+    {
+        EliminarDependenciasNoIncluidas(tarea, tareaContexto);
+        AgregarDependenciasNuevas(tarea, tareaContexto);
+    }
+    
+    private void EliminarDependenciasNoIncluidas(Tarea tarea, Tarea tareaContexto)
+    {
+        List<Dependencia> dependenciasAEliminar = tareaContexto.Dependencias
+            .Where(d => !tarea.Dependencias.Contains(d))
+            .ToList();
+        
+        foreach (Dependencia dependencia in dependenciasAEliminar)
+        {
+            tareaContexto.Dependencias.Remove(dependencia);
+            _contexto.Set<Dependencia>().Remove(dependencia);
+        }
+    }
+
+    private void AgregarDependenciasNuevas(Tarea tarea, Tarea tareaContexto)
+    {
+        foreach (var dependencia in tarea.Dependencias)
+        {
+            if (!tareaContexto.Dependencias.Any(d => d.Tarea.Id == dependencia.Tarea.Id && d.Tipo == dependencia.Tipo))
+            {
+                Tarea tareaDependiente = _contexto.Set<Tarea>().FirstOrDefault(t => t.Id == dependencia.Tarea.Id);
+                if (tareaDependiente != null)
+                {
+                    tareaContexto.Dependencias.Add(new Dependencia
+                    {
+                        Tipo = dependencia.Tipo,
+                        Tarea = tareaDependiente
+                    });
+                }
+            }
         }
     }
 }
