@@ -47,22 +47,7 @@ public class RepositorioRecursos : IRepositorio<Recurso>
         
         if (recursoContexto != null)
         {
-            if (recurso.ProyectoAsociado != null)
-            {
-                Proyecto proyectoAsociadoContexto = _contexto.Proyectos
-                    .FirstOrDefault(p => p.Id == recurso.ProyectoAsociado.Id);
-    
-                recursoContexto.ProyectoAsociado = proyectoAsociadoContexto;
-            }
-            else
-            {
-                recursoContexto.ProyectoAsociado = null;
-            }
-            
-            recursoContexto.Nombre = recurso.Nombre;
-            recursoContexto.Tipo = recurso.Tipo;
-            recursoContexto.Descripcion = recurso.Descripcion;
-            recursoContexto.CantidadDeTareasUsandolo = recurso.CantidadDeTareasUsandolo;
+            recursoContexto.Actualizar(recurso);
             _contexto.SaveChanges();
         }
     }
