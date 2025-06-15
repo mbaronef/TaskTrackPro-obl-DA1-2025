@@ -5,7 +5,7 @@ namespace Dominio;
 
 public class Notificacion
 {
-    public int Id { get; private set; }
+    public int Id { get; set; }
     public string Mensaje { get; private set; }
     public DateTime Fecha { get; private set; }
 

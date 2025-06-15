@@ -143,6 +143,16 @@ namespace Tests.DominioTests
         }
 
         [TestMethod]
+        public void SeExponeElSeteoDeContrasenaEncriptada()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            string contrasena = "NuevaContraseña123";
+            string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(contrasena);
+            usuario.ContrasenaEncriptada =contrasenaEncriptada;
+            Assert.IsTrue(usuario.Autenticar(contrasena));
+        }
+        
+        [TestMethod]
         public void SeCambiaContrasenaCorrectamente()
         {
             Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@adinet.com", "xxxxxxx");
@@ -215,11 +225,10 @@ namespace Tests.DominioTests
         public void BorrarNotificacionInexistenteDaError()
         {
             Usuario usuario = CrearUsuarioValido();
-            string mensaje = "un mensje de notificación";
+            string mensaje = "un mensaje de notificación";
             usuario.RecibirNotificacion(mensaje);
             usuario.RecibirNotificacion(mensaje);
-            // se agregan notificaciones con id 1 e id 2
-            usuario.BorrarNotificacion(0);
+            usuario.BorrarNotificacion(1000);
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]

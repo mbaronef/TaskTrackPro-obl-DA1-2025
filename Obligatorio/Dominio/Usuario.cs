@@ -15,9 +15,8 @@ public class Usuario
     public string Apellido { get;  set; }
     public DateTime FechaNacimiento { get;  set; }
     public string Email { get; set; }
-    public string ContrasenaEncriptada //Propiedad expuesta solo para el mapeo con EF; el get es privado para proteger la contraseña. 
+    public string ContrasenaEncriptada //Propiedad expuesta solo para el mapeo con EF, sin perder protección de la contraseña. 
     {
-        private get => _contrasenaEncriptada;
         set => _contrasenaEncriptada = value;
     }
     public virtual ICollection<Notificacion> Notificaciones { get; private set; }

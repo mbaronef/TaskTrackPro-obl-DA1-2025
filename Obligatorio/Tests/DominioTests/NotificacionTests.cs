@@ -11,10 +11,6 @@ public class NotificacionTests
     [TestInitialize]
     public void SetUp()
     {
-        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(Notificacion).GetField("_cantidadNotificaciones",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-
         _nuevaNotificacion = new Notificacion("Mensaje de notificación");
     }
 
@@ -38,21 +34,6 @@ public class NotificacionTests
     }
 
     [TestMethod]
-    public void SeAsignaIDOk()
-    {
-        Assert.AreEqual(1, _nuevaNotificacion.Id);
-    }
-
-    [TestMethod]
-    public void SeAsignanVariosIDsOk()
-    {
-        Notificacion segundaNotificacion = new Notificacion("Mensaje de una segunda notificación");
-        Assert.AreEqual(2, segundaNotificacion.Id);
-        Notificacion terceraNotificacion = new Notificacion("Mensaje de una tercera notificación");
-        Assert.AreEqual(3, terceraNotificacion.Id);
-    }
-
-    [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Constructor_LanzaExcepcionSiMensajeEsNull()
     {
@@ -64,5 +45,12 @@ public class NotificacionTests
     public void Constructor_LanzaExcepcionSiMensajeEsVacio()
     {
         Notificacion notificacionVacia = new Notificacion("");
+    }
+    
+    [TestMethod]
+    public void SetterId_PermiteSetearIdCorrectamente()
+    {
+        _nuevaNotificacion.Id = 5;
+        Assert.AreEqual(5, _nuevaNotificacion.Id);
     }
 }
