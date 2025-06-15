@@ -6,6 +6,7 @@ using Interfaz.ServiciosInterfaz;
 using Repositorios;
 using Repositorios.Interfaces;
 using Servicios.CaminoCritico;
+using Servicios.Exportacion;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
 
@@ -17,6 +18,7 @@ IRepositorioUsuarios repositorioUsuarios = new RepositorioUsuarios();
 IRepositorio<Proyecto> repositorioProyectos = new RepositorioProyectos();
 IRepositorio<Recurso> repositorioRecursos = new RepositorioRecursos();
 
+builder.Services.AddControllers();
 builder.Services.AddSingleton<INotificador, Notificador>();
 builder.Services.AddSingleton<ICalculadorCaminoCritico, CaminoCritico>();
 
@@ -58,6 +60,9 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddScoped<IExportadorProyectos, ExportadorCsv>();
+builder.Services.AddScoped<IExportadorProyectos, ExportadorJson>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -75,6 +80,9 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapControllers();
+
 
 app.Run();
 
