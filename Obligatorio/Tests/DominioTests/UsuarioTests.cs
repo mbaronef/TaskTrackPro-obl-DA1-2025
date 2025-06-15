@@ -253,6 +253,50 @@ namespace Tests.DominioTests
         }
         
         [TestMethod]
+        public void SeActualizaEsAdministradorProyectoDeUnUsuarioCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.EsAdministradorProyecto = true;
+            
+            usuario.Actualizar(nuevoUsuario);
+            Assert.IsTrue(nuevoUsuario.EsAdministradorProyecto);
+        }
+        
+        [TestMethod]
+        public void SeActualizaEsAdministradorSistemaDeUnUsuarioCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.EsAdministradorSistema = true;
+            
+            usuario.Actualizar(nuevoUsuario);
+            Assert.IsTrue(nuevoUsuario.EsAdministradorSistema);
+        }
+        
+        [TestMethod]
+        public void SeActualizaEstaAdministrandoUnProyectoCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.EstaAdministrandoUnProyecto = true;
+            
+            usuario.Actualizar(nuevoUsuario);
+            Assert.IsTrue(nuevoUsuario.EstaAdministrandoUnProyecto);
+        }
+        
+        [TestMethod]
+        public void SeActualizaCantidadDeProyectosAsignadosCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.CantidadProyectosAsignados = 10;
+            
+            usuario.Actualizar(nuevoUsuario);
+            Assert.AreEqual(10, usuario.CantidadProyectosAsignados);
+        }
+        
+        [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
             Usuario usuario1 = CrearUsuarioValido();

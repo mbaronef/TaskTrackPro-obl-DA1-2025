@@ -84,6 +84,10 @@ public class Usuario
     {
         CambiarEmail(usuarioActualizado.Email);
         _contrasenaEncriptada = usuarioActualizado.ObtenerContrasenaEncriptada();
+        EsAdministradorProyecto = usuarioActualizado.EsAdministradorProyecto;
+        EsAdministradorSistema = usuarioActualizado.EsAdministradorSistema;
+        EstaAdministrandoUnProyecto = usuarioActualizado.EstaAdministrandoUnProyecto;
+        CantidadProyectosAsignados = usuarioActualizado.CantidadProyectosAsignados;
     }
 
 
