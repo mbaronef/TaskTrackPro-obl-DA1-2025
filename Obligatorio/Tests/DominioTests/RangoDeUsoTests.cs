@@ -51,4 +51,15 @@ public class RangoDeUsoTests
             
         RangoDeUso rango = new RangoDeUso(fechaInicio, fechaFin, 0, tareaQueHaceUso);
     }
+    
+    [ExpectedException(typeof(ExcepcionRangoDeUso))]
+    [TestMethod]
+    public void ConstructorConParametros_LanzaExcepcionSiCantidadDeUsosEsNegativa()
+    {
+        DateTime fechaInicio = DateTime.Today.AddDays(10);
+        DateTime fechaFin = DateTime.Today;
+        Tarea tareaQueHaceUso = new Tarea();
+            
+        RangoDeUso rango = new RangoDeUso(fechaInicio, fechaFin, -2, tareaQueHaceUso);
+    }
 }
