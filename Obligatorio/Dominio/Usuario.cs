@@ -83,7 +83,9 @@ public class Usuario
     public void Actualizar(Usuario usuarioActualizado)
     {
         CambiarEmail(usuarioActualizado.Email);
+        _contrasenaEncriptada = usuarioActualizado.ObtenerContrasenaEncriptada();
     }
+
 
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
