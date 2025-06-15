@@ -204,6 +204,39 @@ public class GestorProyectosTests
 
         Assert.AreEqual(0, _gestor.ObtenerTodosDominio().Count);
     }
+    
+    [TestMethod]
+    public void EliminarProyecto_EliminaDeListaAProyectoConTareasYDependencias()
+    {
+        GestorTareas gestorTareas = new GestorTareas(_repositorioProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
+        TareaDTO tarea1 = new TareaDTO()
+        {
+            Titulo = "Tarea 1", Descripcion = "Descripcion", DuracionEnDias = 2,
+            FechaInicioMasTemprana = DateTime.Today.AddDays(5)
+        };
+        TareaDTO tarea2 = new TareaDTO()
+        {
+            Titulo = "Tarea 2", Descripcion = "Descripcion", DuracionEnDias = 2,
+            FechaInicioMasTemprana = DateTime.Today.AddDays(5)
+        };
+        UsuarioDTO usuarioNoAdminDTO = UsuarioDTO.DesdeEntidad(_usuarioNoAdmin);
+
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO,usuarioNoAdminDTO);
+
+        gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _adminDTO, tarea1);
+        gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _adminDTO, tarea2);
+        
+        gestorTareas.AgregarMiembroATarea(_adminDTO, tarea1.Id, proyecto.Id, usuarioNoAdminDTO);
+        
+        gestorTareas.AgregarDependenciaATarea(_adminDTO, tarea1.Id, tarea2.Id, proyecto.Id, "SS");
+        
+        _gestor.EliminarProyecto(proyecto.Id, _adminDTO);
+        
+        Assert.AreEqual(0, _gestor.ObtenerTodosDominio().Count);
+    }
 
     [TestMethod]
     public void EliminarProyecto_CambiaLaFLagEstaAdministrandoProyectoDelAdministrador()

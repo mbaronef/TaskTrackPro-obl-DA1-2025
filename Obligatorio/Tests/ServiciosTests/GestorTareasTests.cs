@@ -13,8 +13,8 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class GestorTareasTests
 {
-    private Notificador _notificador = new Notificador();
-    private CaminoCritico _caminoCritico = new CaminoCritico();
+    private Notificador _notificador;
+    private CaminoCritico _caminoCritico;
     
     private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioUsuarios _repositorioUsuarios;
@@ -35,9 +35,12 @@ public class GestorTareasTests
         _repositorioProyectos = new RepositorioProyectos(_contexto);
         _repositorioRecursos = new RepositorioRecursos(_contexto);
         
+        _notificador = new Notificador(_repositorioUsuarios);
+        _caminoCritico = new CaminoCritico(_notificador);
+        
         _gestorProyectos =
             new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
-        _gestorTareas = new GestorTareas(_gestorProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
+        _gestorTareas = new GestorTareas(_repositorioProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
         
         _admin = CrearAdministradorProyecto();
         _noAdmin = CrearUsuarioNoAdmin();
