@@ -75,4 +75,5 @@ public static class MensajesErrorDominio
     
     public const string FechaInicioRangoMayorQueFin =
         "La fecha de inicio no puede ser mayor que la fecha de fin.";
+    public const string RangoDeUsoNoPuedeSerCeroOMenos = "El rango de uso no puede ser cero o negativo.";
 }
