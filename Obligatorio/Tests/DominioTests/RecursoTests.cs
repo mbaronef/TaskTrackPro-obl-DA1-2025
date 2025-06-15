@@ -189,6 +189,14 @@ public class RecursoTests
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
         Assert.IsFalse(recurso.SeEstaUsando());
     }
+    
+    [TestMethod]
+    public void SeActualizaNombreCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        recurso.ModificarNombre("Nuevo Nombre");
+        Assert.AreEqual("Nuevo Nombre", recurso.Nombre);
+    }
 
     [TestMethod]
     public void EqualsRetornaTrueSiLosIdsSonIguales()
