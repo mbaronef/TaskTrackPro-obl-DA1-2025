@@ -239,7 +239,19 @@ namespace Tests.DominioTests
             usuario.Actualizar(usuarioConOtroEmail);
             Assert.AreEqual("otroemail@gmail.com", usuario.Email);
         }
+        
+        [TestMethod]
+        public void SeActualizaLaContrasenaDeUnUsuarioCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
 
+            string nuevaContrasena = UtilidadesContrasena.ValidarYEncriptarContrasena("Admin123$");
+            Usuario usuarioConOtraContrasena = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", nuevaContrasena);
+            
+            usuario.Actualizar(usuarioConOtraContrasena);
+            Assert.IsTrue(usuario.Autenticar("Admin123$"));
+        }
+        
         [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
