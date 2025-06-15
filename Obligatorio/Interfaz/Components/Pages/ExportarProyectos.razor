@@ -8,7 +8,7 @@
 @if (Sesion.UsuarioLogueado == null || !sesionCargada)
 {
 }
-else // if (Sesion.EsLider()) (lo saqué para poder probarlo)
+else if (Sesion.EsLider())
 {
     <h3>Exportar Proyectos</h3>
     
