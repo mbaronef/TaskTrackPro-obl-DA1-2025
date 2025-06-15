@@ -50,34 +50,9 @@ public class RepositorioUsuarios : IRepositorioUsuarios
     public void Actualizar(Usuario usuario)
     {
         Usuario usuarioContexto = ObtenerPorId(usuario.Id);
-        
-        
         if (usuarioContexto != null)
         {
-            usuarioContexto.CambiarEmail(usuario.Email);
-            usuarioContexto.EsAdministradorProyecto = usuario.EsAdministradorProyecto;
-            usuarioContexto.EsAdministradorSistema = usuario.EsAdministradorSistema;
-            usuarioContexto.EstaAdministrandoUnProyecto = usuario.EstaAdministrandoUnProyecto;
-            usuarioContexto.EstablecerContrasenaEncriptada(usuario.ObtenerContrasenaEncriptada());
-            
-            List<Notificacion> notisEnContexto = usuarioContexto.Notificaciones.ToList();
-            
-            foreach (Notificacion notiExistente in notisEnContexto)
-            {
-                if (!usuario.Notificaciones.Any(n => n.Id == notiExistente.Id))
-                {
-                    usuarioContexto.Notificaciones.Remove(notiExistente);
-                }
-            }
-            
-            foreach (Notificacion nuevaNoti in usuario.Notificaciones)
-            {
-                if (!usuarioContexto.Notificaciones.Any(n => n.Id == nuevaNoti.Id))
-                {
-                    usuarioContexto.Notificaciones.Add(nuevaNoti);
-                }
-            }
-            
+            usuarioContexto.Actualizar(usuario);
             _contexto.SaveChanges();
         }
     }
