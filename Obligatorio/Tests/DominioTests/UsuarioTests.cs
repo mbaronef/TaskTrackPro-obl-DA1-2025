@@ -297,6 +297,19 @@ namespace Tests.DominioTests
         }
         
         [TestMethod]
+        public void SeActualizanNotificacionesCoorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.RecibirNotificacion("mensaje");
+            
+            usuario.Actualizar(nuevoUsuario);
+            
+            Assert.AreEqual(1, usuario.Notificaciones.Count);
+            Assert.AreEqual("mensaje", usuario.Notificaciones.Last().Mensaje);
+        }
+        
+        [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
             Usuario usuario1 = CrearUsuarioValido();
