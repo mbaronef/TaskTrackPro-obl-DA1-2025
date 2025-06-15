@@ -51,7 +51,7 @@
                     {
                         <span class="badge bg-success text-white me-1">Líder de proyecto</span>
                     }
-                    @if (!Sesion.EsAdminSistema() && !Sesion.EsAdminProyecto())
+                    @if (!Sesion.EsAdminSistema() && !Sesion.EsAdminProyecto() && !Sesion.EsLiderProyecto())
                     {
                         <span class="text-muted">Sin rol administrativo</span>
                     }

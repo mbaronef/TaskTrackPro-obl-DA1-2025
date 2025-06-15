@@ -229,7 +229,7 @@ public class GestorTareasTests
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionPermisos))]
-    public void EliminarTareaDelProyectoo_LanzaExcepcionSiSolicitanteNoEsAdmin()
+    public void EliminarTareaDelProyectoo_LanzaExcepcionSiSolicitanteNoEsAdminNiLider()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
@@ -241,7 +241,7 @@ public class GestorTareasTests
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionPermisos))]
-    public void EliminarTareaDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdministradorDelProyecto()
+    public void EliminarTareaDelProyecto_LanzaExcepcionSiSolicitanteNoEsAdministradorDelProyectoNiLider()
     {
         UsuarioDTO otroAdmin = CrearAdministradorProyecto();
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
@@ -267,13 +267,27 @@ public class GestorTareasTests
     }
 
     [TestMethod]
-    public void EliminarTareaDelProyecto_EliminaTareaOK()
+    public void EliminarTareaDelProyecto_EliminaTareaOKSiEsAdmin()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _admin, tarea.Id);
+
+        Assert.AreEqual(0, proyecto.Tareas.Count);
+        Assert.IsFalse(proyecto.Tareas.Contains(tarea));
+    }
+    
+    [TestMethod]
+    public void EliminarTareaDelProyecto_EliminaTareaOKSiEsLider()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
+        
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, lider, tarea.Id);
 
         Assert.AreEqual(0, proyecto.Tareas.Count);
         Assert.IsFalse(proyecto.Tareas.Contains(tarea));
