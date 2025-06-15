@@ -194,8 +194,61 @@ public class RecursoTests
     public void SeActualizaNombreCorrectamente()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
-        recurso.ModificarNombre("Nuevo Nombre");
+        Recurso otroRecurso = new Recurso("Nuevo Nombre", "Tipo", "Descripcion");
+        otroRecurso.Id = recurso.Id;
+        
+        recurso.Actualizar(otroRecurso);
         Assert.AreEqual("Nuevo Nombre", recurso.Nombre);
+    }
+    
+    [TestMethod]
+    public void SeActualizaTipoCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso otroRecurso = new Recurso("Nombre", "Nuevo tipo", "Descripcion");
+        otroRecurso.Id = recurso.Id;
+        
+        recurso.Actualizar(otroRecurso);
+        Assert.AreEqual("Nuevo tipo", recurso.Tipo);
+    }
+    
+    [TestMethod]
+    public void SeActualizaDescripcionCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso otroRecurso = new Recurso("Nombre", "Tipo", "Nueva descripción");
+        otroRecurso.Id = recurso.Id;
+        
+        recurso.Actualizar(otroRecurso);
+        Assert.AreEqual("Nueva descripción", recurso.Descripcion);
+    }
+    
+    [TestMethod]
+    public void SeActualizaProyectoAsociadoCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "unEmail@gmail.com", "UnAc@ntr4");
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto proyecto = new Proyecto("Nombre", "Descripcion", fechaInicio, usuario, new List<Usuario>());
+        Recurso otroRecurso = new Recurso("Nombre", "Tipo", "Nueva descripción");
+        otroRecurso.AsociarAProyecto(proyecto);
+        
+        otroRecurso.Id = recurso.Id;
+        
+        recurso.Actualizar(otroRecurso);
+        Assert.AreEqual(proyecto, recurso.ProyectoAsociado);
+    }
+    
+    [TestMethod]
+    public void SeActualizaCantidadDeTareasUsandoloCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso otroRecurso = new Recurso("Nombre", "Tipo", "Descripcion") { CantidadDeTareasUsandolo = 5 };
+        otroRecurso.Id = recurso.Id;
+        
+        recurso.Actualizar(otroRecurso);
+        Assert.AreEqual(5, recurso.CantidadDeTareasUsandolo);
     }
 
     [TestMethod]

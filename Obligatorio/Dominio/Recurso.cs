@@ -79,7 +79,13 @@ public class Recurso
     {
 
         ModificarNombre(recursoActualizado.Nombre);
+        ModificarTipo(recursoActualizado.Tipo);
+        ModificarDescripcion(recursoActualizado.Descripcion);
+        ProyectoAsociado = recursoActualizado.ProyectoAsociado;
+        CantidadDeTareasUsandolo = recursoActualizado.CantidadDeTareasUsandolo;
     }
+    
+   
 
 
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
