@@ -17,6 +17,10 @@ public interface IGestorUsuarios
     void AsignarAdministradorProyecto(UsuarioDTO solicitanteDTO, int idUsuario);
     
     void DesasignarAdministradorProyecto(UsuarioDTO solicitanteDTO, int idUsuario);
+
+    void AsignarLider(UsuarioDTO solicitanteDTO, int idUsuario);
+
+    void DesasignarLider(UsuarioDTO solicitanteDTO, int idUsuario);
     
     void ReiniciarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo);
     

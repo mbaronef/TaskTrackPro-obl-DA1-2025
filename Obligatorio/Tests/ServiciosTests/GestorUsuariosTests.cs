@@ -637,4 +637,36 @@ public class GestorUsuariosTests
 
         Assert.AreEqual(0, usuarioDominio.Notificaciones.Count());
     }
+    
+    [TestMethod]
+    public void GestorAsignaLiderCorrectamente()
+    {
+        UsuarioDTO usuarioSolicitante = CrearYAsignarAdminSistema();
+        UsuarioDTO nuevoLider = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
+        _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, nuevoLider);
+
+        _gestorUsuarios.AsignarLider(usuarioSolicitante, nuevoLider.Id);
+
+        nuevoLider = _gestorUsuarios.ObtenerUsuarioPorId(nuevoLider.Id); // actualización
+        Assert.IsTrue(nuevoLider.EsLider);
+    }
+
+    [TestMethod]
+    public void GestorDesasignaLiderCorrectamente()
+    {
+        UsuarioDTO usuarioSolicitante = CrearYAsignarAdminSistema();
+        UsuarioDTO nuevoLider = CrearUsuarioDTO("Mateo", "Pérez", "unemail@hotmail.com", "Contrase#a9)");
+        _gestorUsuarios.CrearYAgregarUsuario(_adminSistemaDTO, nuevoLider);
+
+        _gestorUsuarios.AsignarLider(usuarioSolicitante, nuevoLider.Id);
+
+        nuevoLider = _gestorUsuarios.ObtenerUsuarioPorId(nuevoLider.Id);
+
+        _gestorUsuarios.DesasignarLider(usuarioSolicitante, nuevoLider.Id);
+        
+        nuevoLider = _gestorUsuarios.ObtenerUsuarioPorId(nuevoLider.Id);
+
+        Assert.IsFalse(nuevoLider.EsLider);
+    }
+    
 }
