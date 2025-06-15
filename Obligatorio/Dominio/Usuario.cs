@@ -81,6 +81,8 @@ public class Usuario
     
     public void Actualizar(Usuario usuarioActualizado)
     {
+        ValidarIdentidad(usuarioActualizado);
+        
         CambiarEmail(usuarioActualizado.Email);
         _contrasenaEncriptada = usuarioActualizado.ObtenerContrasenaEncriptada();
         EsAdministradorProyecto = usuarioActualizado.EsAdministradorProyecto;
@@ -148,6 +150,15 @@ public class Usuario
     {
         return _contrasenaEncriptada;
     }
+
+    private void ValidarIdentidad(Usuario otroUsuario)
+    {
+        if (!Equals(otroUsuario))
+        {
+            throw new ExcepcionUsuario(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
+        }
+    }
+
     public override bool Equals(object? otro)
     {
         Usuario otroUsuario = otro as Usuario;
