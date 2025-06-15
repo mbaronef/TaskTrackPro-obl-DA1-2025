@@ -24,7 +24,7 @@ namespace Repositorios.Migrations
 
             modelBuilder.Entity("Dominio.Dependencia", b =>
                 {
-                    b.Property<int>("TareaDueñaId")
+                    b.Property<int>("TareaDuenaId")
                         .HasColumnType("int");
 
                     b.Property<int>("TareaId")
@@ -34,7 +34,7 @@ namespace Repositorios.Migrations
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
 
-                    b.HasKey("TareaDueñaId", "TareaId", "Tipo");
+                    b.HasKey("TareaDuenaId", "TareaId", "Tipo");
 
                     b.HasIndex("TareaId");
 
@@ -295,7 +295,7 @@ namespace Repositorios.Migrations
                 {
                     b.HasOne("Dominio.Tarea", null)
                         .WithMany("Dependencias")
-                        .HasForeignKey("TareaDueñaId")
+                        .HasForeignKey("TareaDuenaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

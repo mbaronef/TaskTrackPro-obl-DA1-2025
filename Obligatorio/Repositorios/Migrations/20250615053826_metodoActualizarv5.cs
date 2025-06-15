@@ -155,16 +155,16 @@ namespace Repositorios.Migrations
                 columns: table => new
                 {
                     Tipo = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
-                    TareaDueñaId = table.Column<int>(type: "int", nullable: false),
+                    TareaDuenaId = table.Column<int>(type: "int", nullable: false),
                     TareaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Dependencia", x => new { x.TareaDueñaId, x.TareaId, x.Tipo });
+                    table.PrimaryKey("PK_Dependencia", x => new { x.TareaDuenaId, x.TareaId, x.Tipo });
                     table.CheckConstraint("CK_Dependencia_Tipo", "[Tipo] IN ('SS', 'FS')");
                     table.ForeignKey(
-                        name: "FK_Dependencia_Tarea_TareaDueñaId",
-                        column: x => x.TareaDueñaId,
+                        name: "FK_Dependencia_Tarea_TareaDuenaId",
+                        column: x => x.TareaDuenaId,
                         principalTable: "Tarea",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);

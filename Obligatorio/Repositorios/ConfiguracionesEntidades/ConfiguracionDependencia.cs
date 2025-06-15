@@ -13,15 +13,15 @@ public static class ConfiguracionDependencia
         modelBuilder.Entity<Dependencia>().HasCheckConstraint("CK_Dependencia_Tipo", "[Tipo] IN ('SS', 'FS')");
         
         modelBuilder.Entity<Dependencia>()
-            .Property<int>("TareaDueñaId");  
+            .Property<int>("TareaDuenaId");  
         
         modelBuilder.Entity<Dependencia>()
-            .HasKey("TareaDueñaId", "TareaId", "Tipo");
+            .HasKey("TareaDuenaId", "TareaId", "Tipo");
 
         modelBuilder.Entity<Dependencia>()
             .HasOne<Tarea>()              
             .WithMany(t => t.Dependencias)    
-            .HasForeignKey("TareaDueñaId")
+            .HasForeignKey("TareaDuenaId")
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Dependencia>()
