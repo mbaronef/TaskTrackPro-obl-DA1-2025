@@ -87,6 +87,7 @@ public class GestorRecursos : IGestorRecursos
         string nombreAnterior = recurso.Nombre;
         recurso.ModificarNombre(nuevoNombre);
         _repositorioRecursos.Actualizar(recurso);
+        
         NotificarModificacion(recurso, nombreAnterior);
     }
 
@@ -100,6 +101,7 @@ public class GestorRecursos : IGestorRecursos
         
         recurso.ModificarTipo(nuevoTipo);
         _repositorioRecursos.Actualizar(recurso);
+        
         NotificarModificacion(recurso, recurso.Nombre);
     }
 
@@ -113,7 +115,9 @@ public class GestorRecursos : IGestorRecursos
         VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la descripción de");
         
         recurso.ModificarDescripcion(nuevaDescripcion);
+        
         _repositorioRecursos.Actualizar(recurso);
+        
         NotificarModificacion(recurso, recurso.Nombre);
     }
 

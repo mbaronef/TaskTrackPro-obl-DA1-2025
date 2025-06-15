@@ -11,7 +11,7 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class GestorUsuariosTests
 {
-    private Notificador _notificador = new Notificador();
+    private Notificador _notificador;
     
     private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioUsuarios _repositorioUsuarios;
@@ -23,6 +23,7 @@ public class GestorUsuariosTests
     public void SetUp()
     {
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
+        _notificador = new Notificador(_repositorioUsuarios);
         _gestorUsuarios = new GestorUsuarios(_repositorioUsuarios, _notificador);
         
         _adminSistemaDTO = UsuarioDTO.DesdeEntidad(_gestorUsuarios.AdministradorInicial);

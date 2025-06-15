@@ -13,8 +13,8 @@ namespace Tests.ServiciosTests;
 [TestClass]
 public class GestorRecursosTests
 {
-    private Notificador _notificador = new Notificador();
-    private CaminoCritico _caminoCritico = new CaminoCritico();
+    private Notificador _notificador;
+    private CaminoCritico _caminoCritico;
     
     private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioRecursos _repositorioRecursos;
@@ -31,6 +31,8 @@ public class GestorRecursosTests
         _repositorioRecursos = new RepositorioRecursos(_contexto);
         _repositorioUsuarios = new RepositorioUsuarios(_contexto);
         _repositorioProyectos = new RepositorioProyectos(_contexto);
+        _notificador = new Notificador(_repositorioUsuarios);
+        _caminoCritico = new CaminoCritico(_notificador);
 
         _gestorProyectos =
             new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
@@ -70,9 +72,14 @@ public class GestorRecursosTests
         return UsuarioDTO.DesdeEntidad(usuario); // dto
     }
 
-    private Tarea CrearTarea()
+    private void CrearYAgregarTarea(Proyecto proyecto, RecursoDTO recurso)
     {
-        return new Tarea("Un título", "una descripcion", 3, DateTime.Today.AddDays(10));
+        UsuarioDTO adminProyectoDTO = UsuarioDTO.DesdeEntidad(proyecto.Administrador);
+        
+        GestorTareas gestorTareas = new GestorTareas(_repositorioProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
+        TareaDTO tarea = TareaDTO.DesdeEntidad(new Tarea("Un título", "una descripcion", 3, DateTime.Today.AddDays(10)));
+        gestorTareas.AgregarTareaAlProyecto(proyecto.Id, adminProyectoDTO, tarea);
+        gestorTareas.AsignarRecursoATarea(adminProyectoDTO, tarea.Id, proyecto.Id, recurso);
     }
 
     private Proyecto CrearYAgregarProyecto(Usuario adminProyecto)
@@ -513,9 +520,7 @@ public class GestorRecursosTests
 
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        Tarea tarea = CrearTarea();
-        tarea.AsignarRecurso(recurso.AEntidad());
-        proyecto.AgregarTarea(tarea);
+        CrearYAgregarTarea(proyecto, recurso);
 
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
 
@@ -556,9 +561,7 @@ public class GestorRecursosTests
 
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        Tarea tarea = CrearTarea();
-        tarea.AsignarRecurso(recurso.AEntidad());
-        proyecto.AgregarTarea(tarea);
+        CrearYAgregarTarea(proyecto, recurso);
 
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
 
@@ -599,9 +602,7 @@ public class GestorRecursosTests
 
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        Tarea tarea = CrearTarea();
-        tarea.AsignarRecurso(recurso.AEntidad());
-        proyecto.AgregarTarea(tarea);
+        CrearYAgregarTarea(proyecto, recurso);
 
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Otra descripción");
 
