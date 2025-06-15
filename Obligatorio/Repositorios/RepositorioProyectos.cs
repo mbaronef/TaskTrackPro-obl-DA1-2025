@@ -73,6 +73,24 @@ public class RepositorioProyectos : IRepositorioProyectos
         }
     }
     
+    public void ActualizarTarea(Tarea tarea)
+    {
+        Tarea tareaContexto = _contexto.Set<Tarea>()
+            .Include(t => t.RecursosNecesarios)
+            .Include(t => t.UsuariosAsignados)
+            .Include(t => t.Dependencias)
+            .FirstOrDefault(t => t.Id == tarea.Id);
+        
+        if (tareaContexto != null)
+        {
+            tareaContexto.Actualizar(tarea);
+            SincronizarUsuariosAsignados(tarea, tareaContexto);
+            SincronizarRecursosNecesarios(tarea, tareaContexto);
+            SincronizarDependencias(tarea, tareaContexto);
+            _contexto.SaveChanges();
+        }
+    }
+    
     private void SincronizarAdministradorDelProyecto(Proyecto proyecto, Proyecto proyectoContexto)
     {
         if (!proyecto.Administrador.Equals(proyectoContexto.Administrador))
@@ -144,25 +162,6 @@ public class RepositorioProyectos : IRepositorioProyectos
             }
         }
     }
-
-    public void ActualizarTarea(Tarea tarea)
-    {
-        Tarea tareaContexto = _contexto.Set<Tarea>()
-            .Include(t => t.RecursosNecesarios)
-            .Include(t => t.UsuariosAsignados)
-            .Include(t => t.Dependencias)
-            .FirstOrDefault(t => t.Id == tarea.Id);
-        
-        if (tareaContexto != null)
-        {
-            tareaContexto.Actualizar(tarea);
-            SincronizarUsuariosAsignados(tarea, tareaContexto);
-            SincronizarRecursosNecesarios(tarea, tareaContexto);
-            SincronizarDependencias(tarea, tareaContexto);
-            _contexto.SaveChanges();
-        }
-    }
-
     private void SincronizarUsuariosAsignados(Tarea tarea, Tarea tareaContexto)
     {
         EliminarUsuariosAsignadosNoIncluidos(tarea, tareaContexto);

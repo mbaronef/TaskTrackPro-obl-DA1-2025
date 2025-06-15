@@ -20,14 +20,8 @@ public class RepositorioRecursosTests
         _contexto = SqlContextFactory.CrearContextoEnMemoria();
 
         _repositorioRecursos = new RepositorioRecursos(_contexto);
+        
         _recurso = new Recurso("nombre", "tipo", "descripcion");
-        _recurso.IncrementarCantidadDeTareasUsandolo();
-        _recurso.IncrementarCantidadDeTareasUsandolo();
-        _recurso.IncrementarCantidadDeTareasUsandolo(); // cantidad de tarea usandolo = 3
-        _adminProyecto = new Usuario("Juan", "Pérez", new DateTime(1998, 7, 6), "unEmail@gmail.com", "uNaC@ntr4seña");
-        _adminProyecto.EsAdministradorProyecto = true;
-        List<Usuario> miembros = new List<Usuario>();
-        _proyecto = new Proyecto("Proyecto", "hacer algo", DateTime.Today.AddDays(10), _adminProyecto, miembros);
     }
     
     [TestCleanup]
@@ -35,6 +29,15 @@ public class RepositorioRecursosTests
     {
         _contexto.Database.EnsureDeleted();
         _contexto.Dispose();
+    }
+
+    public void InicializarProyecto()
+    {
+        _adminProyecto = new Usuario("Juan", "Pérez", new DateTime(1998, 7, 6), "unEmail@gmail.com", "uNaC@ntr4seña");
+        _adminProyecto.EsAdministradorProyecto = true;
+        
+        List<Usuario> miembros = new List<Usuario>();
+        _proyecto = new Proyecto("Proyecto", "hacer algo", DateTime.Today.AddDays(10), _adminProyecto, miembros);
     }
 
     [TestMethod]
@@ -80,26 +83,52 @@ public class RepositorioRecursosTests
         Assert.AreEqual(1, recursos.Count);
         Assert.AreEqual(_recurso, recursos.Last());
     }
-    
+
     [TestMethod]
-    public void SeActualizaRecursoCorrectamente()
+    public void SeActualizaUnRecursoSinProyectoAsociadoOk()
     {
         _repositorioRecursos.Agregar(_recurso);
+
+        Recurso recursoCambios = new Recurso("Recurso Actualizado", "Nuevo Tipo", "Descripción actualizada")
+        {
+            CantidadDeTareasUsandolo = 10,
+            ProyectoAsociado = null
+        };
+        recursoCambios.Id = _recurso.Id;
         
-        var recursoOriginal = _repositorioRecursos.ObtenerPorId(_recurso.Id);
-        recursoOriginal.Nombre = "Recurso Actualizado";
-        recursoOriginal.Tipo = "Nuevo Tipo";
-        recursoOriginal.Descripcion = "Descripción actualizada";
-        recursoOriginal.CantidadDeTareasUsandolo = 10;
-        recursoOriginal.ProyectoAsociado = _proyecto;
-        _repositorioRecursos.Actualizar(recursoOriginal);
+        _repositorioRecursos.Actualizar(recursoCambios);
         
-        var recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Recurso recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
         Assert.AreEqual("Recurso Actualizado", recursoActualizado.Nombre);
         Assert.AreEqual("Nuevo Tipo", recursoActualizado.Tipo);
         Assert.AreEqual("Descripción actualizada", recursoActualizado.Descripcion);
         Assert.AreEqual(10, recursoActualizado.CantidadDeTareasUsandolo);
-        Assert.AreEqual(_proyecto, recursoActualizado.ProyectoAsociado);
+        Assert.IsNull(recursoActualizado.ProyectoAsociado);
     }
 
+
+    [TestMethod]
+    public void SeActualizaUnRecursoConProyectoAsociadoOk()
+    {
+        InicializarProyecto();
+        _contexto.Proyectos.Add(_proyecto);
+        
+        _repositorioRecursos.Agregar(_recurso);
+        
+        Recurso recursoCambios = new Recurso("Recurso Actualizado", "Nuevo Tipo", "Descripción actualizada")
+        {
+            CantidadDeTareasUsandolo = 10,
+            ProyectoAsociado = _proyecto
+        };
+        recursoCambios.Id = _recurso.Id;
+        
+        _repositorioRecursos.Actualizar(recursoCambios);
+        
+        Recurso recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual("Recurso Actualizado", recursoActualizado.Nombre);
+        Assert.AreEqual("Nuevo Tipo", recursoActualizado.Tipo);
+        Assert.AreEqual("Descripción actualizada", recursoActualizado.Descripcion);
+        Assert.AreEqual(10, recursoActualizado.CantidadDeTareasUsandolo);
+        Assert.AreEqual(recursoActualizado.ProyectoAsociado, _proyecto);
+    }
 }
