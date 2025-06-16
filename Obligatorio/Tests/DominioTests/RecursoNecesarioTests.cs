@@ -7,7 +7,7 @@ namespace Tests.DominioTests;
 public class RecursoNecesarioTests
 {
     [TestMethod]
-    public void Constructor_ConParametros_AsignacionCorrecta()
+    public void Constructor_ConParametrosAsignaCorrectamente()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 5);
         int cantidad = 2;
