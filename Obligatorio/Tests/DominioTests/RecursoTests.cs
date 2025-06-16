@@ -19,8 +19,6 @@ public class RecursoTests
         Assert.IsNotNull(recurso.RangosEnUso);
     }
     
-    //TODO validar capacidad mayor a 0
-
     [TestMethod]
     public void RecursoSeHaceExclusivoOk()
     {
@@ -206,6 +204,14 @@ public class RecursoTests
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",1);
         Assert.IsFalse(recurso.SeEstaUsando());
+    }
+
+    [TestMethod]
+    public void ModificarCapacidadModificaCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",1);
+        recurso.ModificarCapacidad(3);
+        Assert.AreEqual(3, recurso.Capacidad);
     }
 
     [TestMethod]
