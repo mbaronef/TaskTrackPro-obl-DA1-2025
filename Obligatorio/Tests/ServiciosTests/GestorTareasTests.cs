@@ -480,6 +480,7 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_AdminProyectoCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
@@ -494,6 +495,7 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_MiembroTareaCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
@@ -573,6 +575,7 @@ public class GestorTareasTests
     public void SeActualizaEstadoCuandoSeCompletaUnaDependencia()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
 
         TareaDTO tareaD = CrearTarea();
