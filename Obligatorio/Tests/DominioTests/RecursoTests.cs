@@ -90,12 +90,14 @@ public class RecursoTests
     }
     
     [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
     public void DaErrorCrearRecursoConCapacidadCero()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 0);
     }
     
     [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
     public void DaErrorCrearRecursoConCapacidadMenorACero()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", -3);

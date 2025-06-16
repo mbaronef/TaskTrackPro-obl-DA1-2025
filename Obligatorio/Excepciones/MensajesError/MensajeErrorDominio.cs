@@ -48,6 +48,7 @@ public static class MensajesErrorDominio
 
     public const string CantidadTareasRecursoNegativa =
         "La cantidad de tareas usando este recurso no puede ser menor a cero.";
+    public const string CapacidadRecursoInvalida = "La capacidad del recurso debe ser mayor a cero.";
 
     public const string MensajeNotificacionVacio = "El mensaje de la notificación no puede estar vacío o null.";
 

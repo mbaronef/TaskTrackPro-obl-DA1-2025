@@ -23,6 +23,7 @@ public class Recurso
         ValidarAtributoNoVacio(nombre, "nombre");
         ValidarAtributoNoVacio(tipo, "tipo");
         ValidarAtributoNoVacio(descripcion, "descripcion");
+        ValidarCapacidadMayorACero(capacidad);
         
         Nombre = nombre;
         Tipo = tipo;
@@ -87,6 +88,14 @@ public class Recurso
         if (string.IsNullOrWhiteSpace(texto))
         {
             throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, nombreAtributo));
+        }
+    }
+
+    private void ValidarCapacidadMayorACero(int capacidad)
+    {
+        if (capacidad <= 0)
+        {
+            throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadRecursoInvalida);
         }
     }
 
