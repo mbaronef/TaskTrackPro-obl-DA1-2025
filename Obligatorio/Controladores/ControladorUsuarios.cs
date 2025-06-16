@@ -46,16 +46,6 @@ public class ControladorUsuarios
     {
         _gestorUsuarios.DesasignarAdministradorProyecto(solicitante, id);
     }
-    
-    public void AsignarLider(UsuarioDTO solicitante, int id)
-    {
-        _gestorUsuarios.AsignarLider(solicitante, id);
-    }
-    
-    public void DesasignarLider(UsuarioDTO solicitante, int id)
-    {
-        _gestorUsuarios.DesasignarLider(solicitante, id);
-    }
 
     public void ReiniciarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
     {

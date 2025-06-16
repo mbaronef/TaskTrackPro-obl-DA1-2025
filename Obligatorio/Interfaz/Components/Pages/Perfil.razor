@@ -41,15 +41,15 @@
                 <dd class="col-sm-8">
                     @if (Sesion.EsAdminSistema())
                     {
-                        <span class="badge bg-danger me-1">Administrador de sistema</span>
+                        <span class="badge bg-warning text-white">Administrador de sistema</span>
                     }
                     @if (Sesion.EsAdminProyecto())
                     {
-                        <span class="badge bg-info text-dark me-1">Administrador de proyecto</span>
+                        <span class="badge bg-info text-white ms-1">Administrador de proyecto</span>
                     }
                     @if (Sesion.UsuarioLogueado.EsLider)
                     {
-                        <span class="badge bg-success text-white me-1">Líder de proyecto</span>
+                        <span class="badge bg-success text-white ms-1">Líder de @Sesion.UsuarioLogueado.CantidadProyectosLiderando proyecto(s).</span>
                     }
                     @if (!Sesion.EsAdminSistema() && !Sesion.EsAdminProyecto() && !Sesion.EsLiderProyecto())
                     {

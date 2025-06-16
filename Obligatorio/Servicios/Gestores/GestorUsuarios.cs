@@ -88,22 +88,6 @@ public class GestorUsuarios : IGestorUsuarios
         PermisosUsuarios.VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(administradorProyecto);
         administradorProyecto.EsAdministradorProyecto = false;
     }
-    
-    public void AsignarLider(UsuarioDTO solicitanteDTO, int idUsuario)
-    {
-        Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        PermisosUsuarios.VerificarPermisoAdminSistema(solicitante, "asignar lider");
-        Usuario nuevoLider = obtenerUsuarioDominioPorId(idUsuario);
-        nuevoLider.AsignarRolLider();
-    }
-
-    public void DesasignarLider(UsuarioDTO solicitanteDTO, int idUsuario)
-    {
-        Usuario solicitante = obtenerUsuarioDominioPorId(solicitanteDTO.Id);
-        PermisosUsuarios.VerificarPermisoAdminSistema(solicitante, "desasignar lider");
-        Usuario nuevoLider = obtenerUsuarioDominioPorId(idUsuario);
-        nuevoLider.RemoverRolLider();
-    }
 
     public void ReiniciarContrasena(UsuarioDTO solicitanteDTO, int idUsuarioObjetivo)
     {

@@ -171,8 +171,6 @@ else
                             <InputCheckbox @bind-Value="usuarioAEditar.EsAdministradorProyecto"
                                            disabled="@usuarioOriginal.EstaAdministrandoUnProyecto"/>
                             <label class="me-3">Administrador de proyecto</label>
-                            <InputCheckbox @bind-Value="usuarioAEditar.EsLider"/>
-                            <label class="me-3">Lider</label>
                         </div>
                         <div>
                             <button class="btn btn-success" @onclick="GuardarCambiosUsuario">Guardar cambios</button>
@@ -251,15 +249,15 @@ else
                         <td>
                             @if (usuario.EsAdministradorSistema)
                             {
-                                <span class="badge bg-warning text-dark">Administrador de sistema</span>
+                                <span class="badge bg-warning text-white">Administrador de sistema</span>
                             }
                             @if (usuario.EsAdministradorProyecto)
                             {
-                                <span class="badge bg-info text-dark ms-1">Administrador de proyecto</span>
+                                <span class="badge bg-info text-white ms-1">Administrador de proyecto</span>
                             }
                             @if (usuario.EsLider)
                             {
-                                <span class="badge bg-success text-dark ms-1">Líder de proyecto</span>
+                                <span class="badge bg-success text-white ms-1">Líder de @usuario.CantidadProyectosLiderando proyecto(s).</span>
                             }
                         </td>
                         <td>
@@ -471,7 +469,6 @@ else
                 FechaNacimiento = usuario.FechaNacimiento,
                 Email = usuario.Email,
                 EsAdministradorSistema = usuario.EsAdministradorSistema,
-                EsLider = usuario.EsLider,
                 EsAdministradorProyecto = usuario.EsAdministradorProyecto
             };
             usuarioOriginal = usuario;
@@ -515,15 +512,6 @@ else
             if (usuarioAEditar.EsAdministradorSistema && !usuarioOriginal.EsAdministradorSistema)
             {
                 ControladorUsuarios.AgregarAdministradorSistema(Sesion.UsuarioLogueado, idUsuarioEditando);
-            }
-            
-            if (usuarioAEditar.EsLider && !usuarioOriginal.EsLider)
-            {
-                ControladorUsuarios.AsignarLider(Sesion.UsuarioLogueado, idUsuarioEditando);
-            }
-            else if (!usuarioAEditar.EsLider && usuarioOriginal.EsLider)
-            {
-                ControladorUsuarios.DesasignarLider(Sesion.UsuarioLogueado, idUsuarioEditando);
             }
 
             if (Sesion.UsuarioLogueado.Id == idUsuarioEditando)

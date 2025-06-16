@@ -136,12 +136,22 @@ public class Proyecto
         RemoverRolLiderAnteriorSiExiste();
         Lider = usuario;
         Lider.AsignarRolLider();
+        Lider.CantidadProyectosLiderando++;
     }
     
     public void DesasignarLider(Usuario usuario)
     {
-        EsLider(usuario);
-        Lider.RemoverRolLider();
+        if (!EsLider(usuario))
+            throw new ExcepcionDominio("El usuario no es el líder de este proyecto.");
+
+        usuario.CantidadProyectosLiderando--;
+
+        if (usuario.CantidadProyectosLiderando <= 0)
+        {
+            usuario.RemoverRolLider();
+        }
+
+        Lider = null;
     }
 
     
@@ -170,7 +180,11 @@ public class Proyecto
     {
         if (Lider != null)
         {
-            Lider.RemoverRolLider();
+            Lider.CantidadProyectosLiderando--;
+            if (Lider.CantidadProyectosLiderando <= 0)
+            {
+                Lider.RemoverRolLider();
+            }
         }
     }
 

@@ -35,6 +35,8 @@ public class UsuarioDTO
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
 
     public int CantidadProyectosAsignados { get; set; } = 0;
+    
+    public int CantidadProyectosLiderando { get; set; } = 0;
 
     public static UsuarioDTO DesdeEntidad(Usuario usuario)
     {
@@ -50,7 +52,8 @@ public class UsuarioDTO
             EsLider = usuario.EsLider,
             Notificaciones = usuario.Notificaciones.Select(NotificacionDTO.DesdeEntidad).ToList(),
             EstaAdministrandoUnProyecto = usuario.EstaAdministrandoUnProyecto,
-            CantidadProyectosAsignados = usuario.CantidadProyectosAsignados
+            CantidadProyectosAsignados = usuario.CantidadProyectosAsignados,
+            CantidadProyectosLiderando = usuario.CantidadProyectosLiderando,
             // la contraseña se omite por seguridad.
         };
     }

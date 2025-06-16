@@ -19,10 +19,9 @@ public class Usuario
     public bool EsAdministradorSistema { get; set; } = false;
     public bool EsAdministradorProyecto { get; set; } = false;
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
-    
-    public bool EsLider { get; private set; } = false;
-
     public int CantidadProyectosAsignados { get; set; } = 0;
+    public bool EsLider { get; private set; } = false;
+    public int CantidadProyectosLiderando { get; set; } = 0;
 
     public Usuario()
     {
