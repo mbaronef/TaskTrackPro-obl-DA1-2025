@@ -96,11 +96,7 @@ public class Recurso
 
     public void AgregarRangoDeUso(DateTime fechaInicioNuevo, DateTime fechaFinNuevo, int cantidadNuevo, Tarea tarea)
     {
-        if (!TieneCapacidadDisponible(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo))
-        {
-            throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadInsuficienteEnElRango);
-        }
-
+        ValidarCapacidadDisponibleEnRango(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo);
         RangoDeUso nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo, tarea);
         RangosEnUso.Add(nuevoRango);
     }
@@ -126,6 +122,14 @@ public class Recurso
         return RangosEnUso
             .Where(r => r.FechaInicio <= dia && r.FechaFin >= dia)
             .Sum(r => r.CantidadDeUsos);
+    }
+    
+    private void ValidarCapacidadDisponibleEnRango(DateTime fechaInicioNuevo, DateTime fechaFinNuevo, int cantidadNuevo)
+    {
+        if (!TieneCapacidadDisponible(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo))
+        {
+            throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadInsuficienteEnElRango);
+        }
     }
     
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
