@@ -72,6 +72,11 @@ public class Recurso
         }
         CantidadDeTareasUsandolo--;
     }
+    
+    public void ModificarCapacidad(int nuevaCapacidad)
+    {
+        Capacidad = nuevaCapacidad;
+    }
 
     public bool EsExclusivo()
     {
