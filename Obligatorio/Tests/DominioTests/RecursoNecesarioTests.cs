@@ -6,6 +6,15 @@ namespace Tests.DominioTests;
 [TestClass]
 public class RecursoNecesarioTests
 {
+
+    [TestMethod]
+    public void Constructor_InicializaUnRango()
+    {
+        RecursoNecesario recursoNecesario = new RecursoNecesario();
+        Assert.IsNotNull(recursoNecesario);
+    }
+    
+
     [TestMethod]
     public void Constructor_ConParametrosAsignaCorrectamente()
     {
