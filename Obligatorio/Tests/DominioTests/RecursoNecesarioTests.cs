@@ -36,4 +36,14 @@ public class RecursoNecesarioTests
 
         RecursoNecesario rn = new RecursoNecesario(recurso, cantidad);
     }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void Constructor_LanzaExcepcionSiCantidadEsMenorOIgualACero()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 5);
+        int cantidad = 0;
+
+        RecursoNecesario rn = new RecursoNecesario(recurso, cantidad);
+    }
 }
