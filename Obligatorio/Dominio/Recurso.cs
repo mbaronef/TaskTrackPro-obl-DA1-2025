@@ -100,6 +100,16 @@ public class Recurso
         RangoDeUso nuevoRango = new RangoDeUso(fechaInicio, fechaFin, cantidadNuevo);
         RangosEnUso.Add(nuevoRango);
     }
+    
+    public void EliminarRango(DateTime inicio, DateTime fin, int cantidad)
+    {
+        RangoDeUso rango = RangosEnUso.FirstOrDefault(r =>
+            r.FechaInicio == inicio && r.FechaFin == fin && r.CantidadDeUsos == cantidad);
+        if (rango != null)
+        {
+            RangosEnUso.Remove(rango);
+        }
+    }
 
     public void ModificarCapacidad(int nuevaCapacidad)
     {

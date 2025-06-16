@@ -178,7 +178,7 @@ public class RecursoTests
 
         recurso.AgregarRangoDeUso(inicio, fin, 2);
 
-        recurso.EliminarRango(inicio, fin, 2); // aún no existe esta función
+        recurso.EliminarRango(inicio, fin, 2); 
 
         Assert.AreEqual(0, recurso.RangosEnUso.Count);
     }
