@@ -860,7 +860,7 @@ public class GestorTareasTests
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
 
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.IsTrue(tarea.RecursosNecesarios.Any(recurso => recurso.Id == recursoDTO.Id));
@@ -879,7 +879,7 @@ public class GestorTareasTests
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_noAdmin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.AsignarRecursoATarea(_noAdmin, tarea.Id, proyecto.Id, recursoDTO, 1);
     }
 
     [TestMethod]
@@ -895,7 +895,7 @@ public class GestorTareasTests
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
 
         _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
         string mensajeEsperado =
@@ -916,7 +916,7 @@ public class GestorTareasTests
         
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
     }
 
     [TestMethod]
@@ -930,7 +930,7 @@ public class GestorTareasTests
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
         _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
 
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
@@ -949,7 +949,7 @@ public class GestorTareasTests
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
         _gestorTareas.EliminarRecursoDeTarea(_noAdmin, tarea.Id, proyecto.Id, recursoDTO);
     }
 
@@ -991,7 +991,7 @@ public class GestorTareasTests
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
         _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
 
         _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización

@@ -695,4 +695,43 @@ public class GestorRecursosTests
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(usuarioNoEnRepositorio, recurso, false);
     }
+    
+    [TestMethod]
+    public void AdminSistemaModificaCapacidadDeRecursoOk()
+    {
+        RecursoDTO recurso = CrearRecursoDTO();
+        recurso.Capacidad = 5;
+        _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
+
+        _gestorRecursos.ModificarCapacidadRecurso(_adminSistemaDTO, recurso.Id, 10);
+
+        Recurso recursoModificado = _repositorioRecursos.ObtenerPorId(recurso.Id);
+        Assert.AreEqual(10, recursoModificado.Capacidad);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void ModificarCapacidadLanzaExcepcionSiCapacidadMenorAlUsoActual()
+    {
+        Recurso recurso = new Recurso("Servidor", "Hardware", "Alta disponibilidad", 5);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 3);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 3); // uso total = 6
+        recurso.Id = 1;
+        _repositorioRecursos.Agregar(recurso);
+
+        _gestorRecursos.ModificarCapacidadRecurso(_adminSistemaDTO, recurso.Id, 4);
+    }
+    
+    [ExpectedException(typeof(ExcepcionPermisos))]
+    [TestMethod]
+    public void UsuarioSinPermisosNoPuedeModificarCapacidad()
+    {
+        UsuarioDTO usuarioNoAdmin = CrearUsuarioNoAdminDTO();
+
+        RecursoDTO recurso = CrearRecursoDTO();
+        recurso.Capacidad = 5;
+        _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
+
+        _gestorRecursos.ModificarCapacidadRecurso(usuarioNoAdmin, recurso.Id, 10);
+    }
 }

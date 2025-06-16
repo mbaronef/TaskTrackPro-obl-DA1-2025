@@ -14,14 +14,14 @@ public class Tarea
     public DateTime FechaDeEjecucion { get; private set; } = DateTime.MinValue;
     public EstadoTarea Estado { get; private set; } = EstadoTarea.Pendiente;
     public int Holgura { get; set; }
-    public List<Usuario> UsuariosAsignados { get; }
-    public List<Recurso> RecursosNecesarios { get; }
-    public List<Dependencia> Dependencias { get; }
+    public ICollection<Usuario> UsuariosAsignados { get; }
+    public ICollection<RecursoNecesario> RecursosNecesarios { get; }
+    public ICollection<Dependencia> Dependencias { get; }
 
     public Tarea()
     {
         UsuariosAsignados = new List<Usuario>();
-        RecursosNecesarios = new List<Recurso>();
+        RecursosNecesarios = new List<RecursoNecesario>();
         Dependencias = new List<Dependencia>();
     }
 
@@ -38,7 +38,7 @@ public class Tarea
         FechaInicioMasTemprana = fechaInicioMasTemprana;
         Estado = EstadoTarea.Pendiente;
         UsuariosAsignados = new List<Usuario>();
-        RecursosNecesarios = new List<Recurso>();
+        RecursosNecesarios = new List<RecursoNecesario>();
         Dependencias = new List<Dependencia>();
         
         CalcularFechaFinMasTemprana();
@@ -80,21 +80,22 @@ public class Tarea
         UsuariosAsignados.Remove(usuarioAEliminar);
     }
 
-    public void AsignarRecurso(Recurso recurso)
+    public void AsignarRecurso(Recurso recurso, int cantidad)
     {
         ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullParaAgregar);
         VerificarRecursoNoEstaAgregado(recurso);
         
-        RecursosNecesarios.Add(recurso);
+        RecursoNecesario recursoNecesario = new RecursoNecesario(recurso, cantidad);
+        RecursosNecesarios.Add(recursoNecesario);
         recurso.IncrementarCantidadDeTareasUsandolo();
     }
 
     public void EliminarRecurso(int idRecurso)
     {
-        Recurso recursoAEliminar = BuscarRecursoNecesarioPorId(idRecurso);
+        RecursoNecesario recursoAEliminar = BuscarRecursoNecesarioPorId(idRecurso);
         ValidarObjetoNoNull(recursoAEliminar, MensajesErrorDominio.RecursoNoNecesario);
 
-        recursoAEliminar.DecrementarCantidadDeTareasUsandolo();
+        recursoAEliminar.Recurso.DecrementarCantidadDeTareasUsandolo();
         RecursosNecesarios.Remove(recursoAEliminar);
     }
 
@@ -251,7 +252,7 @@ public class Tarea
 
     private void VerificarRecursoNoEstaAgregado(Recurso recurso)
     {
-        if (RecursosNecesarios.Contains(recurso))
+        if (RecursosNecesarios.Any(rn => rn.Recurso.Id == recurso.Id))
         {
             throw new ExcepcionDominio(MensajesErrorDominio.RecursoYaAgregado);
         }
@@ -270,9 +271,9 @@ public class Tarea
         return UsuariosAsignados.FirstOrDefault(u => u.Id == id);
     }
 
-    private Recurso BuscarRecursoNecesarioPorId(int id)
+    private RecursoNecesario BuscarRecursoNecesarioPorId(int id)
     {
-        return RecursosNecesarios.FirstOrDefault(r => r.Id == id);
+        return RecursosNecesarios.FirstOrDefault(rn => rn.Recurso.Id == id);
     }
 
     private Dependencia BuscarDependenciaPorIdDeTarea(int id)
@@ -282,9 +283,9 @@ public class Tarea
 
     private void LiberarRecursos()
     {
-        foreach (Recurso recurso in RecursosNecesarios)
+        foreach (RecursoNecesario recursoNecesario in RecursosNecesarios)
         {
-            recurso.DecrementarCantidadDeTareasUsandolo();
+            recursoNecesario.Recurso.DecrementarCantidadDeTareasUsandolo();
         }
     }
 

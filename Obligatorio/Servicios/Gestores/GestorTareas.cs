@@ -213,7 +213,7 @@ public class GestorTareas : IGestorTareas
         NotificarEliminar($"miembro {miembro.ToString()}", idTarea, idProyecto);
     }
 
-    public void AsignarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO)
+    public void AsignarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO, int cantidad)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Recurso nuevoRecurso = ObtenerRecursoPorDTO(nuevoRecursoDTO);
@@ -221,7 +221,7 @@ public class GestorTareas : IGestorTareas
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
-        tarea.AsignarRecurso(nuevoRecurso);
+        tarea.AsignarRecurso(nuevoRecurso, cantidad);
         NotificarAgregar($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
     }
 
@@ -307,7 +307,7 @@ public class GestorTareas : IGestorTareas
     private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
     {
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
-        if (!tarea.RecursosNecesarios.Contains(recurso))
+        if (!tarea.RecursosNecesarios.Any(rn => rn.Recurso.Id == recurso.Id))
         {
             throw new ExcepcionTarea(MensajesErrorServicios.RecursoNoAsignado);
         }

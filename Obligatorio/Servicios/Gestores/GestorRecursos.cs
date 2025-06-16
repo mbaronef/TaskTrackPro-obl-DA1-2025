@@ -88,6 +88,18 @@ public class GestorRecursos : IGestorRecursos
         recurso.ModificarNombre(nuevoNombre);
         NotificarModificacion(recurso, nombreAnterior);
     }
+    
+    public void ModificarCapacidadRecurso(UsuarioDTO solicitanteDTO, int idRecurso, int nuevaCapacidad)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
+    
+        PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la capacidad de un recurso");
+        VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la capacidad de");
+
+        recurso.ModificarCapacidad(nuevaCapacidad);
+        NotificarModificacion(recurso, recurso.Nombre);
+    }
 
     public void ModificarTipoRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoTipo)
     {
@@ -213,7 +225,11 @@ public class GestorRecursos : IGestorRecursos
 
     private List<Recurso> RecursosNecesariosPorProyecto(Proyecto proyecto)
     {
-        return proyecto.Tareas.SelectMany(tarea => tarea.RecursosNecesarios).Distinct().ToList();
+        return proyecto.Tareas
+            .SelectMany(tarea => tarea.RecursosNecesarios)
+            .Select(rn => rn.Recurso)
+            .Distinct()
+            .ToList();;
     }
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
