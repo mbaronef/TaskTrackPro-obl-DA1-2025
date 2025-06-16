@@ -528,10 +528,14 @@ else
                                     @foreach (var r in recursosProyecto)
                                     {
                                         <option value="@r.Id">Nombre: '@r.Nombre', tipo: '@r.Tipo', descripción:
-                                            '@r.Descripcion'
+                                            '@r.Descripcion', capacidad: '@r.Capacidad'
                                         </option>
                                     }
                                 </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Cantidad</label>
+                                <InputNumber @bind-Value="recursoAsignacionDto.Cantidad" class="form-control" min="1" />
                             </div>
                             <div class="col-md-3">
                                 <button class="btn btn-success w-100" type="submit">
@@ -984,7 +988,7 @@ else
             RecursoDTO nuevoRecurso = ControladorRecursos.ObtenerRecursoPorId(recursoAsignacionDto.Id);
             try
             {
-                ControladorTareas.AgregarRecursoATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso);
+                ControladorTareas.AgregarRecursoATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso, recursoAsignacionDto.Cantidad);
                 mensaje = "Recurso agregado con éxito.";
             }
             catch (ExcepcionTarea e)
