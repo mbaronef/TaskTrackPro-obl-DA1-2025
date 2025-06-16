@@ -263,7 +263,7 @@ public class GestorProyectos : IGestorProyectos
         Proyecto proyecto = ObtenerProyectoDominioPorId(proyectoDTO.Id);
         _caminoCritico.CalcularCaminoCritico(proyecto);
         _proyectos.Actualizar(proyecto);
-        proyecto.Tareas.ToList().ForEach(tarea => _proyectos.ActualizarTarea(tarea: tarea));
+        proyecto.Tareas.ToList().ForEach(tarea => _proyectos.ActualizarTarea(tarea));
     }
     
     public void AsignarLider(int idProyecto, UsuarioDTO solicitanteDTO, int idNuevoLider)
