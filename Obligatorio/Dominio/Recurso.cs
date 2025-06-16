@@ -96,18 +96,11 @@ public class Recurso
 
     public void AgregarRangoDeUso(Tarea tarea, int cantidadNuevo)
     {
-        ValidarTareaNoUsaElRecurso(tarea);
         DateTime fechaInicioNuevo = tarea.FechaInicioMasTemprana;
         DateTime fechaFinNuevo = tarea.FechaFinMasTemprana;
         ValidarCapacidadDisponibleEnRango(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo);
-        RangoDeUso nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo, tarea);
+        RangoDeUso nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo);
         RangosEnUso.Add(nuevoRango);
-    }
-    
-    public void EliminarRangoDeUsoDeTarea(Tarea tarea)
-    {
-        RangoDeUso rangoAEliminar = RangosEnUso.FirstOrDefault(r => r.Tarea.Equals(tarea));
-        RangosEnUso.Remove(rangoAEliminar);
     }
 
     public void ModificarCapacidad(int nuevaCapacidad)
@@ -160,14 +153,6 @@ public class Recurso
         if (!TieneCapacidadDisponible(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo))
         {
             throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadInsuficienteEnElRango);
-        }
-    }
-    
-    private void ValidarTareaNoUsaElRecurso(Tarea tarea)
-    {
-        if (RangosEnUso.Any(r => r.Tarea.Equals(tarea)))
-        {
-            throw new ExcepcionRecurso(MensajesErrorDominio.RecursoYaAgregadoATarea);
         }
     }
     

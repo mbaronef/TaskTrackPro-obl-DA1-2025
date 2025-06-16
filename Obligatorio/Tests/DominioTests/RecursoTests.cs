@@ -112,7 +112,7 @@ public class RecursoTests
     public void DaFalseSiUnRecursoNoTieneCapacidadDisponible()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
-        recurso.RangosEnUso.Add(new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, new Tarea()));
+        recurso.RangosEnUso.Add(new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2));
         Assert.IsFalse(recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1), 1));
     }
 
@@ -163,28 +163,6 @@ public class RecursoTests
         recurso.AgregarRangoDeUso(
             new Tarea() { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 2 },
             1);
-    }
-    
-    [ExpectedException(typeof(ExcepcionRecurso))]
-    [TestMethod]
-    public void DaErrorAlAgregarRangoDeUsoDeLaMismaTareaDosVeces()
-    {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
-        Tarea tarea = new Tarea()
-            { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1 };
-        recurso.AgregarRangoDeUso(tarea, 1);
-        recurso.AgregarRangoDeUso(tarea, 1);
-    }
-
-    [TestMethod]
-    public void SeBorranTodosLosRangosDeUnaTarea()
-    {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
-        Tarea tarea = new Tarea()
-            { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1 };
-        recurso.AgregarRangoDeUso(tarea, 2);
-        recurso.EliminarRangoDeUsoDeTarea(tarea);
-        Assert.AreEqual(0, recurso.RangosEnUso.Count);
     }
 
     [TestMethod]
