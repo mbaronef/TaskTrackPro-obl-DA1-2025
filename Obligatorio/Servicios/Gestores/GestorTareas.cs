@@ -268,6 +268,7 @@ public class GestorTareas : IGestorTareas
         ValidarRecursoExistente(recurso, idTarea, idProyecto);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
         tarea.EliminarRecurso(recurso.Id);
         
         _repositorioProyectos.ActualizarTarea(tarea);
