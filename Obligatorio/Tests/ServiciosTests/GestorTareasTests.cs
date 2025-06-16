@@ -236,6 +236,20 @@ public class GestorTareasTests
         TareaDTO tarea = CrearTarea();
         _gestorTareas.EliminarTareaDelProyecto(1000, _admin, tarea.Id);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarTarea_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _admin, tarea.Id);
+    }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionPermisos))]
@@ -247,6 +261,15 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
         _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _noAdmin, tarea.Id);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarTarea_LanzaExcepcionSiTareaNoExiste()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+
+        _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _admin, 9999); // ID inexistente
     }
 
     [TestMethod]
@@ -381,6 +404,20 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
         Assert.AreEqual("Nuevo título por líder", tarea.Titulo);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void ModificarTitulo_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.ModificarTituloTarea(_admin, tarea.Id, proyecto.Id, "Título nuevo");
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
@@ -430,6 +467,20 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
         Assert.AreEqual("Nueva descripción por líder", tarea.Descripcion);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void ModificarDescripcion_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.ModificarDescripcionTarea(_admin, tarea.Id, proyecto.Id, "Nueva descripción");
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
@@ -478,6 +529,20 @@ public class GestorTareasTests
 
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
         Assert.AreEqual(99, tarea.DuracionEnDias);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void ModificarDuracion_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.ModificarDuracionTarea(_admin, tarea.Id, proyecto.Id, 10);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
@@ -531,6 +596,20 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
         Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void ModificarFechaInicio_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.ModificarFechaInicioTarea(_admin, tarea.Id, proyecto.Id, DateTime.Today.AddDays(5));
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
@@ -574,6 +653,8 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_LiderProyectoCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+
         UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
 
         TareaDTO tarea = CrearTarea();
@@ -722,6 +803,23 @@ public class GestorTareasTests
         Assert.IsTrue(tareaPrincipal.Dependencias.Any(dep =>
             dep.TareaPrevia.Id == tareaDependencia.Id && dep.Tipo == "FS"));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void AgregarDependencia_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        TareaDTO dependencia = CrearTarea();
+    
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, dependencia);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea.Id, dependencia.Id, proyecto.Id, "FS");
+    }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionTarea))]
@@ -825,6 +923,24 @@ public class GestorTareasTests
         tareaPrincipal = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tareaPrincipal.Id); // actualización
         Assert.AreEqual(0, tareaPrincipal.Dependencias.Count);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarDependencia_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        TareaDTO dependencia = CrearTarea();
+    
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, dependencia);
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea.Id, dependencia.Id, proyecto.Id, "FS");
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.EliminarDependenciaDeTarea(_admin, tarea.Id, dependencia.Id, proyecto.Id);
+    }
 
 
     [TestMethod]
@@ -916,6 +1032,23 @@ public class GestorTareasTests
 
         Assert.IsTrue(tarea.UsuariosAsignados.Any(u => u.Id == _noAdmin.Id));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void AgregarMiembro_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO nuevoMiembro = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, nuevoMiembro);
+
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, nuevoMiembro);
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
@@ -991,6 +1124,23 @@ public class GestorTareasTests
 
         Assert.IsFalse(tarea.UsuariosAsignados.Any(u => u.Id == _noAdmin.Id));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarMiembro_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.EliminarMiembroDeTarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
@@ -1055,6 +1205,22 @@ public class GestorTareasTests
 
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.IsTrue(tarea.RecursosNecesarios.Any(recurso => recurso.Id == recursoDTO.Id));
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void AsignarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recurso = CrearYAgregarRecurso();
+        TareaDTO tarea = CrearTarea();
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
@@ -1126,6 +1292,23 @@ public class GestorTareasTests
 
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.IsFalse(tarea.RecursosNecesarios.Any(recurso => recurso.Id == recursoDTO.Id));
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recurso = CrearYAgregarRecurso();
+        TareaDTO tarea = CrearTarea();
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
