@@ -105,8 +105,7 @@ public class Recurso
     {
         RangoDeUso rango = RangosEnUso.FirstOrDefault(r =>
             r.FechaInicio == inicio && r.FechaFin == fin && r.CantidadDeUsos == cantidad);
-        if (rango == null)
-            throw new ExcepcionRecurso(MensajesErrorDominio.RangoNoEncontrado);
+        ValidarRangoNoNulo(rango);
         RangosEnUso.Remove(rango);
     }
 
@@ -193,6 +192,12 @@ public class Recurso
         {
             throw new ExcepcionRecurso(MensajesErrorDominio.FechaInicioRangoMayorQueFin);
         }
+    }
+    
+    private void ValidarRangoNoNulo(RangoDeUso? rango)
+    {
+        if (rango == null)
+            throw new ExcepcionRecurso(MensajesErrorDominio.RangoNoEncontrado);
     }
 
     public override bool Equals(object? otro)
