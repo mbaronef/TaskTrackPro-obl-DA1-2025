@@ -250,6 +250,7 @@ public class GestorTareas : IGestorTareas
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
         tarea.AsignarRecurso(nuevoRecurso);
         
         _repositorioProyectos.ActualizarTarea(tarea);
