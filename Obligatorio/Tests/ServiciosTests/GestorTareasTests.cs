@@ -236,6 +236,20 @@ public class GestorTareasTests
         TareaDTO tarea = CrearTarea();
         _gestorTareas.EliminarTareaDelProyecto(1000, _admin, tarea.Id);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarTarea_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _admin, tarea.Id);
+    }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionPermisos))]
