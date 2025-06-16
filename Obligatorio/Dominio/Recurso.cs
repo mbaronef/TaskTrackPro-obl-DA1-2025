@@ -94,20 +94,20 @@ public class Recurso
         return true;
     }
 
-    public void AgregarRangoDeUso(DateTime fechaInicioNuevo, DateTime fechaFinNuevo, int cantidadNuevo, Tarea tarea)
+    public void AgregarRangoDeUso(Tarea tarea, int cantidadNuevo)
     {
+        ValidarTareaNoUsaElRecurso(tarea);
+        DateTime fechaInicioNuevo = tarea.FechaInicioMasTemprana;
+        DateTime fechaFinNuevo = tarea.FechaFinMasTemprana;
         ValidarCapacidadDisponibleEnRango(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo);
         RangoDeUso nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo, tarea);
         RangosEnUso.Add(nuevoRango);
     }
     
-    public void EliminarRangosDeUsoDeTarea(Tarea tarea)
-    { 
-        List<RangoDeUso> rangosAEliminar = RangosEnUso
-            .Where(r => r.Tarea.Equals(tarea))
-            .ToList();
-
-        rangosAEliminar.ForEach(r => RangosEnUso.Remove(r));
+    public void EliminarRangoDeUsoDeTarea(Tarea tarea)
+    {
+        RangoDeUso rangoAEliminar = RangosEnUso.FirstOrDefault(r => r.Tarea.Equals(tarea));
+        RangosEnUso.Remove(rangoAEliminar);
     }
 
     public void ModificarCapacidad(int nuevaCapacidad)
@@ -163,6 +163,14 @@ public class Recurso
         }
     }
     
+    private void ValidarTareaNoUsaElRecurso(Tarea tarea)
+    {
+        if (RangosEnUso.Any(r => r.Tarea.Equals(tarea)))
+        {
+            throw new ExcepcionRecurso(MensajesErrorDominio.RecursoYaAgregadoATarea);
+        }
+    }
+    
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
         if (string.IsNullOrWhiteSpace(texto))
@@ -170,7 +178,7 @@ public class Recurso
             throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, nombreAtributo));
         }
     }
-
+    
     private void ValidarCapacidadMayorACero(int capacidad)
     {
         if (capacidad <= 0)

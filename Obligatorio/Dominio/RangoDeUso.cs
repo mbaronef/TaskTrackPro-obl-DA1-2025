@@ -50,4 +50,15 @@ public class RangoDeUso
             throw new ExcepcionRangoDeUso(MensajesErrorDominio.TareaNull);
         }
     }
+    
+    public override bool Equals(object? otro)
+    {
+        RangoDeUso otroRango = otro as RangoDeUso;
+        return otroRango != null && Id == otroRango.Id;
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
 }
