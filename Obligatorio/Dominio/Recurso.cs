@@ -75,6 +75,7 @@ public class Recurso
     
     public void ModificarCapacidad(int nuevaCapacidad)
     {
+        ValidarCapacidadMayorACero(nuevaCapacidad);
         Capacidad = nuevaCapacidad;
     }
 
