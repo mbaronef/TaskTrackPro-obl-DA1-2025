@@ -105,10 +105,9 @@ public class Recurso
     {
         RangoDeUso rango = RangosEnUso.FirstOrDefault(r =>
             r.FechaInicio == inicio && r.FechaFin == fin && r.CantidadDeUsos == cantidad);
-        if (rango != null)
-        {
-            RangosEnUso.Remove(rango);
-        }
+        if (rango == null)
+            throw new ExcepcionRecurso(MensajesErrorDominio.RangoNoEncontrado);
+        RangosEnUso.Remove(rango);
     }
 
     public void ModificarCapacidad(int nuevaCapacidad)

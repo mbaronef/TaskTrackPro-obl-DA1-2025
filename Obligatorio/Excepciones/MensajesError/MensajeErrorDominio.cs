@@ -83,5 +83,6 @@ public static class MensajesErrorDominio
     public const string RangoDeUsoNoPuedeSerCeroOMenos = "El rango de uso no puede ser cero o negativo.";
     public static string TareaNoPuedeSerNula = "Una tarea nula no puede hacer uso en el rango de uso.";
     public static string RecursoYaAgregadoATarea = "El recurso ya fue agregado a la tarea.";
+    public const string RangoNoEncontrado ="No se encontró un rango con los datos especificados.";
 
 }
