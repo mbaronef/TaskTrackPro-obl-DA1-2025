@@ -24,6 +24,7 @@ public class RepositorioProyectos : IRepositorioProyectos
     {
         return _contexto.Proyectos
             .Include(p => p.Administrador)
+            .Include(p => p.Lider)
             .Include(p => p.Miembros)
             .Include(p => p.Tareas)
             .ThenInclude(t => t.Dependencias)
@@ -45,6 +46,7 @@ public class RepositorioProyectos : IRepositorioProyectos
     {
         return _contexto.Proyectos
             .Include(p => p.Administrador)
+            .Include(p=>p.Lider)
             .Include(p => p.Miembros)
             .Include(p => p.Tareas)
             .ThenInclude(t => t.Dependencias)
@@ -59,6 +61,7 @@ public class RepositorioProyectos : IRepositorioProyectos
     {
         Proyecto proyectoContexto = _contexto.Proyectos
             .Include(p => p.Administrador)
+            .Include(p =>p.Lider)
             .Include(p => p.Miembros)
             .Include(p => p.Tareas)
             .FirstOrDefault(p => p.Id == proyecto.Id);
@@ -67,6 +70,7 @@ public class RepositorioProyectos : IRepositorioProyectos
         {
             proyectoContexto.Actualizar(proyecto);
             SincronizarAdministradorDelProyecto(proyecto, proyectoContexto);
+            SincronizarLiderDelProyecto(proyecto, proyectoContexto);
             SincronizarMiembros(proyecto, proyectoContexto);
             SincronizarTareas(proyecto, proyectoContexto);
             _contexto.SaveChanges();
@@ -97,6 +101,19 @@ public class RepositorioProyectos : IRepositorioProyectos
         {
             Usuario nuevoAdmin = _contexto.Usuarios.FirstOrDefault(u => u.Id == proyecto.Administrador.Id);
             proyectoContexto.AsignarNuevoAdministrador(nuevoAdmin);
+        }
+    }
+    
+    private void SincronizarLiderDelProyecto(Proyecto proyecto, Proyecto proyectoContexto)
+    {
+        if (proyecto.Lider == null)
+        {
+            proyectoContexto.Lider = null;
+        }
+        else if (!proyecto.Lider.Equals(proyectoContexto.Lider))
+        {
+            Usuario nuevoLider = _contexto.Usuarios.FirstOrDefault(u => u.Id == proyecto.Lider.Id);
+            proyectoContexto.AsignarLider(nuevoLider);
         }
     }
     

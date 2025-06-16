@@ -32,6 +32,12 @@ public static class ConfiguracionProyecto
             .OnDelete(DeleteBehavior.Restrict);
         
         modelBuilder.Entity<Proyecto>()
+            .HasOne(p => p.Lider)
+            .WithMany()
+            .HasForeignKey("LiderId")
+            .OnDelete(DeleteBehavior.Restrict); 
+        
+        modelBuilder.Entity<Proyecto>()
             .HasMany(p => p.Miembros)
             .WithMany();
         

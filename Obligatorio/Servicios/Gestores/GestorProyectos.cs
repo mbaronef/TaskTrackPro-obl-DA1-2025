@@ -275,6 +275,8 @@ public class GestorProyectos : IGestorProyectos
         Usuario nuevoLider = ObtenerUsuarioPorDTO(new UsuarioDTO { Id = idNuevoLider });
 
         proyecto.AsignarLider(nuevoLider);
+        _repositorioUsuarios.Actualizar(nuevoLider);
+        _proyectos.Actualizar(proyecto);
         
         string mensaje = MensajesNotificacion.LiderAsignado(proyecto.Nombre, nuevoLider.ToString());
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(), mensaje);
@@ -289,6 +291,8 @@ public class GestorProyectos : IGestorProyectos
         Usuario liderMiembros = proyecto.Miembros.FirstOrDefault(m => m.EsLider == true);
         Usuario liderAEliminar = ObtenerUsuarioPorDTO(new UsuarioDTO { Id =  liderMiembros.Id});
         proyecto.DesasignarLider(liderAEliminar);
+        _repositorioUsuarios.Actualizar(liderAEliminar);
+        _proyectos.Actualizar(proyecto);
         
         string mensaje = MensajesNotificacion.LiderDesasignado(proyecto.Nombre, liderAEliminar.ToString());
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(), mensaje);

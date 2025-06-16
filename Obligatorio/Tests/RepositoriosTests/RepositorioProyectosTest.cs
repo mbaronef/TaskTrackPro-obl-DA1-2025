@@ -123,6 +123,29 @@ public class RepositorioProyectosTest
 
         Assert.AreEqual(nuevoAdmin.Id, proyectoActualizado.Administrador.Id);
     }
+    
+    [TestMethod]
+    public void SeActualizaLiderDelProyectoOk()
+    {
+        _repositorioProyectos.Agregar(_proyecto);
+        Usuario lider = new Usuario("Ana", "López", new DateTime(1990, 1, 1), "ana@mail.com", "otraClave");
+        lider.EsLider = true;
+        _contexto.Usuarios.Add(lider);
+        _proyecto.Miembros.Add(lider);
+        _repositorioProyectos.Actualizar(_proyecto);
+
+        Proyecto proyectoModificado = new Proyecto(_proyecto.Nombre, _proyecto.Descripcion, _proyecto.FechaInicio,
+            _proyecto.Administrador, _proyecto.Miembros.ToList())
+        {
+            Id = _proyecto.Id
+        };
+        proyectoModificado.AsignarLider(lider);
+
+        _repositorioProyectos.Actualizar(proyectoModificado);
+        Proyecto proyectoActualizado = _repositorioProyectos.ObtenerPorId(_proyecto.Id);
+
+        Assert.AreEqual(lider.Id, proyectoActualizado.Lider.Id);
+    }
 
     [TestMethod]
     public void SeAgreganYEliminanMiembrosOk()

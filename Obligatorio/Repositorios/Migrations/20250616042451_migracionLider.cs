@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Repositorios.Migrations
 {
     /// <inheritdoc />
-    public partial class metodoActualizarv5 : Migration
+    public partial class migracionLider : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,6 +25,8 @@ namespace Repositorios.Migrations
                     EsAdministradorProyecto = table.Column<bool>(type: "bit", nullable: false),
                     EstaAdministrandoUnProyecto = table.Column<bool>(type: "bit", nullable: false),
                     CantidadProyectosAsignados = table.Column<int>(type: "int", nullable: false),
+                    EsLider = table.Column<bool>(type: "bit", nullable: false),
+                    CantidadProyectosLiderando = table.Column<int>(type: "int", nullable: false),
                     ContrasenaEncriptada = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -62,6 +64,7 @@ namespace Repositorios.Migrations
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
                     AdministradorId = table.Column<int>(type: "int", nullable: false),
+                    LiderId = table.Column<int>(type: "int", nullable: true),
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaFinMasTemprana = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -71,6 +74,12 @@ namespace Repositorios.Migrations
                     table.ForeignKey(
                         name: "FK_Proyectos_Usuarios_AdministradorId",
                         column: x => x.AdministradorId,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Proyectos_Usuarios_LiderId",
+                        column: x => x.LiderId,
                         principalTable: "Usuarios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -226,8 +235,8 @@ namespace Repositorios.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "Id", "Apellido", "CantidadProyectosAsignados", "Email", "EsAdministradorProyecto", "EsAdministradorSistema", "EstaAdministrandoUnProyecto", "FechaNacimiento", "Nombre", "ContrasenaEncriptada" },
-                values: new object[] { 1, "Sistema", 0, "admin@sistema.com", false, true, false, new DateTime(1999, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Admin", "$2a$11$uVXK5.NABpLzG7ueVTVdIuH.zhjycb0C65p84Q6kNZN2PgHKrsgFK" });
+                columns: new[] { "Id", "Apellido", "CantidadProyectosAsignados", "CantidadProyectosLiderando", "Email", "EsAdministradorProyecto", "EsAdministradorSistema", "EsLider", "EstaAdministrandoUnProyecto", "FechaNacimiento", "Nombre", "ContrasenaEncriptada" },
+                values: new object[] { 1, "Sistema", 0, 0, "admin@sistema.com", false, true, false, false, new DateTime(1999, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Admin", "$2a$11$GCvufW/DLcfla54qygaAy.RHKV/T.0zGGvuAbHbZdURhIze5DIhNS" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Dependencia_TareaId",
@@ -244,6 +253,11 @@ namespace Repositorios.Migrations
                 table: "Proyectos",
                 column: "AdministradorId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Proyectos_LiderId",
+                table: "Proyectos",
+                column: "LiderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProyectoUsuario_ProyectoId",

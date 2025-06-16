@@ -91,6 +91,9 @@ namespace Repositorios.Migrations
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("LiderId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -99,6 +102,8 @@ namespace Repositorios.Migrations
 
                     b.HasIndex("AdministradorId")
                         .IsUnique();
+
+                    b.HasIndex("LiderId");
 
                     b.ToTable("Proyectos");
                 });
@@ -198,6 +203,9 @@ namespace Repositorios.Migrations
                     b.Property<int>("CantidadProyectosAsignados")
                         .HasColumnType("int");
 
+                    b.Property<int>("CantidadProyectosLiderando")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -206,6 +214,9 @@ namespace Repositorios.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("EsAdministradorSistema")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EsLider")
                         .HasColumnType("bit");
 
                     b.Property<bool>("EstaAdministrandoUnProyecto")
@@ -236,13 +247,15 @@ namespace Repositorios.Migrations
                             Id = 1,
                             Apellido = "Sistema",
                             CantidadProyectosAsignados = 0,
+                            CantidadProyectosLiderando = 0,
                             Email = "admin@sistema.com",
                             EsAdministradorProyecto = false,
                             EsAdministradorSistema = true,
+                            EsLider = false,
                             EstaAdministrandoUnProyecto = false,
                             FechaNacimiento = new DateTime(1999, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nombre = "Admin",
-                            _contrasenaEncriptada = "$2a$11$uVXK5.NABpLzG7ueVTVdIuH.zhjycb0C65p84Q6kNZN2PgHKrsgFK"
+                            _contrasenaEncriptada = "$2a$11$GCvufW/DLcfla54qygaAy.RHKV/T.0zGGvuAbHbZdURhIze5DIhNS"
                         });
                 });
 
@@ -325,7 +338,14 @@ namespace Repositorios.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Dominio.Usuario", "Lider")
+                        .WithMany()
+                        .HasForeignKey("LiderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Administrador");
+
+                    b.Navigation("Lider");
                 });
 
             modelBuilder.Entity("Dominio.Recurso", b =>
