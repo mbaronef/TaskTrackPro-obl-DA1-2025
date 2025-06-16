@@ -14,6 +14,7 @@ public class Tarea
     public DateTime FechaDeEjecucion { get; private set; } = DateTime.MinValue;
     public EstadoTarea Estado { get; private set; } = EstadoTarea.Pendiente;
     public int Holgura { get; set; }
+    public bool FechaInicioFijadaManualmente { get; set; } = false;
     public virtual ICollection<Usuario> UsuariosAsignados { get; }
     public virtual ICollection<Recurso> RecursosNecesarios { get; }
     public virtual ICollection<Dependencia> Dependencias { get; }
@@ -141,7 +142,18 @@ public class Tarea
         FechaInicioMasTemprana = fechaInicioNueva;
         CalcularFechaFinMasTemprana();
     }
-
+    
+    public void FijarFechaInicio(DateTime fechaInicioNueva)
+    {
+        if (Dependencias.Any())
+        {
+            DateTime fechaMinimaPorDependencias = CalcularFechaMinimaPorDependencias();
+            ValidarFechaInicioMayorAFechaMinimaPorDependencias(fechaInicioNueva, fechaMinimaPorDependencias);
+        }
+        ModificarFechaInicioMasTemprana(fechaInicioNueva);
+        FechaInicioFijadaManualmente = true;
+    }
+    
     public bool EsCritica()
     {
         return Holgura == 0;
@@ -161,6 +173,18 @@ public class Tarea
             }
         }
     }
+    
+    /*public void ActualizarEstadoPorFecha(DateTime fechaActual)
+{
+    if (Estado == EstadoTarea.Pendiente && FechaInicioMasTemprana < fechaActual.Date)
+    {
+        Estado = EstadoTarea.Atrasada;
+    }
+    else if (Estado == EstadoTarea.Atrasada && FechaInicioMasTemprana >= fechaActual.Date)
+    {
+        Estado = EstadoTarea.Pendiente;
+    }
+}*/
 
     public bool EsMiembro(Usuario usuario)
     {
@@ -240,7 +264,14 @@ public class Tarea
         if (objeto is null)
             throw new ExcepcionDominio(mensajeError);
     }
-
+    
+    private void ValidarFechaInicioMayorAFechaMinimaPorDependencias(DateTime fechaInicioNueva, DateTime fechaMinimaPorDependencias)
+    {
+        if(fechaInicioNueva < fechaMinimaPorDependencias)
+        {
+            throw new ExcepcionTarea(MensajesErrorDominio.FechaMenorAFechMinima);
+        }
+    }
     private void ValidarTransicionInvalida(EstadoTarea actual, EstadoTarea nuevo)
     {
         if ((actual == EstadoTarea.Completada && nuevo == EstadoTarea.Pendiente) ||
@@ -301,7 +332,24 @@ public class Tarea
             recurso.DecrementarCantidadDeTareasUsandolo();
         }
     }
+    
+    private DateTime CalcularFechaMinimaPorDependencias()
+    {
+        List<DateTime> fechas = new List<DateTime>();
 
+        foreach (Dependencia dependencia in Dependencias)
+        {
+            if (dependencia.Tipo == "FS")
+            {
+                fechas.Add(dependencia.Tarea.FechaFinMasTemprana.AddDays(1));
+            }
+            else if (dependencia.Tipo == "SS")
+            {
+                fechas.Add(dependencia.Tarea.FechaInicioMasTemprana);
+            }
+        }
+        return fechas.Max();
+    }
     private bool SePuedeRealizar()
     {
         bool dependenciasFSCompletas =
