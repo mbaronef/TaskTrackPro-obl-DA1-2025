@@ -112,7 +112,7 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
-        tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
+        tarea.FijarFechaInicio(nuevaFecha);
 
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         RecalcularCaminoCriticoYActualizarProyecto(proyecto);
