@@ -88,6 +88,18 @@ public class RecursoTests
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", null,1 );
     }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    public void DaErrorCrearRecursoConCapacidadCero()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 0);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    public void DaErrorCrearRecursoConCapacidadMenorACero()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", -3);
+    }
 
     [TestMethod]
     public void SeModificaNombreOk()
