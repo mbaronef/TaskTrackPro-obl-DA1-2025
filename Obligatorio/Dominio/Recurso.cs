@@ -78,19 +78,28 @@ public class Recurso
     {
         for (DateTime dia = fechaDesde; dia <= fechaHasta; dia = dia.AddDays(1))
         {
-            int usosEnElDia = RangosEnUso
-                .Where(r => r.FechaInicio <= dia && r.FechaFin >= dia)
-                .Sum(r => r.CantidadDeUsos);
+            int usosEnElDia = CantidadDeUsosPorDia(dia); 
             
-            int totalUsoDia = usosEnElDia + capacidadRequerida;
+            int totalUsosEnElDia = usosEnElDia + capacidadRequerida;
 
-            if (totalUsoDia > Capacidad)
+            if (totalUsosEnElDia > Capacidad)
             {
                 return false;
             }
         }
         return true;
     }
+    
+    /* public void AgregarRangoDeUso(DateTime fechaInicioNuevo, DateTime fechaFinNuevo, int cantidadNuevo, Tarea tarea)
+    {
+        if (!TieneCapacidadDisponible(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo))
+        {
+            throw new Exception("No hay capacidad suficiente en el recurso para ese rango de fechas.");
+        }
+
+        var nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo, tarea);
+        RangosEnUso.Add(nuevoRango);
+    }*/
 
     public void ModificarCapacidad(int nuevaCapacidad)
     {
@@ -108,6 +117,13 @@ public class Recurso
         return CantidadDeTareasUsandolo > 0;
     }
 
+    private int CantidadDeUsosPorDia(DateTime dia)
+    {
+        return RangosEnUso
+            .Where(r => r.FechaInicio <= dia && r.FechaFin >= dia)
+            .Sum(r => r.CantidadDeUsos);
+    }
+    
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
         if (string.IsNullOrWhiteSpace(texto))
