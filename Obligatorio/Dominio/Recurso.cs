@@ -94,12 +94,10 @@ public class Recurso
         return true;
     }
 
-    public void AgregarRangoDeUso(Tarea tarea, int cantidadNuevo)
+    public void AgregarRangoDeUso(DateTime fechaInicio, DateTime fechaFin, int cantidadNuevo)
     {
-        DateTime fechaInicioNuevo = tarea.FechaInicioMasTemprana;
-        DateTime fechaFinNuevo = tarea.FechaFinMasTemprana;
-        ValidarCapacidadDisponibleEnRango(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo);
-        RangoDeUso nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo);
+        ValidarCapacidadDisponibleEnRango(fechaInicio, fechaFin, cantidadNuevo);
+        RangoDeUso nuevoRango = new RangoDeUso(fechaInicio, fechaFin, cantidadNuevo);
         RangosEnUso.Add(nuevoRango);
     }
 

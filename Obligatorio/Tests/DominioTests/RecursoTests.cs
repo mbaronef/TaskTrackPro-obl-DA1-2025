@@ -1,11 +1,20 @@
+using System.Runtime.InteropServices.JavaScript;
 using Dominio;
 using Excepciones;
+using Excepciones.MensajesError;
 
 namespace Tests.DominioTests;
 
 [TestClass]
 public class RecursoTests
 {
+    [TestMethod]
+    public void Constructor_InicializaRangosEnUso()
+    {
+        Recurso recurso = new Recurso();
+        Assert.IsNotNull(recurso.RangosEnUso);
+    }
+    
     [TestMethod]
     public void ConstructorCreaRecursoYAsignaOk()
     {
@@ -144,9 +153,7 @@ public class RecursoTests
     public void SeAgregaUnRangoDeUsoCorrectamente()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
-        recurso.AgregarRangoDeUso(
-            new Tarea() { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1) },
-            2);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1),2);
         Assert.AreEqual(DateTime.Today, recurso.RangosEnUso.First().FechaInicio);
         Assert.AreEqual(DateTime.Today.AddDays(1), recurso.RangosEnUso.First().FechaFin);
         Assert.AreEqual(2, recurso.RangosEnUso.First().CantidadDeUsos);
@@ -157,12 +164,8 @@ public class RecursoTests
     public void DaErrorAlAgregarRangoDeUsoSiNoTieneCapacidadDisponible()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
-        recurso.AgregarRangoDeUso(
-            new Tarea() { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1 },
-            2);
-        recurso.AgregarRangoDeUso(
-            new Tarea() { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 2 },
-            1);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 4);
     }
 
     [TestMethod]
@@ -301,16 +304,8 @@ public class RecursoTests
     public void NoSePuedeDisminuirCapacidadSiSeHaceUsoDeCapacidadMaxima()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
-        recurso.AgregarRangoDeUso(
-            new Tarea()
-            {
-                FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1
-            }, 1);
-        recurso.AgregarRangoDeUso(
-            new Tarea()
-            {
-                FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 2
-            }, 1);
+        recurso.AgregarRangoDeUso(DateTime.Today,DateTime.Today.AddDays(1), 1);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1);
         recurso.ModificarCapacidad(1);
     }
 
@@ -318,8 +313,8 @@ public class RecursoTests
     public void SePuedeDisminuirCapacidadSiNoSeHaceUsoDeCapacidadMaxima()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",2);
-        recurso.AgregarRangoDeUso( new Tarea(){FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1}, 1);
-        recurso.AgregarRangoDeUso( new Tarea(){FechaInicioMasTemprana = DateTime.Today.AddDays(2), FechaFinMasTemprana = DateTime.Today.AddDays(3), Id = 2}, 1);
+        recurso.AgregarRangoDeUso( DateTime.Today, DateTime.Today.AddDays(1), 1);
+        recurso.AgregarRangoDeUso( DateTime.Today.AddDays(2), DateTime.Today.AddDays(3), 1);
         recurso.ModificarCapacidad(1);
     }
 
