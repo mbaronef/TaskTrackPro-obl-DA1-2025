@@ -7,9 +7,8 @@ namespace Servicios.Exportacion;
 
 public class ExportadorCsv : IExportadorProyectos
 {
-    private readonly IRepositorio<Proyecto> _repositorio; // Cambiar luego por IRepositorioProyectos
-
-    public ExportadorCsv(IRepositorio<Proyecto> repositorio)
+    private readonly IRepositorioProyectos _repositorio;
+    public ExportadorCsv(IRepositorioProyectos repositorio)
     {
         _repositorio = repositorio;
     }

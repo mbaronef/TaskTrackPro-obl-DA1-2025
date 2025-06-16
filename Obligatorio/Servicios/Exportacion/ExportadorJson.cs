@@ -8,9 +8,9 @@ namespace Servicios.Exportacion;
 
 public class ExportadorJson : IExportadorProyectos
 {
-    private readonly IRepositorio<Proyecto> _repositorio; // Cambiar luego por IRepositorioProyectos
+    private readonly IRepositorioProyectos _repositorio;
 
-    public ExportadorJson(IRepositorio<Proyecto> repositorio)
+    public ExportadorJson(IRepositorioProyectos repositorio)
     {
         _repositorio = repositorio;
     }

@@ -277,7 +277,7 @@ public class GestorProyectos : IGestorProyectos
         proyecto.AsignarLider(nuevoLider);
         
         string mensaje = MensajesNotificacion.LiderAsignado(proyecto.Nombre, nuevoLider.ToString());
-        _notificador.NotificarMuchos(proyecto.Miembros, mensaje);
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(), mensaje);
     }
     
     public void DesasignarLider(int idProyecto, UsuarioDTO solicitanteDTO)
@@ -291,7 +291,7 @@ public class GestorProyectos : IGestorProyectos
         proyecto.DesasignarLider(liderAEliminar);
         
         string mensaje = MensajesNotificacion.LiderDesasignado(proyecto.Nombre, liderAEliminar.ToString());
-        _notificador.NotificarMuchos(proyecto.Miembros, mensaje);
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(), mensaje);
     }
 
     public bool ExisteLiderEnProyecto(int idProyecto)

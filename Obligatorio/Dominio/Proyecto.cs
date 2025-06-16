@@ -11,7 +11,7 @@ public class Proyecto
     public string Descripcion { get; private set; }
     public virtual ICollection<Tarea> Tareas { get; }
     public Usuario Administrador { get; set; }
-    public Usuario? Lider { get; private set; }    public List<Usuario> Miembros { get; }
+    public Usuario? Lider { get; private set; } 
     public virtual ICollection<Usuario> Miembros { get; }
     public DateTime FechaInicio { get; set; } = DateTime.Today;
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MaxValue;
