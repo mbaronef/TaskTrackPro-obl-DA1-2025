@@ -1,3 +1,6 @@
+using Excepciones;
+using Excepciones.MensajesError;
+
 namespace Dominio;
 
 public class RecursoNecesario
@@ -12,7 +15,14 @@ public class RecursoNecesario
 
     public RecursoNecesario(Recurso recurso, int cantidad)
     {
+        ValidarRecursoNoNulo(recurso);
         Recurso = recurso;
         Cantidad = cantidad;
+    }
+
+    private void ValidarRecursoNoNulo(Recurso recurso)
+    {
+        if (recurso == null)
+            throw new ExcepcionRecurso(MensajesErrorDominio.RecursoNullParaAgregar);
     }
 }

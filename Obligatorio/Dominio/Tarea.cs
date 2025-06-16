@@ -82,7 +82,7 @@ public class Tarea
 
     public void AsignarRecurso(Recurso recurso)
     {
-        ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullEnTarea);
+        ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullParaAgregar);
         VerificarRecursoNoEstaAgregado(recurso);
         
         RecursosNecesarios.Add(recurso);
