@@ -16,8 +16,15 @@ public class RecursoNecesario
     public RecursoNecesario(Recurso recurso, int cantidad)
     {
         ValidarRecursoNoNulo(recurso);
+        ValidarCantidadMayorACero(cantidad);
         Recurso = recurso;
         Cantidad = cantidad;
+    }
+
+    private void ValidarCantidadMayorACero(int cantidad)
+    {
+        if (cantidad <= 0)
+            throw new ExcepcionRecurso(MensajesErrorDominio.CantidadMayorACero);
     }
 
     private void ValidarRecursoNoNulo(Recurso recurso)
