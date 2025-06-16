@@ -444,6 +444,20 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
         Assert.AreEqual("Nueva descripción por líder", tarea.Descripcion);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void ModificarDescripcion_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.ModificarDescripcionTarea(_admin, tarea.Id, proyecto.Id, "Nueva descripción");
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]

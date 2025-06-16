@@ -53,5 +53,7 @@ public static class MensajesErrorServicios
     
     public const string UsuarioNoEsAdminNiLider = "El usuario no tiene permisos para realizar esta acción (debe ser administrador o líder del proyecto).";
     public const string ProyectoNoComenzado = "El proyecto no ha comenzado aún.";
-    public static string PermisoParaCambiarDeEstado => "El usuario debe tener la tarea asignada o ser administrador del proyecto o ser lider del proyecto para realizar esta acción.";
+    public const string PermisoParaCambiarDeEstado = "El usuario debe tener la tarea asignada o ser administrador del proyecto o ser lider del proyecto para realizar esta acción.";
+
+    public const string TareaEnProceso = "No se puede modificar una tarea que está en proceso.";
 }

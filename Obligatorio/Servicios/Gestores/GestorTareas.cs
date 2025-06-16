@@ -73,15 +73,20 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
-        
-        if (tarea.Estado == EstadoTarea.EnProceso)
-            throw new ExcepcionTarea("No se puede modificar una tarea que está en proceso.");
+
+        VerificarTareaNoEsteEnProceso(tarea);
         
         tarea.ModificarTitulo(nuevoTitulo);
         
         _repositorioProyectos.ActualizarTarea(tarea);
         
         NotificarCambio("título", idTarea, idProyecto);
+    }
+
+    private void VerificarTareaNoEsteEnProceso(Tarea tarea)
+    {
+        if (tarea.Estado == EstadoTarea.EnProceso)
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaEnProceso);
     }
 
     public void ModificarDescripcionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto,
