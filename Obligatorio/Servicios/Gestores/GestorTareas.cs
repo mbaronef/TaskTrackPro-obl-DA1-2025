@@ -172,6 +172,7 @@ public class GestorTareas : IGestorTareas
 
         Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
 
         Tarea tareaDependencia = ObtenerTareaDominioPorId(idProyecto, idTareaDependencia);
         Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
