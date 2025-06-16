@@ -362,8 +362,6 @@ public class GestorTareas : IGestorTareas
     
     public void ValidarYAsignarRecurso(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO, int cantidad)
     {
-        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         Recurso recurso = ObtenerRecursoPorDTO(recursoDTO);
 

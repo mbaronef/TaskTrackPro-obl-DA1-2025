@@ -1024,4 +1024,64 @@ public class GestorTareasTests
 
         Assert.IsFalse(_gestorTareas.EsMiembroDeTarea(_admin, tarea.Id, proyecto.Id));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    public void ValidarYAsignarRecurso_LanzaExcepcionSiRecursoNoExiste()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        RecursoDTO recursoInexistente = new RecursoDTO { Id = 999 };
+        _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoInexistente, 1);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    public void ValidarYAsignarRecurso_LanzaExcepcionSiCantidadSuperaCapacidad()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
+        _repositorioRecursos.Agregar(recurso);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 10); 
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionConflicto))]
+    public void ValidarYAsignarRecurso_LanzaExcepcionSiHayConflictoEnFechas()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
+        recurso.AgregarRangoDeUso(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, 1); 
+        _repositorioRecursos.Agregar(recurso);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+    }
+    
+    [TestMethod]
+    public void ValidarYAsignarRecurso_AsignaRecursoCorrectamente()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2); 
+        _repositorioRecursos.Agregar(recurso);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
+        Assert.IsTrue(tarea.RecursosNecesarios.Any(r => r.Id == recurso.Id));
+    }
 }
