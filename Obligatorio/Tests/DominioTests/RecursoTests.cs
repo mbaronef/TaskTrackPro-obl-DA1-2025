@@ -182,6 +182,20 @@ public class RecursoTests
 
         Assert.AreEqual(0, recurso.RangosEnUso.Count);
     }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void EliminarRango_LanzaExcepcionSiNoExisteRango()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 5);
+
+        DateTime inicio = DateTime.Today.AddDays(1);
+        DateTime fin = DateTime.Today.AddDays(2);
+
+        recurso.AgregarRangoDeUso(inicio, fin, 2);
+
+        recurso.EliminarRango(inicio, fin, 1);
+    }
 
     [TestMethod]
     public void SeModificaNombreOk()
