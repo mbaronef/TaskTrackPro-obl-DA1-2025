@@ -144,9 +144,10 @@ public class RecursoTests
     public void SeAgregaUnRangoDeUsoCorrectamente()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
-        RangoDeUso rango = new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, new Tarea());
-        recurso.AgregarRangoDeUso(rango);
-        Assert.IsTrue(recurso.RangosEnUso.Contains(rango));
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, new Tarea());
+        Assert.AreEqual(DateTime.Today, recurso.RangosEnUso.First().FechaInicio);
+        Assert.AreEqual(DateTime.Today.AddDays(1), recurso.RangosEnUso.First().FechaFin);
+        Assert.AreEqual(2, recurso.RangosEnUso.First().CantidadDeUsos);
     }
 
     [TestMethod]

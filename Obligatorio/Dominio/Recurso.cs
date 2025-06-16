@@ -94,16 +94,16 @@ public class Recurso
         return true;
     }
 
-    /* public void AgregarRangoDeUso(DateTime fechaInicioNuevo, DateTime fechaFinNuevo, int cantidadNuevo, Tarea tarea)
+    public void AgregarRangoDeUso(DateTime fechaInicioNuevo, DateTime fechaFinNuevo, int cantidadNuevo, Tarea tarea)
     {
         if (!TieneCapacidadDisponible(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo))
         {
-            throw new Exception("No hay capacidad suficiente en el recurso para ese rango de fechas.");
+            throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadInsuficienteEnElRango);
         }
 
-        var nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo, tarea);
+        RangoDeUso nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo, tarea);
         RangosEnUso.Add(nuevoRango);
-    }*/
+    }
 
     public void ModificarCapacidad(int nuevaCapacidad)
     {
