@@ -76,6 +76,10 @@ public class Recurso
 
     public bool TieneCapacidadDisponible(DateTime fechaDesde, DateTime fechaHasta, int capacidadRequerida)
     {
+        ValidarCapacidadMayorACero(capacidadRequerida);
+        ValidarCapacidadMenorACapacidadRecurso(capacidadRequerida);
+        ValidarInicioAntesQueFin(fechaDesde, fechaHasta);
+        
         for (DateTime dia = fechaDesde; dia <= fechaHasta; dia = dia.AddDays(1))
         {
             int usosEnElDia = CantidadDeUsosPorDia(dia); 
@@ -89,7 +93,7 @@ public class Recurso
         }
         return true;
     }
-    
+
     /* public void AgregarRangoDeUso(DateTime fechaInicioNuevo, DateTime fechaFinNuevo, int cantidadNuevo, Tarea tarea)
     {
         if (!TieneCapacidadDisponible(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo))
@@ -137,6 +141,22 @@ public class Recurso
         if (capacidad <= 0)
         {
             throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadRecursoInvalida);
+        }
+    }
+    
+    private void ValidarCapacidadMenorACapacidadRecurso(int capacidadRequerida)
+    {
+        if (capacidadRequerida > Capacidad)
+        {
+            throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadRecursoInvalida);
+        }
+    }
+    
+    private void ValidarInicioAntesQueFin(DateTime fechaDesde, DateTime fechaHasta)
+    {
+        if (fechaDesde > fechaHasta)
+        {
+            throw new ExcepcionRecurso(MensajesErrorDominio.FechaInicioRangoMayorQueFin);
         }
     }
 

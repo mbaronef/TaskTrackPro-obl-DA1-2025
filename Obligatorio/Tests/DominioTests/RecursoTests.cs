@@ -115,6 +115,30 @@ public class RecursoTests
         recurso.RangosEnUso.Add(new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, new Tarea()));
         Assert.IsFalse(recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1),1));
     }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorSiSeValidaCapacidadConCapacidadRequeridaCero()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1),0);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorSiSeValidaCapacidadConCapacidadRequeridaMayorALaDelRecurso()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1),3);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorSiSeValidaCapacidadConFechaInicioMayorALaFechaFin()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.TieneCapacidadDisponible(DateTime.Today.AddDays(1), DateTime.Today, 1);
+    }
 
     [TestMethod]
     public void SeModificaNombreOk()
