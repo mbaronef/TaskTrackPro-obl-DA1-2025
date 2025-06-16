@@ -213,6 +213,14 @@ public class RecursoTests
         recurso.ModificarCapacidad(3);
         Assert.AreEqual(3, recurso.Capacidad);
     }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void ModificarCapacidadDaErrorSiSeModificaCapacidadCero()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",2);
+        recurso.ModificarCapacidad(0);
+    }
 
     [TestMethod]
     public void EqualsRetornaTrueSiLosIdsSonIguales()
