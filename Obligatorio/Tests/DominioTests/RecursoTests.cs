@@ -189,6 +189,60 @@ public class RecursoTests
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
         Assert.IsFalse(recurso.SeEstaUsando());
     }
+    
+    [TestMethod]
+    public void SeActualizaNombreCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso otroRecurso = new Recurso("Nuevo Nombre", "Tipo", "Descripcion");
+        otroRecurso.Id = recurso.Id;
+        
+        recurso.Actualizar(otroRecurso);
+        Assert.AreEqual("Nuevo Nombre", recurso.Nombre);
+    }
+    
+    [TestMethod]
+    public void SeActualizaTipoCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso otroRecurso = new Recurso("Nombre", "Nuevo tipo", "Descripcion");
+        otroRecurso.Id = recurso.Id;
+        
+        recurso.Actualizar(otroRecurso);
+        Assert.AreEqual("Nuevo tipo", recurso.Tipo);
+    }
+    
+    [TestMethod]
+    public void SeActualizaDescripcionCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso otroRecurso = new Recurso("Nombre", "Tipo", "Nueva descripción");
+        otroRecurso.Id = recurso.Id;
+        
+        recurso.Actualizar(otroRecurso);
+        Assert.AreEqual("Nueva descripción", recurso.Descripcion);
+    }
+    
+    [TestMethod]
+    public void SeActualizaCantidadDeTareasUsandoloCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso otroRecurso = new Recurso("Nombre", "Tipo", "Descripcion") { CantidadDeTareasUsandolo = 5 };
+        otroRecurso.Id = recurso.Id;
+        
+        recurso.Actualizar(otroRecurso);
+        Assert.AreEqual(5, recurso.CantidadDeTareasUsandolo);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void NoSePuedeActualizarRecursoConIdDiferente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
+        Recurso otroRecurso = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 2 };
+        
+        recurso.Actualizar(otroRecurso);
+    }
 
     [TestMethod]
     public void EqualsRetornaTrueSiLosIdsSonIguales()
@@ -245,5 +299,12 @@ public class RecursoTests
         string resultadoEsperado =
             $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'";
         Assert.AreEqual(resultadoEsperado, recurso.ToString());
+    }
+    
+    [TestMethod]
+    public void ConstructorSinParametros_CreaInstanciaCorrectamente()
+    {
+        var recurso = new Recurso();
+        Assert.IsNotNull(recurso);
     }
 }

@@ -5,13 +5,18 @@ using Servicios.CaminoCritico;
 using Excepciones;
 using Servicios.Gestores;
 using Servicios.Notificaciones;
-using Servicios.Utilidades;
+using Utilidades;
+using Tests.Contexto;
 
 namespace Tests.ServiciosTests;
 
 [TestClass]
 public class GestorRecursosTests
 {
+    private Notificador _notificador;
+    private CaminoCritico _caminoCritico;
+    
+    private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioRecursos _repositorioRecursos;
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
@@ -20,22 +25,14 @@ public class GestorRecursosTests
     private GestorProyectos _gestorProyectos;
     private UsuarioDTO _adminSistemaDTO;
 
-    private Notificador _notificador;
-    private CaminoCritico _caminoCritico;
-
     [TestInitialize]
     public void SetUp()
     {
-        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(RepositorioRecursos).GetField("_cantidadRecursos",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-
-        _notificador = new Notificador();
-        _caminoCritico = new CaminoCritico();
-
-        _repositorioRecursos = new RepositorioRecursos();
-        _repositorioUsuarios = new RepositorioUsuarios();
-        _repositorioProyectos = new RepositorioProyectos();
+        _repositorioRecursos = new RepositorioRecursos(_contexto);
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
+        _repositorioProyectos = new RepositorioProyectos(_contexto);
+        _notificador = new Notificador(_repositorioUsuarios);
+        _caminoCritico = new CaminoCritico(_notificador);
 
         _gestorProyectos =
             new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
@@ -48,7 +45,6 @@ public class GestorRecursosTests
 
     private UsuarioDTO CrearAdministradorSistemaDTO()
     {
-        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
@@ -69,7 +65,6 @@ public class GestorRecursosTests
 
     private UsuarioDTO CrearUsuarioNoAdminDTO()
     {
-        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
@@ -77,9 +72,14 @@ public class GestorRecursosTests
         return UsuarioDTO.DesdeEntidad(usuario); // dto
     }
 
-    private Tarea CrearTarea()
+    private void CrearYAgregarTarea(Proyecto proyecto, RecursoDTO recurso)
     {
-        return new Tarea("Un título", "una descripcion", 3, DateTime.Today.AddDays(10));
+        UsuarioDTO adminProyectoDTO = UsuarioDTO.DesdeEntidad(proyecto.Administrador);
+        
+        GestorTareas gestorTareas = new GestorTareas(_repositorioProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
+        TareaDTO tarea = TareaDTO.DesdeEntidad(new Tarea("Un título", "una descripcion", 3, DateTime.Today.AddDays(10)));
+        gestorTareas.AgregarTareaAlProyecto(proyecto.Id, adminProyectoDTO, tarea);
+        gestorTareas.AsignarRecursoATarea(adminProyectoDTO, tarea.Id, proyecto.Id, recurso);
     }
 
     private Proyecto CrearYAgregarProyecto(Usuario adminProyecto)
@@ -98,6 +98,13 @@ public class GestorRecursosTests
     {
         return new RecursoDTO()
             { Nombre = "Analista Senior", Tipo = "Humano", Descripcion = "Un analista Senior con experiencia" };
+    }
+    
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
     }
 
     [TestMethod]
@@ -387,10 +394,8 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarTipoDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
         Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción", DateTime.Today.AddDays(1), otroAdminProyecto,
             new List<Usuario>());
         _gestorProyectos.CrearProyecto(ProyectoDTO.DesdeEntidad(otroProyecto),
@@ -459,11 +464,9 @@ public class GestorRecursosTests
     public void AdminProyectoNoPuedeModificarDescripciónDeRecursosNoExclusivosDeSuProyecto()
     {
         Usuario adminProyecto = CrearAdministradorProyecto();
-        adminProyecto.Id = 1; // lo hace el repo de usuarios
         CrearYAgregarProyecto(adminProyecto);
 
         Usuario otroAdminProyecto = CrearAdministradorProyecto();
-        otroAdminProyecto.Id = 2; // lo hace el repo de usuarios
         Proyecto otroProyecto = new Proyecto("Otro Nombre", "Descripción", DateTime.Today.AddDays(1), otroAdminProyecto,
             new List<Usuario>());
         _gestorProyectos.CrearProyecto(ProyectoDTO.DesdeEntidad(otroProyecto),
@@ -517,9 +520,7 @@ public class GestorRecursosTests
 
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        Tarea tarea = CrearTarea();
-        tarea.AsignarRecurso(recurso.AEntidad());
-        proyecto.AgregarTarea(tarea);
+        CrearYAgregarTarea(proyecto, recurso);
 
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
 
@@ -560,9 +561,7 @@ public class GestorRecursosTests
 
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        Tarea tarea = CrearTarea();
-        tarea.AsignarRecurso(recurso.AEntidad());
-        proyecto.AgregarTarea(tarea);
+        CrearYAgregarTarea(proyecto, recurso);
 
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
 
@@ -603,9 +602,7 @@ public class GestorRecursosTests
 
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        Tarea tarea = CrearTarea();
-        tarea.AsignarRecurso(recurso.AEntidad());
-        proyecto.AgregarTarea(tarea);
+        CrearYAgregarTarea(proyecto, recurso);
 
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Otra descripción");
 

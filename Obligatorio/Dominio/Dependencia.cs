@@ -5,9 +5,10 @@ namespace Dominio;
 
 public class Dependencia
 {
-    public string Tipo { get; private set; }
-    public Tarea Tarea { get; private set; }
-
+    public string Tipo { get; set; }
+    public Tarea Tarea { get; set; }
+    
+    public Dependencia() { }
     public Dependencia(string tipo, Tarea tarea)
     {
         ValidarNoVacio(tipo);

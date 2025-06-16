@@ -1,7 +1,7 @@
 using Excepciones;
-using Servicios.Utilidades;
+using Utilidades;
 
-namespace Tests.ServiciosTests;
+namespace Tests.UtilidadesTests;
 
 [TestClass]
 public class UtilidadesContrasenaTests

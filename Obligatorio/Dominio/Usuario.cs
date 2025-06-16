@@ -11,11 +11,15 @@ public class Usuario
     private static readonly int _edadMaxima = 100;
 
     public int Id { get; set; }
-    public string Nombre { get; set; }
-    public string Apellido { get; set; }
-    public DateTime FechaNacimiento { get; set; }
+    public string Nombre { get;  set; }
+    public string Apellido { get;  set; }
+    public DateTime FechaNacimiento { get;  set; }
     public string Email { get; set; }
-    public List<Notificacion> Notificaciones { get; private set; }
+    public string ContrasenaEncriptada //Propiedad expuesta solo para el mapeo con EF, sin perder protección de la contraseña. 
+    {
+        set => _contrasenaEncriptada = value;
+    }
+    public virtual ICollection<Notificacion> Notificaciones { get; private set; }
     public bool EsAdministradorSistema { get; set; } = false;
     public bool EsAdministradorProyecto { get; set; } = false;
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
@@ -77,13 +81,25 @@ public class Usuario
 
     public void BorrarNotificacion(int idNotificacion)
     {
-        int indice = Notificaciones.FindIndex(n => n.Id == idNotificacion);
-        if (indice == -1)
+        Notificacion notificacionABorrar = Notificaciones.FirstOrDefault(n => n.Id == idNotificacion); 
+        if (notificacionABorrar == null)
         {
             throw new ExcepcionDominio(MensajesErrorDominio.NotificacionNoExiste);
         }
 
-        Notificaciones.RemoveAt(indice);
+        Notificaciones.Remove(notificacionABorrar);
+    }
+    
+    public void Actualizar(Usuario usuarioActualizado)
+    {
+        ValidarIdentidad(usuarioActualizado);
+        
+        CambiarEmail(usuarioActualizado.Email);
+        _contrasenaEncriptada = usuarioActualizado.ObtenerContrasenaEncriptada();
+        EsAdministradorProyecto = usuarioActualizado.EsAdministradorProyecto;
+        EsAdministradorSistema = usuarioActualizado.EsAdministradorSistema;
+        EstaAdministrandoUnProyecto = usuarioActualizado.EstaAdministrandoUnProyecto;
+        CantidadProyectosAsignados = usuarioActualizado.CantidadProyectosAsignados;
     }
 
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
@@ -113,6 +129,19 @@ public class Usuario
         if (!Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
         {
             throw new ExcepcionDominio(MensajesErrorDominio.EmailInvalido);
+        }
+    }
+    
+    private string ObtenerContrasenaEncriptada()
+    {
+        return _contrasenaEncriptada;
+    }
+
+    private void ValidarIdentidad(Usuario otroUsuario)
+    {
+        if (!Equals(otroUsuario))
+        {
+            throw new ExcepcionUsuario(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
         }
     }
 

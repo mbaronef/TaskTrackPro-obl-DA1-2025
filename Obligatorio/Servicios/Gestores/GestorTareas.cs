@@ -6,24 +6,22 @@ using Excepciones;
 using Excepciones.MensajesError;
 using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
-using Servicios.Utilidades;
+using Utilidades;
 
 namespace Servicios.Gestores;
 
 public class GestorTareas : IGestorTareas
 {
-    private static int _cantidadTareas;
-    
-    private readonly IGestorProyectos _gestorProyectos;
+    private readonly IRepositorioProyectos _repositorioProyectos;
     private IRepositorioUsuarios _repositorioUsuarios;
     private IRepositorio<Recurso> _repositorioRecursos;
     private readonly INotificador _notificador;
     private readonly ICalculadorCaminoCritico _caminoCritico;
 
-    public GestorTareas(IGestorProyectos gestorProyectos, IRepositorioUsuarios repositorioUsuarios, IRepositorio<Recurso> repositorioRecursos,
+    public GestorTareas(IRepositorioProyectos repositorioProyectos, IRepositorioUsuarios repositorioUsuarios, IRepositorio<Recurso> repositorioRecursos,
         INotificador notificador, ICalculadorCaminoCritico caminoCritico)
     {
-        _gestorProyectos = gestorProyectos;
+        _repositorioProyectos = repositorioProyectos;
         _repositorioUsuarios = repositorioUsuarios;
         _repositorioRecursos = repositorioRecursos;
         _notificador = notificador;
@@ -39,14 +37,11 @@ public class GestorTareas : IGestorTareas
 
         ValidarTareaIniciaDespuesDelProyecto(proyecto, nuevaTarea);
 
-        _cantidadTareas++;
-        nuevaTarea.Id = _cantidadTareas;
-
         proyecto.AgregarTarea(nuevaTarea);
 
-        _caminoCritico.CalcularCaminoCritico(proyecto);
+        RecalcularCaminoCriticoYActualizarProyecto(proyecto);
         
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.TareaAgregada(nuevaTarea.Id, proyecto.Nombre));
         
         nuevaTareaDTO.Id = nuevaTarea.Id;
@@ -62,9 +57,9 @@ public class GestorTareas : IGestorTareas
 
         proyecto.EliminarTarea(idTareaAEliminar);
 
-        _caminoCritico.CalcularCaminoCritico(proyecto);
+        RecalcularCaminoCriticoYActualizarProyecto(proyecto);
 
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.TareaEliminada(idTareaAEliminar, proyecto.Nombre));
     }
 
@@ -80,6 +75,9 @@ public class GestorTareas : IGestorTareas
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
         tarea.ModificarTitulo(nuevoTitulo);
+        
+        _repositorioProyectos.ActualizarTarea(tarea);
+        
         NotificarCambio("título", idTarea, idProyecto);
     }
 
@@ -90,6 +88,9 @@ public class GestorTareas : IGestorTareas
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
         tarea.ModificarDescripcion(nuevaDescripcion);
+        
+        _repositorioProyectos.ActualizarTarea(tarea);
+        
         NotificarCambio("descripción", idTarea, idProyecto);
     }
 
@@ -100,9 +101,9 @@ public class GestorTareas : IGestorTareas
         
         tarea.ModificarDuracion(nuevaDuracion);
 
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        _caminoCritico.CalcularCaminoCritico(proyecto);
-
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
+        RecalcularCaminoCriticoYActualizarProyecto(proyecto);
+        
         NotificarCambio("duración", idTarea, idProyecto);
     }
 
@@ -113,9 +114,9 @@ public class GestorTareas : IGestorTareas
         
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        _caminoCritico.CalcularCaminoCritico(proyecto);
-
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
+        RecalcularCaminoCriticoYActualizarProyecto(proyecto);
+        
         NotificarCambio("fecha de inicio", idTarea, idProyecto);
     }
 
@@ -125,25 +126,31 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         EstadoTarea nuevoEstado = (EstadoTarea)nuevoEstadoDTO;
 
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
+        
+        VerificarProyectoHayaComenzado(proyecto);
+
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(solicitante, tarea, proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
         tarea.CambiarEstado(nuevoEstado);
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
-        
-        _notificador.NotificarMuchos(proyecto.Miembros,
-            MensajesNotificacion.EstadoTareaModificado(idTarea, proyecto.Nombre, nuevoEstado));
 
         if (nuevoEstado == EstadoTarea.Completada)
         {
-            ActualizarEstadosTareasDelProyecto(proyecto);
+            ActualizarEstadosTareasDelProyecto(proyecto); //acá se modifican fechas en base a las recalculadas. Por ello no se puede llamar a RecalcularCaminoCriticoYActualizarProyecto();
         }
+        
+        _repositorioProyectos.Actualizar(proyecto);
+        proyecto.Tareas.ToList().ForEach(tarea => _repositorioProyectos.ActualizarTarea(tarea));
+        
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
+            MensajesNotificacion.EstadoTareaModificado(idTarea, proyecto.Nombre, nuevoEstado));
     }
-
+    
     public void AgregarDependenciaATarea(UsuarioDTO solicitanteDTO, int idTarea, int idTareaDependencia, int idProyecto,
         string tipoDependencia)
     {
@@ -151,23 +158,23 @@ public class GestorTareas : IGestorTareas
 
         Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
-        
+
         Tarea tareaDependencia = ObtenerTareaDominioPorId(idProyecto, idTareaDependencia);
         Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
-        
+
         tarea.AgregarDependencia(dependencia);
-        
+
         try
         {
-            _caminoCritico.CalcularCaminoCritico(proyecto);
+            RecalcularCaminoCriticoYActualizarProyecto(proyecto);
         }
         catch (ExcepcionCaminoCritico)
         {
             tarea.EliminarDependencia(dependencia.Tarea.Id);
             throw new ExcepcionTarea(MensajesErrorServicios.GeneraCiclos);
         }
-
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.DependenciaAgregada(tarea.Id, proyecto.Nombre, tipoDependencia, tareaDependencia.Id));
     }
 
@@ -180,9 +187,9 @@ public class GestorTareas : IGestorTareas
         
         tarea.EliminarDependencia(idTareaDependencia);
         
-        _caminoCritico.CalcularCaminoCritico(proyecto);
+        RecalcularCaminoCriticoYActualizarProyecto(proyecto);
         
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.DependenciaEliminada(idTareaDependencia, idTarea, proyecto.Nombre));
     }
 
@@ -197,6 +204,8 @@ public class GestorTareas : IGestorTareas
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.AsignarUsuario(nuevoMiembro);
         
+        _repositorioProyectos.ActualizarTarea(tarea);
+        
         NotificarAgregar($"miembro {nuevoMiembro.ToString()}", idTarea, idProyecto);
     }
 
@@ -210,6 +219,9 @@ public class GestorTareas : IGestorTareas
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.EliminarUsuario(miembro.Id);
+        
+        _repositorioProyectos.ActualizarTarea(tarea);
+        
         NotificarEliminar($"miembro {miembro.ToString()}", idTarea, idProyecto);
     }
 
@@ -222,6 +234,10 @@ public class GestorTareas : IGestorTareas
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.AsignarRecurso(nuevoRecurso);
+        
+        _repositorioProyectos.ActualizarTarea(tarea);
+        _repositorioRecursos.Actualizar(nuevoRecurso);
+        
         NotificarAgregar($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
     }
 
@@ -236,6 +252,9 @@ public class GestorTareas : IGestorTareas
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         tarea.EliminarRecurso(recurso.Id);
         
+        _repositorioProyectos.ActualizarTarea(tarea);
+        _repositorioRecursos.Actualizar(recurso);
+        
         NotificarEliminar($"recurso {recurso.Nombre}", idTarea, idProyecto);
     }
 
@@ -248,7 +267,7 @@ public class GestorTareas : IGestorTareas
 
     private Tarea ObtenerTareaDominioPorId(int idProyecto, int idTarea)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         Tarea tarea = proyecto.Tareas.FirstOrDefault(t => t.Id == idTarea);
 
         if (tarea == null)
@@ -259,9 +278,20 @@ public class GestorTareas : IGestorTareas
         return tarea;
     }
 
+    private Proyecto ObtenerProyectoPorId(int idProyecto)
+    {
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(idProyecto);
+
+        if (proyecto == null)
+        {
+            throw new ExcepcionProyecto(MensajesErrorServicios.ProyectoNoEncontrado);
+        }
+        return proyecto;
+    }
+
     private Proyecto ObtenerProyectoValidandoAdmin(int idProyecto, Usuario solicitante)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         
         PermisosUsuarios.VerificarUsuarioTengaPermisosDeAdminProyecto(solicitante, "solicitante");
         PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
@@ -271,7 +301,7 @@ public class GestorTareas : IGestorTareas
     
     private Proyecto ObtenerProyectoValidandoAdminOLider(int idProyecto, Usuario solicitante)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
 
         PermisosUsuarios.VerificarUsuarioEsAdminOLiderDelProyecto(proyecto, solicitante);
         
@@ -283,26 +313,32 @@ public class GestorTareas : IGestorTareas
         Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         return ObtenerTareaDominioPorId(proyecto.Id, idTarea);
     }
-    
 
+    private void RecalcularCaminoCriticoYActualizarProyecto(Proyecto proyecto)
+    {
+        _caminoCritico.CalcularCaminoCritico(proyecto);
+        _repositorioProyectos.Actualizar(proyecto);
+        proyecto.Tareas.ToList().ForEach(tarea => _repositorioProyectos.ActualizarTarea(tarea));
+    }
     private void NotificarCambio(string campo, int idTarea, int idProyecto)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.CampoTareaModificado(campo, idTarea, proyecto.Nombre));
     }
 
     private void NotificarEliminar(string campo, int idTarea, int idProyecto)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        _notificador.NotificarMuchos(proyecto.Miembros,
-            MensajesNotificacion.CampoTareaEliminado(campo, idTarea, proyecto.Nombre));
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
+
+    MensajesNotificacion.CampoTareaEliminado(campo, idTarea, proyecto.Nombre));
     }
 
     private void NotificarAgregar(string campo, int idTarea, int idProyecto)
     {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        _notificador.NotificarMuchos(proyecto.Miembros,
+        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.CampoTareaAgregado(campo, idTarea, proyecto.Nombre));
     }
 
@@ -325,7 +361,7 @@ public class GestorTareas : IGestorTareas
 
     private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
     {
-        proyecto.Tareas.ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
+        proyecto.Tareas.ToList().ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
     }
 
     private void ValidarTareaNoTieneSucesora(Proyecto proyecto, int idTarea)
@@ -341,6 +377,14 @@ public class GestorTareas : IGestorTareas
         if (nuevaTarea.FechaInicioMasTemprana < proyecto.FechaInicio)
         {
             throw new ExcepcionTarea(MensajesErrorServicios.FechaInicioTarea);
+        }
+    }
+    
+    private void VerificarProyectoHayaComenzado(Proyecto proyecto)
+    {
+        if (proyecto.FechaInicio > DateTime.Today)
+        {
+            throw new ExcepcionTarea(MensajesErrorServicios.ProyectoNoComenzado);
         }
     }
 

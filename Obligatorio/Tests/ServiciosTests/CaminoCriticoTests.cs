@@ -1,12 +1,17 @@
 using Dominio;
 using Excepciones;
+using Repositorios;
 using Servicios.CaminoCritico;
+using Servicios.Notificaciones;
+using Tests.Contexto;
 
 namespace Tests.ServiciosTests;
 
 [TestClass]
 public class CaminoCriticoTests
 {
+    private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
+    
     private CaminoCritico _caminoCritico;
     private Proyecto _proyecto;
     private Usuario _admin = new Usuario("Juan", "Pérez", new DateTime(1999, 2, 2), "email@email.com", "Contra5e{a");
@@ -19,7 +24,10 @@ public class CaminoCriticoTests
     [TestInitialize]
     public void SetUp()
     {
-        _caminoCritico = new CaminoCritico();
+        RepositorioUsuarios repositorioUsuarios = new RepositorioUsuarios(_contexto);
+        Notificador notificador = new Notificador(repositorioUsuarios);
+        
+        _caminoCritico = new CaminoCritico(notificador);
 
         _tarea1 = new Tarea("Tarea 1", "desc", 2, _fechaHoy);
         _tarea2 = new Tarea("Tarea 2", "desc", 3, _fechaHoy.AddDays(3));
@@ -38,6 +46,13 @@ public class CaminoCriticoTests
         _proyecto = new Proyecto("Nombre", "desc", _fechaHoy, _admin, new List<Usuario>());
     }
 
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
+    }
+    
     [TestMethod]
     public void CalculaCaminoCriticoOk()
     {

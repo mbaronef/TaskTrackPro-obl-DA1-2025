@@ -2,6 +2,7 @@ using Blazored.LocalStorage;
 using Excepciones;
 using DTOs;
 using Servicios.Gestores;
+using Servicios.Gestores.Interfaces;
 
 namespace Interfaz.ServiciosInterfaz;
 
@@ -14,9 +15,9 @@ public class LogicaSesion
     private const string CURRENT_USER = "current_user";
 
     private readonly ILocalStorageService _localStorage;
-    private readonly GestorUsuarios _gestorUsuarios;
+    private readonly IGestorUsuarios _gestorUsuarios;
 
-    public LogicaSesion(ILocalStorageService localStorage, GestorUsuarios gestorUsuarios)
+    public LogicaSesion(ILocalStorageService localStorage, IGestorUsuarios gestorUsuarios)
     {
         _localStorage = localStorage;
         _gestorUsuarios = gestorUsuarios;

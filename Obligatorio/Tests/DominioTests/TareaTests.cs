@@ -478,7 +478,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.AsignarUsuario(usuario1);
         tarea.AsignarUsuario(usuario2);
-        List<Usuario> asignados = tarea.UsuariosAsignados;
+        List<Usuario> asignados = tarea.UsuariosAsignados.ToList();
         Assert.AreEqual(2, asignados.Count);
         Assert.IsTrue(asignados.Any(u => u.Id == usuario1.Id));
         Assert.IsTrue(asignados.Any(u => u.Id == usuario2.Id));
@@ -494,7 +494,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.AsignarRecurso(necesario);
         tarea.AsignarRecurso(necesario2);
-        List<Recurso> lista = tarea.RecursosNecesarios;
+        List<Recurso> lista = tarea.RecursosNecesarios.ToList();
         Assert.AreEqual(2, lista.Count);
         Assert.IsTrue(lista.Contains(necesario));
         Assert.IsTrue(lista.Contains(necesario2));
@@ -610,6 +610,112 @@ public class TareaTests
     }
 
     [TestMethod]
+    public void SeActualizaTituloCorrectamente()
+    {
+        Tarea tarea = CrearTareaValida();
+        Tarea nuevaTarea = new Tarea("Nuevo Titulo", "Nueva Descripción", 10, _fechaInicio);
+        nuevaTarea.Id = tarea.Id;
+        
+        tarea.Actualizar(nuevaTarea);
+        Assert.AreEqual("Nuevo Titulo", tarea.Titulo);
+    }
+    
+    [TestMethod]
+    public void SeActualizaDescripcionCorrectamente()
+    {
+        Tarea tarea = CrearTareaValida();
+        Tarea nuevaTarea = new Tarea("Titulo", "Nueva Descripción", 10, _fechaInicio);
+        nuevaTarea.Id = tarea.Id;
+        
+        tarea.Actualizar(nuevaTarea);
+        Assert.AreEqual("Nueva Descripción", tarea.Descripcion);
+    }
+    
+    [TestMethod]
+    public void SeActualizaDuracionCorrectamente()
+    {
+        Tarea tarea = CrearTareaValida();
+        Tarea nuevaTarea = new Tarea("Titulo", "Nueva Descripción", 100, _fechaInicio);
+        nuevaTarea.Id = tarea.Id;
+        
+        tarea.Actualizar(nuevaTarea);
+        Assert.AreEqual(100, tarea.DuracionEnDias);
+    }
+    
+    [TestMethod]
+    public void SeActualizaFechaInicioCorrectamente()
+    {
+        Tarea tarea = CrearTareaValida();
+        Tarea nuevaTarea = new Tarea("Titulo", "Nueva Descripción", 100, _fechaInicio.AddDays(10));
+        nuevaTarea.Id = tarea.Id;
+        
+        tarea.Actualizar(nuevaTarea);
+        Assert.AreEqual(_fechaInicio.AddDays(10), tarea.FechaInicioMasTemprana);
+    }
+    
+    [TestMethod]
+    public void SeActualizaFechaFinCorrectamente()
+    {
+        Tarea tarea = CrearTareaValida();
+        Tarea nuevaTarea = new Tarea("Titulo", "Nueva Descripción", 100, _fechaInicio);
+        nuevaTarea.Id = tarea.Id;
+        
+        tarea.Actualizar(nuevaTarea);
+        Assert.AreEqual(_fechaInicio.AddDays(99), tarea.FechaFinMasTemprana);
+    }
+    
+    [TestMethod]
+    public void SeActualizaFechaEjecucionCorrectamente()
+    {
+        Tarea tarea = CrearTareaValida();
+        tarea.CambiarEstado(EstadoTarea.EnProceso);
+        Tarea nuevaTarea = new Tarea("Titulo", "Nueva Descripción", 100, DateTime.Today);
+        nuevaTarea.CambiarEstado(EstadoTarea.EnProceso);
+        
+        nuevaTarea.CambiarEstado(EstadoTarea.Completada);
+        nuevaTarea.Id = tarea.Id;
+        
+        tarea.Actualizar(nuevaTarea);
+        Assert.AreEqual(DateTime.Today, tarea.FechaDeEjecucion);
+    }
+    
+    [TestMethod]
+    public void SeActualizaHolguraCorrectamente()
+    {
+        Tarea tarea = CrearTareaValida();
+        Tarea nuevaTarea = new Tarea("Titulo", "Nueva Descripción", 100, DateTime.Today);
+        nuevaTarea.Holgura = 10;
+        nuevaTarea.Id = tarea.Id;
+        
+        tarea.Actualizar(nuevaTarea);
+        Assert.AreEqual(10, tarea.Holgura);
+    }
+    
+    [TestMethod]
+    public void SeActualizaEstadoCorrectamente()
+    {
+        Tarea tarea = CrearTareaValida();
+        Tarea nuevaTarea = new Tarea("Titulo", "Nueva Descripción", 100, DateTime.Today);
+        nuevaTarea.CambiarEstado(EstadoTarea.EnProceso);
+        nuevaTarea.Id = tarea.Id;
+        
+        tarea.Actualizar(nuevaTarea);
+        Assert.AreEqual(EstadoTarea.EnProceso, tarea.Estado);
+    }
+
+    [ExpectedException(typeof(ExcepcionTarea))]
+    [TestMethod]
+    public void NoSePuedeActualizarTareaDiferente()
+    {
+        Tarea tarea = CrearTareaValida();
+        tarea.Id = 1; //se hardcodea id por simplicidad
+        Tarea otraTarea = CrearTareaValida();
+        otraTarea.Id = 2; //id distinto al de la tarea original
+
+        tarea.Actualizar(otraTarea);
+    }
+
+    [TestMethod]
     public void EqualsRetornaTrueSiLosIdsSonIguales()
     {
         Tarea tarea1 = CrearTareaValida();
@@ -694,4 +800,12 @@ public class TareaTests
         Dependencia dependencia = new Dependencia("FS", tareaD);
         return dependencia;
     }
+    
+    [TestMethod]
+    public void ConstructorSinParametros_CreaInstanciaCorrectamente()
+    {
+        var tarea = new Tarea();
+        Assert.IsNotNull(tarea);
+    }
+    
 }

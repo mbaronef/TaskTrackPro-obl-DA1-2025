@@ -7,14 +7,21 @@ public class Proyecto
 {
     private static int _maximoCaracteresDescripcion = 400;
     public int Id { get; set; }
-    public string Nombre { get; set; }
-    public string Descripcion { get; set; }
-    public List<Tarea> Tareas { get; }
+    public string Nombre { get; private set; }
+    public string Descripcion { get; private set; }
+    public virtual ICollection<Tarea> Tareas { get; }
     public Usuario Administrador { get; set; }
     public Usuario? Lider { get; private set; }    public List<Usuario> Miembros { get; }
+    public virtual ICollection<Usuario> Miembros { get; }
     public DateTime FechaInicio { get; set; } = DateTime.Today;
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MaxValue;
 
+    public Proyecto()
+    {
+        Tareas = new List<Tarea>();
+        Miembros = new List<Usuario>();
+    }
+    
     public Proyecto(string nombre, string descripcion, DateTime fechaInicio, Usuario administrador,
         List<Usuario> miembros)
     {
@@ -198,6 +205,16 @@ public class Proyecto
         return Tareas.Any();
     }
 
+    public void Actualizar(Proyecto proyectoActualizado)
+    {
+        ValidarIdentidad(proyectoActualizado);
+
+        ModificarNombre(proyectoActualizado.Nombre);
+        ModificarDescripcion(proyectoActualizado.Descripcion);
+        FechaInicio = proyectoActualizado.FechaInicio; // se evita la validación para poder editar proyectos que ya iniciaron. Las validaciones al crear/actualizar se hacen en interfaz/servicios
+        FechaFinMasTemprana = proyectoActualizado.FechaFinMasTemprana;
+    }
+
     private Tarea BuscarTareaPorId(int id)
     {
         return Tareas.FirstOrDefault(t => t.Id == id);
@@ -313,6 +330,14 @@ public class Proyecto
         if (inicio == fin)
         {
             throw new ExcepcionDominio(MensajesErrorDominio.FechaInicioProyectoIgualFin);
+        }
+    }
+    
+    private void ValidarIdentidad(Proyecto otroProyecto)
+    {
+        if (!Equals(otroProyecto))
+        {
+            throw new ExcepcionProyecto(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
         }
     }
 

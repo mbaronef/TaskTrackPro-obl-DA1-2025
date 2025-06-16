@@ -1,6 +1,6 @@
 using Dominio;
 using Excepciones;
-using Servicios.Utilidades;
+using Utilidades;
 
 namespace Tests.DominioTests
 
@@ -168,6 +168,16 @@ namespace Tests.DominioTests
         }
 
         [TestMethod]
+        public void SeExponeElSeteoDeContrasenaEncriptada()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            string contrasena = "NuevaContraseña123";
+            string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena(contrasena);
+            usuario.ContrasenaEncriptada =contrasenaEncriptada;
+            Assert.IsTrue(usuario.Autenticar(contrasena));
+        }
+        
+        [TestMethod]
         public void SeCambiaContrasenaCorrectamente()
         {
             Usuario usuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "unemail@adinet.com", "xxxxxxx");
@@ -240,11 +250,10 @@ namespace Tests.DominioTests
         public void BorrarNotificacionInexistenteDaError()
         {
             Usuario usuario = CrearUsuarioValido();
-            string mensaje = "un mensje de notificación";
+            string mensaje = "un mensaje de notificación";
             usuario.RecibirNotificacion(mensaje);
             usuario.RecibirNotificacion(mensaje);
-            // se agregan notificaciones con id 1 e id 2
-            usuario.BorrarNotificacion(0);
+            usuario.BorrarNotificacion(1000);
         }
 
         [ExpectedException(typeof(ExcepcionDominio))]
@@ -255,6 +264,92 @@ namespace Tests.DominioTests
             usuario.BorrarNotificacion(2);
         }
 
+        [TestMethod]
+        public void SeActualizaElEmailDeUnUsuarioCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario usuarioConOtroEmail = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxxxx");
+            usuarioConOtroEmail.Id = usuario.Id;
+            
+            usuario.Actualizar(usuarioConOtroEmail);
+            Assert.AreEqual("otroemail@gmail.com", usuario.Email);
+        }
+        
+        [TestMethod]
+        public void SeActualizaLaContrasenaDeUnUsuarioCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            string nuevaContrasena = UtilidadesContrasena.ValidarYEncriptarContrasena("Admin123$");
+            Usuario usuarioConOtraContrasena = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", nuevaContrasena);
+            usuarioConOtraContrasena.Id = usuario.Id;
+            
+            usuario.Actualizar(usuarioConOtraContrasena);
+            Assert.IsTrue(usuario.Autenticar("Admin123$"));
+        }
+        
+        [TestMethod]
+        public void SeActualizaEsAdministradorProyectoDeUnUsuarioCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.Id = usuario.Id;
+            
+            nuevoUsuario.EsAdministradorProyecto = true;
+            
+            usuario.Actualizar(nuevoUsuario);
+            Assert.IsTrue(nuevoUsuario.EsAdministradorProyecto);
+        }
+        
+        [TestMethod]
+        public void SeActualizaEsAdministradorSistemaDeUnUsuarioCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.Id = usuario.Id;
+            
+            nuevoUsuario.EsAdministradorSistema = true;
+            
+            usuario.Actualizar(nuevoUsuario);
+            Assert.IsTrue(nuevoUsuario.EsAdministradorSistema);
+        }
+        
+        [TestMethod]
+        public void SeActualizaEstaAdministrandoUnProyectoCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.Id = usuario.Id;
+            
+            nuevoUsuario.EstaAdministrandoUnProyecto = true;
+            
+            usuario.Actualizar(nuevoUsuario);
+            Assert.IsTrue(nuevoUsuario.EstaAdministrandoUnProyecto);
+        }
+        
+        [TestMethod]
+        public void SeActualizaCantidadDeProyectosAsignadosCorrectamente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario nuevoUsuario = new Usuario("Juan", "Perez", _fechaNacimientoValida, "otroemail@gmail.com", "xxxx");
+            nuevoUsuario.Id = usuario.Id;
+            
+            nuevoUsuario.CantidadProyectosAsignados = 10;
+            
+            usuario.Actualizar(nuevoUsuario);
+            Assert.AreEqual(10, usuario.CantidadProyectosAsignados);
+        }
+        
+        [ExpectedException(typeof(ExcepcionUsuario))]
+        [TestMethod]
+        public void NoSePuedeActualizarUnUsuarioConIdDiferente()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Usuario usuarioConIdDiferente = CrearUsuarioValido();
+            usuarioConIdDiferente.Id = 2;
+            
+            usuario.Actualizar(usuarioConIdDiferente);
+        }
+        
         [TestMethod]
         public void EqualsRetornaTrueSiLosIdsSonIguales()
         {
@@ -317,6 +412,13 @@ namespace Tests.DominioTests
             Usuario usuario = CrearUsuarioValido();
             string resultadoEsperado = $"{usuario.Nombre} {usuario.Apellido} ({usuario.Email})";
             Assert.AreEqual(resultadoEsperado, usuario.ToString());
+        }
+        
+        [TestMethod]
+        public void ConstructorSinParametros_CreaInstanciaCorrectamente()
+        {
+            var usuario = new Usuario();
+            Assert.IsNotNull(usuario);
         }
     }
 }

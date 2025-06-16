@@ -1,41 +1,89 @@
 using Dominio;
+using Microsoft.EntityFrameworkCore;
 using Repositorios.Interfaces;
 
 namespace Repositorios;
 
 public class RepositorioUsuarios : IRepositorioUsuarios
 {
-    private List<Usuario> _usuarios;
-    private static int _cantidadUsuarios;
+    private SqlContext _contexto;
 
-    public RepositorioUsuarios()
+    public RepositorioUsuarios(SqlContext contexto)
     {
-        _usuarios = new List<Usuario>();
+        _contexto = contexto;
     }
 
     public void Agregar(Usuario objeto)
     {
-        objeto.Id = ++_cantidadUsuarios;
-        _usuarios.Add(objeto);
+        _contexto.Usuarios.Add(objeto);
+        _contexto.SaveChanges();
     }
 
     public Usuario ObtenerPorId(int id)
     {
-        return _usuarios.Find(usuario => usuario.Id == id);
+        return _contexto.Usuarios.
+            Include(u=>u.Notificaciones)
+            .FirstOrDefault(usuario => usuario.Id == id);
+    }
+    
+    public Usuario ObtenerUsuarioPorEmail(string email)
+    {
+        return _contexto.Usuarios.
+            Include(u=> u.Notificaciones)
+            .FirstOrDefault(usuario => usuario.Email == email);
     }
 
     public void Eliminar(int id)
     {
-        _usuarios.Remove(_usuarios.Find(usuario => usuario.Id == id));
+        Usuario usuarioAEliminar = _contexto.Usuarios.FirstOrDefault(usuario => usuario.Id == id);
+        _contexto.Usuarios.Remove(usuarioAEliminar);
+        _contexto.SaveChanges();
     }
-
+    
     public List<Usuario> ObtenerTodos()
     {
-        return _usuarios;
+        return _contexto.Usuarios
+            .Include(u=>u.Notificaciones)
+            .ToList();
     }
-
-    public Usuario ObtenerUsuarioPorEmail(string email)
+    
+    public void Actualizar(Usuario usuario)
     {
-        return _usuarios.Find(usuario => usuario.Email == email);
+        Usuario usuarioContexto = ObtenerPorId(usuario.Id);
+        
+        if (usuarioContexto != null)
+        {
+            usuarioContexto.Actualizar(usuario);
+            SincronizarNotificaciones(usuarioContexto, usuario);
+            _contexto.SaveChanges();
+        }
+    }
+    
+    private void SincronizarNotificaciones(Usuario usuarioContexto, Usuario usuario)
+    {
+        EliminarNotificacionesNoIncluidas(usuarioContexto, usuario);
+        AgregarNotificacionesNuevas(usuarioContexto, usuario);
+    }
+    
+    private void EliminarNotificacionesNoIncluidas(Usuario usuarioContexto, Usuario usuario)
+    {
+        foreach (Notificacion notificacionExistente in usuarioContexto.Notificaciones.ToList())
+        {
+            if (!usuario.Notificaciones.Any(n => n.Id == notificacionExistente.Id))
+            {
+                usuarioContexto.Notificaciones.Remove(notificacionExistente);
+            }
+        }
+    }
+    
+    private void AgregarNotificacionesNuevas(Usuario usuarioContexto, Usuario usuario)
+    {
+        foreach (Notificacion notificacionNueva in usuario.Notificaciones)
+        {
+            if (!usuarioContexto.Notificaciones.Any(n => n.Id == notificacionNueva.Id))
+            {
+                usuarioContexto.Notificaciones.Add(notificacionNueva);
+            }
+        }
     }
 }

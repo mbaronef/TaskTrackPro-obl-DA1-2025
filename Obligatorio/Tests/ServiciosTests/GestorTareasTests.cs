@@ -3,51 +3,53 @@ using DTOs;
 using Repositorios;
 using Excepciones;
 using Servicios.Gestores;
-using Servicios.Utilidades;
+using Utilidades;
 using Servicios.CaminoCritico;
 using Servicios.Notificaciones;
+using Tests.Contexto;
 
 namespace Tests.ServiciosTests;
 
 [TestClass]
 public class GestorTareasTests
 {
-    private GestorTareas _gestorTareas;
-    private GestorProyectos _gestorProyectos;
-    private UsuarioDTO _admin;
-    private UsuarioDTO _noAdmin;
+    private Notificador _notificador;
+    private CaminoCritico _caminoCritico;
+    
+    private SqlContext _contexto = SqlContextFactory.CrearContextoEnMemoria();
     private RepositorioUsuarios _repositorioUsuarios;
     private RepositorioProyectos _repositorioProyectos;
     private RepositorioRecursos _repositorioRecursos;
-    private Notificador _notificador;
-    private CaminoCritico _caminoCritico;
+    
+    private GestorTareas _gestorTareas;
+    private GestorProyectos _gestorProyectos;
+    
+    private UsuarioDTO _admin;
+    private UsuarioDTO _noAdmin;
+    
 
     [TestInitialize]
     public void Inicializar()
     {
-        // setup para reiniciar las variables estáticas, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(GestorTareas).GetField("_cantidadTareas",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-        typeof(RepositorioProyectos).GetField("_cantidadProyectos",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
-
-        _notificador = new Notificador();
-        _caminoCritico = new CaminoCritico();
-        _repositorioUsuarios = new RepositorioUsuarios();
-        _repositorioProyectos = new RepositorioProyectos();
-        _repositorioRecursos = new RepositorioRecursos();
+        _repositorioUsuarios = new RepositorioUsuarios(_contexto);
+        _repositorioProyectos = new RepositorioProyectos(_contexto);
+        _repositorioRecursos = new RepositorioRecursos(_contexto);
+        
+        _notificador = new Notificador(_repositorioUsuarios);
+        _caminoCritico = new CaminoCritico(_notificador);
+        
         _gestorProyectos =
             new GestorProyectos(_repositorioUsuarios, _repositorioProyectos, _notificador, _caminoCritico);
-        _gestorTareas = new GestorTareas(_gestorProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
+        _gestorTareas = new GestorTareas(_repositorioProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
+        
         _admin = CrearAdministradorProyecto();
         _noAdmin = CrearUsuarioNoAdmin();
     }
 
     private UsuarioDTO CrearAdministradorSistema()
     {
-        //simulación del gestor
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+        Usuario admin = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "email@gmail.com",
             contrasenaEncriptada);
         admin.EsAdministradorSistema = true;
         _repositorioUsuarios.Agregar(admin);
@@ -64,7 +66,6 @@ public class GestorTareasTests
 
     private UsuarioDTO CrearAdministradorProyecto()
     {
-        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
         Usuario adminProyecto = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
             contrasenaEncriptada);
@@ -75,9 +76,8 @@ public class GestorTareasTests
 
     private UsuarioDTO CrearUsuarioNoAdmin()
     {
-        //simulación del gestor 
         string contrasenaEncriptada = UtilidadesContrasena.ValidarYEncriptarContrasena("Contraseña#3");
-        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "unemail@gmail.com",
+        Usuario usuario = new Usuario("Juan", "Pérez", new DateTime(2000, 01, 01), "gmail@gmail.com",
             contrasenaEncriptada);
         _repositorioUsuarios.Agregar(usuario);
         return UsuarioDTO.DesdeEntidad(usuario); // dto
@@ -116,6 +116,13 @@ public class GestorTareasTests
         return RecursoDTO.DesdeEntidad(recurso);
     }
     
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
+    }
+    
     [TestMethod]
     public void Constructor_CreaGestorValido()
     {
@@ -132,8 +139,9 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea1);
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea2);
 
-        Assert.AreEqual(1, tarea1.Id);
-        Assert.AreEqual(2, tarea2.Id);
+        bool resultado = tarea1.Id < tarea2.Id;
+
+        Assert.IsTrue(resultado);
     }
 
     [TestMethod]
@@ -200,7 +208,9 @@ public class GestorTareasTests
 
         Assert.AreEqual(1, proyecto.Tareas.Count);
         Assert.IsTrue(proyecto.Tareas.Any(t => t.Id == tarea.Id));
-        Assert.AreEqual(1, tarea.Id);
+
+        bool resultado = tarea.Id > 0;
+        Assert.IsTrue(resultado);
     }
 
     [TestMethod]
@@ -549,6 +559,7 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_AdminProyectoCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
@@ -578,6 +589,7 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_MiembroTareaCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
@@ -596,6 +608,22 @@ public class GestorTareasTests
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void CambiarEstadoTarea_LanzaExcepcionSiProyectoNoHaComenzado()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin); // con fecha de inicio hoy +1
+        TareaDTO tarea = CrearTarea();
+        tarea.FechaInicioMasTemprana = proyecto.FechaInicio; 
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
     }
 
     [ExpectedException(typeof(ExcepcionTarea))]
@@ -642,6 +670,7 @@ public class GestorTareasTests
     public void SeActualizaEstadoCuandoSeCompletaUnaDependencia()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
 
         TareaDTO tareaD = CrearTarea();

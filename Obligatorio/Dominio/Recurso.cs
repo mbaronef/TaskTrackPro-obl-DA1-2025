@@ -6,12 +6,13 @@ namespace Dominio;
 public class Recurso
 {
     public int Id { get; set; }
-    public string Nombre { get; private set; }
-    public string Tipo { get; private set; }
-    public string Descripcion { get; private set; }
-    public Proyecto? ProyectoAsociado { get; private set; } = null;
-    public int CantidadDeTareasUsandolo { get; private set; } = 0;
+    public string Nombre { get; set; }
+    public string Tipo { get; set; }
+    public string Descripcion { get; set; }
+    public Proyecto? ProyectoAsociado { get; set; } = null;
+    public int CantidadDeTareasUsandolo { get; set; } = 0;
 
+    public Recurso() { }
     public Recurso(string nombre, string tipo, string descripcion)
     {
         ValidarAtributoNoVacio(nombre, "nombre");
@@ -74,11 +75,29 @@ public class Recurso
         return CantidadDeTareasUsandolo > 0;
     }
 
+    public void Actualizar(Recurso recursoActualizado)
+    {
+        ValidarIdentidad(recursoActualizado);
+        
+        ModificarNombre(recursoActualizado.Nombre);
+        ModificarTipo(recursoActualizado.Tipo);
+        ModificarDescripcion(recursoActualizado.Descripcion);
+        CantidadDeTareasUsandolo = recursoActualizado.CantidadDeTareasUsandolo;
+    }
+    
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)
     {
         if (string.IsNullOrWhiteSpace(texto))
         {
             throw new ExcepcionDominio(string.Format(MensajesErrorDominio.AtributoVacio, nombreAtributo));
+        }
+    }
+    
+    private void ValidarIdentidad(Recurso otroRecurso)
+    {
+        if (!Equals(otroRecurso))
+        {
+            throw new ExcepcionRecurso(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
         }
     }
 

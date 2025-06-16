@@ -74,4 +74,7 @@ public static class MensajesErrorDominio
 
     public const string DependenciaNoExisteEnTarea =
         "La dependencia no se encuentra dentro de la lista de dependencias.";
+    
+    public const string ActualizarEntidadNoCoincidente =
+        "No se puede actualizar la entidad por una distinta a la actual";
 }

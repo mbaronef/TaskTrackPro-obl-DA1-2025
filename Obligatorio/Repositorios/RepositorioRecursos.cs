@@ -1,36 +1,72 @@
+using System.Security.Cryptography;
 using Dominio;
+using Microsoft.EntityFrameworkCore;
 using Repositorios.Interfaces;
 
 namespace Repositorios;
 
 public class RepositorioRecursos : IRepositorio<Recurso>
 {
-    public List<Recurso> _recursos;
-    private static int _cantidadRecursos;
+    private SqlContext _contexto;
 
-    public RepositorioRecursos()
+    public RepositorioRecursos(SqlContext contexto)
     {
-        _recursos = new List<Recurso>();
+        _contexto = contexto;
     }
 
     public void Agregar(Recurso objeto)
     {
-        objeto.Id = ++_cantidadRecursos;
-        _recursos.Add(objeto);
+        _contexto.Recursos.Add(objeto);
+        _contexto.SaveChanges();
     }
 
     public Recurso ObtenerPorId(int id)
     {
-        return _recursos.Find(recurso => recurso.Id == id);
+        return _contexto.Recursos.
+            Include(r => r.ProyectoAsociado).
+            FirstOrDefault(recurso => recurso.Id == id);
     }
 
     public void Eliminar(int id)
     {
-        _recursos.Remove(_recursos.Find(recurso => recurso.Id == id));
+        Recurso recursoAEliminar = _contexto.Recursos.FirstOrDefault(recurso => recurso.Id == id);
+        _contexto.Remove(recursoAEliminar);
+        _contexto.SaveChanges();
     }
 
     public List<Recurso> ObtenerTodos()
     {
-        return _recursos;
+        return _contexto.Recursos.
+            Include(r=> r.ProyectoAsociado)
+            .ToList();
+    }
+    
+    public void Actualizar(Recurso recurso)
+    {
+        Recurso recursoContexto = ObtenerPorId(recurso.Id);
+        if (recursoContexto != null)
+        {
+            recursoContexto.Actualizar(recurso);
+            SincronizarProyectoAsociado(recurso, recursoContexto);
+            _contexto.SaveChanges();
+        }
+    }
+    
+    private void SincronizarProyectoAsociado(Recurso recurso, Recurso recursoContexto)
+    {
+        if (recurso.ProyectoAsociado != null)
+        {
+            Proyecto proyectoAsociadoContexto = _contexto.Proyectos
+                .FirstOrDefault(p => p.Id == recurso.ProyectoAsociado.Id);
+            AsociarRecursoAProyectoSiNoEsExclusivo(recursoContexto, proyectoAsociadoContexto);
+        }
+    }
+    
+    private void AsociarRecursoAProyectoSiNoEsExclusivo(Recurso recursoContexto, Proyecto proyectoAsociadoContexto)
+    {
+        if (!recursoContexto.EsExclusivo())
+        {
+            recursoContexto.AsociarAProyecto(proyectoAsociadoContexto);
+        }
     }
 }

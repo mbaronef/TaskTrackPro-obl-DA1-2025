@@ -14,9 +14,9 @@ public class Tarea
     public DateTime FechaDeEjecucion { get; private set; } = DateTime.MinValue;
     public EstadoTarea Estado { get; private set; } = EstadoTarea.Pendiente;
     public int Holgura { get; set; }
-    public List<Usuario> UsuariosAsignados { get; }
-    public List<Recurso> RecursosNecesarios { get; }
-    public List<Dependencia> Dependencias { get; }
+    public virtual ICollection<Usuario> UsuariosAsignados { get; }
+    public virtual ICollection<Recurso> RecursosNecesarios { get; }
+    public virtual ICollection<Dependencia> Dependencias { get; }
 
     public Tarea()
     {
@@ -24,12 +24,12 @@ public class Tarea
         RecursosNecesarios = new List<Recurso>();
         Dependencias = new List<Dependencia>();
     }
-
+    
     public Tarea(string titulo, string descripcion, int duracionEnDias, DateTime fechaInicioMasTemprana)
     {
         ValidarStringNoVacioNiNull(titulo, MensajesErrorDominio.TituloTareaVacio);
-        ValidarIntNoNegativoNiCero(duracionEnDias, MensajesErrorDominio.DuracionTareaInvalida);
         ValidarStringNoVacioNiNull(descripcion, MensajesErrorDominio.DescripcionVacia);
+        ValidarIntNoNegativoNiCero(duracionEnDias, MensajesErrorDominio.DuracionTareaInvalida);
         ValidarFechaInicio(fechaInicioMasTemprana);
         
         Titulo = titulo;
@@ -171,6 +171,20 @@ public class Tarea
     {
         return Dependencias.Any(d => d.Tarea.Id == idTarea);
     }
+    
+    public void Actualizar(Tarea tareaActualizada)
+    {
+        ValidarIdentidad(tareaActualizada);
+        
+        ModificarTitulo(tareaActualizada.Titulo);
+        ModificarDescripcion(tareaActualizada.Descripcion);
+        ModificarDuracion(tareaActualizada.DuracionEnDias);
+        FechaInicioMasTemprana = tareaActualizada.FechaInicioMasTemprana; // se evita la validación para poder editar tareas que ya iniciaron. Las validaciones al crear/actualizar se hacen en interfaz/servicios
+        FechaFinMasTemprana = tareaActualizada.FechaFinMasTemprana;
+        FechaDeEjecucion = tareaActualizada.FechaDeEjecucion;
+        Holgura = tareaActualizada.Holgura;
+        CambiarEstado(tareaActualizada.Estado);
+    }
 
     private void CalcularFechaFinMasTemprana()
     {
@@ -297,7 +311,13 @@ public class Tarea
         
         return dependenciasFSCompletas && dependenciasSSEnProcesoOCompletadas;
     }
-
+    private void ValidarIdentidad(Tarea otraTarea)
+    {
+        if (!Equals(otraTarea))
+        {
+            throw new ExcepcionTarea(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
+        }
+    }
     public override bool Equals(object obj)
     {
         if (obj is not Tarea otra) return false;

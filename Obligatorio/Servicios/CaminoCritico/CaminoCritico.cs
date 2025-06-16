@@ -7,13 +7,18 @@ namespace Servicios.CaminoCritico;
 
 public class CaminoCritico : ICalculadorCaminoCritico
 {
-    private static readonly INotificador _notificador = new Notificador();
+    private readonly INotificador _notificador;
+    
+    public CaminoCritico(INotificador notificador)
+    {
+        _notificador = notificador;
+    }
 
     public void CalcularCaminoCritico(Proyecto proyecto)
     {
         if (proyecto.TieneTareas())
         {
-            List<Tarea> tareas = proyecto.Tareas;
+            List<Tarea> tareas = proyecto.Tareas.ToList();
             List<Tarea> tareasOrdenTopologico = OrdenarTopologicamente(tareas);
 
             foreach (Tarea tarea in tareasOrdenTopologico)
@@ -29,7 +34,7 @@ public class CaminoCritico : ICalculadorCaminoCritico
             }
 
             proyecto.FechaFinMasTemprana = tareas.Max(t => t.FechaFinMasTemprana);
-            _notificador.NotificarMuchos(proyecto.Miembros,
+            _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
                 MensajesNotificacion.FechaFinMasTempranaActualizada(proyecto.Nombre, proyecto.FechaFinMasTemprana));
             Dictionary<Tarea, List<Tarea>> sucesoras = ObtenerSucesorasPorTarea(tareas);
             CalcularHolguras(tareasOrdenTopologico, sucesoras, proyecto);

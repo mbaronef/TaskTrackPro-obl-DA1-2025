@@ -1,5 +1,7 @@
 using Dominio;
 using Repositorios;
+using Microsoft.EntityFrameworkCore;
+using Tests.Contexto;
 
 namespace Tests.RepositoriosTests;
 
@@ -7,6 +9,7 @@ namespace Tests.RepositoriosTests;
 public class RepositorioRecursosTests
 {
     private RepositorioRecursos _repositorioRecursos;
+    private SqlContext _contexto;
     private Recurso _recurso;
     private Proyecto _proyecto;
     private Usuario _adminProyecto;
@@ -14,17 +17,25 @@ public class RepositorioRecursosTests
     [TestInitialize]
     public void SetUp()
     {
-        // setup para reiniciar la variable estática, sin agregar un método en la clase que no sea coherente con el diseño
-        typeof(RepositorioRecursos).GetField("_cantidadRecursos",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
+        _contexto = SqlContextFactory.CrearContextoEnMemoria();
 
-        _repositorioRecursos = new RepositorioRecursos();
+        _repositorioRecursos = new RepositorioRecursos(_contexto);
+        
         _recurso = new Recurso("nombre", "tipo", "descripcion");
-        _recurso.IncrementarCantidadDeTareasUsandolo();
-        _recurso.IncrementarCantidadDeTareasUsandolo();
-        _recurso.IncrementarCantidadDeTareasUsandolo(); // cantidad de tarea usandolo = 3
+    }
+    
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _contexto.Database.EnsureDeleted();
+        _contexto.Dispose();
+    }
+
+    public void InicializarProyecto()
+    {
         _adminProyecto = new Usuario("Juan", "Pérez", new DateTime(1998, 7, 6), "unEmail@gmail.com", "uNaC@ntr4seña");
         _adminProyecto.EsAdministradorProyecto = true;
+        
         List<Usuario> miembros = new List<Usuario>();
         _proyecto = new Proyecto("Proyecto", "hacer algo", DateTime.Today.AddDays(10), _adminProyecto, miembros);
     }
@@ -32,7 +43,7 @@ public class RepositorioRecursosTests
     [TestMethod]
     public void ConstructorCreaRepositorioOk()
     {
-        RepositorioRecursos repositorioRecursos = new RepositorioRecursos();
+        RepositorioRecursos repositorioRecursos = new RepositorioRecursos(_contexto);
         Recurso recurso = repositorioRecursos.ObtenerPorId(1);
         Assert.IsNull(recurso);
     }
@@ -71,5 +82,53 @@ public class RepositorioRecursosTests
         Assert.IsNotNull(recursos);
         Assert.AreEqual(1, recursos.Count);
         Assert.AreEqual(_recurso, recursos.Last());
+    }
+
+    [TestMethod]
+    public void SeActualizaUnRecursoSinProyectoAsociadoOk()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+
+        Recurso recursoCambios = new Recurso("Recurso Actualizado", "Nuevo Tipo", "Descripción actualizada")
+        {
+            CantidadDeTareasUsandolo = 10,
+            ProyectoAsociado = null
+        };
+        recursoCambios.Id = _recurso.Id;
+        
+        _repositorioRecursos.Actualizar(recursoCambios);
+        
+        Recurso recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual("Recurso Actualizado", recursoActualizado.Nombre);
+        Assert.AreEqual("Nuevo Tipo", recursoActualizado.Tipo);
+        Assert.AreEqual("Descripción actualizada", recursoActualizado.Descripcion);
+        Assert.AreEqual(10, recursoActualizado.CantidadDeTareasUsandolo);
+        Assert.IsNull(recursoActualizado.ProyectoAsociado);
+    }
+
+
+    [TestMethod]
+    public void SeActualizaUnRecursoConProyectoAsociadoOk()
+    {
+        InicializarProyecto();
+        _contexto.Proyectos.Add(_proyecto);
+        
+        _repositorioRecursos.Agregar(_recurso);
+        
+        Recurso recursoCambios = new Recurso("Recurso Actualizado", "Nuevo Tipo", "Descripción actualizada")
+        {
+            CantidadDeTareasUsandolo = 10,
+            ProyectoAsociado = _proyecto
+        };
+        recursoCambios.Id = _recurso.Id;
+        
+        _repositorioRecursos.Actualizar(recursoCambios);
+        
+        Recurso recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual("Recurso Actualizado", recursoActualizado.Nombre);
+        Assert.AreEqual("Nuevo Tipo", recursoActualizado.Tipo);
+        Assert.AreEqual("Descripción actualizada", recursoActualizado.Descripcion);
+        Assert.AreEqual(10, recursoActualizado.CantidadDeTareasUsandolo);
+        Assert.AreEqual(recursoActualizado.ProyectoAsociado, _proyecto);
     }
 }
