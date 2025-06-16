@@ -16,7 +16,7 @@ else
 {
     <div id="ganttDiagrama"></div>
     <p style="margin-top: 1rem; font-style: italic; color: #555;">
-        Las tareas del camino crítico están resaltadas en rojo.
+        Las tareas del camino crítico están resaltadas en rojo, y las tareas completadas en verde.
     </p>
 }
 
@@ -55,6 +55,7 @@ else
                 fechaInicio = t.FechaInicioMasTemprana.ToString("yyyy-MM-dd"),
                 fechaFin = t.FechaFinMasTemprana.AddDays(1).ToString("yyyy-MM-dd"), // añadimos un día para representar que la tarea se completa hasta el final del día
                 fechaFinReal = t.FechaFinMasTemprana.ToString("yyyy-MM-dd"),
+                estado = t.Estado,
                 holgura = t.Holgura
             }).ToList();
 
