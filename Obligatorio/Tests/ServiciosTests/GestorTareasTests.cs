@@ -921,6 +921,24 @@ public class GestorTareasTests
         tareaPrincipal = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tareaPrincipal.Id); // actualización
         Assert.AreEqual(0, tareaPrincipal.Dependencias.Count);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarDependencia_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        TareaDTO dependencia = CrearTarea();
+    
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, dependencia);
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea.Id, dependencia.Id, proyecto.Id, "FS");
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.EliminarDependenciaDeTarea(_admin, tarea.Id, dependencia.Id, proyecto.Id);
+    }
 
 
     [TestMethod]
