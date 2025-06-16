@@ -105,7 +105,15 @@ public class RecursoTests
     public void SeValidaSiUnRecursoTieneCapacidadDisponible()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
-        Assert.IsTrue(recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1)),2);
+        Assert.IsTrue(recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1),2));
+    }
+    
+    [TestMethod]
+    public void DaFalseSiUnRecursoNoTieneCapacidadDisponible()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.RangosEnUso.Add(new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, new Tarea()));
+        Assert.IsFalse(recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1),1));
     }
 
     [TestMethod]

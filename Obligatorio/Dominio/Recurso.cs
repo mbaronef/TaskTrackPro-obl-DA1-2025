@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using Excepciones;
 using Excepciones.MensajesError;
 
@@ -12,7 +13,7 @@ public class Recurso
     public Proyecto? ProyectoAsociado { get; private set; } = null;
     public int Capacidad { get; private set; } 
     public int CantidadDeTareasUsandolo { get; private set; } = 0;
-    public List<RangoDeUso> RangosEnUso { get; private set; }
+    public virtual ICollection<RangoDeUso> RangosEnUso { get; private set; }
 
     public Recurso()
     {
@@ -72,7 +73,25 @@ public class Recurso
         }
         CantidadDeTareasUsandolo--;
     }
-    
+
+    public bool TieneCapacidadDisponible(DateTime fechaDesde, DateTime fechaHasta, int capacidadRequerida)
+    {
+        for (DateTime dia = fechaDesde; dia <= fechaHasta; dia = dia.AddDays(1))
+        {
+            int usosEnElDia = RangosEnUso
+                .Where(r => r.FechaInicio <= dia && r.FechaFin >= dia)
+                .Sum(r => r.CantidadDeUsos);
+            
+            int totalUsoDia = usosEnElDia + capacidadRequerida;
+
+            if (totalUsoDia > Capacidad)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void ModificarCapacidad(int nuevaCapacidad)
     {
         ValidarCapacidadMayorACero(nuevaCapacidad);
