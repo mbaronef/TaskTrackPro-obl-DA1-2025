@@ -81,10 +81,30 @@ public class ControladorProyectos
     {
         return _gestorProyectos.EsAdministradorDeProyecto(usuario, idProyecto);
     }
+    
+    public bool EsLiderDeProyecto(UsuarioDTO usuario, int idProyecto)
+    {
+        return _gestorProyectos.EsLiderDeProyecto(usuario, idProyecto);
+    }
 
     public bool EsMiembroDeProyecto(int idUsuario, int idProyecto)
     {
         return _gestorProyectos.EsMiembroDeProyecto(idUsuario, idProyecto);
     }
-    
+
+    public void AsignarLider(int idProyecto, UsuarioDTO solicitante, int idNuevoLider)
+    {
+        _gestorProyectos.AsignarLider(idProyecto, solicitante, idNuevoLider);
+    }
+
+    public void DesasignarLider(int idProyecto, UsuarioDTO solicitanteDTO)
+    {
+        _gestorProyectos.DesasignarLider(idProyecto, solicitanteDTO);
+    }
+
+    public bool ExisteLiderEnProyecto(int idProyecto)
+    {
+        return _gestorProyectos.ExisteLiderEnProyecto(idProyecto);
+    }
+
 }

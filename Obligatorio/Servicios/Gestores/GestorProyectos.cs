@@ -233,7 +233,41 @@ public class GestorProyectos : IGestorProyectos
         Proyecto proyecto = ObtenerProyectoDominioPorId(proyectoDTO.Id);
         _caminoCritico.CalcularCaminoCritico(proyecto);
     }
+    
+    public void AsignarLider(int idProyecto, UsuarioDTO solicitanteDTO, int idNuevoLider)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+        PermisosUsuarios.VerificarUsuarioEsAdminDeEseProyectoOAdminSistema(solicitante, proyecto);
 
+        Usuario nuevoLider = ObtenerUsuarioPorDTO(new UsuarioDTO { Id = idNuevoLider });
+
+        proyecto.AsignarLider(nuevoLider);
+        
+        string mensaje = MensajesNotificacion.LiderAsignado(proyecto.Nombre, nuevoLider.ToString());
+        _notificador.NotificarMuchos(proyecto.Miembros, mensaje);
+    }
+    
+    public void DesasignarLider(int idProyecto, UsuarioDTO solicitanteDTO)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+        PermisosUsuarios.VerificarUsuarioEsAdminDeEseProyectoOAdminSistema(solicitante, proyecto);
+        
+        Usuario liderMiembros = proyecto.Miembros.FirstOrDefault(m => m.EsLider == true);
+        Usuario liderAEliminar = ObtenerUsuarioPorDTO(new UsuarioDTO { Id =  liderMiembros.Id});
+        proyecto.DesasignarLider(liderAEliminar);
+        
+        string mensaje = MensajesNotificacion.LiderDesasignado(proyecto.Nombre, liderAEliminar.ToString());
+        _notificador.NotificarMuchos(proyecto.Miembros, mensaje);
+    }
+
+    public bool ExisteLiderEnProyecto(int idProyecto)
+    {
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+        if (proyecto.Lider == null) return false;
+        return true;
+    }
     public bool EsAdministradorDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)
     {
         Usuario usuario = ObtenerUsuarioPorDTO(usuarioDTO);
@@ -245,6 +279,13 @@ public class GestorProyectos : IGestorProyectos
     {
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
         return proyecto.EsMiembro(idUsuario);
+    }
+
+    public bool EsLiderDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)
+    {
+        Usuario usuario = ObtenerUsuarioPorDTO(usuarioDTO);
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+        return proyecto.EsLider(usuario);
     }
 
     public Proyecto ObtenerProyectoDominioPorId(int id)
@@ -285,4 +326,6 @@ public class GestorProyectos : IGestorProyectos
 
         return usuario;
     }
+    
+    
 }

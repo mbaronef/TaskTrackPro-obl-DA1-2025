@@ -35,11 +35,11 @@ else
             </div>
         }
 
-        @if (proyecto.Tareas.Count == 0 && (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || Sesion.EsAdminSistema()))
+        @if (proyecto.Tareas.Count == 0 && (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || Sesion.EsAdminSistema() || ControladorProyectos.EsLiderDeProyecto(Sesion.UsuarioLogueado, proyecto.Id)))
         {
             <p>Aún no hay tareas en el proyecto.</p>
         }
-        else if (proyecto.Tareas.Count == 0 && ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, proyecto.Id))
+        else if (proyecto.Tareas.Count > 0 && ControladorProyectos.EsMiembroDeProyecto(Sesion.UsuarioLogueado.Id, proyecto.Id) && !proyecto.Tareas.Any(t => t.UsuariosAsignados.Any(u => u.Id == Sesion.UsuarioLogueado.Id)))
         {
             <p>Aún no tienes tareas asignadas</p>
         }
@@ -48,7 +48,7 @@ else
         {
             @foreach (var tarea in proyecto.Tareas)
             {
-                @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || ControladorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id) || Sesion.EsAdminSistema())
+                @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || ControladorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id) || Sesion.EsAdminSistema() || ControladorProyectos.EsLiderDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
                 {
                     var collapseId = $"collapseTarea{tarea.Id}";
 
@@ -101,7 +101,7 @@ else
                                     <p><strong>Aún no hay miembros asignados</strong></p>
                                 }
                             </div>
-                            @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada)
+                            @if ((ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) || ControladorProyectos.EsLiderDeProyecto(Sesion.UsuarioLogueado, proyecto.Id)) && tarea.Estado != EstadoTareaDTO.Completada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
                                     <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
@@ -511,36 +511,38 @@ else
                 }
 
                 <!-- Agregar recurso -->
-                <EditForm Model="recursoAsignacionDto" OnValidSubmit="AgregarRecurso"
-                          OnInvalidSubmit="MostrarErroresValidacion">
-                    <DataAnnotationsValidator/>
-                    <ValidationSummary class="d-none"/>
+                @if (Sesion.UsuarioLogueado != null && proyecto != null && ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
+                {
+                    <EditForm Model="recursoAsignacionDto" OnValidSubmit="AgregarRecurso"
+                              OnInvalidSubmit="MostrarErroresValidacion">
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary class="d-none"/>
 
-                    <fieldset class="border rounded-3 p-3 mb-4">
-                        <legend class="float-none w-auto px-2 fs-6 text-muted mb-0">Agregar recurso</legend>
+                        <fieldset class="border rounded-3 p-3 mb-4">
+                            <legend class="float-none w-auto px-2 fs-6 text-muted mb-0">Agregar recurso</legend>
 
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-9">
-                                <label class="form-label fw-semibold">Recurso necesario</label>
-                                <select class="form-select" @bind="recursoAsignacionDto.Id">
-                                    <option disabled selected value="0">Seleccione un recurso</option>
-                                    @foreach (var r in recursosProyecto)
-                                    {
-                                        <option value="@r.Id">Nombre: '@r.Nombre', tipo: '@r.Tipo', descripción:
-                                            '@r.Descripcion'
-                                        </option>
-                                    }
-                                </select>
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-9">
+                                    <label class="form-label fw-semibold">Recurso necesario</label>
+                                    <select class="form-select" @bind="recursoAsignacionDto.Id">
+                                        <option disabled selected value="0">Seleccione un recurso</option>
+                                        @foreach (var r in recursosProyecto)
+                                        {
+                                            <option value="@r.Id">Nombre: '@r.Nombre', tipo: '@r.Tipo', descripción:
+                                                '@r.Descripcion'
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-success w-100" type="submit">
+                                        <i class="bi bi-plus-circle me-1"></i> Agregar
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <button class="btn btn-success w-100" type="submit">
-                                    <i class="bi bi-plus-circle me-1"></i> Agregar
-                                </button>
-                            </div>
-                        </div>
-                    </fieldset>
-                </EditForm>
-
+                        </fieldset>
+                    </EditForm>
+                }
                 <!-- Lista de recursos asignados -->
                 <h6 class="fw-semibold mb-2">Recursos asignados</h6>
                 @if (tareaActual is not null && tareaActual.RecursosNecesarios.Any())
@@ -550,11 +552,14 @@ else
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span><i
-                                        class="bi bi-box-seam me-1 text-primary"></i>Nombre: '@recurso.Nombre', tipo: '@recurso.Tipo', descripción: '@recurso.Descripcion' </span>
-                                <button class="btn btn-outline-danger btn-sm"
-                                        @onclick="() => EliminarRecursoDeTarea(recurso.Id)">
-                                    <i class="bi bi-trash3"></i> Quitar
-                                </button>
+                                          class="bi bi-box-seam me-1 text-primary"></i>Nombre: '@recurso.Nombre', tipo: '@recurso.Tipo', descripción: '@recurso.Descripcion' </span>
+                                @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id))
+                                {
+                                    <button class="btn btn-outline-danger btn-sm"
+                                            @onclick="() => EliminarRecursoDeTarea(recurso.Id)">
+                                        <i class="bi bi-trash3"></i> Quitar
+                                    </button>
+                                }
                             </li>
                         }
                     </ul>

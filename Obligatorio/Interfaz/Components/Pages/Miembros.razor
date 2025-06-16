@@ -67,7 +67,11 @@ else
                 <td>
                     @if (miembro.Id == proyecto.Administrador.Id)
                     {
-                        <span class="badge bg-info text-dark">Administrador de proyecto</span>
+                        <span class="badge bg-info text-white ms-1">Administrador de proyecto</span>
+                    }
+                    @if (miembro.EsLider)
+                    {
+                        <span class="badge bg-success text-white ms-1">Líder de @miembro.CantidadProyectosLiderando proyecto(s).</span>
                     }
                 </td>
                 @if (esAdminProyecto && miembro.Id != proyecto.Administrador.Id)
@@ -93,6 +97,14 @@ else
         {
             <button class="btn btn-secondary" @onclick="MostrarModalCambioAdmin">Cambiar administrador de proyecto
             </button>
+        }
+        @if (Sesion.UsuarioLogueado.EsAdministradorSistema || esAdminProyecto)
+        {
+            <button class="btn btn-secondary" @onclick="MostrarModalAsignarLider">Asignar líder de proyecto</button>
+        }
+        @if (ControladorProyectos.ExisteLiderEnProyecto(proyecto.Id) && (Sesion.UsuarioLogueado.EsAdministradorSistema || esAdminProyecto))
+        {
+        <button class="btn btn-secondary" @onclick="DesasignarLiderProyecto">Eliminar líder de proyecto</button>
         }
     </div>
 
@@ -196,6 +208,39 @@ else
     }
 }
 
+@if (mostrarModalAsignarLider)
+{
+    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="modal-title">Líder del proyecto</h5>
+                    <button class="btn-close" @onclick="() => mostrarModalAsignarLider = false"></button>
+                </div>
+
+                <div class="mb-3">
+                    <label><strong>Nuevo Líder:</strong></label>
+                    <select class="form-select" @bind="idNuevoLider">
+                        <option value="">Seleccione un miembro</option>
+                        @foreach (var miembro in miembros)
+                        {
+                            <option value="@miembro.Id">@miembro.Nombre @miembro.Apellido (@miembro.Email)</option>
+                        }
+                    </select>
+                    @if (mostrarErrorAsignarLider)
+                    {
+                        <div class="alert alert-danger mt-2">@errorMensajeAsignarLider</div>
+                    }
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-success" @onclick="AsignarLider">Guardar cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     [Parameter] public int id { get; set; }
 
@@ -223,6 +268,11 @@ else
 
     private string errorEliminarMiembro = "";
     private bool mostrarErrorEliminarMiembro = false;
+    
+    private bool mostrarModalAsignarLider = false;
+    private int? idNuevoLider;
+    private bool mostrarErrorAsignarLider = false;
+    private string errorMensajeAsignarLider = "";
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -270,6 +320,41 @@ else
     private void CerrarModalAgregar()
     {
         mostrarModalAgregar = false;
+    }
+    
+    private void MostrarModalAsignarLider()
+    {
+        idNuevoLider = null;
+        mostrarErrorAsignarLider = false;
+        errorMensajeAsignarLider = "";
+        mostrarModalAsignarLider = true;
+    }
+    
+    private async void AsignarLider()
+    {
+        mostrarErrorAsignarLider = false;
+        errorMensajeAsignarLider = "";
+
+        if (idNuevoLider == null)
+        {
+            mostrarErrorAsignarLider = true;
+            errorMensajeAsignarLider = "Debe seleccionar un líder.";
+            return;
+        }
+
+        try
+        {
+            ControladorProyectos.AsignarLider(id, Sesion.UsuarioLogueado, idNuevoLider.Value);
+            mostrarModalAsignarLider = false;
+            CargarDatosDelProyecto(); 
+            await Sesion.ActualizarSesion();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            errorMensajeAsignarLider = ex.Message;
+            mostrarErrorAsignarLider = true;
+        }
     }
 
     private void AgregarMiembro()
@@ -333,6 +418,22 @@ else
         {
             errorEliminarMiembro = "Ocurrió un error inesperado.";
             mostrarErrorEliminarMiembro = true;
+        }
+    }
+
+    private async void DesasignarLiderProyecto()
+    {
+        try
+        {
+            ControladorProyectos.DesasignarLider(proyecto.Id, Sesion.UsuarioLogueado);
+            CargarDatosDelProyecto();
+            await Sesion.ActualizarSesion();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            // Podés mostrar un mensaje de error si querés
+            Console.WriteLine(ex.Message);
         }
     }
 

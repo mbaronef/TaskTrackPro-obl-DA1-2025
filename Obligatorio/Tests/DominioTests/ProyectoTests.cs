@@ -284,6 +284,32 @@ public class ProyectoTests
         _proyecto.AsignarMiembro(miembro);
         _proyecto.EliminarMiembro(_admin.Id); // Intenta eliminar al admin
     }
+    
+    [TestMethod]
+    public void EliminarMiembro_QueEsLider_DejaLiderEnNull()
+    {
+        Usuario lider = CrearMiembro(3);
+        _miembros.Add(lider);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(lider);
+
+        proyecto.EliminarMiembro(lider.Id);
+
+        Assert.IsNull(proyecto.Lider);
+    }
+
+    [TestMethod]
+    public void EliminarMiembro_QueEsLider_ActualizaEsLiderFalse()
+    {
+        Usuario lider = CrearMiembro(3);
+        _miembros.Add(lider);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(lider);
+
+        proyecto.EliminarMiembro(lider.Id);
+
+        Assert.IsFalse(lider.EsLider);
+    }
 
     //EsAdministrador
     [TestMethod]
@@ -651,4 +677,101 @@ public class ProyectoTests
         tarea.ModificarFechaInicioMasTemprana(inicio ?? DateTime.Today);
         return tarea;
     }
+    
+    [TestMethod]
+    public void Proyecto_SeCreaSinLiderPorDefecto()
+    {
+        DateTime fechaInicio = DateTime.Today.AddDays(1);
+        Proyecto proyecto = new Proyecto("Proyecto", "Descripcion", fechaInicio, _admin, _miembros);
+
+        Assert.IsNull(proyecto.Lider);
+    }
+    
+    [TestMethod]
+    public void AsignarLider_AsignaCorrectamente()
+    {
+        Usuario miembro = CrearMiembro(2);
+        _miembros.Add(miembro);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+
+        proyecto.AsignarLider(miembro);
+
+        Assert.AreEqual(miembro, proyecto.Lider);
+        Assert.IsTrue(miembro.EsLider);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AsignarLider_LanzaExcepcionSiUsuarioNoEsMiembro()
+    {
+        Usuario noMiembro = CrearMiembro(99);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+
+        proyecto.AsignarLider(noMiembro);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AsignarLider_LanzaExcepcionSiUsuarioEsNull()
+    {
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(null);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void AsignarLider_LanzaExcepcionSiUsuarioYaEsLider()
+    {
+        Usuario miembro = CrearMiembro(2);
+        _miembros.Add(miembro);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+
+        proyecto.AsignarLider(miembro);
+        proyecto.AsignarLider(miembro); 
+    }
+    
+    [TestMethod]
+    public void AsignarLider_CambiaLiderYActualizaRoles()
+    {
+        Usuario miembro1 = CrearMiembro(2);
+        Usuario miembro2 = CrearMiembro(3);
+        _miembros.AddRange(new[] { miembro1, miembro2 });
+
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(miembro1); // primer líder
+        proyecto.AsignarLider(miembro2); // cambio
+
+        Assert.AreEqual(miembro2, proyecto.Lider);
+        Assert.IsTrue(miembro2.EsLider);
+        Assert.IsFalse(miembro1.EsLider); 
+    }
+    
+    [TestMethod]
+    public void EsLider_DevuelveTrueSiUsuarioEsElLider()
+    {
+        Usuario miembro = CrearMiembro(2);
+        _miembros.Add(miembro);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(miembro);
+
+        bool resultado = proyecto.EsLider(miembro);
+
+        Assert.IsTrue(resultado);
+    }
+    
+    [TestMethod]
+    public void EsLider_DevuelveFalseSiUsuarioNoEsElLider()
+    {
+        Usuario miembro1 = CrearMiembro(2);
+        Usuario miembro2 = CrearMiembro(3);
+        _miembros.AddRange(new[] { miembro1, miembro2 });
+
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(miembro1);
+
+        bool resultado = proyecto.EsLider(miembro2);
+
+        Assert.IsFalse(resultado);
+    }
 }
+

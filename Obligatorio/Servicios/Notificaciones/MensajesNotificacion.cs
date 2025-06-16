@@ -24,6 +24,9 @@ public static class MensajesNotificacion
 
     public static string AdministradorProyectoModificado(string nombreProyecto, string nuevoAdmin) =>
         $"Se cambió el administrador del proyecto '{nombreProyecto}'. El nuevo administrador es '{nuevoAdmin}'.";
+    
+    public static string LiderAsignado(string nombreProyecto, string nuevoLider) =>
+         $"Se asignó a {nuevoLider} como líder del proyecto {nombreProyecto}.";
 
     public static string MiembroAgregado(string nombreProyecto, int idMiembro) =>
         $"Se agregó a un nuevo miembro (id {idMiembro}) al proyecto '{nombreProyecto}'.";
@@ -74,4 +77,7 @@ public static class MensajesNotificacion
 
     public static string UsuarioEliminado(string nombre, string apellido) =>
         $"Se eliminó un nuevo usuario. Nombre: {nombre}, Apellido: {apellido}";
+    
+    public static string LiderDesasignado(string nombre, string apellido) =>
+        $"Se eliminó el líder. Nombre: {nombre}, Apellido: {apellido}";
 }

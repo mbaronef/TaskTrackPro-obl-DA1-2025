@@ -11,7 +11,7 @@ public class Proyecto
     public string Descripcion { get; set; }
     public List<Tarea> Tareas { get; }
     public Usuario Administrador { get; set; }
-    public List<Usuario> Miembros { get; }
+    public Usuario? Lider { get; private set; }    public List<Usuario> Miembros { get; }
     public DateTime FechaInicio { get; set; } = DateTime.Today;
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MaxValue;
 
@@ -69,7 +69,11 @@ public class Proyecto
 
         ValidarNoNulo(usuarioAEliminar, MensajesErrorDominio.UsuarioNoEsMiembroDelProyecto);
         ValidarQueUsuarioAEliminarNoSeaAdministrador(usuarioAEliminar);
-
+        if (Lider != null && Lider.Id == usuarioAEliminar.Id)
+        {
+            usuarioAEliminar.RemoverRolLider();
+            Lider = null;
+        }
         Miembros.Remove(usuarioAEliminar);
         usuarioAEliminar.CantidadProyectosAsignados--;
     }
@@ -122,6 +126,64 @@ public class Proyecto
                 Administrador.EstaAdministrandoUnProyecto = false;
                 Administrador = usuario;
                 Administrador.EstaAdministrandoUnProyecto = true;
+            }
+        }
+    }
+    
+    public void AsignarLider(Usuario usuario)
+    {
+        ValidarLiderCandidato(usuario);
+        RemoverRolLiderAnteriorSiExiste();
+        Lider = usuario;
+        Lider.AsignarRolLider();
+        Lider.CantidadProyectosLiderando++;
+    }
+    
+    public void DesasignarLider(Usuario usuario)
+    {
+        if (!EsLider(usuario))
+            throw new ExcepcionDominio("El usuario no es el líder de este proyecto.");
+
+        usuario.CantidadProyectosLiderando--;
+
+        if (usuario.CantidadProyectosLiderando <= 0)
+        {
+            usuario.RemoverRolLider();
+        }
+
+        Lider = null;
+    }
+
+    
+    public bool EsLider(Usuario usuario)
+    {
+        return Lider != null && Lider.Equals(usuario);
+    }
+    
+    private void ValidarLiderCandidato(Usuario usuario)
+    {
+        ValidarNoNulo(usuario, MensajesErrorDominio.LiderNull);
+        ValidarUsuarioEnMiembros(usuario.Id);
+        ValidarLiderDistintoAlAnterior(usuario);
+    }
+
+    private void ValidarLiderDistintoAlAnterior(Usuario usuario)
+    {
+        if (Lider != null && Lider.Equals(usuario))
+        {
+            throw new ExcepcionDominio(MensajesErrorDominio.UsuarioYaEsLider);
+        }
+    }
+
+
+    private void RemoverRolLiderAnteriorSiExiste()
+    {
+        if (Lider != null)
+        {
+            Lider.CantidadProyectosLiderando--;
+            if (Lider.CantidadProyectosLiderando <= 0)
+            {
+                Lider.RemoverRolLider();
             }
         }
     }

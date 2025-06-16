@@ -56,7 +56,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
 
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
 
         ValidarTareaNoTieneSucesora(proyecto, idTareaAEliminar);
 
@@ -77,7 +77,7 @@ public class GestorTareas : IGestorTareas
     public void ModificarTituloTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, string nuevoTitulo)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
         tarea.ModificarTitulo(nuevoTitulo);
         NotificarCambio("título", idTarea, idProyecto);
@@ -87,7 +87,7 @@ public class GestorTareas : IGestorTareas
         string nuevaDescripcion)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
         tarea.ModificarDescripcion(nuevaDescripcion);
         NotificarCambio("descripción", idTarea, idProyecto);
@@ -96,7 +96,7 @@ public class GestorTareas : IGestorTareas
     public void ModificarDuracionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, int nuevaDuracion)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
         tarea.ModificarDuracion(nuevaDuracion);
 
@@ -109,7 +109,7 @@ public class GestorTareas : IGestorTareas
     public void ModificarFechaInicioTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, DateTime nuevaFecha)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
+        Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
@@ -128,9 +128,9 @@ public class GestorTareas : IGestorTareas
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
         
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
-        VerificarEstadoEditablePorUsuario(nuevoEstado);
-
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(solicitante, tarea, proyecto);
+        VerificarEstadoEditablePorUsuario(nuevoEstado);
         tarea.CambiarEstado(nuevoEstado);
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
@@ -149,7 +149,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
 
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         
         Tarea tareaDependencia = ObtenerTareaDominioPorId(idProyecto, idTareaDependencia);
@@ -175,7 +175,7 @@ public class GestorTareas : IGestorTareas
         int idProyecto)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         
         tarea.EliminarDependencia(idTareaDependencia);
@@ -190,7 +190,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Usuario nuevoMiembro = ObtenerUsuarioPorDTO(nuevoMiembroDTO);
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(nuevoMiembro.Id, proyecto);
 
@@ -204,7 +204,7 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Usuario miembro = ObtenerUsuarioPorDTO(miembroDTO);
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
 
@@ -268,12 +268,22 @@ public class GestorTareas : IGestorTareas
         
         return proyecto;
     }
-
-    private Tarea ObtenerTareaValidandoAdmin(Usuario solicitante, int idProyecto, int idTarea)
+    
+    private Proyecto ObtenerProyectoValidandoAdminOLider(int idProyecto, Usuario solicitante)
     {
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+
+        PermisosUsuarios.VerificarUsuarioEsAdminOLiderDelProyecto(proyecto, solicitante);
+        
+        return proyecto;
+    }
+    
+    private Tarea ObtenerTareaValidandoAdminOLider(Usuario solicitante, int idProyecto, int idTarea)
+    {
+        Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         return ObtenerTareaDominioPorId(proyecto.Id, idTarea);
     }
+    
 
     private void NotificarCambio(string campo, int idTarea, int idProyecto)
     {

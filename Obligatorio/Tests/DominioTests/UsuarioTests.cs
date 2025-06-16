@@ -72,6 +72,13 @@ namespace Tests.DominioTests
             DateTime fechaHace100Años = new DateTime(1925, 04, 30);
             Usuario usuario = new Usuario("Juan", "Perez", fechaHace100Años, "unemail@gmail.com", "Contrase#a3");
         }
+        
+        [TestMethod]
+        public void UsuarioNoEsLiderAlCrearse()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            Assert.IsFalse(usuario.EsLider);
+        }
 
         [TestMethod]
         public void UsuarioSeCreaConListaNotificacionesVacia()
@@ -140,6 +147,24 @@ namespace Tests.DominioTests
         {
             DateTime fechaNacimiento = new DateTime(2020, 1, 6);
             Usuario usuario = new Usuario("Juan", "Perez", fechaNacimiento, "unemail@hotmail.com", "xxxxx");
+        }
+        
+        [TestMethod]
+        public void AsignarRolLiderMarcaAlUsuarioComoLider()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            usuario.AsignarRolLider();
+            Assert.IsTrue(usuario.EsLider);
+        }
+        
+        
+        [TestMethod]
+        public void RemoverComoLiderMarcaUsuarioComoNoLider()
+        {
+            Usuario usuario = CrearUsuarioValido();
+            usuario.AsignarRolLider();
+            usuario.RemoverRolLider();
+            Assert.IsFalse(usuario.EsLider);
         }
 
         [TestMethod]

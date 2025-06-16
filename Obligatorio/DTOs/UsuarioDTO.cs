@@ -28,11 +28,15 @@ public class UsuarioDTO
 
     public bool EsAdministradorSistema { get; set; }
     public bool EsAdministradorProyecto { get; set; }
+    
+    public bool EsLider { get; set; }
 
     public List<NotificacionDTO> Notificaciones { get; private set; }
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
 
     public int CantidadProyectosAsignados { get; set; } = 0;
+    
+    public int CantidadProyectosLiderando { get; set; } = 0;
 
     public static UsuarioDTO DesdeEntidad(Usuario usuario)
     {
@@ -45,9 +49,11 @@ public class UsuarioDTO
             Email = usuario.Email,
             EsAdministradorSistema = usuario.EsAdministradorSistema,
             EsAdministradorProyecto = usuario.EsAdministradorProyecto,
+            EsLider = usuario.EsLider,
             Notificaciones = usuario.Notificaciones.Select(NotificacionDTO.DesdeEntidad).ToList(),
             EstaAdministrandoUnProyecto = usuario.EstaAdministrandoUnProyecto,
-            CantidadProyectosAsignados = usuario.CantidadProyectosAsignados
+            CantidadProyectosAsignados = usuario.CantidadProyectosAsignados,
+            CantidadProyectosLiderando = usuario.CantidadProyectosLiderando,
             // la contraseña se omite por seguridad.
         };
     }

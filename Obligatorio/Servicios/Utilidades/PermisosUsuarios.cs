@@ -47,6 +47,14 @@ public static class PermisosUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.PermisoDenegadoPorTipo(tipoUsuario));
         }
     }
+    
+    public static void VerificarUsuarioEsAdminOLiderDelProyecto(Proyecto proyecto, Usuario usuario)
+    {
+        if (proyecto.Administrador.Id != usuario.Id && (proyecto.Lider == null || proyecto.Lider.Id != usuario.Id))
+        {
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoEsAdminNiLider);
+        }
+    }
 
     public static void VerificarUsuarioADesasignarNoEsteAdmistrandoUnProyecto(Usuario usuario)
     {
@@ -89,7 +97,31 @@ public static class PermisosUsuarios
             throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioMiembroDeProyecto);
         }
     }
-    
+
+    public static void VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(Usuario usuario, Tarea tarea, Proyecto proyecto)
+    {
+        if (!tarea.EsMiembro(usuario) && proyecto.Administrador.Id != usuario.Id && (proyecto.Lider == null || proyecto.Lider.Id != usuario.Id))
+        {
+            throw new ExcepcionPermisos(MensajesErrorServicios.PermisoParaCambiarDeEstado);
+        }
+    }
+
+    public static void VerificarUsuarioEsAdminDeEseProyectoOAdminSistema(Usuario usuario, Proyecto proyecto)
+    {
+        if (!(proyecto.EsAdministrador(usuario) || usuario.EsAdministradorSistema))
+        {
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoAdministraProyectoOEsAdminSistema);
+        }
+    }
+
+    public static void VerificarUsuarioEsLiderDeEseProyecto(Usuario usuario, Proyecto proyecto)
+    {
+        if (!proyecto.EsLider(usuario))
+        {
+            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoEsLider);
+        }
+    }
+
     private static Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
         Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);

@@ -882,4 +882,83 @@ public class GestorProyectosTests
 
         Assert.AreEqual(3, tareasCriticas.Count); // Todas las tareas deberían estar en el camino crítico
     }
+    
+    [TestMethod]
+    public void AsignarLider_AsignaCorrectamenteElLider()
+    {
+        Usuario nuevoLider = CrearMiembro(); 
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(nuevoLider));
+
+        _gestor.AsignarLider(proyecto.Id, _adminDTO, nuevoLider.Id);
+
+        Proyecto proyectoActualizado = _gestor.ObtenerProyectoDominioPorId(proyecto.Id);
+
+        Assert.AreEqual(nuevoLider.Id, proyectoActualizado.Lider.Id);
+        Assert.IsTrue(proyectoActualizado.Lider.EsLider);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionPermisos))]
+    public void AsignarLider_LanzaExcepcionSiSolicitanteNoEsAdminDelProyecto()
+    {
+        Usuario nuevoLider = CrearMiembro();
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, UsuarioDTO.DesdeEntidad(nuevoLider));
+
+        _gestor.AsignarLider(proyecto.Id, UsuarioDTO.DesdeEntidad(nuevoLider), nuevoLider.Id);
+    }
+    
+    [TestMethod]
+    public void AsignarLider_NotificaATodosLosMiembrosDelProyecto()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+
+        Usuario nuevoLider = CrearMiembro();
+        UsuarioDTO nuevoLiderDTO = UsuarioDTO.DesdeEntidad(nuevoLider);
+
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, nuevoLiderDTO);
+
+        _gestor.AsignarLider(proyecto.Id, _adminDTO, nuevoLider.Id);
+
+        string mensajeEsperado = MensajesNotificacion.LiderAsignado(proyecto.Nombre, nuevoLider.ToString());
+
+        proyecto = _gestor.ObtenerProyectoPorId(proyecto.Id);
+
+        foreach (var m in proyecto.Miembros)
+        {
+            Assert.IsTrue(m.Notificaciones.Any(n => n.Mensaje == mensajeEsperado));
+        }
+    }
+    
+    [TestMethod]
+    public void EsLiderDeProyecto_DevuelveTrueSiEsLider()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        Usuario lider = CrearMiembro();
+        UsuarioDTO liderDTO = UsuarioDTO.DesdeEntidad(lider);
+
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, liderDTO);
+
+        _gestor.AsignarLider(proyecto.Id, _adminDTO, lider.Id);
+
+        bool esLider = _gestor.EsLiderDeProyecto(liderDTO, proyecto.Id);
+        Assert.IsTrue(esLider);
+    }
+
+    [TestMethod]
+    public void EsLiderDeProyecto_DevuelveFalseSiNoEsLider()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+
+        bool esLider = _gestor.EsLiderDeProyecto(UsuarioDTO.DesdeEntidad(_admin), proyecto.Id);
+        Assert.IsFalse(esLider);
+    }
 }

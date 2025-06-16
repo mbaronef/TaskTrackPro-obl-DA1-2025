@@ -20,6 +20,8 @@ public class Usuario
     public bool EsAdministradorProyecto { get; set; } = false;
     public bool EstaAdministrandoUnProyecto { get; set; } = false;
     public int CantidadProyectosAsignados { get; set; } = 0;
+    public bool EsLider { get; private set; } = false;
+    public int CantidadProyectosLiderando { get; set; } = 0;
 
     public Usuario()
     {
@@ -39,6 +41,16 @@ public class Usuario
         Email = email;
         _contrasenaEncriptada = contrasenaEncriptada;
         Notificaciones = new List<Notificacion>();
+    }
+    
+    public void AsignarRolLider()
+    {
+        EsLider = true;
+    }
+    
+    public void RemoverRolLider()
+    {
+        EsLider = false;
     }
 
     public void EstablecerContrasenaEncriptada(string contrasenaEncriptada)

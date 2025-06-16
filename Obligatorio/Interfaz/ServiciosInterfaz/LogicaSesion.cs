@@ -60,6 +60,17 @@ public class LogicaSesion
     {
         return UsuarioLogueado.EsAdministradorProyecto;
     }
+    
+    public bool EsLider()
+    {
+        return UsuarioLogueado.EsLider;
+    }
+
+
+    public bool EsLiderProyecto()
+    {
+        return UsuarioLogueado.EsLider;
+    }
 
     public async Task ActualizarSesion()
     {

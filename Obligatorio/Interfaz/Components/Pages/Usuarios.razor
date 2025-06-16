@@ -249,11 +249,15 @@ else
                         <td>
                             @if (usuario.EsAdministradorSistema)
                             {
-                                <span class="badge bg-warning text-dark">Administrador de sistema</span>
+                                <span class="badge bg-warning text-white">Administrador de sistema</span>
                             }
                             @if (usuario.EsAdministradorProyecto)
                             {
-                                <span class="badge bg-info text-dark ms-1">Administrador de proyecto</span>
+                                <span class="badge bg-info text-white ms-1">Administrador de proyecto</span>
+                            }
+                            @if (usuario.EsLider)
+                            {
+                                <span class="badge bg-success text-white ms-1">Líder de @usuario.CantidadProyectosLiderando proyecto(s).</span>
                             }
                         </td>
                         <td>
