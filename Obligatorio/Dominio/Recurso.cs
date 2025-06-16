@@ -104,9 +104,11 @@ public class Recurso
     public void ModificarCapacidad(int nuevaCapacidad)
     {
         ValidarCapacidadMayorACero(nuevaCapacidad);
+        
+        
+        
         Capacidad = nuevaCapacidad;
     }
-
     public bool EsExclusivo()
     {
         return ProyectoAsociado != null;

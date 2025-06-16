@@ -149,6 +149,15 @@ public class RecursoTests
         Assert.AreEqual(DateTime.Today.AddDays(1), recurso.RangosEnUso.First().FechaFin);
         Assert.AreEqual(2, recurso.RangosEnUso.First().CantidadDeUsos);
     }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorAlAgregarRangoDeUsoSiNoTieneCapacidadDisponible()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, new Tarea());
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1, new Tarea());
+    }
 
     [TestMethod]
     public void SeModificaNombreOk()
@@ -262,13 +271,23 @@ public class RecursoTests
         recurso.ModificarCapacidad(3);
         Assert.AreEqual(3, recurso.Capacidad);
     }
-    
+
     [ExpectedException(typeof(ExcepcionRecurso))]
     [TestMethod]
     public void ModificarCapacidadDaErrorSiSeModificaCapacidadCero()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",2);
         recurso.ModificarCapacidad(0);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void NoSePuedeDisminuirCapacidadSiSeHaceUsoDeCapacidadMaxima()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",2);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1, new Tarea());
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1, new Tarea());
+        recurso.ModificarCapacidad(1);
     }
 
     [TestMethod]
