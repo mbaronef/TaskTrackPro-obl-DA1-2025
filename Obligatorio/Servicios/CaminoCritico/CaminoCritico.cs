@@ -23,11 +23,7 @@ public class CaminoCritico : ICalculadorCaminoCritico
 
             foreach (Tarea tarea in tareasOrdenTopologico)
             {
-                if (!tarea.Dependencias.Any())
-                {
-                    tarea.ModificarFechaInicioMasTemprana(proyecto.FechaInicio);
-                }
-                else
+                if (tarea.Dependencias.Any())
                 {
                     CalcularFechasMasTempranas(tarea);
                 }
@@ -41,7 +37,7 @@ public class CaminoCritico : ICalculadorCaminoCritico
         }
     }
 
-    private static List<Tarea> OrdenarTopologicamente(List<Tarea> tareas)
+    private List<Tarea> OrdenarTopologicamente(List<Tarea> tareas)
     {
         List<Tarea> tareasOrdenadas = new List<Tarea>();
 
@@ -74,7 +70,7 @@ public class CaminoCritico : ICalculadorCaminoCritico
         return tareasOrdenadas;
     }
 
-    private static void InicializarGradosDeEntradaYSucesoras(List<Tarea> tareas, Dictionary<Tarea, int> gradosDeEntrada,
+    private void InicializarGradosDeEntradaYSucesoras(List<Tarea> tareas, Dictionary<Tarea, int> gradosDeEntrada,
         Dictionary<Tarea, List<Tarea>> sucesoras)
     {
         foreach (Tarea tarea in tareas)
@@ -94,28 +90,17 @@ public class CaminoCritico : ICalculadorCaminoCritico
         }
     }
 
-    private static void CalcularFechasMasTempranas(Tarea tarea)
+    private void CalcularFechasMasTempranas(Tarea tarea)
     {
-        List<DateTime> fechas = new List<DateTime>();
+        if (tarea.FechaInicioFijadaManualmente)
+            return; 
+        
+        DateTime fechaMasTemprana = ObtenerFechaMinimaDesdeDependencias(tarea);
 
-        foreach (Dependencia dependencia in tarea.Dependencias)
-        {
-            Tarea tareaAnterior = dependencia.Tarea;
-
-            if (dependencia.Tipo == "FS")
-            {
-                fechas.Add(tareaAnterior.FechaFinMasTemprana.AddDays(1));
-            }
-            else if (dependencia.Tipo == "SS")
-            {
-                fechas.Add(tareaAnterior.FechaInicioMasTemprana);
-            }
-        }
-
-        tarea.ModificarFechaInicioMasTemprana(fechas.Max());
+        tarea.ModificarFechaInicioMasTemprana(fechaMasTemprana);
     }
 
-    private static Dictionary<Tarea, List<Tarea>> ObtenerSucesorasPorTarea(List<Tarea> tareas)
+    private Dictionary<Tarea, List<Tarea>> ObtenerSucesorasPorTarea(List<Tarea> tareas)
     {
         Dictionary<Tarea, List<Tarea>> sucesoras = new Dictionary<Tarea, List<Tarea>>();
 
@@ -136,7 +121,7 @@ public class CaminoCritico : ICalculadorCaminoCritico
         return sucesoras;
     }
 
-    private static void CalcularHolguras(List<Tarea> tareasOrdenTopologico, Dictionary<Tarea, List<Tarea>> sucesoras,
+    private void CalcularHolguras(List<Tarea> tareasOrdenTopologico, Dictionary<Tarea, List<Tarea>> sucesoras,
         Proyecto proyecto)
     {
         for (int i = tareasOrdenTopologico.Count - 1; i >= 0; i--)
@@ -149,7 +134,7 @@ public class CaminoCritico : ICalculadorCaminoCritico
         }
     }
 
-    private static DateTime ObtenerFechaLimite(Tarea tarea, Dictionary<Tarea, List<Tarea>> sucesoras,
+    private DateTime ObtenerFechaLimite(Tarea tarea, Dictionary<Tarea, List<Tarea>> sucesoras,
         DateTime fechaFinProyecto)
     {
         if (!sucesoras[tarea].Any())
@@ -165,5 +150,26 @@ public class CaminoCritico : ICalculadorCaminoCritico
                     : sucesora.FechaInicioMasTemprana))
             .ToList();
         return posiblesLimites.Min();
+    }
+    
+    private DateTime ObtenerFechaMinimaDesdeDependencias(Tarea tarea)
+    {
+        List<DateTime> fechas = new List<DateTime>();
+        
+        foreach (Dependencia dependencia in tarea.Dependencias)
+        {
+            Tarea tareaAnterior = dependencia.Tarea;
+
+            if (dependencia.Tipo == "FS")
+            {
+                fechas.Add(tareaAnterior.FechaFinMasTemprana.AddDays(1));
+            }
+            else if (dependencia.Tipo == "SS")
+            {
+                fechas.Add(tareaAnterior.FechaInicioMasTemprana);
+            }
+        }
+
+        return fechas.Max();
     }
 }
