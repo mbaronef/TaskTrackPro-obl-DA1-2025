@@ -234,6 +234,7 @@ public class GestorTareas : IGestorTareas
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
         tarea.EliminarUsuario(miembro.Id);
         
         _repositorioProyectos.ActualizarTarea(tarea);
