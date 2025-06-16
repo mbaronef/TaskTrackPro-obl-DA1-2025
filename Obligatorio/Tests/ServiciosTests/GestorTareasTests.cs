@@ -995,6 +995,23 @@ public class GestorTareasTests
 
         Assert.IsTrue(tarea.UsuariosAsignados.Any(u => u.Id == _noAdmin.Id));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void AgregarMiembro_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        UsuarioDTO nuevoMiembro = CrearUsuarioNoAdmin();
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, nuevoMiembro);
+
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, nuevoMiembro);
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
