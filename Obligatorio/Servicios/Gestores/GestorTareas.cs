@@ -118,6 +118,8 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
+        VerificarTareaNoEsteEnProceso(tarea);
+
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
