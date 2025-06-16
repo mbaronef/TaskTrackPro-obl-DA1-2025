@@ -23,7 +23,7 @@ else
 @code {
     [Parameter] public int Id { get; set; }
     private ProyectoDTO proyecto;
-    private bool graficoDibujado = false;
+    //private bool graficoDibujado = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -45,7 +45,7 @@ else
             return; // Esperar hasta el segundo render
         }
 
-        if (proyecto != null && !graficoDibujado)
+        if (proyecto != null) //&& !graficoDibujado)
         {
             ControladorProyectos.CalcularCaminoCritico(proyecto);
             proyecto = ControladorProyectos.ObtenerProyectoPorId(proyecto.Id);
@@ -60,7 +60,7 @@ else
             }).ToList();
 
             await JSRuntime.InvokeVoidAsync("dibujarGanttConApex", "#ganttDiagrama", tareas);
-            graficoDibujado = true;
+            //graficoDibujado = true;
         }
     }
 
