@@ -174,18 +174,6 @@ public class Tarea
         }
     }
     
-    /*public void ActualizarEstadoPorFecha(DateTime fechaActual)
-{
-    if (Estado == EstadoTarea.Pendiente && FechaInicioMasTemprana < fechaActual.Date)
-    {
-        Estado = EstadoTarea.Atrasada;
-    }
-    else if (Estado == EstadoTarea.Atrasada && FechaInicioMasTemprana >= fechaActual.Date)
-    {
-        Estado = EstadoTarea.Pendiente;
-    }
-}*/
-
     public bool EsMiembro(Usuario usuario)
     {
         return UsuariosAsignados.Contains(usuario);
