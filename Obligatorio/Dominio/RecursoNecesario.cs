@@ -32,4 +32,15 @@ public class RecursoNecesario
         if (recurso == null)
             throw new ExcepcionRecurso(MensajesErrorDominio.RecursoNullParaAgregar);
     }
+    
+    public override bool Equals(object? otro)
+    {
+        RecursoNecesario otroRecurso = otro as RecursoNecesario;
+        return otroRecurso != null && Id == otroRecurso.Id;
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
 }
