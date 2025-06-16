@@ -26,4 +26,14 @@ public class RecursoNecesarioTests
         Assert.AreEqual(recurso, rn.Recurso);
         Assert.AreEqual(cantidad, rn.Cantidad);
     }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void Constructor_LanzaExcepcionSiRecursoEsNull()
+    {
+        Recurso recurso = null;
+        int cantidad = 2;
+
+        RecursoNecesario rn = new RecursoNecesario(recurso, cantidad);
+    }
 }
