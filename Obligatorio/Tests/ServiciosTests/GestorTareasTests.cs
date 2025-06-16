@@ -1256,6 +1256,23 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
         Assert.IsFalse(tarea.RecursosNecesarios.Any(recurso => recurso.Id == recursoDTO.Id));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recurso = CrearYAgregarRecurso();
+        TareaDTO tarea = CrearTarea();
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
