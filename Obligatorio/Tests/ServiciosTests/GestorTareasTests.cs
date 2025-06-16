@@ -801,6 +801,23 @@ public class GestorTareasTests
         Assert.IsTrue(tareaPrincipal.Dependencias.Any(dep =>
             dep.TareaPrevia.Id == tareaDependencia.Id && dep.Tipo == "FS"));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void AgregarDependencia_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        TareaDTO dependencia = CrearTarea();
+    
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, dependencia);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.AgregarDependenciaATarea(_admin, tarea.Id, dependencia.Id, proyecto.Id, "FS");
+    }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionTarea))]
