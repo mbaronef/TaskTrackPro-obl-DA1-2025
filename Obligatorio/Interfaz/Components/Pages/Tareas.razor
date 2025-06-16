@@ -128,7 +128,7 @@ else
                                     </button>
                                 </div>
                             }
-                            @if (ControladorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id) && !ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada && tarea.Estado != EstadoTareaDTO.Bloqueada)
+                            @if (proyectoComenzado && ControladorTareas.EsMiembroDeTarea(Sesion.UsuarioLogueado, tarea.Id, proyecto.Id) && !ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tarea.Estado != EstadoTareaDTO.Completada && tarea.Estado != EstadoTareaDTO.Bloqueada)
                             {
                                 <div class="d-flex justify-content-center mb-3 gap-2 flex-wrap">
                                     <button class="btn btn-primary btn-sm d-flex align-items-center gap-1"
