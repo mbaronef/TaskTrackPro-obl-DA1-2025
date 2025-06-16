@@ -97,4 +97,14 @@ public class ControladorProyectos
         _gestorProyectos.AsignarLider(idProyecto, solicitante, idNuevoLider);
     }
 
+    public void DesasignarLider(int idProyecto, UsuarioDTO solicitanteDTO)
+    {
+        _gestorProyectos.DesasignarLider(idProyecto, solicitanteDTO);
+    }
+
+    public bool ExisteLiderEnProyecto(int idProyecto)
+    {
+        return _gestorProyectos.ExisteLiderEnProyecto(idProyecto);
+    }
+
 }

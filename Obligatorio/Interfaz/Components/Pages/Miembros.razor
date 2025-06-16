@@ -102,6 +102,10 @@ else
         {
             <button class="btn btn-secondary" @onclick="MostrarModalAsignarLider">Asignar líder de proyecto</button>
         }
+        @if (ControladorProyectos.ExisteLiderEnProyecto(proyecto.Id) && (Sesion.UsuarioLogueado.EsAdministradorSistema || esAdminProyecto))
+        {
+        <button class="btn btn-secondary" @onclick="DesasignarLiderProyecto">Eliminar líder de proyecto</button>
+        }
     </div>
 
     @if (mostrarModalAgregar)
@@ -414,6 +418,22 @@ else
         {
             errorEliminarMiembro = "Ocurrió un error inesperado.";
             mostrarErrorEliminarMiembro = true;
+        }
+    }
+
+    private async void DesasignarLiderProyecto()
+    {
+        try
+        {
+            ControladorProyectos.DesasignarLider(proyecto.Id, Sesion.UsuarioLogueado);
+            CargarDatosDelProyecto();
+            await Sesion.ActualizarSesion();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            // Podés mostrar un mensaje de error si querés
+            Console.WriteLine(ex.Message);
         }
     }
 

@@ -26,6 +26,8 @@ public static class MensajesErrorServicios
     public const string UsuarioNoAdminProyecto = "El usuario a desasignar no es administrador de proyectos.";
     public const string UsuarioAdministrandoProyecto = "El usuario está administrando un proyecto.";
     public const string UsuarioNoAdministraProyectos = "No se encontró un proyecto administrado por ese usuario.";
+    public const string UsuarioNoAdministraProyectoOEsAdminSistema = "No se encontró un proyecto administrado por ese usuario, ni el usuario tiene permisos de administrador de sistema.";
+    public const string UsuarioNoEsLider = "El ususario no es lider del proyecto.";
 
     public const string NombreRepetido = "Ya existe ese nombre. Debe elegir uno distinto.";
     public const string EmailRepetido = "Ya existe un usuario registrado con ese email. Debe elegir uno distinto.";
@@ -53,5 +55,5 @@ public static class MensajesErrorServicios
     public static string UsuarioNoAsignadoALaTarea => "El usuario no tiene la tarea asignada.";
     
     public static string PermisoParaCambiarDeEstado => "El usuario debe tener la tarea asignada o ser administrador del proyecto o ser lider del proyecto para realizar esta acción.";
-
+    
 }

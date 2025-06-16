@@ -11,7 +11,6 @@ public class Proyecto
     public string Descripcion { get; set; }
     public List<Tarea> Tareas { get; }
     public Usuario Administrador { get; set; }
-    
     public Usuario? Lider { get; private set; }    public List<Usuario> Miembros { get; }
     public DateTime FechaInicio { get; set; } = DateTime.Today;
     public DateTime FechaFinMasTemprana { get; set; } = DateTime.MaxValue;
@@ -138,6 +137,13 @@ public class Proyecto
         Lider = usuario;
         Lider.AsignarRolLider();
     }
+    
+    public void DesasignarLider(Usuario usuario)
+    {
+        EsLider(usuario);
+        Lider.RemoverRolLider();
+    }
+
     
     public bool EsLider(Usuario usuario)
     {

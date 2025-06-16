@@ -46,4 +46,8 @@ public interface IGestorProyectos
     Proyecto ObtenerProyectoDominioPorId(int id);
 
     void AsignarLider(int idProyecto, UsuarioDTO solicitanteDTO, int idNuevoLider);
+
+    void DesasignarLider(int idProyecto, UsuarioDTO solicitanteDTO);
+
+    bool ExisteLiderEnProyecto(int idProyecto);
 }

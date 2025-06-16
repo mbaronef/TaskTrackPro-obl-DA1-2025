@@ -238,7 +238,7 @@ public class GestorProyectos : IGestorProyectos
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
-        PermisosUsuarios.VerificarUsuarioEsAdminProyectoDeEseProyecto(proyecto, solicitante);
+        PermisosUsuarios.VerificarUsuarioEsAdminDeEseProyectoOAdminSistema(solicitante, proyecto);
 
         Usuario nuevoLider = ObtenerUsuarioPorDTO(new UsuarioDTO { Id = idNuevoLider });
 
@@ -247,7 +247,27 @@ public class GestorProyectos : IGestorProyectos
         string mensaje = MensajesNotificacion.LiderAsignado(proyecto.Nombre, nuevoLider.ToString());
         _notificador.NotificarMuchos(proyecto.Miembros, mensaje);
     }
+    
+    public void DesasignarLider(int idProyecto, UsuarioDTO solicitanteDTO)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+        PermisosUsuarios.VerificarUsuarioEsAdminDeEseProyectoOAdminSistema(solicitante, proyecto);
+        
+        Usuario liderMiembros = proyecto.Miembros.FirstOrDefault(m => m.EsLider == true);
+        Usuario liderAEliminar = ObtenerUsuarioPorDTO(new UsuarioDTO { Id =  liderMiembros.Id});
+        proyecto.DesasignarLider(liderAEliminar);
+        
+        string mensaje = MensajesNotificacion.LiderDesasignado(proyecto.Nombre, liderAEliminar.ToString());
+        _notificador.NotificarMuchos(proyecto.Miembros, mensaje);
+    }
 
+    public bool ExisteLiderEnProyecto(int idProyecto)
+    {
+        Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
+        if (proyecto.Lider == null) return false;
+        return true;
+    }
     public bool EsAdministradorDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)
     {
         Usuario usuario = ObtenerUsuarioPorDTO(usuarioDTO);
@@ -267,7 +287,6 @@ public class GestorProyectos : IGestorProyectos
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
         return proyecto.EsLider(usuario);
     }
-
 
     public Proyecto ObtenerProyectoDominioPorId(int id)
     {

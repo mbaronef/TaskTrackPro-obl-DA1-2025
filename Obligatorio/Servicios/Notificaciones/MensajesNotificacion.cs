@@ -77,4 +77,7 @@ public static class MensajesNotificacion
 
     public static string UsuarioEliminado(string nombre, string apellido) =>
         $"Se eliminó un nuevo usuario. Nombre: {nombre}, Apellido: {apellido}";
+    
+    public static string LiderDesasignado(string nombre, string apellido) =>
+        $"Se eliminó el líder. Nombre: {nombre}, Apellido: {apellido}";
 }
