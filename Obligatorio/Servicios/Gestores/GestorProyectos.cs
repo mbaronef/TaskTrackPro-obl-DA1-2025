@@ -301,7 +301,10 @@ public class GestorProyectos : IGestorProyectos
     public bool ExisteLiderEnProyecto(int idProyecto)
     {
         Proyecto proyecto = ObtenerProyectoDominioPorId(idProyecto);
-        if (proyecto.Lider == null) return false;
+        if (proyecto.Lider == null)
+        {
+            return false;
+        }
         return true;
     }
     public bool EsAdministradorDeProyecto(UsuarioDTO usuarioDTO, int idProyecto)

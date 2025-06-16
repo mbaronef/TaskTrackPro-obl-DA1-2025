@@ -983,6 +983,24 @@ public class GestorProyectosTests
     }
     
     [TestMethod]
+    public void DesasignarLider_DesasignaElLiderCorrectamente()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        Usuario lider = CrearMiembro();
+        UsuarioDTO liderDTO = UsuarioDTO.DesdeEntidad(lider);
+
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, liderDTO);
+        _gestor.AsignarLider(proyecto.Id, _adminDTO, lider.Id);
+
+        _gestor.DesasignarLider(proyecto.Id, _adminDTO);
+
+        Proyecto proyectoDominio = _gestor.ObtenerProyectoDominioPorId(proyecto.Id); // actualización
+
+        Assert.IsNull(proyectoDominio.Lider);
+    }
+    
+    [TestMethod]
     public void EsLiderDeProyecto_DevuelveTrueSiEsLider()
     {
         ProyectoDTO proyecto = CrearProyectoCon(_admin);
@@ -1006,5 +1024,31 @@ public class GestorProyectosTests
 
         bool esLider = _gestor.EsLiderDeProyecto(UsuarioDTO.DesdeEntidad(_admin), proyecto.Id);
         Assert.IsFalse(esLider);
+    }
+
+    [TestMethod]
+    public void ExisteLiderEnProyecto_RetornaTrueSiExiste()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        Usuario lider = CrearMiembro();
+        UsuarioDTO liderDTO = UsuarioDTO.DesdeEntidad(lider);
+
+        _gestor.AgregarMiembroAProyecto(proyecto.Id, _adminDTO, liderDTO);
+
+        _gestor.AsignarLider(proyecto.Id, _adminDTO, lider.Id);
+        
+        bool ExisteLider = _gestor.ExisteLiderEnProyecto(proyecto.Id);
+        Assert.IsTrue(ExisteLider);
+    }
+    
+    [TestMethod]
+    public void ExisteLiderEnProyecto_RetornaFalseSiNoExiste()
+    {
+        ProyectoDTO proyecto = CrearProyectoCon(_admin);
+        _gestor.CrearProyecto(proyecto, _adminDTO);
+        
+        bool ExisteLider = _gestor.ExisteLiderEnProyecto(proyecto.Id);
+        Assert.IsFalse(ExisteLider);
     }
 }
