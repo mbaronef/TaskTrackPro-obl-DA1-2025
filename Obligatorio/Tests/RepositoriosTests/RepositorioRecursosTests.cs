@@ -19,7 +19,7 @@ public class RepositorioRecursosTests
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).SetValue(null, 0);
 
         _repositorioRecursos = new RepositorioRecursos();
-        _recurso = new Recurso("nombre", "tipo", "descripcion");
+        _recurso = new Recurso("nombre", "tipo", "descripcion",1);
         _recurso.IncrementarCantidadDeTareasUsandolo();
         _recurso.IncrementarCantidadDeTareasUsandolo();
         _recurso.IncrementarCantidadDeTareasUsandolo(); // cantidad de tarea usandolo = 3
@@ -48,7 +48,7 @@ public class RepositorioRecursosTests
     public void SeAsignanIdsOk()
     {
         _repositorioRecursos.Agregar(_recurso);
-        Recurso recurso2 = new Recurso("Nombre", "tipo", "desc");
+        Recurso recurso2 = new Recurso("Nombre", "tipo", "desc",1);
         _repositorioRecursos.Agregar(recurso2);
 
         Assert.AreEqual(1, _recurso.Id);
