@@ -507,6 +507,20 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
         Assert.AreEqual(99, tarea.DuracionEnDias);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void ModificarDuracion_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+        _gestorTareas.ModificarDuracionTarea(_admin, tarea.Id, proyecto.Id, 10);
+    }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
     [TestMethod]
