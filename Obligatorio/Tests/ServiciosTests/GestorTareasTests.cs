@@ -653,6 +653,8 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_LiderProyectoCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+
         UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
 
         TareaDTO tarea = CrearTarea();
