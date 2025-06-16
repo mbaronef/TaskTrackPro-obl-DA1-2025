@@ -160,6 +160,17 @@ public class RecursoTests
     }
 
     [TestMethod]
+    public void SeBorranTodosLosRangosDeUnaTarea()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        Tarea tarea = new Tarea() { Id = 1 };
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, tarea);
+        recurso.AgregarRangoDeUso(DateTime.Today.AddDays(2), DateTime.Today.AddDays(3), 2, tarea);
+        recurso.BorrarRangosDeTarea(tarea);
+        Assert.AreEqual(0, recurso.RangosEnUso.Count);
+    }
+
+    [TestMethod]
     public void SeModificaNombreOk()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",1 );
@@ -285,8 +296,8 @@ public class RecursoTests
     public void NoSePuedeDisminuirCapacidadSiSeHaceUsoDeCapacidadMaxima()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",2);
-        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1, new Tarea());
-        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1, new Tarea());
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1, new Tarea(){Id = 1});
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1, new Tarea(){Id = 2});
         recurso.ModificarCapacidad(1);
     }
 
