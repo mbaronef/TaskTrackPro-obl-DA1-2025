@@ -167,6 +167,21 @@ public class RecursoTests
         recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1);
         recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 4);
     }
+    
+    [TestMethod]
+    public void EliminarRango_EliminaRangoConFechasYCapacidadExactas()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 5);
+
+        DateTime inicio = DateTime.Today.AddDays(1);
+        DateTime fin = DateTime.Today.AddDays(2);
+
+        recurso.AgregarRangoDeUso(inicio, fin, 2);
+
+        recurso.EliminarRango(inicio, fin, 2); // aún no existe esta función
+
+        Assert.AreEqual(0, recurso.RangosEnUso.Count);
+    }
 
     [TestMethod]
     public void SeModificaNombreOk()
