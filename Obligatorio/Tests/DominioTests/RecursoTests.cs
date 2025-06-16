@@ -139,6 +139,15 @@ public class RecursoTests
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
         recurso.TieneCapacidadDisponible(DateTime.Today.AddDays(1), DateTime.Today, 1);
     }
+    
+    [TestMethod]
+    public void SeAgregaUnRangoDeUsoCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        RangoDeUso rango = new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, new Tarea());
+        recurso.AgregarRangoDeUso(rango);
+        Assert.IsTrue(recurso.RangosEnUso.Contains(rango));
+    }
 
     [TestMethod]
     public void SeModificaNombreOk()
