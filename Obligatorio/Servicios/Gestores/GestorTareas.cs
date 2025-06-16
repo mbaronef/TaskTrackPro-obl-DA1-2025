@@ -83,17 +83,13 @@ public class GestorTareas : IGestorTareas
         NotificarCambio("título", idTarea, idProyecto);
     }
 
-    private void VerificarTareaNoEsteEnProceso(Tarea tarea)
-    {
-        if (tarea.Estado == EstadoTarea.EnProceso)
-            throw new ExcepcionTarea(MensajesErrorServicios.TareaEnProceso);
-    }
-
     public void ModificarDescripcionTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto,
         string nuevaDescripcion)
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
+        
+        VerificarTareaNoEsteEnProceso(tarea);
         
         tarea.ModificarDescripcion(nuevaDescripcion);
         
@@ -394,6 +390,12 @@ public class GestorTareas : IGestorTareas
         {
             throw new ExcepcionTarea(MensajesErrorServicios.ProyectoNoComenzado);
         }
+    }
+    
+    private void VerificarTareaNoEsteEnProceso(Tarea tarea)
+    {
+        if (tarea.Estado == EstadoTarea.EnProceso)
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaEnProceso);
     }
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
