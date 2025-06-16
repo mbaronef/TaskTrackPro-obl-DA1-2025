@@ -102,6 +102,13 @@ public class RecursoTests
     }
 
     [TestMethod]
+    public void SeValidaSiUnRecursoTieneCapacidadDisponible()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        Assert.IsTrue(recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1)),2);
+    }
+
+    [TestMethod]
     public void SeModificaNombreOk()
     {
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",1 );
