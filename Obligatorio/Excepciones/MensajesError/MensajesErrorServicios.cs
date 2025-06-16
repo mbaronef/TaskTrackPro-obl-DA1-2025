@@ -48,4 +48,7 @@ public static class MensajesErrorServicios
     public const string ContrasenaSinNumero = "La contraseña debe incluir al menos un número (0-9).";
     public const string ContrasenaSinCaracterEspecial =
         "La contraseña debe incluir al menos un carácter especial (como @, #, $, etc.).";
+
+    public const string CapacidadInsuficiente = "El recurso no tiene capacidad suficiente.";
+    public const string ExisteConflicto = "Existe un conflicto en ese rango de fechas.";
 }

@@ -358,5 +358,29 @@ public class GestorTareas : IGestorTareas
         return recurso;
     }
     
+    // pongo aca los nuevos metodos despues reordenamos y sacamos los comentarios:
+    
+    public void ValidarYAsignarRecurso(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO, int cantidad)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        Recurso recurso = ObtenerRecursoPorDTO(recursoDTO);
+
+        if (recurso == null)
+            throw new ExcepcionRecurso(MensajesErrorServicios.RecursoNoEncontrado);
+
+        // Si la cantidad pedida directamente supera la capacidad total
+        if (cantidad > recurso.Capacidad)
+            throw new ExcepcionRecurso(MensajesErrorServicios.CapacidadInsuficiente);
+
+        // Si hay conflicto en los días del rango
+        if (!recurso.TieneCapacidadDisponible(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, cantidad))
+            throw new ExcepcionConflicto(MensajesErrorServicios.ExisteConflicto);
+
+        // Si pasa las validaciones anteriores, asignar el recurso
+        AsignarRecursoATarea(solicitanteDTO, idTarea, idProyecto, recursoDTO, cantidad);
+    }
+    
     
 }
