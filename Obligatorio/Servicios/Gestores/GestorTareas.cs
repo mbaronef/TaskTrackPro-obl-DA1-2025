@@ -74,6 +74,9 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
+        if (tarea.Estado == EstadoTarea.EnProceso)
+            throw new ExcepcionTarea("No se puede modificar una tarea que está en proceso.");
+        
         tarea.ModificarTitulo(nuevoTitulo);
         
         _repositorioProyectos.ActualizarTarea(tarea);
