@@ -105,10 +105,30 @@ public class Recurso
     {
         ValidarCapacidadMayorACero(nuevaCapacidad);
         
-        
+        if (nuevaCapacidad < Capacidad)
+        {
+            ValidarSiElUsoSuperaLaNuevaCapacidad(nuevaCapacidad);
+        }
         
         Capacidad = nuevaCapacidad;
     }
+
+    private void ValidarSiElUsoSuperaLaNuevaCapacidad(int nuevaCapacidad)
+    {
+        DateTime primeraFechaDeUso = RangosEnUso.Min(r => r.FechaInicio.Date);
+        DateTime ultimaFechaDeUso = RangosEnUso.Max(r => r.FechaFin.Date);
+
+        for (DateTime dia = primeraFechaDeUso; dia <= ultimaFechaDeUso; dia = dia.AddDays(1))
+        {
+            int usoEnDia = CantidadDeUsosPorDia(dia);
+            
+            if (usoEnDia > nuevaCapacidad)
+            {
+                throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadNoReducible);
+            }
+        }
+    }
+
     public bool EsExclusivo()
     {
         return ProyectoAsociado != null;

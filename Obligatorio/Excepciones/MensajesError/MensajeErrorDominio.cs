@@ -52,6 +52,9 @@ public static class MensajesErrorDominio
     public const string CapacidadRequeridaInvalida = "La capacidad requerida no puede ser mayor a la capacidad del recurso.";
     public const string CapacidadInsuficienteEnElRango = "No hay capacidad suficiente en el recurso para ese rango de fechas.";
 
+    public const string CapacidadNoReducible =
+        "No se puede reducir la capacidad del recurso porque se hace uso de la capacidad máxima en un rango de fechas.";
+
     public const string MensajeNotificacionVacio = "El mensaje de la notificación no puede estar vacío o null.";
 
     public const string FechaTareaInvalida = "La fecha no puede ser anterior a hoy.";
