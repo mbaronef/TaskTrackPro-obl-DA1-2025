@@ -52,10 +52,16 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
 
         Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
+        
+        Tarea tareaAEliminar = proyecto.Tareas.FirstOrDefault(t => t.Id == idTareaAEliminar);
 
-        ValidarTareaNoTieneSucesora(proyecto, idTareaAEliminar);
+        ValidarTareaExistente(tareaAEliminar);
 
-        proyecto.EliminarTarea(idTareaAEliminar);
+        VerificarTareaNoEsteEnProceso(tareaAEliminar);
+
+        ValidarTareaNoTieneSucesora(proyecto, tareaAEliminar.Id);
+
+        proyecto.EliminarTarea(tareaAEliminar.Id);
 
         RecalcularCaminoCriticoYActualizarProyecto(proyecto);
 
@@ -400,6 +406,12 @@ public class GestorTareas : IGestorTareas
     {
         if (tarea.Estado == EstadoTarea.EnProceso)
             throw new ExcepcionTarea(MensajesErrorServicios.TareaEnProceso);
+    }
+    
+    private void ValidarTareaExistente(Tarea? tareaAEliminar)
+    {
+        if (tareaAEliminar == null)
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaNoExistente);
     }
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)

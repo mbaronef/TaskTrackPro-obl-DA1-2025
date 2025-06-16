@@ -262,6 +262,15 @@ public class GestorTareasTests
 
         _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _noAdmin, tarea.Id);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarTarea_LanzaExcepcionSiTareaNoExiste()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+
+        _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, _admin, 9999); // ID inexistente
+    }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionPermisos))]
