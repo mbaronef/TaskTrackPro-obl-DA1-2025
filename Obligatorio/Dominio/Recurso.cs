@@ -100,6 +100,15 @@ public class Recurso
         RangoDeUso nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo, tarea);
         RangosEnUso.Add(nuevoRango);
     }
+    
+    public void EliminarRangosDeUsoDeTarea(Tarea tarea)
+    { 
+        List<RangoDeUso> rangosAEliminar = RangosEnUso
+            .Where(r => r.Tarea.Equals(tarea))
+            .ToList();
+
+        rangosAEliminar.ForEach(r => RangosEnUso.Remove(r));
+    }
 
     public void ModificarCapacidad(int nuevaCapacidad)
     {

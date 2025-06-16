@@ -166,7 +166,7 @@ public class RecursoTests
         Tarea tarea = new Tarea() { Id = 1 };
         recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, tarea);
         recurso.AgregarRangoDeUso(DateTime.Today.AddDays(2), DateTime.Today.AddDays(3), 2, tarea);
-        recurso.BorrarRangosDeTarea(tarea);
+        recurso.EliminarRangosDeUsoDeTarea(tarea);
         Assert.AreEqual(0, recurso.RangosEnUso.Count);
     }
 
