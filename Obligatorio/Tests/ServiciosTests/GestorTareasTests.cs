@@ -480,6 +480,7 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_AdminProyectoCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
 
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
@@ -494,6 +495,7 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_MiembroTareaCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
@@ -511,6 +513,22 @@ public class GestorTareasTests
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void CambiarEstadoTarea_LanzaExcepcionSiProyectoNoHaComenzado()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin); // con fecha de inicio hoy +1
+        TareaDTO tarea = CrearTarea();
+        tarea.FechaInicioMasTemprana = proyecto.FechaInicio; 
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+        _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
     }
 
     [ExpectedException(typeof(ExcepcionTarea))]
@@ -557,6 +575,7 @@ public class GestorTareasTests
     public void SeActualizaEstadoCuandoSeCompletaUnaDependencia()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
 
         TareaDTO tareaD = CrearTarea();
