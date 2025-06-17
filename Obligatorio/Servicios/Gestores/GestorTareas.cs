@@ -291,6 +291,19 @@ public class GestorTareas : IGestorTareas
         }
     }
     
+    public void ReprogramarTarea(UsuarioDTO solicitanteDTO, int idProyecto, int idTarea, RecursoDTO recursoDTO, int cantidad)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Recurso recurso = ObtenerRecursoPorDTO(recursoDTO);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+
+        DateTime nuevaFechaInicio = recurso.BuscarProximaFechaDisponible(tarea.DuracionEnDias, cantidad);
+
+        string mensaje = $"La tarea '{tarea.Titulo}' puede reprogramarse para comenzar el {nuevaFechaInicio:dd/MM/yyyy} usando el recurso '{recurso.Nombre}' sin conflictos.";
+        _notificador.NotificarUno(proyecto.Administrador, mensaje);
+    }
+    
     public void ForzarAsignacion(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO,
         int cantidad)
     {
