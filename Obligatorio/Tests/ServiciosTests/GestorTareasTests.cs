@@ -1243,7 +1243,7 @@ public class GestorTareasTests
     
     [TestMethod]
     [ExpectedException(typeof(ExcepcionTarea))]
-    public void AgregarTareaConNombreRepetidoLanzaExcepcion()
+    public void AgregarTituloConNombreRepetidoLanzaExcepcion()
     {
         UsuarioDTO admin = CrearAdministradorProyecto();
         ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
@@ -1255,6 +1255,24 @@ public class GestorTareasTests
         TareaDTO tarea2 = CrearTarea();
         tarea2.Titulo = "Repetido";
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea2); 
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void ModificarTituloTarea_ConNombreExistenteEnOtraTareaLanzaExcepcion()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+        TareaDTO tarea1 = CrearTarea();
+        tarea1.Titulo = "Uno";
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
+
+        TareaDTO tarea2 = CrearTarea();
+        tarea2.Titulo = "Dos";
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea2);
+
+        _gestorTareas.ModificarTituloTarea(admin, tarea2.Id, proyecto.Id, "Uno"); 
     }
 
 }

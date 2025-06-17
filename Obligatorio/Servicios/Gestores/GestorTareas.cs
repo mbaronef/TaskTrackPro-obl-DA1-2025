@@ -36,7 +36,7 @@ public class GestorTareas : IGestorTareas
         Tarea nuevaTarea = nuevaTareaDTO.AEntidad();
 
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-
+        ValidarTituloUnicoEnProyecto(proyecto, nuevaTarea.Titulo);
         ValidarTareaIniciaDespuesDelProyecto(proyecto, nuevaTarea);
 
         _cantidadTareas++;
@@ -85,7 +85,8 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
-        
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        ValidarTituloUnicoEnProyecto(proyecto, nuevoTitulo, tarea.Id);
         tarea.ModificarTitulo(nuevoTitulo);
         NotificarCambio("título", idTarea, idProyecto);
     }
@@ -383,6 +384,16 @@ public class GestorTareas : IGestorTareas
     {
         if (tarea.RecursosNecesarios.Any())
             throw new ExcepcionTarea(MensajesErrorServicios.TareaConRecursosAsignados);
+    }
+    
+    private void ValidarTituloUnicoEnProyecto(Proyecto proyecto, string titulo, int? idTareaActual = null)
+    {
+        bool nombreYaExiste = proyecto.Tareas
+            .Any(t => t.Titulo.Equals(titulo, StringComparison.OrdinalIgnoreCase)
+                      && (!idTareaActual.HasValue || t.Id != idTareaActual.Value));
+
+        if (nombreYaExiste)
+            throw new ExcepcionTarea(MensajesErrorServicios.TituloTareaRepetido);
     }
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
