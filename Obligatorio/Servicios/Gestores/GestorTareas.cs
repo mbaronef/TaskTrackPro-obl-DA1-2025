@@ -105,6 +105,8 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
         
+        VerificarTareaNoTieneRecursos(tarea);
+        
         tarea.ModificarDuracion(nuevaDuracion);
 
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
@@ -373,6 +375,12 @@ public class GestorTareas : IGestorTareas
         {
             throw new ExcepcionTarea(MensajesErrorServicios.FechaInicioTarea);
         }
+    }
+    
+    private void VerificarTareaNoTieneRecursos(Tarea tarea)
+    {
+        if (tarea.RecursosNecesarios.Any())
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaConRecursosAsignados);
     }
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)

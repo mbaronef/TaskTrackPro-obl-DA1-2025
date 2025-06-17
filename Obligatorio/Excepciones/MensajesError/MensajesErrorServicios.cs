@@ -51,4 +51,7 @@ public static class MensajesErrorServicios
 
     public const string CapacidadInsuficiente = "El recurso no tiene capacidad suficiente.";
     public const string ExisteConflicto = "Existe un conflicto en ese rango de fechas.";
+    
+    public const string TareaConRecursosAsignados = "No se puede modificar esta tarea porque tiene recursos asignados. Debe eliminar los recursos primero.";
+
 }
