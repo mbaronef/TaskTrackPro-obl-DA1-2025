@@ -161,6 +161,39 @@ public class Recurso
             }
         }
     }
+    
+    public DateTime BuscarProximaFechaDisponible(int duracionEnDias, int cantidad)
+    {
+        DateTime fechaInicio = DateTime.Today;
+        if (RangosEnUso.Any())
+        {
+            fechaInicio = RangosEnUso.Max(r => r.FechaFin.Date).AddDays(1); // empieza luego del último uso
+        }
+
+        while (true)
+        {
+            DateTime fechaFinTentativa = fechaInicio.AddDays(duracionEnDias - 1);
+            bool disponible = true;
+
+            for (DateTime dia = fechaInicio; dia <= fechaFinTentativa; dia = dia.AddDays(1))
+            {
+                int usoEnElDia = CantidadDeUsosPorDia(dia);
+                if (usoEnElDia + cantidad > Capacidad)
+                {
+                    disponible = false;
+                    break;
+                }
+            }
+
+            if (disponible)
+            {
+                return fechaInicio;
+            }
+
+            fechaInicio = fechaInicio.AddDays(1); // probamos el siguiente día
+        }
+    }
+
 
     public bool EsExclusivo()
     {
