@@ -119,7 +119,8 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdmin(solicitante, idProyecto, idTarea);
-        
+        VerificarTareaNoTieneRecursos(tarea);
+
         tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
 
         Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
