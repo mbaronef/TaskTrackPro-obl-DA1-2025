@@ -94,7 +94,8 @@ public class Tarea
     {
         RecursoNecesario recursoAEliminar = BuscarRecursoNecesarioPorId(idRecurso);
         ValidarObjetoNoNull(recursoAEliminar, MensajesErrorDominio.RecursoNoNecesario);
-
+        int cantidad = recursoAEliminar.Cantidad;
+        recursoAEliminar.Recurso.EliminarRango(FechaInicioMasTemprana, FechaFinMasTemprana, cantidad);
         recursoAEliminar.Recurso.DecrementarCantidadDeTareasUsandolo();
         RecursosNecesarios.Remove(recursoAEliminar);
     }

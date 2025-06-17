@@ -255,7 +255,7 @@ public class GestorRecursos : IGestorRecursos
 
         List<RecursoPanelDTO> panel = new();
 
-        foreach (var recurso in recursos)
+        foreach (Recurso recurso in recursos)
         {
             int nivelDeUso = tareasEnProceso.Count(t => t.UsaRecurso(recurso.Id));
             List<RangoDeUso> rangos = recurso.RangosEnUso.ToList();

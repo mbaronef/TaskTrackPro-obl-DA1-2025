@@ -62,9 +62,9 @@ public class GestorTareas : IGestorTareas
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTareaAEliminar);
 
-        foreach (var recursoNecesario in tarea.RecursosNecesarios)
+        foreach (RecursoNecesario recursoNecesario in tarea.RecursosNecesarios.ToList())
         {
-            recursoNecesario.Recurso.EliminarRango(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, recursoNecesario.Cantidad);
+            tarea.EliminarRecurso(recursoNecesario.Recurso.Id);
         }
 
         proyecto.EliminarTarea(idTareaAEliminar);
@@ -251,7 +251,6 @@ public class GestorTareas : IGestorTareas
 
         int cantidad = recursoAsignado.Cantidad;
         
-        recurso.EliminarRango(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, cantidad);
         tarea.EliminarRecurso(recurso.Id);
         
         NotificarEliminar($"recurso {recurso.Nombre}", idTarea, idProyecto);
