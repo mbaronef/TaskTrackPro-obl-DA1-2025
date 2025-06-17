@@ -124,14 +124,9 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
-<<<<<<< fix/fechasCaminoCritico
-        tarea.FijarFechaInicio(nuevaFecha);
-=======
         VerificarTareaNoEsteEnProceso(tarea);
-
-        tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
->>>>>>> develop
-
+        tarea.FijarFechaInicio(nuevaFecha);
+        
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         RecalcularCaminoCriticoYActualizarProyecto(proyecto);
         
