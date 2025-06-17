@@ -1126,17 +1126,17 @@ public class GestorTareasTests
     [TestMethod]
     public void EliminarTarea_LiberaRangosEnRecurso()
     {
-        var admin = CrearAdministradorProyecto();
-        var proyecto = CrearYAgregarProyecto(admin);
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
     
-        var tarea = CrearTarea();
+        TareaDTO tarea = CrearTarea();
         tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
         tarea.DuracionEnDias = 2;
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
     
-        var recurso = new Recurso("Dev", "Humano", "Desarrollador", 1);
+        Recurso recurso = new Recurso("Dev", "Humano", "Desarrollador", 1);
         _repositorioRecursos.Agregar(recurso);
-        var recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
     
         _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
         Assert.AreEqual(1, recurso.RangosEnUso.Count); 
@@ -1146,4 +1146,26 @@ public class GestorTareasTests
         Assert.AreEqual(0, recurso.RangosEnUso.Count);
     }
 
+    [TestMethod]
+    public void EncontrarMismoTipoAlternativo_EncuentraRecursoAlternativo()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyectoDTO = CrearYAgregarProyecto(admin);
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
+        
+        Recurso recursoOriginal = new Recurso("Original", "TipoX", "desc", 1);
+        recursoOriginal.Id = 1;
+        _repositorioRecursos.Agregar(recursoOriginal);
+        RecursoDTO recursoOriginalDTO = RecursoDTO.DesdeEntidad(recursoOriginal);
+        
+        Recurso alternativo = new Recurso("Alternativo", "TipoX", "desc", 5);
+        alternativo.Id = 2;
+        _repositorioRecursos.Agregar(alternativo);
+        
+        _gestorTareas.EncontrarRecursosAlternativosMismoTipo(admin, proyecto.Id, recursoOriginalDTO, 1);
+        
+        Usuario adminEntidad = _repositorioUsuarios.ObtenerPorId(admin.Id);
+        Assert.IsTrue(adminEntidad.Notificaciones.Any(n => n.Mensaje.Contains("Alternativo")));
+        
+    }
 }
