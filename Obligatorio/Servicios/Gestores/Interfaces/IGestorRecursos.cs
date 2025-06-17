@@ -19,6 +19,8 @@ public interface IGestorRecursos
     void ModificarTipoRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoTipo);
     
     void ModificarDescripcionRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevaDescripcion);
+
+    void ModificarCapacidadRecurso(UsuarioDTO solicitanteDTO, int idRecurso, int nuevaCapacidad);
     
     RecursoDTO ObtenerRecursoExclusivoPorId(int idProyecto, int idRecurso);
 }

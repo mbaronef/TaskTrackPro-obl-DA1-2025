@@ -51,6 +51,12 @@ public class ControladorRecursos
     {
         _gestorRecursos.ModificarTipoRecurso(solicitanteDTO, idRecurso, nuevoTipo);
     }
+    
+    public void ModificarCapacidadRecurso(UsuarioDTO solicitanteDTO, int idRecurso, int nuevaCapacidad)
+    {
+        _gestorRecursos.ModificarCapacidadRecurso(solicitanteDTO, idRecurso, nuevaCapacidad);
+    }
+
 
     public RecursoDTO ObtenerRecursoExclusivoPorId(int idProyecto, int idRecurso)
     {

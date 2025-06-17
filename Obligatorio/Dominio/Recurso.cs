@@ -123,6 +123,7 @@ public class Recurso
 
     private void ValidarSiElUsoSuperaLaNuevaCapacidad(int nuevaCapacidad)
     {
+        if (!RangosEnUso.Any()) return; //agregue esto
         DateTime primeraFechaDeUso = RangosEnUso.Min(r => r.FechaInicio.Date);
         DateTime ultimaFechaDeUso = RangosEnUso.Max(r => r.FechaFin.Date);
 
