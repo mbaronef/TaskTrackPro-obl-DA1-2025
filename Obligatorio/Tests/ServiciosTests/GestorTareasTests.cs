@@ -1145,5 +1145,26 @@ public class GestorTareasTests
     
         Assert.AreEqual(0, recurso.RangosEnUso.Count);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void ModificarDuracionTarea_ConRecursosAsignadosLanzaExcepcion()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+        TareaDTO tarea = CrearTarea();
+        tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
+        tarea.DuracionEnDias = 2;
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+
+        Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
+        _repositorioRecursos.Agregar(recurso);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+        
+        _gestorTareas.ModificarDuracionTarea(admin, tarea.Id, proyecto.Id, 5);
+    }
 
 }
