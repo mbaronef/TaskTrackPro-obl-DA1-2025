@@ -77,9 +77,9 @@ public class ControladorTareas
         _gestorTareas.EliminarMiembroDeTarea(solicitanteDTO, idTarea, idProyecto, miembroDTO);
     }
 
-    public void AgregarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO, int cantidad)
+    public void ValidarYAsignarRecurso(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO, int cantidad)
     {
-        _gestorTareas.AsignarRecursoATarea(solicitanteDTO, idTarea, idProyecto, nuevoRecursoDTO, cantidad);
+        _gestorTareas.ValidarYAsignarRecurso(solicitanteDTO, idTarea, idProyecto, nuevoRecursoDTO, cantidad);
     }
 
     public void EliminarRecursoDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO)

@@ -289,6 +289,11 @@ public class GestorTareas : IGestorTareas
             string mensaje = $"Se encontraron recursos alternativos disponibles del mismo tipo que '{recursoOriginal.Nombre}': {lista}.";
             _notificador.NotificarUno(proyecto.Administrador, mensaje);
         }
+        else
+        {
+            string mensaje = $"No se encontraron recursos alternativos.";
+            _notificador.NotificarUno(proyecto.Administrador, mensaje);
+        }
     }
     
     public void ReprogramarTarea(UsuarioDTO solicitanteDTO, int idProyecto, int idTarea, RecursoDTO recursoDTO, int cantidad)

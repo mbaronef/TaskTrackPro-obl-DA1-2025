@@ -510,6 +510,20 @@ else
                         <span class="fw-semibold">@((MarkupString)mensaje)</span>
                     </div>
                 }
+                @if (mostrarBotonesCapacidadSuperada)
+                {
+                    <div class="d-flex flex-wrap gap-2 justify-content-center mt-3">
+                        <button class="btn btn-outline-warning" @onclick="ReprogramarTarea">
+                            <i class="bi bi-calendar-check"></i> Reprogramar tarea
+                        </button>
+                        <button class="btn btn-outline-danger" @onclick="ForzarAsignacion">
+                            <i class="bi bi-exclamation-triangle"></i> Forzar asignación
+                        </button>
+                        <button class="btn btn-outline-primary" @onclick="BuscarRecursosAlternativos">
+                            <i class="bi bi-lightbulb"></i> Ver alternativos
+                        </button>
+                    </div>
+                }
 
                 <!-- Agregar recurso -->
                 <EditForm Model="recursoAsignacionDto" OnValidSubmit="AgregarRecurso"
@@ -673,6 +687,8 @@ else
     private bool mostrarVentanaDependencias = false;
     private bool mostrarVentanaRecursos = false;
     private bool mostrarVentanaMiembros = false;
+    private bool mostrarBotonesCapacidadSuperada = false;
+
     private string mensaje = String.Empty;
     private string errorDuracion = null;
     private string errorFechaInicio = null;
@@ -804,6 +820,7 @@ else
     private void CerrarVentanaRecursos()
     {
         mostrarVentanaRecursos = false;
+        mostrarBotonesCapacidadSuperada = false;
     }
 
     private void CerrarVentanaMiembros()
@@ -988,20 +1005,26 @@ else
             RecursoDTO nuevoRecurso = ControladorRecursos.ObtenerRecursoPorId(recursoAsignacionDto.Id);
             try
             {
-                ControladorTareas.AgregarRecursoATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso, recursoAsignacionDto.Cantidad);
+                ControladorTareas.ValidarYAsignarRecurso(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso, recursoAsignacionDto.Cantidad);
                 mensaje = "Recurso agregado con éxito.";
+            }
+            catch (ExcepcionConflicto e) 
+            {
+                mensaje = e.Message;
+                mostrarBotonesCapacidadSuperada = true;
+                return;
             }
             catch (ExcepcionRecurso e)
             {
-                mensaje = e.Message; // o un mensaje más amigable
+                mensaje = e.Message; 
             }
             catch (ExcepcionTarea e)
             {
-                mensaje = e.Message; // o un mensaje más amigable
+                mensaje = e.Message; 
             }
             catch (ExcepcionDominio e)
             {
-            mensaje = e.Message; // o un mensaje más amigable
+            mensaje = e.Message;
             }
             catch (Exception e)
             {
@@ -1138,6 +1161,37 @@ else
             EliminarDependencia(id);
             dependenciaAConfirmar = null;
         }
+    }
+
+    private void ReprogramarTarea()
+    {
+        mostrarBotonesCapacidadSuperada = false;
+        RecursoDTO recursoDTO = new RecursoDTO { Id = recursoAsignacionDto.Id };
+        ControladorTareas.ReprogramarTarea(Sesion.UsuarioLogueado, proyecto.Id, tareaActual.Id, recursoDTO, recursoAsignacionDto.Cantidad);
+        mensaje = "Se envió una notificación con una nueva fecha de inicio para la tarea.";
+        StateHasChanged();
+    }
+
+    
+    private void ForzarAsignacion()
+    {
+        mostrarBotonesCapacidadSuperada = false;
+        RecursoDTO recursoDTO = new RecursoDTO { Id = recursoAsignacionDto.Id };
+        ControladorTareas.ForzarAsignacion(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, recursoDTO, recursoAsignacionDto.Cantidad);
+        mensaje = "Recurso asignado forzadamente.";
+        proyecto = ControladorProyectos.ObtenerProyectoPorId(proyecto.Id);
+        tareaActual = ControladorTareas.ObtenerTareaPorId(proyecto.Id, tareaActual.Id);
+        ActualizarRecursosDisponibles();
+        StateHasChanged();
+    }
+
+    private void BuscarRecursosAlternativos()
+    {
+        mostrarBotonesCapacidadSuperada = false;
+        var recursoDTO = new RecursoDTO { Id = recursoAsignacionDto.Id };
+        ControladorTareas.EncontrarRecursosAlternativosMismoTipo(Sesion.UsuarioLogueado, proyecto.Id, recursoDTO, tareaActual.FechaInicioMasTemprana, tareaActual.FechaFinMasTemprana, recursoAsignacionDto.Cantidad);
+        mensaje = "Se envió una notificación con los recursos alternativos.";
+        StateHasChanged();
     }
 
 }

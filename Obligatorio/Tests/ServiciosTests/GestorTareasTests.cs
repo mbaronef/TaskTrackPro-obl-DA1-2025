@@ -1195,6 +1195,7 @@ public class GestorTareasTests
         Notificacion notificacion = adminEntidad.Notificaciones
             .FirstOrDefault(n => n.Mensaje.Contains("puede reprogramarse"));
         Assert.IsNotNull(notificacion);
+        Assert.IsTrue(notificacion.Mensaje.Contains("puede reprogramarse"));
         Assert.IsTrue(notificacion.Mensaje.Contains(recurso.Nombre));
         Assert.IsTrue(notificacion.Mensaje.Contains("04/01/2026"));
     }

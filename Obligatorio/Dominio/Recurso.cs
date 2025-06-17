@@ -96,7 +96,7 @@ public class Recurso
 
     public void AgregarRangoDeUso(DateTime fechaInicio, DateTime fechaFin, int cantidadNuevo)
     {
-        ValidarCapacidadDisponibleEnRango(fechaInicio, fechaFin, cantidadNuevo);
+        //ValidarCapacidadDisponibleEnRango(fechaInicio, fechaFin, cantidadNuevo);
         RangoDeUso nuevoRango = new RangoDeUso(fechaInicio, fechaFin, cantidadNuevo);
         RangosEnUso.Add(nuevoRango);
     }

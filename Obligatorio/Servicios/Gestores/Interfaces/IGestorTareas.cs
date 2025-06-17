@@ -42,4 +42,8 @@ public interface IGestorTareas
 
     void ForzarAsignacion(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO,
         int cantidad);
+
+    public void ValidarYAsignarRecurso(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto,
+        RecursoDTO nuevoRecursoDTO, int cantidad);
+    
 }
