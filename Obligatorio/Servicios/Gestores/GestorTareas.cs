@@ -195,7 +195,8 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
-        
+        VerificarTareaNoTieneRecursos(tarea);
+
         tarea.EliminarDependencia(idTareaDependencia);
         
         _caminoCritico.CalcularCaminoCritico(proyecto);
