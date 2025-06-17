@@ -991,14 +991,23 @@ else
                 ControladorTareas.AgregarRecursoATarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, nuevoRecurso, recursoAsignacionDto.Cantidad);
                 mensaje = "Recurso agregado con éxito.";
             }
+            catch (ExcepcionRecurso e)
+            {
+                mensaje = e.Message; // o un mensaje más amigable
+            }
             catch (ExcepcionTarea e)
             {
                 mensaje = e.Message; // o un mensaje más amigable
+            }
+            catch (ExcepcionDominio e)
+            {
+            mensaje = e.Message; // o un mensaje más amigable
             }
             catch (Exception e)
             {
                 mensaje = "Error inesperado al agregar recurso.";
             }
+
             // actualizaciones
             recursoAsignacionDto = new RecursoAsignacionDTO();
             proyecto = ControladorProyectos.ObtenerProyectoPorId(id);
@@ -1020,7 +1029,8 @@ else
     {
         try
         {
-            RecursoDTO recurso = ControladorRecursos.ObtenerRecursoPorId(idRecurso);
+            RecursoDTO recurso = tareaActual.RecursosNecesarios.FirstOrDefault(rn => rn.Id == idRecurso)?.Recurso;
+            //RecursoDTO recurso = ControladorRecursos.ObtenerRecursoPorId(idRecurso);
             ControladorTareas.EliminarRecursoDeTarea(Sesion.UsuarioLogueado, tareaActual.Id, proyecto.Id, recurso);
             mensaje = "Recurso eliminado con éxito.";
             // actualizaciones
