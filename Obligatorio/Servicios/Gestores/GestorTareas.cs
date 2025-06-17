@@ -221,6 +221,7 @@ public class GestorTareas : IGestorTareas
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        nuevoRecurso.AgregarRangoDeUso(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, cantidad);
         tarea.AsignarRecurso(nuevoRecurso, cantidad);
         NotificarAgregar($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
     }
@@ -234,6 +235,17 @@ public class GestorTareas : IGestorTareas
         ValidarRecursoExistente(recurso, idTarea, idProyecto);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        
+        RecursoNecesario recursoAsignado = tarea.RecursosNecesarios.FirstOrDefault(r => r.Recurso.Equals(recurso));
+        
+        if (recursoAsignado == null)
+        {
+            throw new ExcepcionTarea($"El recurso {recurso.Nombre} no está asignado a la tarea.");
+        }
+
+        int cantidad = recursoAsignado.Cantidad;
+        
+        recurso.EliminarRango(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, cantidad);
         tarea.EliminarRecurso(recurso.Id);
         
         NotificarEliminar($"recurso {recurso.Nombre}", idTarea, idProyecto);
