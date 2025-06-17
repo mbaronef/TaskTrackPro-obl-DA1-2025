@@ -52,10 +52,16 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
 
         Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
+        
+        Tarea tareaAEliminar = proyecto.Tareas.FirstOrDefault(t => t.Id == idTareaAEliminar);
 
-        ValidarTareaNoTieneSucesora(proyecto, idTareaAEliminar);
+        ValidarTareaExistente(tareaAEliminar);
 
-        proyecto.EliminarTarea(idTareaAEliminar);
+        VerificarTareaNoEsteEnProceso(tareaAEliminar);
+
+        ValidarTareaNoTieneSucesora(proyecto, tareaAEliminar.Id);
+
+        proyecto.EliminarTarea(tareaAEliminar.Id);
 
         RecalcularCaminoCriticoYActualizarProyecto(proyecto);
 
@@ -73,6 +79,8 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
+
+        VerificarTareaNoEsteEnProceso(tarea);
         
         tarea.ModificarTitulo(nuevoTitulo);
         
@@ -87,6 +95,8 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
+        VerificarTareaNoEsteEnProceso(tarea);
+        
         tarea.ModificarDescripcion(nuevaDescripcion);
         
         _repositorioProyectos.ActualizarTarea(tarea);
@@ -98,6 +108,8 @@ public class GestorTareas : IGestorTareas
     {
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
+        
+        VerificarTareaNoEsteEnProceso(tarea);
         
         tarea.ModificarDuracion(nuevaDuracion);
 
@@ -112,7 +124,13 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
+<<<<<<< fix/fechasCaminoCritico
         tarea.FijarFechaInicio(nuevaFecha);
+=======
+        VerificarTareaNoEsteEnProceso(tarea);
+
+        tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
+>>>>>>> develop
 
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         RecalcularCaminoCriticoYActualizarProyecto(proyecto);
@@ -158,6 +176,7 @@ public class GestorTareas : IGestorTareas
 
         Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
 
         Tarea tareaDependencia = ObtenerTareaDominioPorId(idProyecto, idTareaDependencia);
         Dependencia dependencia = new Dependencia(tipoDependencia, tareaDependencia);
@@ -184,6 +203,7 @@ public class GestorTareas : IGestorTareas
         Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
         Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
         
         tarea.EliminarDependencia(idTareaDependencia);
         
@@ -202,6 +222,8 @@ public class GestorTareas : IGestorTareas
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(nuevoMiembro.Id, proyecto);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
+        
         tarea.AsignarUsuario(nuevoMiembro);
         
         _repositorioProyectos.ActualizarTarea(tarea);
@@ -218,6 +240,7 @@ public class GestorTareas : IGestorTareas
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(miembro.Id, proyecto);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
         tarea.EliminarUsuario(miembro.Id);
         
         _repositorioProyectos.ActualizarTarea(tarea);
@@ -233,6 +256,7 @@ public class GestorTareas : IGestorTareas
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
         tarea.AsignarRecurso(nuevoRecurso);
         
         _repositorioProyectos.ActualizarTarea(tarea);
@@ -250,6 +274,7 @@ public class GestorTareas : IGestorTareas
         ValidarRecursoExistente(recurso, idTarea, idProyecto);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        VerificarTareaNoEsteEnProceso(tarea);
         tarea.EliminarRecurso(recurso.Id);
         
         _repositorioProyectos.ActualizarTarea(tarea);
@@ -386,6 +411,18 @@ public class GestorTareas : IGestorTareas
         {
             throw new ExcepcionTarea(MensajesErrorServicios.ProyectoNoComenzado);
         }
+    }
+    
+    private void VerificarTareaNoEsteEnProceso(Tarea tarea)
+    {
+        if (tarea.Estado == EstadoTarea.EnProceso)
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaEnProceso);
+    }
+    
+    private void ValidarTareaExistente(Tarea? tareaAEliminar)
+    {
+        if (tareaAEliminar == null)
+            throw new ExcepcionTarea(MensajesErrorServicios.TareaNoExistente);
     }
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
