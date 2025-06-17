@@ -34,4 +34,12 @@ public interface IGestorTareas
     void EliminarRecursoDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO);
     
     bool EsMiembroDeTarea(UsuarioDTO usuarioDTO, int idTarea, int idProyecto);
+
+    void EncontrarRecursosAlternativosMismoTipo(UsuarioDTO solicitanteDTO, int idProyecto,
+        RecursoDTO recursoOriginalDTO, DateTime FechaInicio, DateTime FechaFin, int cantidad);
+
+    void ReprogramarTarea(UsuarioDTO solicitanteDTO, int idProyecto, int idTarea, RecursoDTO recursoDTO, int cantidad);
+
+    void ForzarAsignacion(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO,
+        int cantidad);
 }

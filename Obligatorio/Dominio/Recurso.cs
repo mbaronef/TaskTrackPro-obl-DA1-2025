@@ -162,12 +162,17 @@ public class Recurso
         }
     }
     
-    public DateTime BuscarProximaFechaDisponible(int duracionEnDias, int cantidad)
+    public DateTime BuscarProximaFechaDisponible(DateTime desde, int duracionEnDias, int cantidad)
     {
-        DateTime fechaInicio = DateTime.Today;
+        DateTime fechaInicio = desde;
+
         if (RangosEnUso.Any())
         {
-            fechaInicio = RangosEnUso.Max(r => r.FechaFin.Date).AddDays(1); // empieza luego del último uso
+            DateTime despuesDeUltimoUso = RangosEnUso.Max(r => r.FechaFin.Date).AddDays(1);
+            if (despuesDeUltimoUso > fechaInicio)
+            {
+                fechaInicio = despuesDeUltimoUso;
+            }
         }
 
         while (true)
@@ -190,9 +195,10 @@ public class Recurso
                 return fechaInicio;
             }
 
-            fechaInicio = fechaInicio.AddDays(1); // probamos el siguiente día
+            fechaInicio = fechaInicio.AddDays(1);
         }
     }
+
 
 
     public bool EsExclusivo()

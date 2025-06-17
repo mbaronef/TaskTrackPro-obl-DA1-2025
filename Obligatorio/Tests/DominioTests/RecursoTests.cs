@@ -409,7 +409,7 @@ public class RecursoTests
     {
         var recurso = new Recurso("Dev", "Humano", "Backend", capacidad: 3);
         
-        DateTime resultado = recurso.BuscarProximaFechaDisponible(duracionEnDias: 2, cantidad: 1);
+        DateTime resultado = recurso.BuscarProximaFechaDisponible(DateTime.Today, duracionEnDias: 2, cantidad: 1);
         
         Assert.AreEqual(DateTime.Today, resultado);
     }

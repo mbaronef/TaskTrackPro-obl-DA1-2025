@@ -91,4 +91,22 @@ public class ControladorTareas
     {
         return _gestorTareas.ObtenerTareaPorId(idProyecto, idTarea);
     }
+
+    public void EncontrarRecursosAlternativosMismoTipo(UsuarioDTO solicitanteDTO, int idProyecto,
+        RecursoDTO recursoOriginalDTO, DateTime FechaInicio, DateTime FechaFin, int cantidad)
+    {
+        _gestorTareas.EncontrarRecursosAlternativosMismoTipo(solicitanteDTO, idProyecto, recursoOriginalDTO, FechaInicio, FechaFin, cantidad);
+    }
+
+    public void ReprogramarTarea(UsuarioDTO solicitanteDTO, int idProyecto, int idTarea, RecursoDTO recursoDTO,
+        int cantidad)
+    {
+        _gestorTareas.ReprogramarTarea(solicitanteDTO, idProyecto, idTarea, recursoDTO, cantidad);
+    }
+
+    public void ForzarAsignacion(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO,
+        int cantidad)
+    {
+        _gestorTareas.ForzarAsignacion(solicitanteDTO, idTarea, idProyecto, recursoDTO, cantidad);
+    }
 }

@@ -298,7 +298,7 @@ public class GestorTareas : IGestorTareas
         Recurso recurso = ObtenerRecursoPorDTO(recursoDTO);
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
 
-        DateTime nuevaFechaInicio = recurso.BuscarProximaFechaDisponible(tarea.DuracionEnDias, cantidad);
+        DateTime nuevaFechaInicio = recurso.BuscarProximaFechaDisponible(tarea.FechaInicioMasTemprana, tarea.DuracionEnDias, cantidad);
 
         string mensaje = $"La tarea '{tarea.Titulo}' puede reprogramarse para comenzar el {nuevaFechaInicio:dd/MM/yyyy} usando el recurso '{recurso.Nombre}' sin conflictos.";
         _notificador.NotificarUno(proyecto.Administrador, mensaje);
