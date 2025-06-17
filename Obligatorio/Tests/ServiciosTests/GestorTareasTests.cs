@@ -101,7 +101,7 @@ public class GestorTareasTests
         return proyecto;
     }
 
-    private RecursoDTO CrearYAgregarRecurso(string nombre = "Nombre", string tipo = "Tipo", string descripcion = "Descripción", int capacidad = 2)
+    private RecursoDTO CrearYAgregarRecurso(string nombre = "Nombre", string tipo = "Tipo", string descripcion = "Descripción", int capacidad = 1)
     {
         Recurso recurso = new Recurso(nombre, tipo, descripcion, capacidad);
         _repositorioRecursos.Agregar(recurso);
@@ -851,7 +851,7 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeAgregarRecursoATarea()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",2);
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
         _repositorioRecursos.Agregar(recurso); 
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
@@ -1121,6 +1121,29 @@ public class GestorTareasTests
 
         List<Notificacion> notificaciones = miembro.Notificaciones;
         Assert.IsTrue(notificaciones.Any(n => n.Mensaje.Contains("asignado forzadamente")));
+    }
+    
+    [TestMethod]
+    public void EliminarTarea_LiberaRangosEnRecurso()
+    {
+        var admin = CrearAdministradorProyecto();
+        var proyecto = CrearYAgregarProyecto(admin);
+    
+        var tarea = CrearTarea();
+        tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
+        tarea.DuracionEnDias = 2;
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+    
+        var recurso = new Recurso("Dev", "Humano", "Desarrollador", 1);
+        _repositorioRecursos.Agregar(recurso);
+        var recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+    
+        _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+        Assert.AreEqual(1, recurso.RangosEnUso.Count); 
+    
+        _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, admin, tarea.Id);
+    
+        Assert.AreEqual(0, recurso.RangosEnUso.Count);
     }
 
 }

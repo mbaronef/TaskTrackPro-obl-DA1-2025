@@ -60,6 +60,13 @@ public class GestorTareas : IGestorTareas
 
         ValidarTareaNoTieneSucesora(proyecto, idTareaAEliminar);
 
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTareaAEliminar);
+
+        foreach (var recursoNecesario in tarea.RecursosNecesarios)
+        {
+            recursoNecesario.Recurso.EliminarRango(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, recursoNecesario.Cantidad);
+        }
+
         proyecto.EliminarTarea(idTareaAEliminar);
 
         _caminoCritico.CalcularCaminoCritico(proyecto);
@@ -221,7 +228,6 @@ public class GestorTareas : IGestorTareas
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
-        nuevoRecurso.AgregarRangoDeUso(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, cantidad);
         tarea.AsignarRecurso(nuevoRecurso, cantidad);
         NotificarAgregar($"recurso {nuevoRecurso.Nombre}", idTarea, idProyecto);
     }
