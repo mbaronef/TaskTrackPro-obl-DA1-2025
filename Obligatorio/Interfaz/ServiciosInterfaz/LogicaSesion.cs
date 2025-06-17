@@ -1,8 +1,6 @@
 using Blazored.LocalStorage;
-using Excepciones;
+using Controladores;
 using DTOs;
-using Servicios.Gestores;
-using Servicios.Gestores.Interfaces;
 
 namespace Interfaz.ServiciosInterfaz;
 
@@ -15,19 +13,19 @@ public class LogicaSesion
     private const string CURRENT_USER = "current_user";
 
     private readonly ILocalStorageService _localStorage;
-    private readonly IGestorUsuarios _gestorUsuarios;
+    private readonly ControladorUsuarios _controladorUsuarios;
 
-    public LogicaSesion(ILocalStorageService localStorage, IGestorUsuarios gestorUsuarios)
+    public LogicaSesion(ILocalStorageService localStorage, ControladorUsuarios controladorUsuarios)
     {
         _localStorage = localStorage;
-        _gestorUsuarios = gestorUsuarios;
+        _controladorUsuarios = controladorUsuarios;
     }
 
     public async Task<bool> Login(string email, string contraseña)
     {
         try
         {
-            UsuarioDTO usuarioLogueado = _gestorUsuarios.LogIn(email, contraseña);
+            UsuarioDTO usuarioLogueado = _controladorUsuarios.LogIn(email, contraseña);
             UsuarioLogueado = usuarioLogueado;
             await _localStorage.SetItemAsync(CURRENT_USER, usuarioLogueado);
             return true;
@@ -77,7 +75,7 @@ public class LogicaSesion
     {
         if (UsuarioLogueado != null)
         {
-            UsuarioLogueado = _gestorUsuarios.ObtenerUsuarioPorId(UsuarioLogueado.Id);
+            UsuarioLogueado = _controladorUsuarios.ObtenerUsuarioPorId(UsuarioLogueado.Id);
             await _localStorage.SetItemAsync(CURRENT_USER, UsuarioLogueado);
             SesionModificada?.Invoke();
         }

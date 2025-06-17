@@ -16,7 +16,7 @@ public class ExportadorJson : IExportadorProyectos
     }
 
     public string NombreFormato => "json";
-    public string ContentType => "application/json";
+    public string TipoContenido => "application/json";
     public string NombreArchivo => "proyectos.json";
 
     public Task<byte[]> Exportar()

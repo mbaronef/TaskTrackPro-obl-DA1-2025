@@ -14,7 +14,7 @@ public class ExportadorCsv : IExportadorProyectos
     }
 
     public string NombreFormato => "csv";
-    public string ContentType => "text/csv";
+    public string TipoContenido => "text/csv";
     public string NombreArchivo => "proyectos.csv";
 
     public Task<byte[]> Exportar()

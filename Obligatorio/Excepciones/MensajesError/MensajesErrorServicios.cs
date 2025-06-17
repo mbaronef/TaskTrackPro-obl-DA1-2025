@@ -3,6 +3,7 @@ namespace Excepciones.MensajesError;
 public static class MensajesErrorServicios
 {
     public const string PermisoDenegado = "El usuario no tiene permisos necesarios para realizar esta acción.";
+
     public static string PermisoDenegadoPara(string accion) =>
         $"No tiene los permisos necesarios para {accion}.";
     public static string PermisoDenegadoPorTipo(string tipoUsuario)
@@ -56,4 +57,6 @@ public static class MensajesErrorServicios
     public const string PermisoParaCambiarDeEstado = "El usuario debe tener la tarea asignada o ser administrador del proyecto o ser lider del proyecto para realizar esta acción.";
 
     public const string TareaEnProceso = "No se puede modificar una tarea que está en proceso.";
+    
+    public const string FormatoNoSoportado = "El formato solicitado no está soportado por el sistema.";
 }
