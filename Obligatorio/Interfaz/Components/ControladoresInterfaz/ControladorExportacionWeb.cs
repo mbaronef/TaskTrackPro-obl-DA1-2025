@@ -24,9 +24,9 @@ public class ControladorExportacionWeb : Controller
             ArchivoExportadoDTO archivo = await _controlador.Exportar(formato);
             return File(archivo.Contenido, archivo.TipoContenido, archivo.NombreArchivo);
         }
-        catch (ExcepcionExportador ex)
+        catch (ExcepcionExportador e)
         {
-            return BadRequest(MensajesErrorServicios.FormatoNoSoportado);
+            return BadRequest(new { error = e.Message });
         }
     }
 }

@@ -9,24 +9,13 @@ namespace Tests.ControladoresTests;
 public class ControladorExportacionTests
 {
     private ControladorExportacion _controladorExportacion;
-    private Mock<IExportadorProyectos> _mockExportadorCsv;
-    private Mock<IExportadorProyectos> _mockExportadorJson;
+    private Mock<IExportadorProyectosFactory> _mockExportadorProyectosFactory;
     
     [TestInitialize]
     public void Setup()
     {
-        _mockExportadorCsv = new Mock<IExportadorProyectos>();
-        _mockExportadorJson = new Mock<IExportadorProyectos>();
-        _mockExportadorCsv.Setup(e => e.NombreFormato).Returns("csv");
-        _mockExportadorJson.Setup(e => e.NombreFormato).Returns("json");
-
-        List<IExportadorProyectos> exportadores = new List<IExportadorProyectos>
-        {
-            _mockExportadorCsv.Object,
-            _mockExportadorJson.Object
-        };
-
-        _controladorExportacion = new ControladorExportacion(exportadores);
+        _mockExportadorProyectosFactory = new Mock<IExportadorProyectosFactory>();
+        _controladorExportacion = new ControladorExportacion(_mockExportadorProyectosFactory.Object);
     }
     
     [TestMethod]
@@ -36,34 +25,19 @@ public class ControladorExportacionTests
     }
 
     [TestMethod]
-    public async Task ExportarCsv_LlamaCorrectamenteAlExportador()
+    public async Task Exportar_LlamaCorrectamenteAlExportador()
     {
-        _mockExportadorCsv.Setup(e => e.Exportar()).ReturnsAsync(new byte[0]);
-        
-        await _controladorExportacion.Exportar("csv");
+        string formato = "csv";
 
-        _mockExportadorCsv.Verify(e => e.Exportar(), Times.Once);
-        _mockExportadorJson.Verify(e => e.Exportar(), Times.Never);
-    }
-    
-    [TestMethod]
-    public async Task ExportarJson_LlamaCorrectamenteAlExportador()
-    {
-        _mockExportadorCsv.Setup(e => e.Exportar()).ReturnsAsync(new byte[0]);
-        
-        await _controladorExportacion.Exportar("json");
+        Mock<IExportadorProyectos> mockExportador = new Mock<IExportadorProyectos>();
+        mockExportador.Setup(e => e.Exportar()).ReturnsAsync(new byte[0]);
 
-        _mockExportadorCsv.Verify(e => e.Exportar(), Times.Never);
-        _mockExportadorJson.Verify(e => e.Exportar(), Times.Once);
-    }
-    
-    [ExpectedException(typeof(ExcepcionExportador))]
-    [TestMethod]
-    public async Task Exportar_FormatoNoExistente_LanzaExcepcion()
-    {
-        _mockExportadorCsv.Setup(e => e.NombreFormato).Returns("csv");
-        _mockExportadorJson.Setup(e => e.NombreFormato).Returns("json");
+        _mockExportadorProyectosFactory.Setup(f => f.CrearExportador(formato))
+            .Returns(mockExportador.Object);
         
-        await _controladorExportacion.Exportar("xls"); 
+        await _controladorExportacion.Exportar(formato);
+        
+        _mockExportadorProyectosFactory.Verify(f => f.CrearExportador(formato), Times.Once);
+        mockExportador.Verify(e => e.Exportar(), Times.Once);
     }
 }

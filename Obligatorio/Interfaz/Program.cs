@@ -31,6 +31,7 @@ builder.Services.AddScoped<INotificador, Notificador>();
 builder.Services.AddScoped<ICalculadorCaminoCritico, CaminoCritico>();
 builder.Services.AddScoped<IExportadorProyectos, ExportadorCsv>();
 builder.Services.AddScoped<IExportadorProyectos, ExportadorJson>();
+builder.Services.AddScoped<IExportadorProyectosFactory, ExportadorProyectosFactory>();
 
 builder.Services.AddScoped<ControladorTareas>();
 builder.Services.AddScoped<ControladorProyectos>();
