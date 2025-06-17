@@ -1187,5 +1187,31 @@ public class GestorTareasTests
         
         _gestorTareas.ModificarFechaInicioTarea(admin, tarea.Id, proyecto.Id, DateTime.Today.AddDays(2));
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void AgregarDependenciaATarea_ConRecursosAsignadosLanzaExcepcion()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+        TareaDTO tarea1 = CrearTarea();
+        TareaDTO tarea2 = CrearTarea();
+        tarea1.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
+        tarea2.FechaInicioMasTemprana = DateTime.Today.AddDays(2);
+        tarea1.DuracionEnDias = 2;
+        tarea2.DuracionEnDias = 2;
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea2);
+
+        Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
+        _repositorioRecursos.Agregar(recurso);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        _gestorTareas.ValidarYAsignarRecurso(admin, tarea1.Id, proyecto.Id, recursoDTO, 1);
+
+        _gestorTareas.AgregarDependenciaATarea(admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
+    }
 
 }
