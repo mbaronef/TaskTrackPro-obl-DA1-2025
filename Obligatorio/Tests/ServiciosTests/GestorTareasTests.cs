@@ -101,9 +101,9 @@ public class GestorTareasTests
         return proyecto;
     }
 
-    private RecursoDTO CrearYAgregarRecurso(string nombre = "Nombre", string tipo = "Tipo", string descripcion = "Descripción")
+    private RecursoDTO CrearYAgregarRecurso(string nombre = "Nombre", string tipo = "Tipo", string descripcion = "Descripción", int capacidad = 1)
     {
-        Recurso recurso = new Recurso(nombre, tipo, descripcion,1);
+        Recurso recurso = new Recurso(nombre, tipo, descripcion, capacidad);
         _repositorioRecursos.Agregar(recurso);
         return RecursoDTO.DesdeEntidad(recurso);
     }
@@ -851,7 +851,7 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeAgregarRecursoATarea()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",2);
         _repositorioRecursos.Agregar(recurso); 
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
@@ -1084,4 +1084,39 @@ public class GestorTareasTests
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
         Assert.IsTrue(tarea.RecursosNecesarios.Any(r => r.Id == recurso.Id));
     }
+    
+    [TestMethod]
+    public void ForzarAsignacion_AsignaRecursoYNotificaMiembros()
+    {
+        ProyectoDTO proyectoDTO = CrearYAgregarProyecto(_admin);
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
+
+        TareaDTO tareaDTO = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyectoDTO.Id, _admin, tareaDTO);
+
+        Tarea tarea = proyecto.Tareas.First();
+        RecursoDTO recursoDTO = CrearYAgregarRecurso("Recurso", "Tipo", "Desc", 5);
+
+        Recurso recurso = _repositorioRecursos.ObtenerPorId(recursoDTO.Id);
+        
+        Usuario miembro = new Usuario("Miembro", "miembro@gmail.com", DateTime.Today.AddYears(-20), "miembro@mail.com", "Contraseña#3");
+        _repositorioUsuarios.Agregar(miembro);
+        proyecto.Miembros.Add(miembro);
+        
+        _gestorTareas.ForzarAsignacion(_admin, tarea.Id, proyecto.Id, recursoDTO, 2);
+
+        RecursoNecesario recursoAsignado = tarea.RecursosNecesarios.FirstOrDefault(rn => rn.Recurso.Id == recurso.Id);
+        Assert.IsNotNull(recursoAsignado);
+        Assert.AreEqual(2, recursoAsignado.Cantidad);
+
+        RangoDeUso rangoAsignado = recurso.RangosEnUso.FirstOrDefault(r =>
+            r.FechaInicio == tarea.FechaInicioMasTemprana &&
+            r.FechaFin == tarea.FechaFinMasTemprana &&
+            r.CantidadDeUsos == 2);
+        Assert.IsNotNull(rangoAsignado);
+
+        List<Notificacion> notificaciones = miembro.Notificaciones;
+        Assert.IsTrue(notificaciones.Any(n => n.Mensaje.Contains("asignado forzadamente")));
+    }
+
 }

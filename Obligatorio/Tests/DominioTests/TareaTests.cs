@@ -169,7 +169,7 @@ public class TareaTests
     {
         Recurso recurso = CrearRecursoValido();
         Tarea tarea = CrearTareaValida();
-        tarea.AsignarRecurso(recurso);
+        tarea.AsignarRecurso(recurso, 1);
         tarea.CambiarEstado(EstadoTarea.EnProceso);
         tarea.CambiarEstado(EstadoTarea.Completada);
         Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
@@ -185,7 +185,7 @@ public class TareaTests
     {
         Recurso recurso = CrearRecursoValido();
         Tarea tarea = CrearTareaValida();
-        tarea.AsignarRecurso(recurso);
+        tarea.AsignarRecurso(recurso, 1);
         tarea.CambiarEstado(EstadoTarea.Completada);
     }
 
@@ -323,8 +323,9 @@ public class TareaTests
     {
         Tarea tarea = CrearTareaValida();
         Recurso recurso = CrearRecursoValido();
-        tarea.AsignarRecurso(recurso);
-        Assert.IsTrue(tarea.RecursosNecesarios.Contains(recurso));
+        RecursoNecesario recursoNecesario = new RecursoNecesario(recurso, 1);
+        tarea.AsignarRecurso(recurso, 1);
+        Assert.IsTrue(tarea.RecursosNecesarios.Contains(recursoNecesario));
         Assert.AreEqual(1, tarea.RecursosNecesarios.Count);
     }
 
@@ -334,7 +335,7 @@ public class TareaTests
     {
         Tarea tarea = CrearTareaValida();
         Recurso recurso = null;
-        tarea.AsignarRecurso(recurso);
+        tarea.AsignarRecurso(recurso,1 );
     }
 
     [TestMethod]
@@ -343,8 +344,8 @@ public class TareaTests
     {
         Recurso recurso = CrearRecursoValido();
         Tarea tarea = CrearTareaValida();
-        tarea.AsignarRecurso(recurso);
-        tarea.AsignarRecurso(recurso);
+        tarea.AsignarRecurso(recurso, 1);
+        tarea.AsignarRecurso(recurso, 1);
     }
 
     [TestMethod]
@@ -353,7 +354,7 @@ public class TareaTests
         Recurso recurso = CrearRecursoValido();
         recurso.Id = 1;
         Tarea tarea = CrearTareaValida();
-        tarea.AsignarRecurso(recurso);
+        tarea.AsignarRecurso(recurso, 1);
         tarea.EliminarRecurso(1);
         Assert.IsFalse(tarea.RecursosNecesarios.Any(t => t.Id == 1));
     }
@@ -365,7 +366,7 @@ public class TareaTests
         Recurso recurso = CrearRecursoValido();
         recurso.Id = 1;
         Tarea tarea = CrearTareaValida();
-        tarea.AsignarRecurso(recurso);
+        tarea.AsignarRecurso(recurso, 1);
         tarea.EliminarRecurso(3);
     }
     
@@ -375,7 +376,7 @@ public class TareaTests
         Recurso recurso = CrearRecursoValido();
         recurso.Id = 1;
         Tarea tarea = CrearTareaValida();
-        tarea.AsignarRecurso(recurso);
+        tarea.AsignarRecurso(recurso, 1);
         Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
 
         tarea.EliminarRecurso(recurso.Id);
@@ -478,7 +479,7 @@ public class TareaTests
         Tarea tarea = CrearTareaValida();
         tarea.AsignarUsuario(usuario1);
         tarea.AsignarUsuario(usuario2);
-        List<Usuario> asignados = tarea.UsuariosAsignados;
+        ICollection<Usuario> asignados = tarea.UsuariosAsignados;
         Assert.AreEqual(2, asignados.Count);
         Assert.IsTrue(asignados.Any(u => u.Id == usuario1.Id));
         Assert.IsTrue(asignados.Any(u => u.Id == usuario2.Id));
@@ -489,16 +490,22 @@ public class TareaTests
     {
         Recurso necesario = CrearRecursoValido();
         necesario.Id = 1;
-        Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion",1);
+
+        Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion", 1);
         necesario2.Id = 2;
+
         Tarea tarea = CrearTareaValida();
-        tarea.AsignarRecurso(necesario);
-        tarea.AsignarRecurso(necesario2);
-        List<Recurso> lista = tarea.RecursosNecesarios;
+        tarea.AsignarRecurso(necesario, 1);
+        tarea.AsignarRecurso(necesario2, 1);
+
+        ICollection<RecursoNecesario> lista = tarea.RecursosNecesarios;
+
         Assert.AreEqual(2, lista.Count);
-        Assert.IsTrue(lista.Contains(necesario));
-        Assert.IsTrue(lista.Contains(necesario2));
+
+        Assert.IsTrue(lista.Any(rn => rn.Recurso.Id == necesario.Id && rn.Cantidad == 1));
+        Assert.IsTrue(lista.Any(rn => rn.Recurso.Id == necesario2.Id && rn.Cantidad == 1));
     }
+
 
     [TestMethod]
     public void FechaFinMasTempranaSeCalculaCorrectamente()

@@ -101,6 +101,12 @@ public class Recurso
         RangosEnUso.Add(nuevoRango);
     }
     
+    public void AgregarRangoDeUsoForzado(DateTime fechaInicio, DateTime fechaFin, int cantidadNuevo)
+    {
+        RangoDeUso nuevoRango = new RangoDeUso(fechaInicio, fechaFin, cantidadNuevo);
+        RangosEnUso.Add(nuevoRango);
+    }
+    
     public void EliminarRango(DateTime inicio, DateTime fin, int cantidad)
     {
         RangoDeUso rango = RangosEnUso.FirstOrDefault(r =>

@@ -84,7 +84,7 @@ public class Tarea
     {
         ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullParaAgregar);
         VerificarRecursoNoEstaAgregado(recurso);
-        //recurso.AgregarRangoDeUso(FechaInicioMasTemprana, FechaFinMasTemprana, cantidad); hay qe agregar esto!!!!
+        recurso.AgregarRangoDeUso(FechaInicioMasTemprana, FechaFinMasTemprana, cantidad);
         RecursoNecesario recursoNecesario = new RecursoNecesario(recurso, cantidad);
         RecursosNecesarios.Add(recursoNecesario);
         recurso.IncrementarCantidadDeTareasUsandolo();

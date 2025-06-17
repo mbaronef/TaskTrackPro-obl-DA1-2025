@@ -237,7 +237,7 @@ public class ControladorTareasTests
 
         _mockGestorTareas.Setup(g => g.AsignarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso, 1));
 
-        _controladorTareas.AgregarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso);
+        _controladorTareas.AgregarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso, 1);
 
         _mockGestorTareas.Verify(g => g.AsignarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso, cantidad), Times.Once);
     }
