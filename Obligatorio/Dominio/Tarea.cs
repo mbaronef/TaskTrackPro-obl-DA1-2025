@@ -162,6 +162,11 @@ public class Tarea
             }
         }
     }
+    
+    public bool UsaRecurso(int idRecurso)
+    {
+        return RecursosNecesarios.Any(rn => rn.Recurso.Id == idRecurso);
+    }
 
     public bool EsMiembro(Usuario usuario)
     {

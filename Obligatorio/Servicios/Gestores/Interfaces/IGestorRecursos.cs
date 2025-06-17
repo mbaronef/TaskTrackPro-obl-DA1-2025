@@ -23,4 +23,7 @@ public interface IGestorRecursos
     void ModificarCapacidadRecurso(UsuarioDTO solicitanteDTO, int idRecurso, int nuevaCapacidad);
     
     RecursoDTO ObtenerRecursoExclusivoPorId(int idProyecto, int idRecurso);
+    
+    List<RecursoPanelDTO> ObtenerRecursosParaPanel(int idProyecto);
+
 }

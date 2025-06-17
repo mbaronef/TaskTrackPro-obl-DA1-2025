@@ -243,4 +243,26 @@ public class GestorRecursos : IGestorRecursos
 
         return usuario;
     }
+    
+    public List<RecursoPanelDTO> ObtenerRecursosParaPanel(int idProyecto)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        List<Recurso> recursos = _repositorioRecursos.ObtenerTodos()
+            .Where(r => !r.EsExclusivo() || (r.ProyectoAsociado?.Id == idProyecto)).ToList();
+
+        List<Tarea> tareasEnProceso = proyecto.Tareas
+            .Where(t => t.Estado == EstadoTarea.EnProceso).ToList();
+
+        List<RecursoPanelDTO> panel = new();
+
+        foreach (var recurso in recursos)
+        {
+            int nivelDeUso = tareasEnProceso.Count(t => t.UsaRecurso(recurso.Id));
+            List<RangoDeUso> rangos = recurso.RangosEnUso.ToList();
+
+            panel.Add(RecursoPanelDTO.DesdeEntidad(recurso, rangos, nivelDeUso));
+        }
+
+        return panel;
+    }
 }
