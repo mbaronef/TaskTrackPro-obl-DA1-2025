@@ -97,7 +97,7 @@ public class GestorRecursosTests
     private RecursoDTO CrearRecursoDTO()
     {
         return new RecursoDTO()
-            { Nombre = "Analista Senior", Tipo = "Humano", Descripcion = "Un analista Senior con experiencia" };
+            { Nombre = "Analista Senior", Tipo = "Humano", Descripcion = "Un analista Senior con experiencia", Capacidad = 3};
     }
 
     [TestMethod]
