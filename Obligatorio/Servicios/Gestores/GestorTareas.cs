@@ -307,7 +307,6 @@ public class GestorTareas : IGestorTareas
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(), mensaje);
     }
 
-
     public bool EsMiembroDeTarea(UsuarioDTO usuarioDTO, int idTarea, int idProyecto)
     {
         Usuario usuario = ObtenerUsuarioPorDTO(usuarioDTO);

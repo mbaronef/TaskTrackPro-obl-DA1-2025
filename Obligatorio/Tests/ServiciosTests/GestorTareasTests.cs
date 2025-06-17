@@ -1163,10 +1163,40 @@ public class GestorTareasTests
         alternativo.Id = 2;
         _repositorioRecursos.Agregar(alternativo);
         
+        
         _gestorTareas.EncontrarRecursosAlternativosMismoTipo(admin, proyecto.Id, recursoOriginalDTO,new DateTime(2026, 01, 01), new DateTime(2026, 01, 04), 1);
         
         Usuario adminEntidad = _repositorioUsuarios.ObtenerPorId(admin.Id);
         Assert.IsTrue(adminEntidad.Notificaciones.Any(n => n.Mensaje.Contains("Alternativo")));
         
     }
+    
+    [TestMethod]
+    public void ReprogramarTarea_NotificaAdminConNuevaFecha()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyectoDTO = CrearYAgregarProyecto(admin);
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
+
+        TareaDTO tareaDTO = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tareaDTO);
+        Tarea tarea = proyecto.Tareas.First();
+
+        Recurso recurso = new Recurso("Dev", "Humano", "Backend", 2);
+        recurso.Id = 1;
+        
+        recurso.AgregarRangoDeUso(new DateTime(2026, 01, 01), new DateTime(2026, 01, 03), 1);
+        _repositorioRecursos.Agregar(recurso);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+        
+        _gestorTareas.ReprogramarTarea(admin, proyecto.Id, tarea.Id, recursoDTO, 1);
+        
+        Usuario adminEntidad = _repositorioUsuarios.ObtenerPorId(admin.Id);
+        Notificacion notificacion = adminEntidad.Notificaciones
+            .FirstOrDefault(n => n.Mensaje.Contains("puede reprogramarse"));
+        Assert.IsNotNull(notificacion);
+        Assert.IsTrue(notificacion.Mensaje.Contains(recurso.Nombre));
+        Assert.IsTrue(notificacion.Mensaje.Contains("04/01/2026"));
+    }
+
 }
