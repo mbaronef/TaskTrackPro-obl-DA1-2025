@@ -147,6 +147,14 @@ public class GestorTareas : IGestorTareas
 
         if (nuevoEstado == EstadoTarea.Completada)
         {
+            foreach (RecursoNecesario recursoNecesario in tarea.RecursosNecesarios.ToList())
+            {
+                recursoNecesario.Recurso.EliminarRango(
+                    tarea.FechaInicioMasTemprana,
+                    tarea.FechaFinMasTemprana,
+                    recursoNecesario.Cantidad
+                );
+            }
             ActualizarEstadosTareasDelProyecto(proyecto);
         }
     }
