@@ -56,6 +56,11 @@ public class ControladorRecursos
     {
         _gestorRecursos.ModificarCapacidadRecurso(solicitanteDTO, idRecurso, nuevaCapacidad);
     }
+    
+    public List<RecursoPanelDTO> ObtenerPanelRecursos(int idProyecto)
+    {
+        return _gestorRecursos.ObtenerRecursosParaPanel(idProyecto);
+    }
 
 
     public RecursoDTO ObtenerRecursoExclusivoPorId(int idProyecto, int idRecurso)
