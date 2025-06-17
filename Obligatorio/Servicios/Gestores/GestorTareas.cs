@@ -250,6 +250,22 @@ public class GestorTareas : IGestorTareas
         
         NotificarEliminar($"recurso {recurso.Nombre}", idTarea, idProyecto);
     }
+    
+    public void ForzarAsignacion(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO,
+        int cantidad)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recurso = ObtenerRecursoPorDTO(recursoDTO);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        
+        ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        recurso.AgregarRangoDeUsoForzado(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, cantidad); //forzado!?
+        tarea.AsignarRecurso(recurso, cantidad);
+        
+        string mensaje = $"Recurso {recurso.Nombre} fue asignado forzadamente a la tarea '{tarea.Titulo}', excediendo su capacidad.";
+        _notificador.NotificarMuchos(proyecto.Miembros.ToList(), mensaje);
+    }
 
     public bool EsMiembroDeTarea(UsuarioDTO usuarioDTO, int idTarea, int idProyecto)
     {
