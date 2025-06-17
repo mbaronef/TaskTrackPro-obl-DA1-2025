@@ -126,6 +126,24 @@ public class Recurso
         
         Capacidad = nuevaCapacidad;
     }
+    
+    public bool UsoSeAjustaANuevaCapacidad(int nuevaCapacidad)
+    {
+        if (!RangosEnUso.Any()) return true;
+        DateTime primeraFechaDeUso = RangosEnUso.Min(r => r.FechaInicio.Date);
+        DateTime ultimaFechaDeUso = RangosEnUso.Max(r => r.FechaFin.Date);
+
+        for (DateTime dia = primeraFechaDeUso; dia <= ultimaFechaDeUso; dia = dia.AddDays(1))
+        {
+            int usoEnDia = CantidadDeUsosPorDia(dia);
+            
+            if (usoEnDia > nuevaCapacidad)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private void ValidarSiElUsoSuperaLaNuevaCapacidad(int nuevaCapacidad)
     {

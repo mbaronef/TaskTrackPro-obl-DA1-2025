@@ -1152,6 +1152,7 @@ public class GestorTareasTests
         UsuarioDTO admin = CrearAdministradorProyecto();
         ProyectoDTO proyectoDTO = CrearYAgregarProyecto(admin);
         Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
+        TareaDTO tarea = CrearTarea();
         
         Recurso recursoOriginal = new Recurso("Original", "TipoX", "desc", 1);
         recursoOriginal.Id = 1;
@@ -1162,7 +1163,7 @@ public class GestorTareasTests
         alternativo.Id = 2;
         _repositorioRecursos.Agregar(alternativo);
         
-        _gestorTareas.EncontrarRecursosAlternativosMismoTipo(admin, proyecto.Id, recursoOriginalDTO, 1);
+        _gestorTareas.EncontrarRecursosAlternativosMismoTipo(admin, proyecto.Id, recursoOriginalDTO,new DateTime(2026, 01, 01), new DateTime(2026, 01, 04), 1);
         
         Usuario adminEntidad = _repositorioUsuarios.ObtenerPorId(admin.Id);
         Assert.IsTrue(adminEntidad.Notificaciones.Any(n => n.Mensaje.Contains("Alternativo")));
