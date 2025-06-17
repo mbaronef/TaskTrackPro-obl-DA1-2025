@@ -651,13 +651,10 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_LiderProyectoCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-<<<<<<< fix/fechasCaminoCritico
+
         Proyecto proyectoDominio = _repositorioProyectos.ObtenerPorId(proyecto.Id);
         proyectoDominio.FechaInicio = DateTime.Today; // para que no falle la validación de fecha de inicio
-=======
-        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
 
->>>>>>> develop
         UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
 
         TareaDTO tarea = CrearTarea();
