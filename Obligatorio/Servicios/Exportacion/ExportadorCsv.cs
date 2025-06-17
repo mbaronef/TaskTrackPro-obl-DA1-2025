@@ -1,7 +1,6 @@
 ﻿using System.Text;
-using System.Text.Json;
-using Dominio;
-using Repositorios.Interfaces;
+using IRepositorios;
+using IServicios;
 
 namespace Servicios.Exportacion;
 

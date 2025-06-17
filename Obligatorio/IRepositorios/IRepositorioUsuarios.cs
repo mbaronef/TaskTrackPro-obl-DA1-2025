@@ -1,6 +1,6 @@
 using Dominio;
 
-namespace Repositorios.Interfaces;
+namespace IRepositorios;
 
 public interface IRepositorioUsuarios : IRepositorio<Usuario>
 {

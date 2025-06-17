@@ -1,6 +1,6 @@
 using Dominio;
 
-namespace Servicios.CaminoCritico;
+namespace IServicios;
 
 public interface ICalculadorCaminoCritico
 {

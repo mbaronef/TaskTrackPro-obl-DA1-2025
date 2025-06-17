@@ -1,6 +1,6 @@
 ﻿using DTOs;
 
-namespace Servicios.Gestores.Interfaces;
+namespace IServicios.IGestores;
 
 public interface IGestorRecursos
 {

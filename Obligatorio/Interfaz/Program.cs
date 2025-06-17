@@ -5,12 +5,12 @@ using Interfaz.Components;
 using Interfaz.ServiciosInterfaz;
 using Microsoft.EntityFrameworkCore;
 using Repositorios;
-using Repositorios.Interfaces;
+using IRepositorios;
+using IServicios;
+using IServicios.IGestores;
 using Servicios.CaminoCritico;
 using Servicios.Exportacion;
 using Servicios.Gestores;
-
-using Servicios.Gestores.Interfaces;
 using Servicios.Notificaciones;
 
 var builder = WebApplication.CreateBuilder(args);

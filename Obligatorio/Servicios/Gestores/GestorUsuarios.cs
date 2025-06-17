@@ -2,8 +2,9 @@ using Dominio;
 using DTOs;
 using Excepciones;
 using Excepciones.MensajesError;
-using Repositorios.Interfaces;
-using Servicios.Gestores.Interfaces;
+using IRepositorios;
+using IServicios;
+using IServicios.IGestores;
 using Servicios.Notificaciones;
 using Utilidades;
 

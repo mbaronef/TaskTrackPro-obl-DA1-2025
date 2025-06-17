@@ -1,4 +1,4 @@
-﻿namespace Servicios.Exportacion;
+﻿namespace IServicios;
 
 public interface IExportadorProyectos
 {

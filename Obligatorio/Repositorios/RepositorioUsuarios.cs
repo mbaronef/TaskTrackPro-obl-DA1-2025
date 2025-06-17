@@ -1,6 +1,6 @@
 using Dominio;
+using IRepositorios;
 using Microsoft.EntityFrameworkCore;
-using Repositorios.Interfaces;
 
 namespace Repositorios;
 

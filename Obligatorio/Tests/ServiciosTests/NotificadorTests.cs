@@ -1,6 +1,6 @@
 using Dominio;
 using Repositorios;
-using Repositorios.Interfaces;
+using IRepositorios;
 using Servicios.Notificaciones;
 using Tests.Contexto;
 

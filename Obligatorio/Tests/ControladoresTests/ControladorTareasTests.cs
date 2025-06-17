@@ -1,6 +1,6 @@
 using Controladores;
 using DTOs;
-using Servicios.Gestores.Interfaces;
+using IServicios.IGestores;
 using Moq;
 
 namespace Tests.ControladoresTests;

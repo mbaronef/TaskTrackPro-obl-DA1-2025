@@ -1,6 +1,7 @@
 using Excepciones;
 using Excepciones.MensajesError;
-using Repositorios.Interfaces;
+using IRepositorios;
+using IServicios;
 
 namespace Servicios.Exportacion;
 

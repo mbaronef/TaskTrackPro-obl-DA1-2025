@@ -1,5 +1,5 @@
 using DTOs;
-using Servicios.Gestores.Interfaces;
+using IServicios.IGestores;
 
 namespace Controladores;
 
