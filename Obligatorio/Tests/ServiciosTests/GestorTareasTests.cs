@@ -1240,5 +1240,21 @@ public class GestorTareasTests
 
         _gestorTareas.EliminarDependenciaDeTarea(admin, tarea1.Id, tarea2.Id, proyecto.Id);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void AgregarTareaConNombreRepetidoLanzaExcepcion()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+        TareaDTO tarea1 = CrearTarea();
+        tarea1.Titulo = "Repetido";
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
+
+        TareaDTO tarea2 = CrearTarea();
+        tarea2.Titulo = "Repetido";
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea2); 
+    }
 
 }
