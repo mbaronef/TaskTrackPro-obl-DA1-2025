@@ -159,7 +159,9 @@ public class GestorTareas : IGestorTareas
 
         VerificarProyectoHayaComenzado(proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
-
+        
+        
+        
         if (nuevoEstado == EstadoTarea.Completada &&
             tarea.FechaFinMasTemprana > DateTime.Today &&
             tarea.RecursosNecesarios.Any())

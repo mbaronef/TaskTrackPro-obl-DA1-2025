@@ -752,6 +752,27 @@ public class GestorTareasTests
 
         _gestorTareas.CambiarEstadoTarea(admin, tarea.Id, proyecto.Id, EstadoTareaDTO.Completada);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void CambiarEstadoTarea_EnProcesoAntesDeFechaInicioYConRecursosLanzaExcepcion()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+        TareaDTO tarea = CrearTarea();
+        tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(2);
+        tarea.DuracionEnDias = 2;
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+
+        Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
+        _repositorioRecursos.Agregar(recurso);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+        _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+
+        _gestorTareas.CambiarEstadoTarea(admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+    }
 
     [TestMethod]
     public void TareaConDependenciaSeBloquea()
