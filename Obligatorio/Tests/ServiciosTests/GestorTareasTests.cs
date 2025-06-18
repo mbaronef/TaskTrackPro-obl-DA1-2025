@@ -732,6 +732,26 @@ public class GestorTareasTests
         _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
         _gestorTareas.CambiarEstadoTarea(_noAdmin, tarea.Id, proyecto.Id, EstadoTareaDTO.Pendiente);
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void CambiarEstadoTarea_CompletadaAntesDeFechaFinYConRecursosLanzaExcepcion()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+
+        TareaDTO tarea = CrearTarea();
+        tarea.FechaInicioMasTemprana = DateTime.Today;
+        tarea.DuracionEnDias = 5; // Fecha fin futura
+
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+
+        RecursoDTO recursoDTO = CrearYAgregarRecurso();
+        _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+
+        _gestorTareas.CambiarEstadoTarea(admin, tarea.Id, proyecto.Id, EstadoTareaDTO.Completada);
+    }
 
     [TestMethod]
     public void TareaConDependenciaSeBloquea()
