@@ -771,6 +771,51 @@ public class ProyectoTests
     }
     
     [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void DesasignarLider_LanzaExcepcionSiUsuarioNoEsLider()
+    {
+        Usuario miembro = CrearMiembro(2);
+        _miembros.Add(miembro);
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+
+        proyecto.DesasignarLider(miembro); 
+    }
+    
+    [TestMethod]
+    public void DesasignarLider_ConContadorEnUnoRemueveRolYLider()
+    {
+        Usuario miembro = CrearMiembro(2);
+        _miembros.Add(miembro);
+    
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(miembro);
+
+        proyecto.DesasignarLider(miembro);
+
+        Assert.IsFalse(miembro.EsLider);
+        Assert.AreEqual(0, miembro.CantidadProyectosLiderando);
+        Assert.IsNull(proyecto.Lider);
+    }
+    
+    [TestMethod]
+    public void DesasignarLider_ConContadorMayorA1MantieneRolYLiderNull()
+    {
+        Usuario miembro = CrearMiembro(2);
+        miembro.AsignarRolLider();
+        miembro.CantidadProyectosLiderando = 1;
+        _miembros.Add(miembro);
+
+        Proyecto proyecto = CrearProyectoCon(_admin, _miembros);
+        proyecto.AsignarLider(miembro);
+
+        proyecto.DesasignarLider(miembro);
+
+        Assert.IsTrue(miembro.EsLider);
+        Assert.AreEqual(1, miembro.CantidadProyectosLiderando);
+        Assert.IsNull(proyecto.Lider);
+    }
+    
+    [TestMethod]
     public void EsLider_DevuelveTrueSiUsuarioEsElLider()
     {
         Usuario miembro = CrearMiembro(2);

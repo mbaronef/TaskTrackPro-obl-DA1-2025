@@ -149,7 +149,7 @@ public class Proyecto
     public void DesasignarLider(Usuario usuario)
     {
         if (!EsLider(usuario))
-            throw new ExcepcionDominio("El usuario no es el líder de este proyecto.");
+            throw new ExcepcionDominio(MensajesErrorDominio.UsuarioNoLider);
 
         usuario.CantidadProyectosLiderando--;
 

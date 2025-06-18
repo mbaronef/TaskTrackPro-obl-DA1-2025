@@ -114,14 +114,6 @@ public static class PermisosUsuarios
         }
     }
 
-    public static void VerificarUsuarioEsLiderDeEseProyecto(Usuario usuario, Proyecto proyecto)
-    {
-        if (!proyecto.EsLider(usuario))
-        {
-            throw new ExcepcionPermisos(MensajesErrorServicios.UsuarioNoEsLider);
-        }
-    }
-
     private static Usuario ObtenerMiembro(int idMiembro, Proyecto proyecto)
     {
         Usuario miembro = proyecto.Miembros.FirstOrDefault(usuario => usuario.Id == idMiembro);

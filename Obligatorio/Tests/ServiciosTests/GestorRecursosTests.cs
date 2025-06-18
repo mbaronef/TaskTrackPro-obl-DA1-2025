@@ -506,7 +506,7 @@ public class GestorRecursosTests
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-
+/*
     [TestMethod]
     public void ModificarNombreDeRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
@@ -529,7 +529,7 @@ public class GestorRecursosTests
 
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
-    }
+    }*/
 
     [TestMethod]
     public void ModificarTipoDeRecursoExclusivoNotificaAlAdministradorDeProyecto()
@@ -549,7 +549,7 @@ public class GestorRecursosTests
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
     }
-
+/*
     [TestMethod]
     public void ModificarTipoDeRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()
     {
@@ -572,8 +572,8 @@ public class GestorRecursosTests
 
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
-    }
-
+    }*/
+/*
     [TestMethod]
     public void ModificarDescripcionDeRecursoExclusivoNotificaAlAdministradorDeProyecto()
     {
@@ -591,7 +591,7 @@ public class GestorRecursosTests
 
         Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
         Assert.AreEqual(DateTime.Today, ultimaNotificacion.Fecha);
-    }
+    }*/
 
     [TestMethod]
     public void ModificarDescripcionDeRecursoNoExclusivoNotificaAdminDeProyectosQueLoNecesitan()

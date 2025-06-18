@@ -1222,7 +1222,7 @@ public class GestorTareasTests
         _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
         _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
 
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso, 1);
     }
 
     [ExpectedException(typeof(ExcepcionPermisos))]
@@ -1305,7 +1305,7 @@ public class GestorTareasTests
         TareaDTO tarea = CrearTarea();
 
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso,1);
 
         _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
         _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
@@ -1495,7 +1495,7 @@ public class GestorTareasTests
             r.CantidadDeUsos == 2);
         Assert.IsNotNull(rangoAsignado);
 
-        List<Notificacion> notificaciones = miembro.Notificaciones;
+        List<Notificacion> notificaciones = miembro.Notificaciones.ToList();
         Assert.IsTrue(notificaciones.Any(n => n.Mensaje.Contains("asignado forzadamente")));
     }
     

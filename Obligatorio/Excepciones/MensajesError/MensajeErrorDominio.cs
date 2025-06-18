@@ -44,6 +44,7 @@ public static class MensajesErrorDominio
     public const string MiembroNull = "No se puede agregar un miembro null.";
     public const string LiderNull = "No se puede asignar un líder null.";
     public const string UsuarioYaEsLider = "El usuario ya es líder del proyecto.";
+    public const string UsuarioNoLider = "El usuario no es el líder de este proyecto.";
     public const string UsuarioNoEsMiembroDelProyecto = "El usuario no es miembro del proyecto.";
 
     public const string RecursoYaEsExclusivo = "El recurso ya es exclusivo de otro proyecto.";
