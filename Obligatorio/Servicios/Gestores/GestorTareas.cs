@@ -1,6 +1,5 @@
 ﻿using Dominio;
 using DTOs;
-using Servicios.CaminoCritico;
 using Excepciones;
 using Excepciones.MensajesError;
 using IRepositorios;
@@ -449,7 +448,7 @@ public class GestorTareas : IGestorTareas
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.CampoTareaModificado(campo, idTarea, proyecto.Nombre));
     }
-
+   
     private void NotificarEliminar(string campo, int idTarea, int idProyecto)
     {
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
@@ -457,13 +456,14 @@ public class GestorTareas : IGestorTareas
             MensajesNotificacion.CampoTareaEliminado(campo, idTarea, proyecto.Nombre));
     }
 
+
     private void NotificarAgregar(string campo, int idTarea, int idProyecto)
     {
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
             MensajesNotificacion.CampoTareaAgregado(campo, idTarea, proyecto.Nombre));
     }
-
+    
     private void VerificarEstadoEditablePorUsuario(EstadoTarea estado)
     {
         if (estado != EstadoTarea.EnProceso && estado != EstadoTarea.Completada)
@@ -471,19 +471,14 @@ public class GestorTareas : IGestorTareas
             throw new ExcepcionTarea(MensajesErrorServicios.EstadoNoEditable);
         }
     }
-
+    
     private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
     {
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
-        if (!tarea.RecursosNecesarios.Contains(recurso))
+        if (!tarea.RecursosNecesarios.Any(rn => rn.Recurso.Equals(recurso)))
         {
             throw new ExcepcionTarea(MensajesErrorServicios.RecursoNoAsignado);
         }
-    }
-
-    private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
-    {
-        proyecto.Tareas.ToList().ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
     }
 
     private void ValidarTareaNoTieneSucesora(Proyecto proyecto, int idTarea)
@@ -549,20 +544,6 @@ public class GestorTareas : IGestorTareas
         AsignarRecursoATarea(solicitanteDTO, idTarea, idProyecto, recursoDTO, cantidad);
     }
     
-    private void ActualizarEstadosTareasDelProyecto(Proyecto proyecto)
-    {
-        proyecto.Tareas.ToList().ForEach(tarea => tarea.ActualizarEstadoBloqueadaOPendiente());
-    }
-    
-    private void ValidarRecursoExistente(Recurso recurso, int idTarea, int idProyecto)
-    {
-        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
-        if (!tarea.RecursosNecesarios.Any(rn => rn.Recurso.Id == recurso.Id))
-        {
-            throw new ExcepcionTarea(MensajesErrorServicios.RecursoNoAsignado);
-        }
-    }
-    
     private void RecalcularCaminoCriticoYActualizarProyecto(Proyecto proyecto)
     {
         _caminoCritico.CalcularCaminoCritico(proyecto);
@@ -579,13 +560,6 @@ public class GestorTareas : IGestorTareas
         return proyecto;
     }
     
-    private void NotificarCambio(string campo, int idTarea, int idProyecto)
-    {
-        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
-        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
-            MensajesNotificacion.CampoTareaModificado(campo, idTarea, proyecto.Nombre));
-    }
-    
     private Tarea ObtenerTareaValidandoAdminOLider(Usuario solicitante, int idProyecto, int idTarea)
         {
             Proyecto proyecto = ObtenerProyectoValidandoAdminOLider(idProyecto, solicitante);
@@ -596,24 +570,11 @@ public class GestorTareas : IGestorTareas
     private void VerificarTareaNoTieneRecursos(Tarea tarea)
     {
         if (tarea.RecursosNecesarios.Any())
+        {
             throw new ExcepcionTarea(MensajesErrorServicios.TareaConRecursosAsignados);
+        }
     }
     
-    private void NotificarAgregar(string campo, int idTarea, int idProyecto)
-    {
-        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
-        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
-            MensajesNotificacion.CampoTareaAgregado(campo, idTarea, proyecto.Nombre));
-    }
-    
-    private void NotificarEliminar(string campo, int idTarea, int idProyecto)
-    {
-        Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
-        _notificador.NotificarMuchos(proyecto.Miembros.ToList(),
-
-            MensajesNotificacion.CampoTareaEliminado(campo, idTarea, proyecto.Nombre));
-    }
-
     private void VerificarProyectoHayaComenzado(Proyecto proyecto)
     {
         if (proyecto.FechaInicio > DateTime.Today)
@@ -632,11 +593,5 @@ public class GestorTareas : IGestorTareas
     {
         if (tareaAEliminar == null)
             throw new ExcepcionTarea(MensajesErrorServicios.TareaNoExistente);
-    }
-    
-    private void VerificarTareaNoTieneRecursos(Tarea tarea)
-    {
-        if (tarea.RecursosNecesarios.Any())
-            throw new ExcepcionTarea(MensajesErrorServicios.TareaConRecursosAsignados);
     }
 }

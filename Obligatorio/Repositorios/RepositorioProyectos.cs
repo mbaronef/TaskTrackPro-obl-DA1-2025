@@ -219,11 +219,11 @@ public class RepositorioProyectos : IRepositorioProyectos
     
     private void EliminarRecursosNoIncluidos(Tarea tarea, Tarea tareaContexto)
     {
-        List<Recurso> recursosAEliminar = tareaContexto.RecursosNecesarios
+        List<RecursoNecesario> recursosAEliminar = tareaContexto.RecursosNecesarios
             .Where(r => !tarea.RecursosNecesarios.Contains(r))
             .ToList();
         
-        foreach (Recurso recurso in recursosAEliminar)
+        foreach (RecursoNecesario recurso in recursosAEliminar)
         {
             tareaContexto.RecursosNecesarios.Remove(recurso);
         }
@@ -231,14 +231,19 @@ public class RepositorioProyectos : IRepositorioProyectos
 
     private void AgregarRecursosNuevos(Tarea tarea, Tarea tareaContexto)
     {
-        foreach (Recurso recurso in tarea.RecursosNecesarios)
+        foreach (RecursoNecesario recursoNecesario in tarea.RecursosNecesarios)
         {
-            if (!tareaContexto.RecursosNecesarios.Contains(recurso))
+            if (!tareaContexto.RecursosNecesarios.Contains(recursoNecesario))
             {
-                Recurso recursoContexto = _contexto.Recursos.FirstOrDefault(r => r.Id == recurso.Id);
+                Recurso recursoContexto = _contexto.Recursos.FirstOrDefault(r => r.Id == recursoNecesario.Id);
+                int cantidad = recursoNecesario.Cantidad;
                 if (recursoContexto != null)
                 {
-                    tareaContexto.RecursosNecesarios.Add(recursoContexto);
+                    tareaContexto.RecursosNecesarios.Add(new RecursoNecesario()
+                    {
+                        Recurso = recursoContexto,
+                        Cantidad = cantidad
+                    });
                 }
             }
         }

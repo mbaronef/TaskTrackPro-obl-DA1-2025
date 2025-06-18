@@ -586,7 +586,7 @@ else
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span><i
-                                          class="bi bi-box-seam me-1 text-primary"></i>Nombre: '@recurso.Recurso.Nombre', tipo: '@recurso.Recurso.Tipo', descripción: '@recurso.RecursoDescripcion' </span>
+                                          class="bi bi-box-seam me-1 text-primary"></i>Nombre: '@recurso.Recurso.Nombre', tipo: '@recurso.Recurso.Tipo', descripción: '@recurso.Recurso.Descripcion' </span>
                                 @if (ControladorProyectos.EsAdministradorDeProyecto(Sesion.UsuarioLogueado, proyecto.Id) && tareaActual.Estado != EstadoTareaDTO.EnProceso)
                                 {
                                     <button class="btn btn-outline-danger btn-sm"
