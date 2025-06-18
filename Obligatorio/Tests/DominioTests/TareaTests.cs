@@ -857,4 +857,27 @@ public class TareaTests
         tarea.FijarFechaInicio(DateTime.Today.AddDays(100));
     }
     
+    [TestMethod]
+    public void UsaRecurso_DevuelveTrueSiElRecursoEstaAsignado()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 2, DateTime.Today.AddDays(1));
+        Recurso recurso = new Recurso("Servidor", "Infra", "Servidor dedicado", 4) ;
+        RecursoNecesario recursoNecesario = new RecursoNecesario(recurso, 1);
+    
+        tarea.RecursosNecesarios.Add(recursoNecesario);
+        
+        bool resultado = tarea.UsaRecurso(recurso.Id);
+
+        Assert.IsTrue(resultado);
+    }
+    
+    [TestMethod]
+    public void UsaRecurso_DevuelveFalseSiElRecursoNoEstaAsignado()
+    {
+        Tarea tarea = new Tarea("Título", "Descripción", 2, DateTime.Today.AddDays(1));
+
+        bool resultado = tarea.UsaRecurso(9999); 
+
+        Assert.IsFalse(resultado);
+    }
 }

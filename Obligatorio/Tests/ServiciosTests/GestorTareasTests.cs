@@ -1209,21 +1209,21 @@ public class GestorTareasTests
         Assert.IsTrue(tarea.RecursosNecesarios.Any(recurso => recurso.Recurso.Id == recursoDTO.Id));
     }
     
-/*[TestMethod]
-[ExpectedException(typeof(ExcepcionTarea))]
-public void AsignarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
-{
-    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-    RecursoDTO recurso = CrearYAgregarRecurso();
-    TareaDTO tarea = CrearTarea();
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void AsignarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recurso = CrearYAgregarRecurso();
+        TareaDTO tarea = CrearTarea();
 
-    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
 
-    _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
-    _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
 
-    _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
-}*/
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso, 1);
+    }
 
 [ExpectedException(typeof(ExcepcionPermisos))]
 [TestMethod]
@@ -1292,26 +1292,26 @@ public void AdminDeProyectoPuedeEliminarRecursoNecesarioDeTarea()
     _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
     _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
 
-    tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
-    Assert.IsFalse(tarea.RecursosNecesarios.Any(recurso => recurso.Recurso.Id == recursoDTO.Id));
-}
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+        Assert.IsFalse(tarea.RecursosNecesarios.Any(recurso => recurso.Recurso.Id == recursoDTO.Id));
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void EliminarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
+    {
+        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        RecursoDTO recurso = CrearYAgregarRecurso();
+        TareaDTO tarea = CrearTarea();
 
-/*[TestMethod]
-[ExpectedException(typeof(ExcepcionTarea))]
-public void EliminarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
-{
-    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-    RecursoDTO recurso = CrearYAgregarRecurso();
-    TareaDTO tarea = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso,1);
 
-    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-    _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
 
-    _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
-    _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
-
-    _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
-}*/
+        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
+    }
 
 [ExpectedException(typeof(ExcepcionPermisos))]
 [TestMethod]
@@ -1461,29 +1461,29 @@ public void ValidarYAsignarRecurso_AsignaRecursoCorrectamente()
 
     _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
 
-    tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id);
-    Assert.IsTrue(tarea.RecursosNecesarios.Any(r => r.Recurso.Id == recurso.Id));
-}
+        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
+        Assert.IsTrue(tarea.RecursosNecesarios.Any(r => r.Recurso.Id == recurso.Id));
+    }
+    
+    [TestMethod]
+    public void ForzarAsignacion_AsignaRecursoYNotificaMiembros()
+    {
+        ProyectoDTO proyectoDTO = CrearYAgregarProyecto(_admin);
+        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
 
-/*[TestMethod]
-public void ForzarAsignacion_AsignaRecursoYNotificaMiembros()
-{
-    ProyectoDTO proyectoDTO = CrearYAgregarProyecto(_admin);
-    Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
+        TareaDTO tareaDTO = CrearTarea();
+        _gestorTareas.AgregarTareaAlProyecto(proyectoDTO.Id, _admin, tareaDTO);
 
-    TareaDTO tareaDTO = CrearTarea();
-    _gestorTareas.AgregarTareaAlProyecto(proyectoDTO.Id, _admin, tareaDTO);
+        Tarea tarea = proyecto.Tareas.First();
+        RecursoDTO recursoDTO = CrearYAgregarRecurso("Recurso", "Tipo", "Desc", 5);
 
-    Tarea tarea = proyecto.Tareas.First();
-    RecursoDTO recursoDTO = CrearYAgregarRecurso("Recurso", "Tipo", "Desc", 5);
-
-    Recurso recurso = _repositorioRecursos.ObtenerPorId(recursoDTO.Id);
-
-    Usuario miembro = new Usuario("Miembro", "miembro@gmail.com", DateTime.Today.AddYears(-20), "miembro@mail.com", "Contraseña#3");
-    _repositorioUsuarios.Agregar(miembro);
-    proyecto.Miembros.Add(miembro);
-
-    _gestorTareas.ForzarAsignacion(_admin, tarea.Id, proyecto.Id, recursoDTO, 2);
+        Recurso recurso = _repositorioRecursos.ObtenerPorId(recursoDTO.Id);
+        
+        Usuario miembro = new Usuario("Miembro", "miembro@gmail.com", DateTime.Today.AddYears(-20), "miembro@mail.com", "Contraseña#3");
+        _repositorioUsuarios.Agregar(miembro);
+        proyecto.Miembros.Add(miembro);
+        
+        _gestorTareas.ForzarAsignacion(_admin, tarea.Id, proyecto.Id, recursoDTO, 2);
 
     RecursoNecesario recursoAsignado = tarea.RecursosNecesarios.FirstOrDefault(rn => rn.Recurso.Id == recurso.Id);
     Assert.IsNotNull(recursoAsignado);
@@ -1495,39 +1495,39 @@ public void ForzarAsignacion_AsignaRecursoYNotificaMiembros()
         r.CantidadDeUsos == 2);
     Assert.IsNotNull(rangoAsignado);
 
-    List<Notificacion> notificaciones = miembro.Notificaciones;
-    Assert.IsTrue(notificaciones.Any(n => n.Mensaje.Contains("asignado forzadamente")));
-}
-*/
-[TestMethod]
-public void EliminarTarea_LiberaRangosEnRecurso()
-{
-    UsuarioDTO admin = CrearAdministradorProyecto();
-    ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
-
-    TareaDTO tarea = CrearTarea();
-    tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
-    tarea.DuracionEnDias = 2;
-    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
-
-    Recurso recurso = new Recurso("Dev", "Humano", "Desarrollador", 1);
-    _repositorioRecursos.Agregar(recurso);
-    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-
-    _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
-    Assert.AreEqual(1, recurso.RangosEnUso.Count);
-
-    _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, admin, tarea.Id);
-
-    Assert.AreEqual(0, recurso.RangosEnUso.Count);
-}
-
-[TestMethod]
-[ExpectedException(typeof(ExcepcionTarea))]
-public void ModificarDuracionTarea_ConRecursosAsignadosLanzaExcepcion()
-{
-    UsuarioDTO admin = CrearAdministradorProyecto();
-    ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+        List<Notificacion> notificaciones = miembro.Notificaciones.ToList();
+        Assert.IsTrue(notificaciones.Any(n => n.Mensaje.Contains("asignado forzadamente")));
+    }
+    
+    [TestMethod]
+    public void EliminarTarea_LiberaRangosEnRecurso()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+    
+        TareaDTO tarea = CrearTarea();
+        tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
+        tarea.DuracionEnDias = 2;
+        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+    
+        Recurso recurso = new Recurso("Dev", "Humano", "Desarrollador", 1);
+        _repositorioRecursos.Agregar(recurso);
+        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+    
+        _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+        Assert.AreEqual(1, recurso.RangosEnUso.Count); 
+    
+        _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, admin, tarea.Id);
+    
+        Assert.AreEqual(0, recurso.RangosEnUso.Count);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionTarea))]
+    public void ModificarDuracionTarea_ConRecursosAsignadosLanzaExcepcion()
+    {
+        UsuarioDTO admin = CrearAdministradorProyecto();
+        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
 
     TareaDTO tarea = CrearTarea();
     tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);

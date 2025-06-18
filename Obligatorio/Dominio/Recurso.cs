@@ -147,25 +147,22 @@ public class Recurso
 
     private void ValidarSiElUsoSuperaLaNuevaCapacidad(int nuevaCapacidad)
     {
-        if (!RangosEnUso.Any()) return; //agregue esto
+        if (!RangosEnUso.Any()) return; 
         DateTime primeraFechaDeUso = RangosEnUso.Min(r => r.FechaInicio.Date);
         DateTime ultimaFechaDeUso = RangosEnUso.Max(r => r.FechaFin.Date);
-
         for (DateTime dia = primeraFechaDeUso; dia <= ultimaFechaDeUso; dia = dia.AddDays(1))
         {
             int usoEnDia = CantidadDeUsosPorDia(dia);
-            
             if (usoEnDia > nuevaCapacidad)
             {
                 throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadNoReducible);
             }
         }
     }
-    
+    /*
     public DateTime BuscarProximaFechaDisponible(DateTime desde, int duracionEnDias, int cantidad)
     {
         DateTime fechaInicio = desde;
-
         if (RangosEnUso.Any())
         {
             DateTime despuesDeUltimoUso = RangosEnUso.Max(r => r.FechaFin.Date).AddDays(1);
@@ -174,7 +171,6 @@ public class Recurso
                 fechaInicio = despuesDeUltimoUso;
             }
         }
-
         while (true)
         {
             DateTime fechaFinTentativa = fechaInicio.AddDays(duracionEnDias - 1);
@@ -189,17 +185,48 @@ public class Recurso
                     break;
                 }
             }
-
             if (disponible)
             {
                 return fechaInicio;
             }
-
             fechaInicio = fechaInicio.AddDays(1);
         }
+    }*/
+    
+    public DateTime BuscarProximaFechaDisponible(DateTime desde, int duracionEnDias, int cantidad)
+    {
+        DateTime inicio = CalcularFechaInicioDisponible(desde);
+
+        while (true)
+        {
+            if (EsVentanaDisponible(inicio, duracionEnDias, cantidad))
+                return inicio;
+
+            inicio = inicio.AddDays(1);
+        }
     }
+    
+    private DateTime CalcularFechaInicioDisponible(DateTime desde)
+    {
+        if (!RangosEnUso.Any())
+            return desde;
 
+        DateTime finUltimoUso = RangosEnUso.Max(r => r.FechaFin.Date).AddDays(1);
+        return finUltimoUso > desde ? finUltimoUso : desde;
+    }
+    
+    private bool EsVentanaDisponible(DateTime inicio, int duracion, int cantidad)
+    {
+        DateTime fin = inicio.AddDays(duracion - 1);
 
+        for (DateTime dia = inicio; dia <= fin; dia = dia.AddDays(1))
+        {
+            if (CantidadDeUsosPorDia(dia) + cantidad > Capacidad)
+                return false;
+        }
+
+        return true;
+    }
 
     public bool EsExclusivo()
     {
@@ -227,14 +254,6 @@ public class Recurso
         return RangosEnUso
             .Where(r => r.FechaInicio <= dia && r.FechaFin >= dia)
             .Sum(r => r.CantidadDeUsos);
-    }
-    
-    private void ValidarCapacidadDisponibleEnRango(DateTime fechaInicioNuevo, DateTime fechaFinNuevo, int cantidadNuevo)
-    {
-        if (!TieneCapacidadDisponible(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo))
-        {
-            throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadInsuficienteEnElRango);
-        }
     }
     
     private void ValidarAtributoNoVacio(string texto, string nombreAtributo)

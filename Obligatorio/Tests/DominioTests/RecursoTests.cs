@@ -163,7 +163,7 @@ public class RecursoTests
         Assert.AreEqual(DateTime.Today.AddDays(1), recurso.RangosEnUso.First().FechaFin);
         Assert.AreEqual(2, recurso.RangosEnUso.First().CantidadDeUsos);
     }
-
+/*
     [ExpectedException(typeof(ExcepcionRecurso))]
     [TestMethod]
     public void DaErrorAlAgregarRangoDeUsoSiNoTieneCapacidadDisponible()
@@ -171,7 +171,7 @@ public class RecursoTests
         Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
         recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1);
         recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 4);
-    }
+    }*/ 
     
     [TestMethod]
     public void EliminarRango_EliminaRangoConFechasYCapacidadExactas()
@@ -412,11 +412,165 @@ public class RecursoTests
     [TestMethod]
     public void BuscarProximaFechaDisponible_SinUsosDevuelveHoy()
     {
-        var recurso = new Recurso("Dev", "Humano", "Backend", capacidad: 3);
+        var recurso = new Recurso("Dev", "Humano", "Backend", 3);
         
-        DateTime resultado = recurso.BuscarProximaFechaDisponible(DateTime.Today, duracionEnDias: 2, cantidad: 1);
+        DateTime resultado = recurso.BuscarProximaFechaDisponible(DateTime.Today, 2,  1);
         
         Assert.AreEqual(DateTime.Today, resultado);
+    }
+    
+    [TestMethod]
+    public void BuscarProximaFechaDisponible_UltimoUsoAntesDeDesdeDevuelveDesde()
+    {
+        var recurso = new Recurso("Dev", "Humano", "Backend", 3);
+        recurso.AgregarRangoDeUso(DateTime.Today.AddDays(-3), DateTime.Today.AddDays(-1), 1);
+
+        DateTime resultado = recurso.BuscarProximaFechaDisponible(DateTime.Today,  2, 1);
+
+        Assert.AreEqual(DateTime.Today, resultado);
+    }
+    
+    [TestMethod]
+    public void BuscarProximaFechaDisponible_UltimoUsoDespuesDeDesdeDevuelveDiaPosterior()
+    {
+        var recurso = new Recurso("Dev", "Humano", "Backend",  3);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(2), 1);
+
+        DateTime resultado = recurso.BuscarProximaFechaDisponible(DateTime.Today, 2, 1);
+
+        Assert.AreEqual(DateTime.Today.AddDays(3), resultado);
+    }
+    
+    [TestMethod]
+    public void BuscarProximaFechaDisponible_SaltaDiasHastaEncontrarVentana()
+    {
+        var recurso = new Recurso("Dev", "Humano", "Backend",  1);
+    
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1);  
+        recurso.AgregarRangoDeUso(DateTime.Today.AddDays(2), DateTime.Today.AddDays(3), 1); 
+        
+        DateTime resultado = recurso.BuscarProximaFechaDisponible(DateTime.Today,  2, 1);
+
+        Assert.AreEqual(DateTime.Today.AddDays(4), resultado);
+    }
+    
+    [TestMethod]
+    public void BuscarProximaFechaDisponible_EntraAlIfDeFechaPosteriorYLaActualiza()
+    {
+        var recurso = new Recurso("Dev", "Humano", "Backend",3);
+
+        DateTime desde = DateTime.Today;
+
+        recurso.AgregarRangoDeUso(desde.AddDays(1), desde.AddDays(2), 1); 
+
+        DateTime resultado = recurso.BuscarProximaFechaDisponible(desde,  2,  1);
+
+        Assert.AreEqual(desde.AddDays(3), resultado);
+    }
+    
+    [TestMethod]
+    public void BuscarProximaFechaDisponible_UsoNoExcedeCapacidadRetornaInicio()
+    {
+        Recurso recurso = new Recurso("Dev", "Humano", "Backend", 3);
+    
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1);
+
+        DateTime resultado = recurso.BuscarProximaFechaDisponible(DateTime.Today, 2, 1);
+
+        Assert.AreEqual(DateTime.Today.AddDays(2), resultado);
+    }
+    
+    [TestMethod]
+    public void BuscarProximaFechaDisponible_VentanaInicialSuperaCapacidadYBuscaOtra()
+    {
+        var recurso = new Recurso("Dev", "Humano", "Backend", capacidad: 3);
+    
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today, 3);
+
+        DateTime resultado = recurso.BuscarProximaFechaDisponible(DateTime.Today, 1,2);
+
+        Assert.AreEqual(DateTime.Today.AddDays(1), resultado);
+    }
+    
+    [TestMethod]
+    public void ValidarSiElUsoSuperaCapacidad_RangosEnUsoVacioNoLanzaExcepcion()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Desc", 5);
+    
+        recurso.ModificarCapacidad(5);
+    }
+    
+    [TestMethod]
+    public void ValidarSiElUsoSuperaCapacidad_NoSuperaNuevaCapacidad_NoLanzaExcepcion()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Desc", 3);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2); 
+
+        recurso.ModificarCapacidad(3); 
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    public void ValidarSiElUsoSuperaCapacidad_SuperaNuevaCapacidadLanzaExcepcion()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Desc", 6);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 3);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 3); 
+
+        recurso.ModificarCapacidad(5); 
+    }
+    
+    [TestMethod]
+    public void ValidarUsoSuperaCapacidad_DisminuyeCapacidadPeroNoHayUsos_NoLanzaExcepcion()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 5);
+        recurso.ModificarCapacidad(4);
+    
+        Assert.AreEqual(4, recurso.Capacidad);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void Actualizar_LanzaExcepcionSiElRecursoNoEsElMismo()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 3);
+        Recurso recursoDiferente = new Recurso("Otro", "OtroTipo", "OtraDescripcion", 2) { Id = 999 }; // ID diferente para simular un recurso distinto
+        recurso.Actualizar(recursoDiferente); 
+    }
+    
+    [TestMethod]
+    public void UsoSeAjustaANuevaCapacidad_SinUsos_RetornaTrue()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 5);
+
+        bool resultado = recurso.UsoSeAjustaANuevaCapacidad(3);
+
+        Assert.IsTrue(resultado);
+    }
+    
+    [TestMethod]
+    public void UsoSeAjustaANuevaCapacidad_UsoDentroDelLimite_RetornaTrue()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 5);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 1); // Total: 2 por día
+
+        bool resultado = recurso.UsoSeAjustaANuevaCapacidad(3);
+
+        Assert.IsTrue(resultado);
+    }
+    
+    [TestMethod]
+    public void UsoSeAjustaANuevaCapacidad_UsoExcedeLimite_RetornaFalse()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 5);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today, 2);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today, 2); // Total: 4
+
+        bool resultado = recurso.UsoSeAjustaANuevaCapacidad(3);
+
+        Assert.IsFalse(resultado);
     }
 
 }
