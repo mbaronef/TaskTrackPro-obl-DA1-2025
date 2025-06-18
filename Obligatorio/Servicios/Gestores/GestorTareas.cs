@@ -160,14 +160,22 @@ public class GestorTareas : IGestorTareas
         VerificarProyectoHayaComenzado(proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
         
-        
+        if (nuevoEstado == EstadoTarea.EnProceso)
+        {
+            if (tarea.FechaInicioMasTemprana > DateTime.Today && tarea.RecursosNecesarios.Any())
+            {
+                throw new ExcepcionTarea(MensajesErrorServicios.NoPuedeComenzarConRecursosAntesDeFechaInicio);
+            }
+        }
         
         if (nuevoEstado == EstadoTarea.Completada &&
             tarea.FechaFinMasTemprana > DateTime.Today &&
             tarea.RecursosNecesarios.Any())
         {
-            throw new ExcepcionTarea("No se puede completar una tarea antes de su fecha de fin si tiene recursos asignados.");
+            throw new ExcepcionTarea(MensajesErrorServicios.NoPuedeCompletarConRecursosAntesDeFechaFin);
         }
+        
+        
         
         tarea.CambiarEstado(nuevoEstado);
 

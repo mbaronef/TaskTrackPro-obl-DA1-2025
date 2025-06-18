@@ -64,5 +64,6 @@ public static class MensajesErrorServicios
     public const string ExisteConflicto = "Existe un conflicto en ese rango de fechas.";
     
     public const string TareaConRecursosAsignados = "No se puede modificar esta tarea porque tiene recursos asignados. Debe eliminar los recursos primero.";
-
+    public const string NoPuedeComenzarConRecursosAntesDeFechaInicio = "No se puede comenzar una tarea con recursos antes de su fecha de inicio. Debe eliminar los recursos primero."; 
+    public const string NoPuedeCompletarConRecursosAntesDeFechaFin= "No se puede completar una tarea antes de su fecha de fin si tiene recursos asignados. Debe eliminar los recursos primero.";
 }

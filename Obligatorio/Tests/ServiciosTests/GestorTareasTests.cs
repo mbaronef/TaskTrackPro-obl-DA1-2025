@@ -770,7 +770,7 @@ public class GestorTareasTests
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
 
         _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
-
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
         _gestorTareas.CambiarEstadoTarea(admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
     }
 
