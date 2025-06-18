@@ -12,7 +12,7 @@ public class Tarea
     public DateTime FechaInicioMasTemprana { get; set; }
     public DateTime FechaFinMasTemprana { get; set; }
     public DateTime FechaDeEjecucion { get; private set; } = DateTime.MinValue;
-    public EstadoTarea Estado { get; private set; } = EstadoTarea.Pendiente;
+    public EstadoTarea Estado { get; set; } = EstadoTarea.Pendiente;
     public int Holgura { get; set; }
     public bool FechaInicioFijadaManualmente { get; set; } = false;
     public virtual ICollection<Usuario> UsuariosAsignados { get; set; }
@@ -212,7 +212,7 @@ public class Tarea
         FechaFinMasTemprana = tareaActualizada.FechaFinMasTemprana;
         FechaDeEjecucion = tareaActualizada.FechaDeEjecucion;
         Holgura = tareaActualizada.Holgura;
-        FechaInicioFijadaManualmente = tareaActualizada.FechaInicioFijadaManualmente; // VER SI FUNCIONA CPM
+        FechaInicioFijadaManualmente = tareaActualizada.FechaInicioFijadaManualmente;
         CambiarEstado(tareaActualizada.Estado);
     }
 

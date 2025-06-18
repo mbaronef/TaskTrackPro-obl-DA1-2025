@@ -146,6 +146,26 @@ public class GestorRecursos : IGestorRecursos
 
         return recurso;
     }
+    
+    public List<RecursoPanelDTO> ObtenerRecursosParaPanel(int idProyecto)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        
+        List<RecursoDTO> recursosDTOs = ObtenerRecursosExclusivos(proyecto.Id).Concat(ObtenerRecursosGenerales()).ToList();
+        List<Recurso> recursos = recursosDTOs.Select(r => ObtenerRecursoDominioPorId(r.Id)).ToList();
+        
+        List<Tarea> tareasEnProceso = proyecto.Tareas.Where(t => t.Estado == EstadoTarea.EnProceso).ToList();
+
+        List<RecursoPanelDTO> panel = new();
+        foreach (Recurso recurso in recursos)
+        {
+            int nivelDeUso = tareasEnProceso.Count(t => t.UsaRecurso(recurso.Id));
+            List<RangoDeUso> rangos = recurso.RangosEnUso.ToList();
+
+            panel.Add(RecursoPanelDTO.DesdeEntidad(recurso, rangos, nivelDeUso));
+        }
+        return panel;
+    }
 
     private Recurso ObtenerRecursoDominioPorId(int idRecurso)
     {
@@ -251,27 +271,5 @@ public class GestorRecursos : IGestorRecursos
         }
 
         return usuario;
-    }
-    
-    public List<RecursoPanelDTO> ObtenerRecursosParaPanel(int idProyecto)
-    {
-        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
-        List<Recurso> recursos = _repositorioRecursos.ObtenerTodos()
-            .Where(r => !r.EsExclusivo() || (r.ProyectoAsociado?.Id == idProyecto)).ToList();
-
-        List<Tarea> tareasEnProceso = proyecto.Tareas
-            .Where(t => t.Estado == EstadoTarea.EnProceso).ToList();
-
-        List<RecursoPanelDTO> panel = new();
-
-        foreach (Recurso recurso in recursos)
-        {
-            int nivelDeUso = tareasEnProceso.Count(t => t.UsaRecurso(recurso.Id));
-            List<RangoDeUso> rangos = recurso.RangosEnUso.ToList();
-
-            panel.Add(RecursoPanelDTO.DesdeEntidad(recurso, rangos, nivelDeUso));
-        }
-
-        return panel;
     }
 }

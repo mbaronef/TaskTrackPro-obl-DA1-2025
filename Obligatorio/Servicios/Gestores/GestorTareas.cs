@@ -56,7 +56,7 @@ public class GestorTareas : IGestorTareas
 
         Tarea tareaAEliminar = proyecto.Tareas.FirstOrDefault(t => t.Id == idTareaAEliminar);
 
-        ValidarTareaExistente(tareaAEliminar); // a CHEQUEAR
+        ValidarTareaExistente(tareaAEliminar);
 
         ValidarTareaNoTieneSucesora(proyecto, idTareaAEliminar);
 
@@ -153,14 +153,12 @@ public class GestorTareas : IGestorTareas
 
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
 
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+        PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(solicitante, tarea, proyecto);
         PermisosUsuarios.VerificarUsuarioMiembroDelProyecto(solicitante.Id, proyecto);
 
         VerificarProyectoHayaComenzado(proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
-
-
-        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
-        PermisosUsuarios.VerificarUsuarioTengaLaTareaAsignadaOSeaAdminOLiderDelProyecto(solicitante, tarea, proyecto);
 
         tarea.CambiarEstado(nuevoEstado);
 
@@ -176,7 +174,6 @@ public class GestorTareas : IGestorTareas
                     recursoNecesario.Cantidad
                 );
             }
-
             ActualizarEstadosTareasDelProyecto(proyecto); //acá se modifican fechas en base a las recalculadas. Por ello no se puede llamar a RecalcularCaminoCriticoYActualizarProyecto();
         }
 
@@ -310,15 +307,6 @@ public class GestorTareas : IGestorTareas
 
         VerificarTareaNoEsteEnProceso(tarea);
 
-        RecursoNecesario recursoAsignado = tarea.RecursosNecesarios.FirstOrDefault(r => r.Recurso.Equals(recurso));
-
-        if (recursoAsignado == null)
-        {
-            throw new ExcepcionTarea($"El recurso {recurso.Nombre} no está asignado a la tarea.");
-        }
-
-        int cantidad = recursoAsignado.Cantidad;
-
         tarea.EliminarRecurso(recurso.Id);
 
         _repositorioProyectos.ActualizarTarea(tarea);
@@ -436,12 +424,6 @@ public class GestorTareas : IGestorTareas
         return proyecto;
     }
 
-    private Tarea ObtenerTareaValidandoAdmin(Usuario solicitante, int idProyecto, int idTarea)
-    {
-        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        return ObtenerTareaDominioPorId(proyecto.Id, idTarea);
-    }
-
     private void NotificarCambio(string campo, int idTarea, int idProyecto)
     {
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
@@ -521,16 +503,11 @@ public class GestorTareas : IGestorTareas
         return recurso;
     }
 
-    // pongo aca los nuevos metodos despues reordenamos y sacamos los comentarios:
-
     public void ValidarYAsignarRecurso(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO,
         int cantidad)
     {
         Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
         Recurso recurso = ObtenerRecursoPorDTO(recursoDTO);
-
-        if (recurso == null)
-            throw new ExcepcionRecurso(MensajesErrorServicios.RecursoNoEncontrado);
 
         // Si la cantidad pedida directamente supera la capacidad total
         if (cantidad > recurso.Capacidad)
