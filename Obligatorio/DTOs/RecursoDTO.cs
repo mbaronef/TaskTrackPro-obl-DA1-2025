@@ -16,12 +16,13 @@ public class RecursoDTO
     [Required(ErrorMessage = "La descripción es obligatoria.")]
     public string Descripcion { get; set; }
     public int? IdProyectoAsociado { get; set; }
-
     public int CantidadDeTareasUsandolo { get; set; } = 0;
+    
+    public int Capacidad { get; set; }
 
     public Recurso AEntidad()
     {
-        Recurso recurso = new Recurso(Nombre, Tipo, Descripcion);
+        Recurso recurso = new Recurso(Nombre, Tipo, Descripcion, Capacidad);
         recurso.Id = Id;
         for (int i = 0; i < CantidadDeTareasUsandolo; i++)
         {

@@ -111,7 +111,7 @@ public class GestorTareasTests
 
     private RecursoDTO CrearYAgregarRecurso(string nombre = "Nombre", string tipo = "Tipo", string descripcion = "Descripción")
     {
-        Recurso recurso = new Recurso(nombre, tipo, descripcion);
+        Recurso recurso = new Recurso(nombre, tipo, descripcion,1);
         _repositorioRecursos.Agregar(recurso);
         return RecursoDTO.DesdeEntidad(recurso);
     }
@@ -1194,7 +1194,7 @@ public class GestorTareasTests
     [TestMethod]
     public void AdminDeProyectoPuedeAgregarRecursoATarea()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
         _repositorioRecursos.Agregar(recurso); 
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
@@ -1229,7 +1229,7 @@ public class GestorTareasTests
     [TestMethod]
     public void NoAdminNoPuedeAgregarRecursoATarea()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
         _repositorioRecursos.Agregar(recurso); 
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
@@ -1244,7 +1244,7 @@ public class GestorTareasTests
     [TestMethod]
     public void SeNotificaElAgregadoDeUnRecursoALosMiembrosDeLaTarea()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
         _repositorioRecursos.Agregar(recurso); 
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
@@ -1269,7 +1269,7 @@ public class GestorTareasTests
     public void AgregarRecursoATarea_LanzaExcepcionSiRecursoNoExiste()
     {
         TareaDTO tarea = CrearTarea();
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
         RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
         

@@ -9,12 +9,14 @@ public class RecursoTests
     [TestMethod]
     public void ConstructorCreaRecursoYAsignaOk()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción", 1);
         Assert.AreEqual("Nombre", recurso.Nombre);
         Assert.AreEqual("Tipo", recurso.Tipo);
         Assert.AreEqual("Descripción", recurso.Descripcion);
         Assert.IsNull(recurso.ProyectoAsociado);
+        Assert.AreEqual(1, recurso.Capacidad);
         Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
+        Assert.IsNotNull(recurso.RangosEnUso);
     }
 
     [TestMethod]
@@ -24,7 +26,7 @@ public class RecursoTests
         List<Usuario> usuarios = new List<Usuario>();
         DateTime fechaInicio = DateTime.Today.AddDays(1);
         Proyecto proyecto = new Proyecto("Nombre", "Descripcion", fechaInicio, usuario, usuarios);
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         recurso.AsociarAProyecto(proyecto);
         Assert.IsTrue(recurso.EsExclusivo());
     }
@@ -38,7 +40,7 @@ public class RecursoTests
         DateTime fechaInicio = DateTime.Today.AddDays(1);
         Proyecto proyecto1 = new Proyecto("Nombre", "Descripción", fechaInicio, usuario, usuarios);
         Proyecto proyecto2 = new Proyecto("Otro nombre", "Otra descripción", fechaInicio, usuario, usuarios);
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción", 1);
         recurso.AsociarAProyecto(proyecto1);
         recurso.AsociarAProyecto(proyecto2);
     }
@@ -47,48 +49,148 @@ public class RecursoTests
     [TestMethod]
     public void DaErrorCrearRecursoConNombreVacio()
     {
-        Recurso recurso = new Recurso("", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("", "Tipo", "Descripcion", 1);
     }
 
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConNombreNull()
     {
-        Recurso recurso = new Recurso(null, "Tipo", "Descripcion");
+        Recurso recurso = new Recurso(null, "Tipo", "Descripcion", 1);
     }
 
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConTipoVacio()
     {
-        Recurso recurso = new Recurso("Nombre", "", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "", "Descripcion", 1);
     }
 
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConTipoNull()
     {
-        Recurso recurso = new Recurso("Nombre", null, "Descripcion");
+        Recurso recurso = new Recurso("Nombre", null, "Descripcion", 1);
     }
 
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConDescripcionVacia()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", " ");
+        Recurso recurso = new Recurso("Nombre", "Tipo", " ", 1);
     }
 
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void DaErrorCrearRecursoConDescripcionNull()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", null);
+        Recurso recurso = new Recurso("Nombre", "Tipo", null, 1);
+    }
+
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorCrearRecursoConCapacidadCero()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 0);
+    }
+
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorCrearRecursoConCapacidadMenorACero()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", -3);
+    }
+
+    [TestMethod]
+    public void SeValidaSiUnRecursoTieneCapacidadDisponible()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        Assert.IsTrue(recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1), 2));
+    }
+
+    [TestMethod]
+    public void DaFalseSiUnRecursoNoTieneCapacidadDisponible()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.RangosEnUso.Add(new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 2, new Tarea()));
+        Assert.IsFalse(recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1), 1));
+    }
+
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorSiSeValidaCapacidadConCapacidadRequeridaCero()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1), 0);
+    }
+
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorSiSeValidaCapacidadConCapacidadRequeridaMayorALaDelRecurso()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.TieneCapacidadDisponible(DateTime.Today, DateTime.Today.AddDays(1), 3);
+    }
+
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorSiSeValidaCapacidadConFechaInicioMayorALaFechaFin()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.TieneCapacidadDisponible(DateTime.Today.AddDays(1), DateTime.Today, 1);
+    }
+
+    [TestMethod]
+    public void SeAgregaUnRangoDeUsoCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.AgregarRangoDeUso(
+            new Tarea() { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1) },
+            2);
+        Assert.AreEqual(DateTime.Today, recurso.RangosEnUso.First().FechaInicio);
+        Assert.AreEqual(DateTime.Today.AddDays(1), recurso.RangosEnUso.First().FechaFin);
+        Assert.AreEqual(2, recurso.RangosEnUso.First().CantidadDeUsos);
+    }
+
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorAlAgregarRangoDeUsoSiNoTieneCapacidadDisponible()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.AgregarRangoDeUso(
+            new Tarea() { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1 },
+            2);
+        recurso.AgregarRangoDeUso(
+            new Tarea() { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 2 },
+            1);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void DaErrorAlAgregarRangoDeUsoDeLaMismaTareaDosVeces()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        Tarea tarea = new Tarea()
+            { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1 };
+        recurso.AgregarRangoDeUso(tarea, 1);
+        recurso.AgregarRangoDeUso(tarea, 1);
+    }
+
+    [TestMethod]
+    public void SeBorranTodosLosRangosDeUnaTarea()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        Tarea tarea = new Tarea()
+            { FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1 };
+        recurso.AgregarRangoDeUso(tarea, 2);
+        recurso.EliminarRangoDeUsoDeTarea(tarea);
+        Assert.AreEqual(0, recurso.RangosEnUso.Count);
     }
 
     [TestMethod]
     public void SeModificaNombreOk()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         string nuevoNombre = "otro";
         recurso.ModificarNombre(nuevoNombre);
         Assert.AreEqual(nuevoNombre, recurso.Nombre);
@@ -98,7 +200,7 @@ public class RecursoTests
     [TestMethod]
     public void DaErrorModificarPorNombreVacio()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         string nuevoNombre = "";
         recurso.ModificarNombre(nuevoNombre);
     }
@@ -107,7 +209,7 @@ public class RecursoTests
     [TestMethod]
     public void DaErrorModificarPorNombreNull()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         string nuevoNombre = null;
         recurso.ModificarNombre(nuevoNombre);
     }
@@ -115,7 +217,7 @@ public class RecursoTests
     [TestMethod]
     public void SeModificaTipoOk()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         string nuevoTipo = "otro";
         recurso.ModificarTipo(nuevoTipo);
         Assert.AreEqual(nuevoTipo, recurso.Tipo);
@@ -125,7 +227,7 @@ public class RecursoTests
     [TestMethod]
     public void DaErrorModificarPorTipoVacio()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         string nuevoTipo = "";
         recurso.ModificarTipo(nuevoTipo);
     }
@@ -134,7 +236,7 @@ public class RecursoTests
     [TestMethod]
     public void DaErrorModificarPorTipoNull()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         string nuevoTipo = null;
         recurso.ModificarTipo(nuevoTipo);
     }
@@ -142,7 +244,7 @@ public class RecursoTests
     [TestMethod]
     public void SeModificaDescripcionOk()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         string nuevaDesc = "otro";
         recurso.ModificarDescripcion(nuevaDesc);
         Assert.AreEqual(nuevaDesc, recurso.Descripcion);
@@ -152,7 +254,7 @@ public class RecursoTests
     [TestMethod]
     public void DaErrorModificarPorDescripcionVacia()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         string nuevaDesc = "";
         recurso.ModificarDescripcion(nuevaDesc);
     }
@@ -161,7 +263,7 @@ public class RecursoTests
     [TestMethod]
     public void DaErrorModificarPorDescripcionNull()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         string nuevaDesc = null;
         recurso.ModificarDescripcion(nuevaDesc);
     }
@@ -169,24 +271,34 @@ public class RecursoTests
     [TestMethod]
     public void RecursoAsignaOkCantidadDeTareasUsandolo()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         int cantidadActualDeTareasUsandolo = recurso.CantidadDeTareasUsandolo;
         recurso.IncrementarCantidadDeTareasUsandolo();
         Assert.AreEqual(1, recurso.CantidadDeTareasUsandolo);
+    }
+    
+    [TestMethod]
+    public void RecursoDecrementaOkCantidadDeTareasUsandolo()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
+        recurso.IncrementarCantidadDeTareasUsandolo();
+        int cantidadActualDeTareasUsandolo = recurso.CantidadDeTareasUsandolo;
+        recurso.DecrementarCantidadDeTareasUsandolo();
+        Assert.AreEqual(0, recurso.CantidadDeTareasUsandolo);
     }
 
     [ExpectedException(typeof(ExcepcionDominio))]
     [TestMethod]
     public void NoLoPuedeUsarUnaCantidadNegativaDeTareas()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         recurso.DecrementarCantidadDeTareasUsandolo();
     }
 
     [TestMethod]
     public void SeCalculaSiSeEstaUsando()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
         Assert.IsFalse(recurso.SeEstaUsando());
     }
     
@@ -245,11 +357,54 @@ public class RecursoTests
     }
 
     [TestMethod]
+    public void ModificarCapacidadModificaCorrectamente()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
+        recurso.ModificarCapacidad(3);
+        Assert.AreEqual(3, recurso.Capacidad);
+    }
+
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void ModificarCapacidadDaErrorSiSeModificaCapacidadCero()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.ModificarCapacidad(0);
+    }
+
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void NoSePuedeDisminuirCapacidadSiSeHaceUsoDeCapacidadMaxima()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+        recurso.AgregarRangoDeUso(
+            new Tarea()
+            {
+                FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1
+            }, 1);
+        recurso.AgregarRangoDeUso(
+            new Tarea()
+            {
+                FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 2
+            }, 1);
+        recurso.ModificarCapacidad(1);
+    }
+
+    [TestMethod]
+    public void SePuedeDisminuirCapacidadSiNoSeHaceUsoDeCapacidadMaxima()
+    {
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",2);
+        recurso.AgregarRangoDeUso( new Tarea(){FechaInicioMasTemprana = DateTime.Today, FechaFinMasTemprana = DateTime.Today.AddDays(1), Id = 1}, 1);
+        recurso.AgregarRangoDeUso( new Tarea(){FechaInicioMasTemprana = DateTime.Today.AddDays(2), FechaFinMasTemprana = DateTime.Today.AddDays(3), Id = 2}, 1);
+        recurso.ModificarCapacidad(1);
+    }
+
+    [TestMethod]
     public void EqualsRetornaTrueSiLosIdsSonIguales()
     {
         // por simplicidad se hardcodean los ids, los gestiona el repo.
-        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
-        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
+        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion",1) { Id = 1 };
+        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion",1) { Id = 1 };
         bool sonIguales = recurso1.Equals(recurso2);
         Assert.IsTrue(sonIguales);
     }
@@ -258,8 +413,8 @@ public class RecursoTests
     public void EqualsRetornaFalseSiLosIdsNoSonIguales()
     {
         // por simplicidad se hardcodean los ids, los gestiona el repo.
-        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
-        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 2 };
+        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion",1) { Id = 1 };
+        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion",1) { Id = 2 };
         bool sonIguales = recurso1.Equals(recurso2);
         Assert.IsFalse(sonIguales);
     }
@@ -267,15 +422,15 @@ public class RecursoTests
     [TestMethod]
     public void EqualsRetornaFalseSiUnObjetoEsNull()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",1);
         bool sonIguales = recurso.Equals(null);
         Assert.IsFalse(sonIguales);
     }
 
     [TestMethod]
-    public void EqualsRetornaFalseSiUnObjetoNoEsUsuario()
+    public void EqualsRetornaFalseSiUnObjetoNoEsRecurso()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",1);
         int otro = 0;
         bool sonIguales = recurso.Equals(otro);
         Assert.IsFalse(sonIguales);
@@ -285,9 +440,9 @@ public class RecursoTests
     public void GetHashCodeFuncionaOk()
     {
         // por simplicidad se hardcodean los ids, los gestiona el repo.
-        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
-        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 1 };
-        Recurso recurso3 = new Recurso("Nombre", "Tipo", "Descripcion") { Id = 2 };
+        Recurso recurso1 = new Recurso("Nombre", "Tipo", "Descripcion",1) { Id = 1 };
+        Recurso recurso2 = new Recurso("Nombre", "Tipo", "Descripcion",1) { Id = 1 };
+        Recurso recurso3 = new Recurso("Nombre", "Tipo", "Descripcion",1) { Id = 2 };
         Assert.AreEqual(recurso1.GetHashCode(), recurso2.GetHashCode());
         Assert.AreNotEqual(recurso3.GetHashCode(), recurso1.GetHashCode());
     }
@@ -295,7 +450,7 @@ public class RecursoTests
     [TestMethod]
     public void ToStringFuncionaCorrectamente()
     {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion");
+        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion",1);
         string resultadoEsperado =
             $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'";
         Assert.AreEqual(resultadoEsperado, recurso.ToString());

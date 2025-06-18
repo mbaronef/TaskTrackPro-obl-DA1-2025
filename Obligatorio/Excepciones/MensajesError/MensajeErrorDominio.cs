@@ -50,6 +50,12 @@ public static class MensajesErrorDominio
 
     public const string CantidadTareasRecursoNegativa =
         "La cantidad de tareas usando este recurso no puede ser menor a cero.";
+    public const string CapacidadRecursoInvalida = "La capacidad del recurso debe ser mayor a cero.";
+    public const string CapacidadRequeridaInvalida = "La capacidad requerida no puede ser mayor a la capacidad del recurso.";
+    public const string CapacidadInsuficienteEnElRango = "No hay capacidad suficiente en el recurso para ese rango de fechas.";
+
+    public const string CapacidadNoReducible =
+        "No se puede reducir la capacidad del recurso porque se hace uso de la capacidad máxima en un rango de fechas.";
 
     public const string MensajeNotificacionVacio = "El mensaje de la notificación no puede estar vacío o null.";
 
@@ -81,4 +87,11 @@ public static class MensajesErrorDominio
     
     public const string ActualizarEntidadNoCoincidente =
         "No se puede actualizar la entidad por una distinta a la actual";
+    
+    public const string FechaInicioRangoMayorQueFin =
+        "La fecha de inicio no puede ser mayor que la fecha de fin.";
+    public const string RangoDeUsoNoPuedeSerCeroOMenos = "El rango de uso no puede ser cero o negativo.";
+    public static string TareaNoPuedeSerNula = "Una tarea nula no puede hacer uso en el rango de uso.";
+    public static string RecursoYaAgregadoATarea = "El recurso ya fue agregado a la tarea.";
+
 }

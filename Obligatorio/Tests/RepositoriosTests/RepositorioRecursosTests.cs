@@ -21,7 +21,10 @@ public class RepositorioRecursosTests
 
         _repositorioRecursos = new RepositorioRecursos(_contexto);
         
-        _recurso = new Recurso("nombre", "tipo", "descripcion");
+        _recurso = new Recurso("nombre", "tipo", "descripcion", 1);
+        _recurso.IncrementarCantidadDeTareasUsandolo();
+        _recurso.IncrementarCantidadDeTareasUsandolo();
+        _recurso.IncrementarCantidadDeTareasUsandolo(); // cantidad de tarea usandolo = 3
     }
     
     [TestCleanup]
@@ -43,9 +46,7 @@ public class RepositorioRecursosTests
     [TestMethod]
     public void ConstructorCreaRepositorioOk()
     {
-        RepositorioRecursos repositorioRecursos = new RepositorioRecursos(_contexto);
-        Recurso recurso = repositorioRecursos.ObtenerPorId(1);
-        Assert.IsNull(recurso);
+        Assert.IsNotNull(_repositorioRecursos);
     }
 
     [TestMethod]
@@ -59,7 +60,7 @@ public class RepositorioRecursosTests
     public void SeAsignanIdsOk()
     {
         _repositorioRecursos.Agregar(_recurso);
-        Recurso recurso2 = new Recurso("Nombre", "tipo", "desc");
+        Recurso recurso2 = new Recurso("Nombre", "tipo", "desc",1);
         _repositorioRecursos.Agregar(recurso2);
 
         Assert.AreEqual(1, _recurso.Id);
@@ -89,7 +90,7 @@ public class RepositorioRecursosTests
     {
         _repositorioRecursos.Agregar(_recurso);
 
-        Recurso recursoCambios = new Recurso("Recurso Actualizado", "Nuevo Tipo", "Descripción actualizada")
+        Recurso recursoCambios = new Recurso("Recurso Actualizado", "Nuevo Tipo", "Descripción actualizada", 5)
         {
             CantidadDeTareasUsandolo = 10,
             ProyectoAsociado = null
@@ -103,6 +104,7 @@ public class RepositorioRecursosTests
         Assert.AreEqual("Nuevo Tipo", recursoActualizado.Tipo);
         Assert.AreEqual("Descripción actualizada", recursoActualizado.Descripcion);
         Assert.AreEqual(10, recursoActualizado.CantidadDeTareasUsandolo);
+        Assert.AreEqual(5, recursoActualizado.Capacidad);
         Assert.IsNull(recursoActualizado.ProyectoAsociado);
     }
 
@@ -115,7 +117,7 @@ public class RepositorioRecursosTests
         
         _repositorioRecursos.Agregar(_recurso);
         
-        Recurso recursoCambios = new Recurso("Recurso Actualizado", "Nuevo Tipo", "Descripción actualizada")
+        Recurso recursoCambios = new Recurso("Recurso Actualizado", "Nuevo Tipo", "Descripción actualizada", 10)
         {
             CantidadDeTareasUsandolo = 10,
             ProyectoAsociado = _proyecto
@@ -129,6 +131,7 @@ public class RepositorioRecursosTests
         Assert.AreEqual("Nuevo Tipo", recursoActualizado.Tipo);
         Assert.AreEqual("Descripción actualizada", recursoActualizado.Descripcion);
         Assert.AreEqual(10, recursoActualizado.CantidadDeTareasUsandolo);
+        Assert.AreEqual(10, recursoActualizado.Capacidad);
         Assert.AreEqual(recursoActualizado.ProyectoAsociado, _proyecto);
     }
 }

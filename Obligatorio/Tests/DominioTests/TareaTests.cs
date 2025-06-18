@@ -489,7 +489,7 @@ public class TareaTests
     {
         Recurso necesario = CrearRecursoValido();
         necesario.Id = 1;
-        Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion");
+        Recurso necesario2 = new Recurso("recurso2", "tipo2", "descripcion",1);
         necesario2.Id = 2;
         Tarea tarea = CrearTareaValida();
         tarea.AsignarRecurso(necesario);
@@ -775,7 +775,7 @@ public class TareaTests
 
     private Recurso CrearRecursoValido()
     {
-        Recurso recurso = new Recurso("recurso", "tipo", "descripcion");
+        Recurso recurso = new Recurso("recurso", "tipo", "descripcion",1);
         return recurso;
     }
 
