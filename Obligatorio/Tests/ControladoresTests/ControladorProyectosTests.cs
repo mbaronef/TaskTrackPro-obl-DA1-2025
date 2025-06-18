@@ -1,8 +1,8 @@
 using Controladores;
 using Dominio;
 using DTOs;
+using IServicios.IGestores;
 using Moq;
-using Servicios.Gestores.Interfaces;
 
 namespace Tests.ControladoresTests;
 

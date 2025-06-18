@@ -1,5 +1,6 @@
 using Dominio;
-using Repositorios.Interfaces;
+using IRepositorios;
+using IServicios;
 
 namespace Servicios.Notificaciones;
 

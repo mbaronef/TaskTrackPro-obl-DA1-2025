@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Dominio\Dominio.csproj"/>
+        <ProjectReference Include="..\IRepositorios\IRepositorios.csproj" />
         <ProjectReference Include="..\Utilidades\Utilidades.csproj" />
     </ItemGroup>
 
@@ -22,6 +23,10 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Interfaces\" />
     </ItemGroup>
 
 </Project>

@@ -1,7 +1,6 @@
 ﻿using System.Text;
-using System.Text.Json;
-using Dominio;
-using Repositorios.Interfaces;
+using IRepositorios;
+using IServicios;
 
 namespace Servicios.Exportacion;
 
@@ -14,7 +13,7 @@ public class ExportadorCsv : IExportadorProyectos
     }
 
     public string NombreFormato => "csv";
-    public string ContentType => "text/csv";
+    public string TipoContenido => "text/csv";
     public string NombreArchivo => "proyectos.csv";
 
     public Task<byte[]> Exportar()
