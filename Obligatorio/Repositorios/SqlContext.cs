@@ -26,5 +26,7 @@ public class SqlContext : DbContext
         ConfiguracionRecurso.Configurar(modelBuilder);
         ConfiguracionTarea.Configurar(modelBuilder);
         ConfiguracionUsuario.Configurar(modelBuilder);
+        ConfiguracionRangoDeUso.Configurar(modelBuilder);
+        ConfiguracionRecursoNecesario.Configurar(modelBuilder);
     }
 }

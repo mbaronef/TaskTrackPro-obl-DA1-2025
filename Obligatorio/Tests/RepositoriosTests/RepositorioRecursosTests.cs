@@ -134,4 +134,72 @@ public class RepositorioRecursosTests
         Assert.AreEqual(10, recursoActualizado.Capacidad);
         Assert.AreEqual(recursoActualizado.ProyectoAsociado, _proyecto);
     }
+    
+    [TestMethod]
+    public void SeAgreganRangosNuevosEnActualizacion()
+    {
+        _repositorioRecursos.Agregar(_recurso);
+
+        RangoDeUso rango1 = new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(2), 1);
+        RangoDeUso rango2 = new RangoDeUso(DateTime.Today.AddDays(3), DateTime.Today.AddDays(5), 1);
+    
+        Recurso recursoConRangos = new Recurso("nombre", "tipo", "descripcion", 1)
+        {
+            Id = _recurso.Id,
+            RangosEnUso = new List<RangoDeUso> { rango1, rango2 }
+        };
+
+        _repositorioRecursos.Actualizar(recursoConRangos);
+
+        var recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual(2, recursoActualizado.RangosEnUso.Count);
+        Assert.IsTrue(recursoActualizado.RangosEnUso.Any(r => r.FechaInicio == rango1.FechaInicio));
+        Assert.IsTrue(recursoActualizado.RangosEnUso.Any(r => r.FechaInicio == rango2.FechaInicio));
+    }
+    
+    [TestMethod]
+    public void SeActualizanRangosIgualesEnActualizacion() // un recurso puede tener dos rangos iguales (mismas fechas y cantidad)
+    {
+        _repositorioRecursos.Agregar(_recurso);
+
+        RangoDeUso rango1 = new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(2), 1);
+        
+        _recurso.RangosEnUso.Add(rango1);
+        _repositorioRecursos.Actualizar(_recurso);
+        
+        RangoDeUso rango2 = new RangoDeUso(DateTime.Today.AddDays(3), DateTime.Today.AddDays(5), 1);
+    
+        Recurso recursoConRangos = new Recurso("nombre", "tipo", "descripcion", 1)
+        {
+            Id = _recurso.Id,
+            RangosEnUso = new List<RangoDeUso> { rango1, rango2 }
+        };
+
+        _repositorioRecursos.Actualizar(recursoConRangos);
+
+        var recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual(3, recursoActualizado.RangosEnUso.Count);
+        Assert.IsTrue(recursoActualizado.RangosEnUso.Any(r => r.FechaInicio == rango1.FechaInicio));
+        Assert.IsTrue(recursoActualizado.RangosEnUso.Any(r => r.FechaInicio == rango2.FechaInicio));
+    }
+    
+    [TestMethod]
+    public void SeEliminanRangosNoIncluidosEnActualizacion()
+    {
+        RangoDeUso rangoOriginal = new RangoDeUso(DateTime.Today, DateTime.Today.AddDays(2), 1);
+        _recurso.RangosEnUso.Add(rangoOriginal);
+        _repositorioRecursos.Agregar(_recurso);
+
+        Recurso recursoSinRangos = new Recurso("nombre", "tipo", "descripcion", 1)
+        {
+            Id = _recurso.Id,
+            RangosEnUso = new List<RangoDeUso>()
+        };
+
+        _repositorioRecursos.Actualizar(recursoSinRangos);
+
+        var recursoActualizado = _repositorioRecursos.ObtenerPorId(_recurso.Id);
+        Assert.AreEqual(0, recursoActualizado.RangosEnUso.Count);
+    }
+
 }

@@ -12,7 +12,7 @@ public class Recurso
     public Proyecto? ProyectoAsociado { get; set; } = null;
     public int Capacidad { get;  set; } 
     public int CantidadDeTareasUsandolo { get; set; } = 0;
-    public virtual ICollection<RangoDeUso> RangosEnUso { get; private set; }
+    public virtual ICollection<RangoDeUso> RangosEnUso { get; set; }
     
     public Recurso()
     {

@@ -26,11 +26,12 @@ public class RepositorioProyectos : IRepositorioProyectos
             .Include(p => p.Lider)
             .Include(p => p.Miembros)
             .Include(p => p.Tareas)
-            .ThenInclude(t => t.Dependencias)
+                .ThenInclude(t => t.Dependencias)
             .Include(p => p.Tareas)
-            .ThenInclude(t => t.UsuariosAsignados)
-            .Include(p => p.Tareas)
-            .ThenInclude(t => t.RecursosNecesarios)
+                .ThenInclude(t => t.UsuariosAsignados)
+            .Include(p=>p.Tareas)
+                .ThenInclude(t => t.RecursosNecesarios)
+                    .ThenInclude(r => r.Recurso)
             .FirstOrDefault(proyecto => proyecto.Id == id);
     }
 
@@ -48,11 +49,12 @@ public class RepositorioProyectos : IRepositorioProyectos
             .Include(p=>p.Lider)
             .Include(p => p.Miembros)
             .Include(p => p.Tareas)
-            .ThenInclude(t => t.Dependencias)
+                .ThenInclude(t => t.Dependencias)
             .Include(p => p.Tareas)
-            .ThenInclude(t => t.UsuariosAsignados)
+                .ThenInclude(t => t.UsuariosAsignados)
             .Include(p => p.Tareas)
-            .ThenInclude(t => t.RecursosNecesarios)
+                .ThenInclude(t => t.RecursosNecesarios)
+                .ThenInclude(r => r.Recurso)
             .ToList();
     }
 
@@ -80,6 +82,7 @@ public class RepositorioProyectos : IRepositorioProyectos
     {
         Tarea tareaContexto = _contexto.Set<Tarea>()
             .Include(t => t.RecursosNecesarios)
+                .ThenInclude(r => r.Recurso)
             .Include(t => t.UsuariosAsignados)
             .Include(t => t.Dependencias)
             .FirstOrDefault(t => t.Id == tarea.Id);
@@ -235,7 +238,7 @@ public class RepositorioProyectos : IRepositorioProyectos
         {
             if (!tareaContexto.RecursosNecesarios.Contains(recursoNecesario))
             {
-                Recurso recursoContexto = _contexto.Recursos.FirstOrDefault(r => r.Id == recursoNecesario.Id);
+                Recurso recursoContexto = _contexto.Recursos.FirstOrDefault(r => r.Id == recursoNecesario.Recurso.Id);
                 int cantidad = recursoNecesario.Cantidad;
                 if (recursoContexto != null)
                 {
