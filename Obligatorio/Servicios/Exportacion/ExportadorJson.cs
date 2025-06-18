@@ -20,12 +20,27 @@ public class ExportadorJson : IExportadorProyectos
 
     public Task<byte[]> Exportar()
     {
-        var proyectos = _repositorio.ObtenerTodos();
+        var proyectos = _repositorio.ObtenerTodos()
+            .OrderBy(p => p.FechaInicio)
+            .Select(p => new
+            {
+                Nombre = p.Nombre,
+                FechaInicio = p.FechaInicio.ToString("dd/MM/yyyy"),
+                Tareas = p.Tareas
+                    .OrderByDescending(t => t.Titulo)
+                    .Select(t => new
+                    {
+                        Titulo = t.Titulo,
+                        FechaInicio = t.FechaInicioMasTemprana.ToString("dd/MM/yyyy"),
+                        Duracion = t.DuracionEnDias,
+                        EnCaminoCritico = t.EsCritica() ? "S" : "N",
+                        Recursos = t.RecursosNecesarios.Select(r => r.ToString()).ToList()
+                    }).ToList()
+            }).ToList();
 
         var opciones = new JsonSerializerOptions
         {
-            WriteIndented = true,
-            ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+            WriteIndented = true
         };
 
         var json = JsonSerializer.Serialize(proyectos, opciones);

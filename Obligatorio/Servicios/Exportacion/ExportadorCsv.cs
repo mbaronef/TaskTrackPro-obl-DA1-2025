@@ -18,17 +18,34 @@ public class ExportadorCsv : IExportadorProyectos
 
     public Task<byte[]> Exportar()
     {
-        var proyectos = _repositorio.ObtenerTodos();
+        var proyectos = _repositorio.ObtenerTodos()
+            .OrderBy(p => p.FechaInicio)
+            .ToList();
 
         var sb = new StringBuilder();
-        sb.AppendLine("Id,Nombre,Descripcion,FechaInicio"); // Cambiar según lo que necesito tener en el archivo por proyecto
 
-        foreach (var p in proyectos)
+        foreach (var proyecto in proyectos)
         {
-            sb.AppendLine($"{p.Id},\"{p.Nombre}\",\"{p.Descripcion}\",{p.FechaInicio:yyyy-MM-dd}");
+            sb.AppendLine($"{proyecto.Nombre},{proyecto.FechaInicio:dd/MM/yyyy}");
+
+            var tareasOrdenadas = proyecto.Tareas
+                .OrderByDescending(t => t.Titulo)
+                .ToList();
+
+            foreach (var tarea in tareasOrdenadas)
+            {
+                string enCaminoCritico = tarea.EsCritica() ? "S" : "N";
+                sb.AppendLine($"{tarea.Titulo},{tarea.FechaInicioMasTemprana:dd/MM/yyyy},{enCaminoCritico}");
+
+                foreach (var recurso in tarea.RecursosNecesarios)
+                {
+                    sb.AppendLine(recurso.ToString());
+                }
+            }
         }
 
         return Task.FromResult(Encoding.UTF8.GetBytes(sb.ToString()));
     }
+
     
 }
