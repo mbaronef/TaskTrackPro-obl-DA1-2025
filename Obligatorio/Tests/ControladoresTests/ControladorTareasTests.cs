@@ -226,8 +226,8 @@ public class ControladorTareasTests
             Times.Once);
     }
 
-    /* [TestMethod]
-    public void AgregarRecursoATarea_LlamaCorrectamenteAGestor()
+    [TestMethod]
+    public void ValidarYAsignarRecurso_LlamaCorrectamenteAGestor()
     {
         UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
         int idTarea = 1;
@@ -235,12 +235,13 @@ public class ControladorTareasTests
         RecursoDTO nuevoRecurso = new RecursoDTO { Id = 1 };
         int cantidad = 1;
 
-        _mockGestorTareas.Setup(g => g.AsignarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso, 1));
+        _mockGestorTareas.Setup(g => g.ValidarYAsignarRecurso(usuario, idTarea, idProyecto, nuevoRecurso, cantidad));
 
-        _controladorTareas.AgregarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso, 1);
+        _controladorTareas.ValidarYAsignarRecurso(usuario, idTarea, idProyecto, nuevoRecurso, cantidad);
 
-        _mockGestorTareas.Verify(g => g.AsignarRecursoATarea(usuario, idTarea, idProyecto, nuevoRecurso, cantidad), Times.Once);
-    }*/
+        _mockGestorTareas.Verify(g => g.ValidarYAsignarRecurso(usuario, idTarea, idProyecto, nuevoRecurso, cantidad), Times.Once);
+    }
+
 
     [TestMethod]
     public void EliminarRecursoDeTarea_LlamaCorrectamenteAGestor()
@@ -257,4 +258,55 @@ public class ControladorTareasTests
         _mockGestorTareas.Verify(g => g.EliminarRecursoDeTarea(usuario, idTarea, idProyecto, recursoAEliminar),
             Times.Once);
     }
+    
+    [TestMethod]
+    public void EncontrarRecursosAlternativosMismoTipo_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idProyecto = 1;
+        RecursoDTO recursoOriginal = new RecursoDTO { Id = 10 };
+        DateTime fechaInicio = DateTime.Today;
+        DateTime fechaFin = DateTime.Today.AddDays(5);
+        int cantidad = 3;
+
+        _mockGestorTareas.Setup(g => g.EncontrarRecursosAlternativosMismoTipo(usuario, idProyecto, recursoOriginal, fechaInicio, fechaFin, cantidad));
+
+        _controladorTareas.EncontrarRecursosAlternativosMismoTipo(usuario, idProyecto, recursoOriginal, fechaInicio, fechaFin, cantidad);
+
+        _mockGestorTareas.Verify(g => g.EncontrarRecursosAlternativosMismoTipo(usuario, idProyecto, recursoOriginal, fechaInicio, fechaFin, cantidad), Times.Once);
+    }
+
+    [TestMethod]
+    public void ReprogramarTarea_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idProyecto = 1;
+        int idTarea = 2;
+        RecursoDTO recurso = new RecursoDTO { Id = 5 };
+        int cantidad = 2;
+
+        _mockGestorTareas.Setup(g => g.ReprogramarTarea(usuario, idProyecto, idTarea, recurso, cantidad));
+
+        _controladorTareas.ReprogramarTarea(usuario, idProyecto, idTarea, recurso, cantidad);
+
+        _mockGestorTareas.Verify(g => g.ReprogramarTarea(usuario, idProyecto, idTarea, recurso, cantidad), Times.Once);
+    }
+
+    
+    [TestMethod]
+    public void ForzarAsignacion_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idTarea = 1;
+        int idProyecto = 1;
+        RecursoDTO recurso = new RecursoDTO { Id = 4 };
+        int cantidad = 1;
+
+        _mockGestorTareas.Setup(g => g.ForzarAsignacion(usuario, idTarea, idProyecto, recurso, cantidad));
+
+        _controladorTareas.ForzarAsignacion(usuario, idTarea, idProyecto, recurso, cantidad);
+
+        _mockGestorTareas.Verify(g => g.ForzarAsignacion(usuario, idTarea, idProyecto, recurso, cantidad), Times.Once);
+    }
+
 }

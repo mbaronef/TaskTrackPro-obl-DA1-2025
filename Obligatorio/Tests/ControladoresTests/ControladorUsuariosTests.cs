@@ -239,4 +239,18 @@ public class ControladorUsuariosTests
 
         _mockGestorUsuarios.Verify(g => g.ValidarUsuarioNoEsAdministradorInicial(idUsuario), Times.Once);
     }
+    
+    [TestMethod]
+    public void AutogenerarContrasenaValida_DevuelveContrasenaGenerada()
+    {
+        string contrasenaEsperada = "Clave123!";
+
+        _mockGestorUsuarios.Setup(g => g.AutogenerarContrasenaValida()).Returns(contrasenaEsperada);
+
+        string resultado = _controladorUsuarios.AutogenerarContrasenaValida();
+
+        Assert.AreEqual(contrasenaEsperada, resultado);
+        _mockGestorUsuarios.Verify(g => g.AutogenerarContrasenaValida(), Times.Once);
+    }
+
 }

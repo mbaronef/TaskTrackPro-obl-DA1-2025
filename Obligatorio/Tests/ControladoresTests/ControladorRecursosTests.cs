@@ -160,4 +160,40 @@ public class ControladorRecursosTests
         Assert.AreEqual(recursoEsperado.Id, resultado.Id);
         _mockGestorRecursos.Verify(g => g.ObtenerRecursoExclusivoPorId(proyecto.Id, idRecurso), Times.Once);
     }
+    
+    [TestMethod]
+    public void ModificarCapacidadRecurso_LlamaCorrectamenteAGestor()
+    {
+        UsuarioDTO usuario = new UsuarioDTO { Id = 1 };
+        int idRecurso = 1;
+        int nuevaCapacidad = 10;
+
+        _mockGestorRecursos.Setup(g => g.ModificarCapacidadRecurso(usuario, idRecurso, nuevaCapacidad));
+
+        _controladorRecursos.ModificarCapacidadRecurso(usuario, idRecurso, nuevaCapacidad);
+
+        _mockGestorRecursos.Verify(g => g.ModificarCapacidadRecurso(usuario, idRecurso, nuevaCapacidad), Times.Once);
+    }
+
+    [TestMethod]
+    public void ObtenerPanelRecursos_LlamaCorrectamenteAGestor()
+    {
+        int idProyecto = 1;
+        List<RecursoPanelDTO> recursosEsperados = new List<RecursoPanelDTO>
+        {
+            new RecursoPanelDTO { Id = 1, Nombre = "Recurso 1" },
+            new RecursoPanelDTO { Id = 2, Nombre = "Recurso 2" }
+        };
+
+        _mockGestorRecursos.Setup(g => g.ObtenerRecursosParaPanel(idProyecto)).Returns(recursosEsperados);
+
+        List<RecursoPanelDTO> resultado = _controladorRecursos.ObtenerPanelRecursos(idProyecto);
+
+        Assert.AreEqual(2, resultado.Count);
+        Assert.AreEqual("Recurso 1", resultado[0].Nombre);
+        Assert.AreEqual("Recurso 2", resultado[1].Nombre);
+        _mockGestorRecursos.Verify(g => g.ObtenerRecursosParaPanel(idProyecto), Times.Once);
+    }
+
+    
 }
