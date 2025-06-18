@@ -160,6 +160,13 @@ public class GestorTareas : IGestorTareas
         VerificarProyectoHayaComenzado(proyecto);
         VerificarEstadoEditablePorUsuario(nuevoEstado);
 
+        if (nuevoEstado == EstadoTarea.Completada &&
+            tarea.FechaFinMasTemprana > DateTime.Today &&
+            tarea.RecursosNecesarios.Any())
+        {
+            throw new ExcepcionTarea("No se puede completar una tarea antes de su fecha de fin si tiene recursos asignados.");
+        }
+        
         tarea.CambiarEstado(nuevoEstado);
 
         _caminoCritico.CalcularCaminoCritico(proyecto);

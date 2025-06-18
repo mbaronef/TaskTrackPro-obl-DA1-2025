@@ -743,7 +743,7 @@ public class GestorTareasTests
 
         TareaDTO tarea = CrearTarea();
         tarea.FechaInicioMasTemprana = DateTime.Today;
-        tarea.DuracionEnDias = 5; // Fecha fin futura
+        tarea.DuracionEnDias = 5; 
 
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
 
