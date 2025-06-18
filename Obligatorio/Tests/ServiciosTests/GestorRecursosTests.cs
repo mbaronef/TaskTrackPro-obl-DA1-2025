@@ -71,15 +71,10 @@ public class GestorRecursosTests
         _repositorioUsuarios.Agregar(usuario);
         return UsuarioDTO.DesdeEntidad(usuario); // dto
     }
-
-    private void CrearYAgregarTarea(Proyecto proyecto, RecursoDTO recurso)
+    
+    private Tarea CrearTarea()
     {
-        UsuarioDTO adminProyectoDTO = UsuarioDTO.DesdeEntidad(proyecto.Administrador);
-        
-        GestorTareas gestorTareas = new GestorTareas(_repositorioProyectos, _repositorioUsuarios, _repositorioRecursos, _notificador, _caminoCritico);
-        TareaDTO tarea = TareaDTO.DesdeEntidad(new Tarea("Un título", "una descripcion", 3, DateTime.Today.AddDays(10)));
-        gestorTareas.AgregarTareaAlProyecto(proyecto.Id, adminProyectoDTO, tarea);
-        gestorTareas.AsignarRecursoATarea(adminProyectoDTO, tarea.Id, proyecto.Id, recurso);
+        return new Tarea("Un título", "una descripcion", 3, DateTime.Today.AddDays(10));
     }
 
     private Proyecto CrearYAgregarProyecto(Usuario adminProyecto)
@@ -97,7 +92,7 @@ public class GestorRecursosTests
     private RecursoDTO CrearRecursoDTO()
     {
         return new RecursoDTO()
-            { Nombre = "Analista Senior", Tipo = "Humano", Descripcion = "Un analista Senior con experiencia" };
+            { Nombre = "Analista Senior", Tipo = "Humano", Descripcion = "Un analista Senior con experiencia", Capacidad = 1};
     }
     
     [TestCleanup]
@@ -520,7 +515,9 @@ public class GestorRecursosTests
 
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        CrearYAgregarTarea(proyecto, recurso);
+        Tarea tarea = CrearTarea();
+        tarea.AsignarRecurso(recurso.AEntidad(), 1);
+        proyecto.AgregarTarea(tarea);
 
         _gestorRecursos.ModificarNombreRecurso(_adminSistemaDTO, recurso.Id, "Otro nombre");
 
@@ -561,7 +558,9 @@ public class GestorRecursosTests
 
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        CrearYAgregarTarea(proyecto, recurso);
+        Tarea tarea = CrearTarea();
+        tarea.AsignarRecurso(recurso.AEntidad(), 1);
+        proyecto.AgregarTarea(tarea);
 
         _gestorRecursos.ModificarTipoRecurso(_adminSistemaDTO, recurso.Id, "Otro tipo");
 
@@ -602,7 +601,9 @@ public class GestorRecursosTests
 
         Usuario adminProyecto = CrearAdministradorProyecto();
         Proyecto proyecto = CrearYAgregarProyecto(adminProyecto);
-        CrearYAgregarTarea(proyecto, recurso);
+        Tarea tarea = CrearTarea();
+        tarea.AsignarRecurso(recurso.AEntidad(), 1);
+        proyecto.AgregarTarea(tarea);
 
         _gestorRecursos.ModificarDescripcionRecurso(_adminSistemaDTO, recurso.Id, "Otra descripción");
 
@@ -691,5 +692,44 @@ public class GestorRecursosTests
         };
         RecursoDTO recurso = CrearRecursoDTO();
         _gestorRecursos.AgregarRecurso(usuarioNoEnRepositorio, recurso, false);
+    }
+    
+    [TestMethod]
+    public void AdminSistemaModificaCapacidadDeRecursoOk()
+    {
+        RecursoDTO recurso = CrearRecursoDTO();
+        recurso.Capacidad = 5;
+        _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
+
+        _gestorRecursos.ModificarCapacidadRecurso(_adminSistemaDTO, recurso.Id, 10);
+
+        Recurso recursoModificado = _repositorioRecursos.ObtenerPorId(recurso.Id);
+        Assert.AreEqual(10, recursoModificado.Capacidad);
+    }
+    
+    [ExpectedException(typeof(ExcepcionRecurso))]
+    [TestMethod]
+    public void ModificarCapacidadLanzaExcepcionSiCapacidadMenorAlUsoActual()
+    {
+        Recurso recurso = new Recurso("Servidor", "Hardware", "Alta disponibilidad", 5);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 3);
+        recurso.AgregarRangoDeUso(DateTime.Today, DateTime.Today.AddDays(1), 3); // uso total = 6
+        recurso.Id = 1;
+        _repositorioRecursos.Agregar(recurso);
+
+        _gestorRecursos.ModificarCapacidadRecurso(_adminSistemaDTO, recurso.Id, 4);
+    }
+    
+    [ExpectedException(typeof(ExcepcionPermisos))]
+    [TestMethod]
+    public void UsuarioSinPermisosNoPuedeModificarCapacidad()
+    {
+        UsuarioDTO usuarioNoAdmin = CrearUsuarioNoAdminDTO();
+
+        RecursoDTO recurso = CrearRecursoDTO();
+        recurso.Capacidad = 5;
+        _gestorRecursos.AgregarRecurso(_adminSistemaDTO, recurso, false);
+
+        _gestorRecursos.ModificarCapacidadRecurso(usuarioNoAdmin, recurso.Id, 10);
     }
 }

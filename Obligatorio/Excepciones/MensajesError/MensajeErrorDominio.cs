@@ -78,7 +78,7 @@ public static class MensajesErrorDominio
     public const string TituloTareaVacio = "El título de la tarea no puede estar vacío o ser nulo.";
     public const string UsuarioNullEnAsignacion = "No se puede asignar una tarea a un usuario null.";
     public const string UsuarioNoAsignado = "El usuario no está asignado a la tarea.";
-    public const string RecursoNullEnTarea = "No se puede agregar un recurso null.";
+    public const string RecursoNullParaAgregar = "No se puede agregar un recurso null.";
     public const string RecursoNoNecesario = "El recurso no se encuentra dentro de los recursos necesarios.";
     public const string DependenciaNullEnTarea = "No se puede agregar una dependencia null.";
 
@@ -93,5 +93,7 @@ public static class MensajesErrorDominio
     public const string RangoDeUsoNoPuedeSerCeroOMenos = "El rango de uso no puede ser cero o negativo.";
     public static string TareaNoPuedeSerNula = "Una tarea nula no puede hacer uso en el rango de uso.";
     public static string RecursoYaAgregadoATarea = "El recurso ya fue agregado a la tarea.";
+    public const string RangoNoEncontrado ="No se encontró un rango con los datos especificados.";
+    public const string CantidadMayorACero ="La cantidad debe ser mayor a cero.";
 
 }

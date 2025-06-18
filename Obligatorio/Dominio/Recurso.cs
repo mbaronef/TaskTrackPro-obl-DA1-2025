@@ -94,20 +94,25 @@ public class Recurso
         return true;
     }
 
-    public void AgregarRangoDeUso(Tarea tarea, int cantidadNuevo)
+    public void AgregarRangoDeUso(DateTime fechaInicio, DateTime fechaFin, int cantidadNuevo)
     {
-        ValidarTareaNoUsaElRecurso(tarea);
-        DateTime fechaInicioNuevo = tarea.FechaInicioMasTemprana;
-        DateTime fechaFinNuevo = tarea.FechaFinMasTemprana;
-        ValidarCapacidadDisponibleEnRango(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo);
-        RangoDeUso nuevoRango = new RangoDeUso(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo, tarea);
+        //ValidarCapacidadDisponibleEnRango(fechaInicio, fechaFin, cantidadNuevo);
+        RangoDeUso nuevoRango = new RangoDeUso(fechaInicio, fechaFin, cantidadNuevo);
         RangosEnUso.Add(nuevoRango);
     }
     
-    public void EliminarRangoDeUsoDeTarea(Tarea tarea)
+    public void AgregarRangoDeUsoForzado(DateTime fechaInicio, DateTime fechaFin, int cantidadNuevo)
     {
-        RangoDeUso rangoAEliminar = RangosEnUso.FirstOrDefault(r => r.Tarea.Equals(tarea));
-        RangosEnUso.Remove(rangoAEliminar);
+        RangoDeUso nuevoRango = new RangoDeUso(fechaInicio, fechaFin, cantidadNuevo);
+        RangosEnUso.Add(nuevoRango);
+    }
+    
+    public void EliminarRango(DateTime inicio, DateTime fin, int cantidad)
+    {
+        RangoDeUso rango = RangosEnUso.FirstOrDefault(r =>
+            r.FechaInicio == inicio && r.FechaFin == fin && r.CantidadDeUsos == cantidad);
+        ValidarRangoNoNulo(rango);
+        RangosEnUso.Remove(rango);
     }
 
     public void ModificarCapacidad(int nuevaCapacidad)
@@ -121,9 +126,28 @@ public class Recurso
         
         Capacidad = nuevaCapacidad;
     }
+    
+    public bool UsoSeAjustaANuevaCapacidad(int nuevaCapacidad)
+    {
+        if (!RangosEnUso.Any()) return true;
+        DateTime primeraFechaDeUso = RangosEnUso.Min(r => r.FechaInicio.Date);
+        DateTime ultimaFechaDeUso = RangosEnUso.Max(r => r.FechaFin.Date);
+
+        for (DateTime dia = primeraFechaDeUso; dia <= ultimaFechaDeUso; dia = dia.AddDays(1))
+        {
+            int usoEnDia = CantidadDeUsosPorDia(dia);
+            
+            if (usoEnDia > nuevaCapacidad)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private void ValidarSiElUsoSuperaLaNuevaCapacidad(int nuevaCapacidad)
     {
+        if (!RangosEnUso.Any()) return; //agregue esto
         DateTime primeraFechaDeUso = RangosEnUso.Min(r => r.FechaInicio.Date);
         DateTime ultimaFechaDeUso = RangosEnUso.Max(r => r.FechaFin.Date);
 
@@ -137,6 +161,45 @@ public class Recurso
             }
         }
     }
+    
+    public DateTime BuscarProximaFechaDisponible(DateTime desde, int duracionEnDias, int cantidad)
+    {
+        DateTime fechaInicio = desde;
+
+        if (RangosEnUso.Any())
+        {
+            DateTime despuesDeUltimoUso = RangosEnUso.Max(r => r.FechaFin.Date).AddDays(1);
+            if (despuesDeUltimoUso > fechaInicio)
+            {
+                fechaInicio = despuesDeUltimoUso;
+            }
+        }
+
+        while (true)
+        {
+            DateTime fechaFinTentativa = fechaInicio.AddDays(duracionEnDias - 1);
+            bool disponible = true;
+
+            for (DateTime dia = fechaInicio; dia <= fechaFinTentativa; dia = dia.AddDays(1))
+            {
+                int usoEnElDia = CantidadDeUsosPorDia(dia);
+                if (usoEnElDia + cantidad > Capacidad)
+                {
+                    disponible = false;
+                    break;
+                }
+            }
+
+            if (disponible)
+            {
+                return fechaInicio;
+            }
+
+            fechaInicio = fechaInicio.AddDays(1);
+        }
+    }
+
+
 
     public bool EsExclusivo()
     {
@@ -171,14 +234,6 @@ public class Recurso
         if (!TieneCapacidadDisponible(fechaInicioNuevo, fechaFinNuevo, cantidadNuevo))
         {
             throw new ExcepcionRecurso(MensajesErrorDominio.CapacidadInsuficienteEnElRango);
-        }
-    }
-    
-    private void ValidarTareaNoUsaElRecurso(Tarea tarea)
-    {
-        if (RangosEnUso.Any(r => r.Tarea.Equals(tarea)))
-        {
-            throw new ExcepcionRecurso(MensajesErrorDominio.RecursoYaAgregadoATarea);
         }
     }
     
@@ -220,6 +275,12 @@ public class Recurso
         {
             throw new ExcepcionRecurso(MensajesErrorDominio.ActualizarEntidadNoCoincidente);
         }
+    }
+    
+    private void ValidarRangoNoNulo(RangoDeUso? rango)
+    {
+        if (rango == null)
+            throw new ExcepcionRecurso(MensajesErrorDominio.RangoNoEncontrado);
     }
 
     public override bool Equals(object? otro)

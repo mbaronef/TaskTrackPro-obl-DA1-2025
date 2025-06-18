@@ -9,22 +9,19 @@ public class RangoDeUso
     public DateTime FechaInicio { get; set; }
     public DateTime FechaFin { get; set; }
     public int CantidadDeUsos { get; set; }
-    public Tarea Tarea { get; set; }
     
     public RangoDeUso()
     {
     }
     
-    public RangoDeUso(DateTime fechaInicio, DateTime fechaFin, int cantidadDeUsos, Tarea tarea)
+    public RangoDeUso(DateTime fechaInicio, DateTime fechaFin, int cantidadDeUsos)
     {
         ValidarFechaInicioMenorAFin(fechaInicio, fechaFin);
         ValidarCantidadDeUsosMayorACero(cantidadDeUsos);
-        ValidarTareaNoNula(tarea);
 
         FechaInicio = fechaInicio;
         FechaFin = fechaFin;
         CantidadDeUsos = cantidadDeUsos;
-        Tarea = tarea;
     }
     
     private void ValidarFechaInicioMenorAFin(DateTime fechaInicio, DateTime fechaFin)
@@ -40,14 +37,6 @@ public class RangoDeUso
         if(cantidadDeUsos <= 0)
         {
             throw new ExcepcionRangoDeUso(MensajesErrorDominio.RangoDeUsoNoPuedeSerCeroOMenos);
-        }
-    }
-    
-    private void ValidarTareaNoNula(Tarea tarea)
-    {
-        if (tarea == null)
-        {
-            throw new ExcepcionRangoDeUso(MensajesErrorDominio.TareaNull);
         }
     }
     

@@ -15,22 +15,22 @@ public class Tarea
     public EstadoTarea Estado { get; private set; } = EstadoTarea.Pendiente;
     public int Holgura { get; set; }
     public bool FechaInicioFijadaManualmente { get; set; } = false;
-    public virtual ICollection<Usuario> UsuariosAsignados { get; }
-    public virtual ICollection<Recurso> RecursosNecesarios { get; }
-    public virtual ICollection<Dependencia> Dependencias { get; }
+    public virtual ICollection<Usuario> UsuariosAsignados { get; set; }
+    public virtual ICollection<RecursoNecesario> RecursosNecesarios { get; set; }
+    public virtual ICollection<Dependencia> Dependencias { get; set; }
 
     public Tarea()
     {
         UsuariosAsignados = new List<Usuario>();
-        RecursosNecesarios = new List<Recurso>();
+        RecursosNecesarios = new List<RecursoNecesario>();
         Dependencias = new List<Dependencia>();
     }
     
     public Tarea(string titulo, string descripcion, int duracionEnDias, DateTime fechaInicioMasTemprana)
     {
         ValidarStringNoVacioNiNull(titulo, MensajesErrorDominio.TituloTareaVacio);
-        ValidarStringNoVacioNiNull(descripcion, MensajesErrorDominio.DescripcionVacia);
         ValidarIntNoNegativoNiCero(duracionEnDias, MensajesErrorDominio.DuracionTareaInvalida);
+        ValidarStringNoVacioNiNull(descripcion, MensajesErrorDominio.DescripcionVacia);
         ValidarFechaInicio(fechaInicioMasTemprana);
         
         Titulo = titulo;
@@ -39,7 +39,7 @@ public class Tarea
         FechaInicioMasTemprana = fechaInicioMasTemprana;
         Estado = EstadoTarea.Pendiente;
         UsuariosAsignados = new List<Usuario>();
-        RecursosNecesarios = new List<Recurso>();
+        RecursosNecesarios = new List<RecursoNecesario>();
         Dependencias = new List<Dependencia>();
         
         CalcularFechaFinMasTemprana();
@@ -81,21 +81,23 @@ public class Tarea
         UsuariosAsignados.Remove(usuarioAEliminar);
     }
 
-    public void AsignarRecurso(Recurso recurso)
+    public void AsignarRecurso(Recurso recurso, int cantidad)
     {
-        ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullEnTarea);
+        ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullParaAgregar);
         VerificarRecursoNoEstaAgregado(recurso);
-        
-        RecursosNecesarios.Add(recurso);
+        recurso.AgregarRangoDeUso(FechaInicioMasTemprana, FechaFinMasTemprana, cantidad);
+        RecursoNecesario recursoNecesario = new RecursoNecesario(recurso, cantidad);
+        RecursosNecesarios.Add(recursoNecesario);
         recurso.IncrementarCantidadDeTareasUsandolo();
     }
 
     public void EliminarRecurso(int idRecurso)
     {
-        Recurso recursoAEliminar = BuscarRecursoNecesarioPorId(idRecurso);
+        RecursoNecesario recursoAEliminar = BuscarRecursoNecesarioPorId(idRecurso);
         ValidarObjetoNoNull(recursoAEliminar, MensajesErrorDominio.RecursoNoNecesario);
-
-        recursoAEliminar.DecrementarCantidadDeTareasUsandolo();
+        int cantidad = recursoAEliminar.Cantidad;
+        recursoAEliminar.Recurso.EliminarRango(FechaInicioMasTemprana, FechaFinMasTemprana, cantidad);
+        recursoAEliminar.Recurso.DecrementarCantidadDeTareasUsandolo();
         RecursosNecesarios.Remove(recursoAEliminar);
     }
 
@@ -174,6 +176,11 @@ public class Tarea
         }
     }
     
+    public bool UsaRecurso(int idRecurso)
+    {
+        return RecursosNecesarios.Any(rn => rn.Recurso.Id == idRecurso);
+    }
+    
     public bool EsMiembro(Usuario usuario)
     {
         return UsuariosAsignados.Contains(usuario);
@@ -195,6 +202,7 @@ public class Tarea
         FechaFinMasTemprana = tareaActualizada.FechaFinMasTemprana;
         FechaDeEjecucion = tareaActualizada.FechaDeEjecucion;
         Holgura = tareaActualizada.Holgura;
+        FechaInicioFijadaManualmente = tareaActualizada.FechaInicioFijadaManualmente; // VER SI FUNCIONA CPM
         CambiarEstado(tareaActualizada.Estado);
     }
 
@@ -284,7 +292,7 @@ public class Tarea
 
     private void VerificarRecursoNoEstaAgregado(Recurso recurso)
     {
-        if (RecursosNecesarios.Contains(recurso))
+        if (RecursosNecesarios.Any(rn => rn.Recurso.Id == recurso.Id))
         {
             throw new ExcepcionDominio(MensajesErrorDominio.RecursoYaAgregado);
         }
@@ -303,9 +311,9 @@ public class Tarea
         return UsuariosAsignados.FirstOrDefault(u => u.Id == id);
     }
 
-    private Recurso BuscarRecursoNecesarioPorId(int id)
+    private RecursoNecesario BuscarRecursoNecesarioPorId(int id)
     {
-        return RecursosNecesarios.FirstOrDefault(r => r.Id == id);
+        return RecursosNecesarios.FirstOrDefault(rn => rn.Recurso.Id == id);
     }
 
     private Dependencia BuscarDependenciaPorIdDeTarea(int id)
@@ -315,9 +323,9 @@ public class Tarea
 
     private void LiberarRecursos()
     {
-        foreach (Recurso recurso in RecursosNecesarios)
+        foreach (RecursoNecesario recursoNecesario in RecursosNecesarios)
         {
-            recurso.DecrementarCantidadDeTareasUsandolo();
+            recursoNecesario.Recurso.DecrementarCantidadDeTareasUsandolo();
         }
     }
     

@@ -57,6 +57,10 @@ else
                         <InputText class="form-control" @bind-Value="nuevoRecurso.Descripcion"
                                    @oninput="OcultarError"></InputText>
                     </div>
+                    <div class="mb-3">
+                        <label>Capacidad</label>
+                        <InputNumber class="form-control" @bind-Value="nuevoRecurso.Capacidad" @oninput="OcultarError"/>
+                    </div>
                     <button class="btn btn-success" @onclick="CrearRecurso">Guardar</button>
                     <button class="btn btn-secondary ms-2" @onclick="CancelarCrearRecurso">Cancelar</button>
                 </div>
@@ -95,6 +99,10 @@ else
                         <InputText class="form-control" @bind-Value="recursoAEditar.Descripcion"
                                    @oninput="OcultarErrorEditar"/>
                     </div>
+                    <div class="mb-3">
+                        <label>Capacidad</label>
+                        <InputNumber class="form-control" @bind-Value="recursoAEditar.Capacidad" @oninput="OcultarErrorEditar"/>
+                    </div>
                     <button class="btn btn-success" @onclick="GuardarCambiosRecurso">Guardar Cambios</button>
                     <button class="btn btn-secondary ms-2" type="button" @onclick="CancelarEdicionRecurso">Cancelar
                     </button>
@@ -122,6 +130,7 @@ else
                 <th>Nombre</th>
                 <th>Tipo</th>
                 <th>Descripción</th>
+                <th>Capacidad</th>
                 @if (Sesion.UsuarioLogueado.Equals(proyecto.Administrador) || Sesion.EsAdminSistema())
                 {
                     <th></th>
@@ -139,6 +148,7 @@ else
                     <td>@recurso.Nombre</td>
                     <td>@recurso.Tipo</td>
                     <td>@recurso.Descripcion</td>
+                    <td>@recurso.Capacidad</td>
                     @if (Sesion.EsAdminSistema() || Sesion.UsuarioLogueado.Equals(proyecto.Administrador))
                     {
                         <td>
@@ -256,6 +266,8 @@ else
             ControladorRecursos.ModificarNombreRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Nombre);
             ControladorRecursos.ModificarTipoRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Tipo);
             ControladorRecursos.ModificarDescripcionRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Descripcion);
+            ControladorRecursos.ModificarCapacidadRecurso(Sesion.UsuarioLogueado, recursoAEditar.Id, recursoAEditar.Capacidad);
+
 
             mostrarFormEditarRecurso = false;
             recursoAEditar = null;

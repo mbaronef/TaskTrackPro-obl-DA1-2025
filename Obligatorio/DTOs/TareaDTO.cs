@@ -29,7 +29,7 @@ public class TareaDTO
 
     public List<UsuarioListarDTO> UsuariosAsignados { get; private set; } = new List<UsuarioListarDTO>();
 
-    public List<RecursoDTO> RecursosNecesarios { get; private set; } = new List<RecursoDTO>();
+    public List<RecursoNecesarioDTO> RecursosNecesarios { get; private set; } = new List<RecursoNecesarioDTO>();
     public List<DependenciaDTO> Dependencias { get; private set; } = new List<DependenciaDTO>();
 
     public Tarea AEntidad()
@@ -52,7 +52,7 @@ public class TareaDTO
             Holgura = tarea.Holgura,
             Estado = (EstadoTareaDTO)tarea.Estado,
             UsuariosAsignados = tarea.UsuariosAsignados.Select(UsuarioListarDTO.DesdeEntidad).ToList(),
-            RecursosNecesarios = tarea.RecursosNecesarios.Select(RecursoDTO.DesdeEntidad).ToList(),
+            RecursosNecesarios = tarea.RecursosNecesarios.Select(RecursoNecesarioDTO.DesdeEntidad).ToList(),
             Dependencias = tarea.Dependencias.Select(DependenciaDTO.DesdeEntidad).ToList()
         };
     }

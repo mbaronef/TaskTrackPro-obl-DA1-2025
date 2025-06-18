@@ -29,9 +29,21 @@ public interface IGestorTareas
     
     void EliminarMiembroDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, UsuarioDTO miembroDTO);
     
-    void AsignarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO);
+    void AsignarRecursoATarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO nuevoRecursoDTO, int cantidad);
     
     void EliminarRecursoDeTarea(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO);
     
     bool EsMiembroDeTarea(UsuarioDTO usuarioDTO, int idTarea, int idProyecto);
+
+    void EncontrarRecursosAlternativosMismoTipo(UsuarioDTO solicitanteDTO, int idProyecto,
+        RecursoDTO recursoOriginalDTO, DateTime FechaInicio, DateTime FechaFin, int cantidad);
+
+    void ReprogramarTarea(UsuarioDTO solicitanteDTO, int idProyecto, int idTarea, RecursoDTO recursoDTO, int cantidad);
+
+    void ForzarAsignacion(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO,
+        int cantidad);
+
+    public void ValidarYAsignarRecurso(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto,
+        RecursoDTO nuevoRecursoDTO, int cantidad);
+    
 }

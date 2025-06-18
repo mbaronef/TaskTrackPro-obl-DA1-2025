@@ -91,6 +91,18 @@ public class GestorRecursos : IGestorRecursos
         
         NotificarModificacion(recurso, nombreAnterior);
     }
+    
+    public void ModificarCapacidadRecurso(UsuarioDTO solicitanteDTO, int idRecurso, int nuevaCapacidad)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recurso = ObtenerRecursoDominioPorId(idRecurso);
+    
+        PermisosUsuarios.VerificarPermisoAdminSistemaOAdminProyecto(solicitante, "modificar la capacidad de un recurso");
+        VerificarRecursoExclusivoDelAdministradorProyecto(solicitante, recurso, "modificar la capacidad de");
+
+        recurso.ModificarCapacidad(nuevaCapacidad);
+        NotificarModificacion(recurso, recurso.Nombre);
+    }
 
     public void ModificarTipoRecurso(UsuarioDTO solicitanteDTO, int idRecurso, string nuevoTipo)
     {
@@ -222,7 +234,11 @@ public class GestorRecursos : IGestorRecursos
 
     private List<Recurso> RecursosNecesariosPorProyecto(Proyecto proyecto)
     {
-        return proyecto.Tareas.SelectMany(tarea => tarea.RecursosNecesarios).Distinct().ToList();
+        return proyecto.Tareas
+            .SelectMany(tarea => tarea.RecursosNecesarios)
+            .Select(rn => rn.Recurso)
+            .Distinct()
+            .ToList();;
     }
 
     private Usuario ObtenerUsuarioPorDTO(UsuarioDTO usuarioDTO)
@@ -235,5 +251,27 @@ public class GestorRecursos : IGestorRecursos
         }
 
         return usuario;
+    }
+    
+    public List<RecursoPanelDTO> ObtenerRecursosParaPanel(int idProyecto)
+    {
+        Proyecto proyecto = _gestorProyectos.ObtenerProyectoDominioPorId(idProyecto);
+        List<Recurso> recursos = _repositorioRecursos.ObtenerTodos()
+            .Where(r => !r.EsExclusivo() || (r.ProyectoAsociado?.Id == idProyecto)).ToList();
+
+        List<Tarea> tareasEnProceso = proyecto.Tareas
+            .Where(t => t.Estado == EstadoTarea.EnProceso).ToList();
+
+        List<RecursoPanelDTO> panel = new();
+
+        foreach (Recurso recurso in recursos)
+        {
+            int nivelDeUso = tareasEnProceso.Count(t => t.UsaRecurso(recurso.Id));
+            List<RangoDeUso> rangos = recurso.RangosEnUso.ToList();
+
+            panel.Add(RecursoPanelDTO.DesdeEntidad(recurso, rangos, nivelDeUso));
+        }
+
+        return panel;
     }
 }

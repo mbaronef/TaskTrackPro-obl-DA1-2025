@@ -40,6 +40,7 @@ public class RecursoDTO
             Nombre = recurso.Nombre,
             Tipo = recurso.Tipo,
             Descripcion = recurso.Descripcion,
+            Capacidad = recurso.Capacidad,
             IdProyectoAsociado = recurso.ProyectoAsociado?.Id
         };
     }
