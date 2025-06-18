@@ -90,6 +90,16 @@ public class Tarea
         RecursosNecesarios.Add(recursoNecesario);
         recurso.IncrementarCantidadDeTareasUsandolo();
     }
+    
+    public void AsignarRecursoForzado(Recurso recurso, int cantidad)
+    {
+        ValidarObjetoNoNull(recurso, MensajesErrorDominio.RecursoNullParaAgregar);
+        VerificarRecursoNoEstaAgregado(recurso);
+        recurso.AgregarRangoDeUsoForzado(FechaInicioMasTemprana, FechaFinMasTemprana, cantidad);
+        RecursoNecesario recursoNecesario = new RecursoNecesario(recurso, cantidad);
+        RecursosNecesarios.Add(recursoNecesario);
+        recurso.IncrementarCantidadDeTareasUsandolo();
+    }
 
     public void EliminarRecurso(int idRecurso)
     {

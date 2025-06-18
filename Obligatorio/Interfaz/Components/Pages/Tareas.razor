@@ -1147,7 +1147,7 @@ else
         List<RecursoDTO> recursosExclusivos = ControladorRecursos.ObtenerRecursosExclusivos(proyecto.Id);
         List<RecursoNecesarioDTO> recursosYaAsignados = tareaActual.RecursosNecesarios;
         List<RecursoDTO> todosLosRecursos = recursosGenerales.Concat(recursosExclusivos).ToList();
-        recursosProyecto = todosLosRecursos.Where(r => !recursosYaAsignados.Any(asignado => asignado.Id == r.Id)).ToList();
+        recursosProyecto = todosLosRecursos.Where(r => !recursosYaAsignados.Any(asignado => asignado.Recurso.Id == r.Id)).ToList();
     }
 
     private void ActualizarUsuariosProyecto()

@@ -386,8 +386,8 @@ public class GestorTareas : IGestorTareas
         Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
 
         ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
-        recurso.AgregarRangoDeUsoForzado(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, cantidad); //forzado!?
-        tarea.AsignarRecurso(recurso, cantidad);
+        recurso.AgregarRangoDeUsoForzado(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, cantidad);
+        tarea.AsignarRecursoForzado(recurso, cantidad);
 
         string mensaje =
             $"Recurso {recurso.Nombre} fue asignado forzadamente a la tarea '{tarea.Titulo}', excediendo su capacidad.";
