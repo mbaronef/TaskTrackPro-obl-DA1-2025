@@ -57,6 +57,10 @@ public static class MensajesErrorDominio
     public const string DuracionTareaInvalida = "La duración de la tarea debe ser mayor a cero días.";
     public const string UsuariosAsignadosVacio = "La lista de usuarios asignados está vacía o no está inicializada.";
     public const string FechaInicioInvalida = "La fecha de inicio debe ser igual o posterior a la fecha de hoy.";
+    public const string EdicionTareaEnProceso = "No se puede editar la tarea mientras está en proceso.";
+    public const string FechaMenorAFechMinima =
+        "La fecha de inicio de la tarea no puede ser anterior a la permitida por sus dependencias.";
+
 
     public static string TransicionEstadoInvalidaDesdeHacia(string desde, string hacia)
         => $"No se puede cambiar una tarea de estado {desde} a estado {hacia}.";

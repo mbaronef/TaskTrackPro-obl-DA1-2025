@@ -67,12 +67,12 @@ public class CaminoCriticoTests
         Assert.IsTrue(_tarea2.EsCritica());
         Assert.IsTrue(_tarea3.EsCritica());
         Assert.IsFalse(_tarea4.EsCritica());
-        Assert.AreEqual(8, _tarea4.Holgura);
+        Assert.AreEqual(3, _tarea4.Holgura);
 
         Assert.AreEqual(_fechaHoy, _tarea1.FechaInicioMasTemprana);
         Assert.AreEqual(_fechaHoy.AddDays(2), _tarea3.FechaInicioMasTemprana);
         Assert.AreEqual(_fechaHoy.AddDays(6), _tarea2.FechaInicioMasTemprana);
-        Assert.AreEqual(_fechaHoy, _tarea4.FechaInicioMasTemprana);
+        Assert.AreEqual(_fechaHoy.AddDays(5), _tarea4.FechaInicioMasTemprana);
     }
 
     [ExpectedException(typeof(ExcepcionCaminoCritico))]
@@ -191,5 +191,19 @@ public class CaminoCriticoTests
 
         Notificacion ultimaNoti = _admin.Notificaciones.Last();
         Assert.AreEqual(esperado, ultimaNoti.Mensaje);
+    }
+    
+    [TestMethod]
+    public void TareaConFechaFijadaNoEsModificada()
+    {
+        _tarea3.FijarFechaInicio(_fechaHoy.AddDays(100));
+        _proyecto.AgregarTarea(_tarea1);
+        _proyecto.AgregarTarea(_tarea3);
+        _proyecto.AgregarTarea(_tarea2); 
+        
+        _caminoCritico.CalcularCaminoCritico(_proyecto);
+        
+        Assert.AreEqual(_fechaHoy.AddDays(100), _tarea3.FechaInicioMasTemprana);
+        Assert.AreEqual(_fechaHoy, _tarea1.FechaInicioMasTemprana);
     }
 }

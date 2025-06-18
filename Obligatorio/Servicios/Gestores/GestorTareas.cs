@@ -125,9 +125,8 @@ public class GestorTareas : IGestorTareas
         Tarea tarea = ObtenerTareaValidandoAdminOLider(solicitante, idProyecto, idTarea);
         
         VerificarTareaNoEsteEnProceso(tarea);
-
-        tarea.ModificarFechaInicioMasTemprana(nuevaFecha);
-
+        tarea.FijarFechaInicio(nuevaFecha);
+        
         Proyecto proyecto = ObtenerProyectoPorId(idProyecto);
         RecalcularCaminoCriticoYActualizarProyecto(proyecto);
         

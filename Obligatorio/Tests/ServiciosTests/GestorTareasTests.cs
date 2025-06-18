@@ -576,10 +576,9 @@ public class GestorTareasTests
         DateTime fechaNueva = new DateTime(2030, 01, 01);
 
         _gestorTareas.ModificarFechaInicioTarea(_admin, tarea.Id, proyecto.Id, fechaNueva);
-        // No debería lanzar excepción. Luego se llama a CPM que modifica la fecha de inicio por la del proyecto
-
+        
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
-        Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
+        Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
     }
     
     [TestMethod]
@@ -591,10 +590,9 @@ public class GestorTareasTests
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
         DateTime fechaNueva = new DateTime(2030, 01, 01);
         _gestorTareas.ModificarFechaInicioTarea(lider, tarea.Id, proyecto.Id, fechaNueva);
-        // No debería lanzar excepción. Luego se llama a CPM que modifica la fecha de inicio por la del proyecto
-
+        
         tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
-        Assert.AreEqual(proyecto.FechaInicio, tarea.FechaInicioMasTemprana);
+        Assert.AreEqual(fechaNueva, tarea.FechaInicioMasTemprana);
     }
     
     [TestMethod]
@@ -653,7 +651,9 @@ public class GestorTareasTests
     public void CambiarEstadoTarea_LiderProyectoCambiaEstadoOk()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+
+        Proyecto proyectoDominio = _repositorioProyectos.ObtenerPorId(proyecto.Id);
+        proyectoDominio.FechaInicio = DateTime.Today; // para que no falle la validación de fecha de inicio
 
         UsuarioDTO lider = CrearYLiderarProyecto(proyecto);
 
@@ -712,6 +712,7 @@ public class GestorTareasTests
     public void MiembroNoPuedeCambiarEstadoABloqueada()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today); // para que no falle la validación de fecha de inicio
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
@@ -724,6 +725,7 @@ public class GestorTareasTests
     public void MiembroNoPuedeCambiarEstadoAPendiente()
     {
         ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today); // para que no falle la validación de fecha de inicio
         _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
         TareaDTO tarea = CrearTarea();
         _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);

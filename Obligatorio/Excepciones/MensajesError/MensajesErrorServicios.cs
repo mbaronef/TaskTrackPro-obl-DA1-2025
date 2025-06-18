@@ -42,7 +42,7 @@ public static class MensajesErrorServicios
     public const string FechaInicioTarea =
         "La fecha de inicio de la tarea no puede ser anterior a la fecha de inicio del proyecto.";
     public const string GrafoConCiclos = "El grafo de tareas tiene dependencias cíclicas.";
-
+    
     public static string ContrasenaMuyCorta(int largoMinimoContrasena) =>
         $"La contraseña debe tener al menos {largoMinimoContrasena} caracteres.";
     public const string ContrasenaSinMayuscula = "La contraseña debe incluir al menos una letra mayúscula (A-Z).";

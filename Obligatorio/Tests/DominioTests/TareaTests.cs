@@ -808,4 +808,46 @@ public class TareaTests
         Assert.IsNotNull(tarea);
     }
     
+    [TestMethod]
+    public void FijarFechaInicioFijadaManualmente_ModificaFechaInicioYFin()
+    {
+        Tarea tarea = CrearTareaValida();
+        tarea.FijarFechaInicio(DateTime.Today);
+        Assert.AreEqual(DateTime.Today, tarea.FechaInicioMasTemprana);
+        Assert.AreEqual(DateTime.Today.AddDays(4), tarea.FechaFinMasTemprana);
+    }
+    
+    [TestMethod]
+    public void FijarFechaInicioFijadaManualmente_CambiaElEstadoDeFechaInicioFijadaManualmente()
+    {
+        Tarea tarea = CrearTareaValida();
+        tarea.FijarFechaInicio(DateTime.Today);
+        Assert.IsTrue(tarea.FechaInicioFijadaManualmente);
+    }
+    
+    [ExpectedException(typeof(ExcepcionTarea))]
+    [TestMethod]
+    public void FijarFechaInicioFijadaManualmente_NoPermiteModificarFechaInicioSiLasDependenciasNoLoPermiten()
+    {
+        Tarea tarea = CrearTareaValida();
+        Dependencia dependencia1 = CrearDependenciaFSValida();
+        dependencia1.Tarea.ModificarFechaInicioMasTemprana(DateTime.Today);
+        tarea.AgregarDependencia(dependencia1);
+        Dependencia dependencia2 = CrearDependenciaSSValida();
+        tarea.AgregarDependencia(dependencia2);
+        
+        tarea.FijarFechaInicio(DateTime.Today);
+    }
+    
+    [TestMethod]
+    public void FijarFechaInicioFijadaManualmente_ModificaFechaInicioSiLasDependenciasLoPermiten()
+    {
+        Tarea tarea = CrearTareaValida();
+        Dependencia dependencia1 = CrearDependenciaFSValida();
+        dependencia1.Tarea.ModificarFechaInicioMasTemprana(DateTime.Today);
+        tarea.AgregarDependencia(dependencia1);
+        
+        tarea.FijarFechaInicio(DateTime.Today.AddDays(100));
+    }
+    
 }
