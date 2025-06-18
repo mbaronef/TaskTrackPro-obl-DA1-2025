@@ -1209,466 +1209,466 @@ public class GestorTareasTests
         Assert.IsTrue(tarea.RecursosNecesarios.Any(recurso => recurso.Recurso.Id == recursoDTO.Id));
     }
     
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionTarea))]
-    public void AsignarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
-    {
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        RecursoDTO recurso = CrearYAgregarRecurso();
-        TareaDTO tarea = CrearTarea();
-
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-
-        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
-        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
-
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
-    }
-
-    [ExpectedException(typeof(ExcepcionPermisos))]
-    [TestMethod]
-    public void NoAdminNoPuedeAgregarRecursoATarea()
-    {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
-        _repositorioRecursos.Agregar(recurso); 
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
-
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_noAdmin, tarea.Id, proyecto.Id, recursoDTO, 1);
-    }
-
-    [TestMethod]
-    public void SeNotificaElAgregadoDeUnRecursoALosMiembrosDeLaTarea()
-    {
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",2);
-        _repositorioRecursos.Agregar(recurso); 
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
-
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
-
-        _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
-        string mensajeEsperado =
-            MensajesNotificacion.CampoTareaAgregado($"recurso {recurso.Nombre}", tarea.Id, proyecto.Nombre);
-        NotificacionDTO ultimaNotificacion = _admin.Notificaciones.Last();
-
-        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionRecurso))]
-    public void AgregarRecursoATarea_LanzaExcepcionSiRecursoNoExiste()
-    {
-        TareaDTO tarea = CrearTarea();
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
-    }
-
-    [TestMethod]
-    public void AdminDeProyectoPuedeEliminarRecursoNecesarioDeTarea()
-    {
-        RecursoDTO recursoDTO = CrearYAgregarRecurso();
-
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
-
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
-        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
-
-        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
-        Assert.IsFalse(tarea.RecursosNecesarios.Any(recurso => recurso.Recurso.Id == recursoDTO.Id));
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionTarea))]
-    public void EliminarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
-    {
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        RecursoDTO recurso = CrearYAgregarRecurso();
-        TareaDTO tarea = CrearTarea();
-
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
-
-        _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
-        _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
-
-        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
-    }
-
-    [ExpectedException(typeof(ExcepcionPermisos))]
-    [TestMethod]
-    public void NoAdminNoPuedeEliminarRecursoDeTarea()
-    {
-        RecursoDTO recursoDTO = CrearYAgregarRecurso();
-
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
-
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
-        _gestorTareas.EliminarRecursoDeTarea(_noAdmin, tarea.Id, proyecto.Id, recursoDTO);
-    }
-
-    [ExpectedException(typeof(ExcepcionTarea))]
-    [TestMethod]
-    public void NoSePuedeEliminarRecursoDeTareaNoExistente()
-    {
-        RecursoDTO recursoDTO = CrearYAgregarRecurso();
-
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
-    }
-
-    [ExpectedException(typeof(ExcepcionTarea))]
-    [TestMethod]
-    public void EliminarRecursoNoExistenteDeTareaDaError()
-    {
-        RecursoDTO recursoNoExistente = CrearYAgregarRecurso();
-
-
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-
-        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoNoExistente);
-    }
-
-    [TestMethod]
-    public void SeNotificaLaEliminacionDeUnRecursoALosMiembrosDeLaTarea()
-    {
-        RecursoDTO recursoDTO = CrearYAgregarRecurso();
-
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
-
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
-        _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
-
-        _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
-        string mensajeEsperado =
-            MensajesNotificacion.CampoTareaEliminado($"recurso {recursoDTO.Nombre}", tarea.Id, proyecto.Nombre);
-        NotificacionDTO ultimaNotificacion = _admin.Notificaciones.Last();
-
-        Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
-    }
-
-    [TestMethod]
-    public void EsMiembroDeTareaDevuelveTrueSiEsMiembro()
-    {
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
-
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-        _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
-
-        Assert.IsTrue(_gestorTareas.EsMiembroDeTarea(_noAdmin, tarea.Id, proyecto.Id));
-    }
-
-    [TestMethod]
-    public void EsMiembroDeTareaDevuelveFalseSiNoEsMiembro()
-    {
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-
-        Assert.IsFalse(_gestorTareas.EsMiembroDeTarea(_admin, tarea.Id, proyecto.Id));
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionRecurso))]
-    public void ValidarYAsignarRecurso_LanzaExcepcionSiRecursoNoExiste()
-    {
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-
-        RecursoDTO recursoInexistente = new RecursoDTO { Id = 999 };
-        _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoInexistente, 1);
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionRecurso))]
-    public void ValidarYAsignarRecurso_LanzaExcepcionSiCantidadSuperaCapacidad()
-    {
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
-        _repositorioRecursos.Agregar(recurso);
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-
-        _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 10); 
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionConflicto))]
-    public void ValidarYAsignarRecurso_LanzaExcepcionSiHayConflictoEnFechas()
-    {
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        TareaDTO tarea = CrearTarea();
-
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-    
-        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
-
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
-        recurso.AgregarRangoDeUso(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, 1); 
-        _repositorioRecursos.Agregar(recurso);
-
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-
-        _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
-    }
-    
-    [TestMethod]
-    public void ValidarYAsignarRecurso_AsignaRecursoCorrectamente()
-    {
-        ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
-        TareaDTO tarea = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
-
-        Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2); 
-        _repositorioRecursos.Agregar(recurso);
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-
-        _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
-
-        tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); 
-        Assert.IsTrue(tarea.RecursosNecesarios.Any(r => r.Recurso.Id == recurso.Id));
-    }
-    
-    [TestMethod]
-    public void ForzarAsignacion_AsignaRecursoYNotificaMiembros()
-    {
-        ProyectoDTO proyectoDTO = CrearYAgregarProyecto(_admin);
-        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
-
-        TareaDTO tareaDTO = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyectoDTO.Id, _admin, tareaDTO);
-
-        Tarea tarea = proyecto.Tareas.First();
-        RecursoDTO recursoDTO = CrearYAgregarRecurso("Recurso", "Tipo", "Desc", 5);
-
-        Recurso recurso = _repositorioRecursos.ObtenerPorId(recursoDTO.Id);
-        
-        Usuario miembro = new Usuario("Miembro", "miembro@gmail.com", DateTime.Today.AddYears(-20), "miembro@mail.com", "Contraseña#3");
-        _repositorioUsuarios.Agregar(miembro);
-        proyecto.Miembros.Add(miembro);
-        
-        _gestorTareas.ForzarAsignacion(_admin, tarea.Id, proyecto.Id, recursoDTO, 2);
-
-        RecursoNecesario recursoAsignado = tarea.RecursosNecesarios.FirstOrDefault(rn => rn.Recurso.Id == recurso.Id);
-        Assert.IsNotNull(recursoAsignado);
-        Assert.AreEqual(2, recursoAsignado.Cantidad);
-
-        RangoDeUso rangoAsignado = recurso.RangosEnUso.FirstOrDefault(r =>
-            r.FechaInicio == tarea.FechaInicioMasTemprana &&
-            r.FechaFin == tarea.FechaFinMasTemprana &&
-            r.CantidadDeUsos == 2);
-        Assert.IsNotNull(rangoAsignado);
-
-        List<Notificacion> notificaciones = miembro.Notificaciones;
-        Assert.IsTrue(notificaciones.Any(n => n.Mensaje.Contains("asignado forzadamente")));
-    }
-    
-    [TestMethod]
-    public void EliminarTarea_LiberaRangosEnRecurso()
-    {
-        UsuarioDTO admin = CrearAdministradorProyecto();
-        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
-    
-        TareaDTO tarea = CrearTarea();
-        tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
-        tarea.DuracionEnDias = 2;
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
-    
-        Recurso recurso = new Recurso("Dev", "Humano", "Desarrollador", 1);
-        _repositorioRecursos.Agregar(recurso);
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-    
-        _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
-        Assert.AreEqual(1, recurso.RangosEnUso.Count); 
-    
-        _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, admin, tarea.Id);
-    
-        Assert.AreEqual(0, recurso.RangosEnUso.Count);
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionTarea))]
-    public void ModificarDuracionTarea_ConRecursosAsignadosLanzaExcepcion()
-    {
-        UsuarioDTO admin = CrearAdministradorProyecto();
-        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
-
-        TareaDTO tarea = CrearTarea();
-        tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
-        tarea.DuracionEnDias = 2;
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
-
-        Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
-        _repositorioRecursos.Agregar(recurso);
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-
-        _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
-        
-        _gestorTareas.ModificarDuracionTarea(admin, tarea.Id, proyecto.Id, 5);
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionTarea))]
-    public void ModificarFechaInicioTarea_ConRecursosAsignadosLanzaExcepcion()
-    {
-        UsuarioDTO admin = CrearAdministradorProyecto();
-        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
-
-        TareaDTO tarea = CrearTarea();
-        tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
-        tarea.DuracionEnDias = 2;
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
-
-        Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
-        _repositorioRecursos.Agregar(recurso);
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-
-        _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
-        
-        _gestorTareas.ModificarFechaInicioTarea(admin, tarea.Id, proyecto.Id, DateTime.Today.AddDays(2));
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionTarea))]
-    public void AgregarDependenciaATarea_ConRecursosAsignadosLanzaExcepcion()
-    {
-        UsuarioDTO admin = CrearAdministradorProyecto();
-        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
-
-        TareaDTO tarea1 = CrearTarea();
-        TareaDTO tarea2 = CrearTarea();
-        tarea1.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
-        tarea2.FechaInicioMasTemprana = DateTime.Today.AddDays(2);
-        tarea1.DuracionEnDias = 2;
-        tarea2.DuracionEnDias = 2;
-
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea2);
-
-        Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
-        _repositorioRecursos.Agregar(recurso);
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-
-        _gestorTareas.ValidarYAsignarRecurso(admin, tarea1.Id, proyecto.Id, recursoDTO, 1);
-
-        _gestorTareas.AgregarDependenciaATarea(admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
-    }
-    
-    [TestMethod]
-    [ExpectedException(typeof(ExcepcionTarea))]
-    public void EliminarDependenciaDeTarea_ConRecursosAsignadosLanzaExcepcion()
-    {
-        UsuarioDTO admin = CrearAdministradorProyecto();
-        ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
-
-        TareaDTO tarea1 = CrearTarea();
-        TareaDTO tarea2 = CrearTarea();
-        tarea1.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
-        tarea2.FechaInicioMasTemprana = DateTime.Today.AddDays(2);
-        tarea1.DuracionEnDias = 2;
-        tarea2.DuracionEnDias = 2;
-
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea2);
-        _gestorTareas.AgregarDependenciaATarea(admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
-
-        Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
-        _repositorioRecursos.Agregar(recurso);
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-
-        _gestorTareas.ValidarYAsignarRecurso(admin, tarea1.Id, proyecto.Id, recursoDTO, 1);
-
-        _gestorTareas.EliminarDependenciaDeTarea(admin, tarea1.Id, tarea2.Id, proyecto.Id);
-    }
-
-    [TestMethod]
-    public void EncontrarMismoTipoAlternativo_EncuentraRecursoAlternativo()
-    {
-        UsuarioDTO admin = CrearAdministradorProyecto();
-        ProyectoDTO proyectoDTO = CrearYAgregarProyecto(admin);
-        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
-        TareaDTO tarea = CrearTarea();
-        
-        Recurso recursoOriginal = new Recurso("Original", "TipoX", "desc", 1);
-        recursoOriginal.Id = 1;
-        _repositorioRecursos.Agregar(recursoOriginal);
-        RecursoDTO recursoOriginalDTO = RecursoDTO.DesdeEntidad(recursoOriginal);
-        
-        Recurso alternativo = new Recurso("Alternativo", "TipoX", "desc", 5);
-        alternativo.Id = 2;
-        _repositorioRecursos.Agregar(alternativo);
-        
-        
-        _gestorTareas.EncontrarRecursosAlternativosMismoTipo(admin, proyecto.Id, recursoOriginalDTO,new DateTime(2026, 01, 01), new DateTime(2026, 01, 04), 1);
-        
-        Usuario adminEntidad = _repositorioUsuarios.ObtenerPorId(admin.Id);
-        Assert.IsTrue(adminEntidad.Notificaciones.Any(n => n.Mensaje.Contains("Alternativo")));
-        
-    }
-    
-    [TestMethod]
-    public void ReprogramarTarea_NotificaAdminConNuevaFecha()
-    {
-        UsuarioDTO admin = CrearAdministradorProyecto();
-        ProyectoDTO proyectoDTO = CrearYAgregarProyecto(admin);
-        Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
-
-        TareaDTO tareaDTO = CrearTarea();
-        _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tareaDTO);
-        Tarea tarea = proyecto.Tareas.First();
-
-        Recurso recurso = new Recurso("Dev", "Humano", "Backend", 2);
-        recurso.Id = 1;
-        
-        recurso.AgregarRangoDeUso(new DateTime(2026, 01, 01), new DateTime(2026, 01, 03), 1);
-        _repositorioRecursos.Agregar(recurso);
-        RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
-        
-        _gestorTareas.ReprogramarTarea(admin, proyecto.Id, tarea.Id, recursoDTO, 1);
-        
-        Usuario adminEntidad = _repositorioUsuarios.ObtenerPorId(admin.Id);
-        Notificacion notificacion = adminEntidad.Notificaciones
-            .FirstOrDefault(n => n.Mensaje.Contains("puede reprogramarse"));
-        Assert.IsNotNull(notificacion);
-        Assert.IsTrue(notificacion.Mensaje.Contains("puede reprogramarse"));
-        Assert.IsTrue(notificacion.Mensaje.Contains(recurso.Nombre));
-        Assert.IsTrue(notificacion.Mensaje.Contains("04/01/2026"));
-    }
+/*[TestMethod]
+[ExpectedException(typeof(ExcepcionTarea))]
+public void AsignarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
+{
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+    RecursoDTO recurso = CrearYAgregarRecurso();
+    TareaDTO tarea = CrearTarea();
+
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+    _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+    _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+    _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+}*/
+
+[ExpectedException(typeof(ExcepcionPermisos))]
+[TestMethod]
+public void NoAdminNoPuedeAgregarRecursoATarea()
+{
+    Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+
+    _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+    _gestorTareas.AsignarRecursoATarea(_noAdmin, tarea.Id, proyecto.Id, recursoDTO, 1);
+}
+
+[TestMethod]
+public void SeNotificaElAgregadoDeUnRecursoALosMiembrosDeLaTarea()
+{
+    Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",2);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+
+    _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+    _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+    _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
+
+    _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
+    string mensajeEsperado =
+        MensajesNotificacion.CampoTareaAgregado($"recurso {recurso.Nombre}", tarea.Id, proyecto.Nombre);
+    NotificacionDTO ultimaNotificacion = _admin.Notificaciones.Last();
+
+    Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
+}
+
+[TestMethod]
+[ExpectedException(typeof(ExcepcionRecurso))]
+public void AgregarRecursoATarea_LanzaExcepcionSiRecursoNoExiste()
+{
+    TareaDTO tarea = CrearTarea();
+    Recurso recurso = new Recurso("Nombre", "Tipo", "Descripción",1);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+    _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
+}
+
+[TestMethod]
+public void AdminDeProyectoPuedeEliminarRecursoNecesarioDeTarea()
+{
+    RecursoDTO recursoDTO = CrearYAgregarRecurso();
+
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+
+    _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+    _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
+    _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+
+    tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id); // actualización
+    Assert.IsFalse(tarea.RecursosNecesarios.Any(recurso => recurso.Recurso.Id == recursoDTO.Id));
+}
+
+/*[TestMethod]
+[ExpectedException(typeof(ExcepcionTarea))]
+public void EliminarRecurso_LanzaExcepcionSiTareaEstaEnProceso()
+{
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+    RecursoDTO recurso = CrearYAgregarRecurso();
+    TareaDTO tarea = CrearTarea();
+
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+    _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recurso);
+
+    _repositorioProyectos.ObtenerPorId(proyecto.Id).ModificarFechaInicio(DateTime.Today);
+    _gestorTareas.CambiarEstadoTarea(_admin, tarea.Id, proyecto.Id, EstadoTareaDTO.EnProceso);
+
+    _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recurso);
+}*/
+
+[ExpectedException(typeof(ExcepcionPermisos))]
+[TestMethod]
+public void NoAdminNoPuedeEliminarRecursoDeTarea()
+{
+    RecursoDTO recursoDTO = CrearYAgregarRecurso();
+
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+
+    _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+    _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO,1);
+    _gestorTareas.EliminarRecursoDeTarea(_noAdmin, tarea.Id, proyecto.Id, recursoDTO);
+}
+
+[ExpectedException(typeof(ExcepcionTarea))]
+[TestMethod]
+public void NoSePuedeEliminarRecursoDeTareaNoExistente()
+{
+    RecursoDTO recursoDTO = CrearYAgregarRecurso();
+
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+    _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+}
+
+[ExpectedException(typeof(ExcepcionTarea))]
+[TestMethod]
+public void EliminarRecursoNoExistenteDeTareaDaError()
+{
+    RecursoDTO recursoNoExistente = CrearYAgregarRecurso();
+
+
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+    _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoNoExistente);
+}
+
+[TestMethod]
+public void SeNotificaLaEliminacionDeUnRecursoALosMiembrosDeLaTarea()
+{
+    RecursoDTO recursoDTO = CrearYAgregarRecurso();
+
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+
+    _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+    _gestorTareas.AsignarRecursoATarea(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+    _gestorTareas.EliminarRecursoDeTarea(_admin, tarea.Id, proyecto.Id, recursoDTO);
+
+    _admin = UsuarioDTO.DesdeEntidad(_repositorioUsuarios.ObtenerPorId(_admin.Id)); // actualización
+    string mensajeEsperado =
+        MensajesNotificacion.CampoTareaEliminado($"recurso {recursoDTO.Nombre}", tarea.Id, proyecto.Nombre);
+    NotificacionDTO ultimaNotificacion = _admin.Notificaciones.Last();
+
+    Assert.AreEqual(mensajeEsperado, ultimaNotificacion.Mensaje);
+}
+
+[TestMethod]
+public void EsMiembroDeTareaDevuelveTrueSiEsMiembro()
+{
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+    _gestorProyectos.AgregarMiembroAProyecto(proyecto.Id, _admin, _noAdmin);
+
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+    _gestorTareas.AgregarMiembroATarea(_admin, tarea.Id, proyecto.Id, _noAdmin);
+
+    Assert.IsTrue(_gestorTareas.EsMiembroDeTarea(_noAdmin, tarea.Id, proyecto.Id));
+}
+
+[TestMethod]
+public void EsMiembroDeTareaDevuelveFalseSiNoEsMiembro()
+{
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+    Assert.IsFalse(_gestorTareas.EsMiembroDeTarea(_admin, tarea.Id, proyecto.Id));
+}
+
+[TestMethod]
+[ExpectedException(typeof(ExcepcionRecurso))]
+public void ValidarYAsignarRecurso_LanzaExcepcionSiRecursoNoExiste()
+{
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+    RecursoDTO recursoInexistente = new RecursoDTO { Id = 999 };
+    _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoInexistente, 1);
+}
+
+[TestMethod]
+[ExpectedException(typeof(ExcepcionRecurso))]
+public void ValidarYAsignarRecurso_LanzaExcepcionSiCantidadSuperaCapacidad()
+{
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+    Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+    _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 10);
+}
+
+[TestMethod]
+[ExpectedException(typeof(ExcepcionConflicto))]
+public void ValidarYAsignarRecurso_LanzaExcepcionSiHayConflictoEnFechas()
+{
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+    TareaDTO tarea = CrearTarea();
+
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+    tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id);
+
+    Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 1);
+    recurso.AgregarRangoDeUso(tarea.FechaInicioMasTemprana, tarea.FechaFinMasTemprana, 1);
+    _repositorioRecursos.Agregar(recurso);
+
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+    _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+}
+
+[TestMethod]
+public void ValidarYAsignarRecurso_AsignaRecursoCorrectamente()
+{
+    ProyectoDTO proyecto = CrearYAgregarProyecto(_admin);
+    TareaDTO tarea = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, _admin, tarea);
+
+    Recurso recurso = new Recurso("Nombre", "Tipo", "Descripcion", 2);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+    _gestorTareas.ValidarYAsignarRecurso(_admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+
+    tarea = _gestorTareas.ObtenerTareaPorId(proyecto.Id, tarea.Id);
+    Assert.IsTrue(tarea.RecursosNecesarios.Any(r => r.Recurso.Id == recurso.Id));
+}
+
+/*[TestMethod]
+public void ForzarAsignacion_AsignaRecursoYNotificaMiembros()
+{
+    ProyectoDTO proyectoDTO = CrearYAgregarProyecto(_admin);
+    Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
+
+    TareaDTO tareaDTO = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyectoDTO.Id, _admin, tareaDTO);
+
+    Tarea tarea = proyecto.Tareas.First();
+    RecursoDTO recursoDTO = CrearYAgregarRecurso("Recurso", "Tipo", "Desc", 5);
+
+    Recurso recurso = _repositorioRecursos.ObtenerPorId(recursoDTO.Id);
+
+    Usuario miembro = new Usuario("Miembro", "miembro@gmail.com", DateTime.Today.AddYears(-20), "miembro@mail.com", "Contraseña#3");
+    _repositorioUsuarios.Agregar(miembro);
+    proyecto.Miembros.Add(miembro);
+
+    _gestorTareas.ForzarAsignacion(_admin, tarea.Id, proyecto.Id, recursoDTO, 2);
+
+    RecursoNecesario recursoAsignado = tarea.RecursosNecesarios.FirstOrDefault(rn => rn.Recurso.Id == recurso.Id);
+    Assert.IsNotNull(recursoAsignado);
+    Assert.AreEqual(2, recursoAsignado.Cantidad);
+
+    RangoDeUso rangoAsignado = recurso.RangosEnUso.FirstOrDefault(r =>
+        r.FechaInicio == tarea.FechaInicioMasTemprana &&
+        r.FechaFin == tarea.FechaFinMasTemprana &&
+        r.CantidadDeUsos == 2);
+    Assert.IsNotNull(rangoAsignado);
+
+    List<Notificacion> notificaciones = miembro.Notificaciones;
+    Assert.IsTrue(notificaciones.Any(n => n.Mensaje.Contains("asignado forzadamente")));
+}
+*/
+[TestMethod]
+public void EliminarTarea_LiberaRangosEnRecurso()
+{
+    UsuarioDTO admin = CrearAdministradorProyecto();
+    ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+    TareaDTO tarea = CrearTarea();
+    tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
+    tarea.DuracionEnDias = 2;
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+
+    Recurso recurso = new Recurso("Dev", "Humano", "Desarrollador", 1);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+    _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+    Assert.AreEqual(1, recurso.RangosEnUso.Count);
+
+    _gestorTareas.EliminarTareaDelProyecto(proyecto.Id, admin, tarea.Id);
+
+    Assert.AreEqual(0, recurso.RangosEnUso.Count);
+}
+
+[TestMethod]
+[ExpectedException(typeof(ExcepcionTarea))]
+public void ModificarDuracionTarea_ConRecursosAsignadosLanzaExcepcion()
+{
+    UsuarioDTO admin = CrearAdministradorProyecto();
+    ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+    TareaDTO tarea = CrearTarea();
+    tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
+    tarea.DuracionEnDias = 2;
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+
+    Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+    _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+
+    _gestorTareas.ModificarDuracionTarea(admin, tarea.Id, proyecto.Id, 5);
+}
+
+[TestMethod]
+[ExpectedException(typeof(ExcepcionTarea))]
+public void ModificarFechaInicioTarea_ConRecursosAsignadosLanzaExcepcion()
+{
+    UsuarioDTO admin = CrearAdministradorProyecto();
+    ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+    TareaDTO tarea = CrearTarea();
+    tarea.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
+    tarea.DuracionEnDias = 2;
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea);
+
+    Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+    _gestorTareas.ValidarYAsignarRecurso(admin, tarea.Id, proyecto.Id, recursoDTO, 1);
+
+    _gestorTareas.ModificarFechaInicioTarea(admin, tarea.Id, proyecto.Id, DateTime.Today.AddDays(2));
+}
+
+[TestMethod]
+[ExpectedException(typeof(ExcepcionTarea))]
+public void AgregarDependenciaATarea_ConRecursosAsignadosLanzaExcepcion()
+{
+    UsuarioDTO admin = CrearAdministradorProyecto();
+    ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+    TareaDTO tarea1 = CrearTarea();
+    TareaDTO tarea2 = CrearTarea();
+    tarea1.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
+    tarea2.FechaInicioMasTemprana = DateTime.Today.AddDays(2);
+    tarea1.DuracionEnDias = 2;
+    tarea2.DuracionEnDias = 2;
+
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea2);
+
+    Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+    _gestorTareas.ValidarYAsignarRecurso(admin, tarea1.Id, proyecto.Id, recursoDTO, 1);
+
+    _gestorTareas.AgregarDependenciaATarea(admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
+}
+
+[TestMethod]
+[ExpectedException(typeof(ExcepcionTarea))]
+public void EliminarDependenciaDeTarea_ConRecursosAsignadosLanzaExcepcion()
+{
+    UsuarioDTO admin = CrearAdministradorProyecto();
+    ProyectoDTO proyecto = CrearYAgregarProyecto(admin);
+
+    TareaDTO tarea1 = CrearTarea();
+    TareaDTO tarea2 = CrearTarea();
+    tarea1.FechaInicioMasTemprana = DateTime.Today.AddDays(1);
+    tarea2.FechaInicioMasTemprana = DateTime.Today.AddDays(2);
+    tarea1.DuracionEnDias = 2;
+    tarea2.DuracionEnDias = 2;
+
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea1);
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tarea2);
+    _gestorTareas.AgregarDependenciaATarea(admin, tarea1.Id, tarea2.Id, proyecto.Id, "FS");
+
+    Recurso recurso = new Recurso("Dev", "Humano", "Programador", 1);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+    _gestorTareas.ValidarYAsignarRecurso(admin, tarea1.Id, proyecto.Id, recursoDTO, 1);
+
+    _gestorTareas.EliminarDependenciaDeTarea(admin, tarea1.Id, tarea2.Id, proyecto.Id);
+}
+
+[TestMethod]
+public void EncontrarMismoTipoAlternativo_EncuentraRecursoAlternativo()
+{
+    UsuarioDTO admin = CrearAdministradorProyecto();
+    ProyectoDTO proyectoDTO = CrearYAgregarProyecto(admin);
+    Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
+    TareaDTO tarea = CrearTarea();
+
+    Recurso recursoOriginal = new Recurso("Original", "TipoX", "desc", 1);
+    recursoOriginal.Id = 1;
+    _repositorioRecursos.Agregar(recursoOriginal);
+    RecursoDTO recursoOriginalDTO = RecursoDTO.DesdeEntidad(recursoOriginal);
+
+    Recurso alternativo = new Recurso("Alternativo", "TipoX", "desc", 5);
+    alternativo.Id = 2;
+    _repositorioRecursos.Agregar(alternativo);
+
+
+    _gestorTareas.EncontrarRecursosAlternativosMismoTipo(admin, proyecto.Id, recursoOriginalDTO,new DateTime(2026, 01, 01), new DateTime(2026, 01, 04), 1);
+
+    Usuario adminEntidad = _repositorioUsuarios.ObtenerPorId(admin.Id);
+    Assert.IsTrue(adminEntidad.Notificaciones.Any(n => n.Mensaje.Contains("Alternativo")));
+
+}
+
+[TestMethod]
+public void ReprogramarTarea_NotificaAdminConNuevaFecha()
+{
+    UsuarioDTO admin = CrearAdministradorProyecto();
+    ProyectoDTO proyectoDTO = CrearYAgregarProyecto(admin);
+    Proyecto proyecto = _repositorioProyectos.ObtenerPorId(proyectoDTO.Id);
+
+    TareaDTO tareaDTO = CrearTarea();
+    _gestorTareas.AgregarTareaAlProyecto(proyecto.Id, admin, tareaDTO);
+    Tarea tarea = proyecto.Tareas.First();
+
+    Recurso recurso = new Recurso("Dev", "Humano", "Backend", 2);
+    recurso.Id = 1;
+
+    recurso.AgregarRangoDeUso(new DateTime(2026, 01, 01), new DateTime(2026, 01, 03), 1);
+    _repositorioRecursos.Agregar(recurso);
+    RecursoDTO recursoDTO = RecursoDTO.DesdeEntidad(recurso);
+
+    _gestorTareas.ReprogramarTarea(admin, proyecto.Id, tarea.Id, recursoDTO, 1);
+
+    Usuario adminEntidad = _repositorioUsuarios.ObtenerPorId(admin.Id);
+    Notificacion notificacion = adminEntidad.Notificaciones
+        .FirstOrDefault(n => n.Mensaje.Contains("puede reprogramarse"));
+    Assert.IsNotNull(notificacion);
+    Assert.IsTrue(notificacion.Mensaje.Contains("puede reprogramarse"));
+    Assert.IsTrue(notificacion.Mensaje.Contains(recurso.Nombre));
+    Assert.IsTrue(notificacion.Mensaje.Contains("04/01/2026"));
+}
 
 }
