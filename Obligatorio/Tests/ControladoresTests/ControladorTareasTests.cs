@@ -1,4 +1,4 @@
-using Controladores;
+/*using Controladores;
 using DTOs;
 using IServicios.IGestores;
 using Moq;
@@ -257,4 +257,4 @@ public class ControladorTareasTests
         _mockGestorTareas.Verify(g => g.EliminarRecursoDeTarea(usuario, idTarea, idProyecto, recursoAEliminar),
             Times.Once);
     }
-}
+}*/

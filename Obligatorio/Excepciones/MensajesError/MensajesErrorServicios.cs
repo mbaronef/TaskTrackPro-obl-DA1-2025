@@ -3,7 +3,7 @@ namespace Excepciones.MensajesError;
 public static class MensajesErrorServicios
 {
     public const string PermisoDenegado = "El usuario no tiene permisos necesarios para realizar esta acción.";
-
+   
     public static string PermisoDenegadoPara(string accion) =>
         $"No tiene los permisos necesarios para {accion}.";
     public static string PermisoDenegadoPorTipo(string tipoUsuario)
