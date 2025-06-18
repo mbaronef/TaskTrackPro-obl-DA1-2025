@@ -31,7 +31,9 @@ public static class ConfiguracionTarea
 
         modelBuilder.Entity<Tarea>()
             .HasMany(t => t.RecursosNecesarios)
-            .WithMany();
+            .WithOne()
+            .HasForeignKey("TareaId")
+            .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<Tarea>()
             .HasMany(t => t.Dependencias)  

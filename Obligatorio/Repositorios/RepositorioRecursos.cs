@@ -1,6 +1,7 @@
 using Dominio;
 using IRepositorios;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Repositorios;
 
@@ -23,7 +24,8 @@ public class RepositorioRecursos : IRepositorio<Recurso>
     {
         return _contexto.Recursos.
             Include(r => r.ProyectoAsociado).
-            FirstOrDefault(recurso => recurso.Id == id);
+            Include(r => r.RangosEnUso)
+            .FirstOrDefault(recurso => recurso.Id == id);
     }
 
     public void Eliminar(int id)
@@ -37,6 +39,7 @@ public class RepositorioRecursos : IRepositorio<Recurso>
     {
         return _contexto.Recursos.
             Include(r=> r.ProyectoAsociado)
+            .Include(r => r.RangosEnUso)
             .ToList();
     }
     
@@ -47,10 +50,11 @@ public class RepositorioRecursos : IRepositorio<Recurso>
         {
             recursoContexto.Actualizar(recurso);
             SincronizarProyectoAsociado(recurso, recursoContexto);
+            SincronizarRangosEnUso(recurso, recursoContexto);
             _contexto.SaveChanges();
         }
     }
-    
+
     private void SincronizarProyectoAsociado(Recurso recurso, Recurso recursoContexto)
     {
         if (recurso.ProyectoAsociado != null)
@@ -66,6 +70,36 @@ public class RepositorioRecursos : IRepositorio<Recurso>
         if (!recursoContexto.EsExclusivo())
         {
             recursoContexto.AsociarAProyecto(proyectoAsociadoContexto);
+        }
+    }
+    
+    private void SincronizarRangosEnUso(Recurso recurso, Recurso recursoContexto)
+    {
+        EliminarRangosEnUsoNoIncluidos(recursoContexto, recurso);
+        AgregarRangosEnUsoNuevos(recursoContexto, recurso);
+    }
+
+    private void AgregarRangosEnUsoNuevos(Recurso recursoContexto, Recurso recurso)
+    {
+        List<RangoDeUso> rangosNuevos = recurso.RangosEnUso.ToList(); 
+        foreach (RangoDeUso rangoNuevo in rangosNuevos)
+        {
+            if (rangoNuevo.Id == 0 || 
+                !recursoContexto.RangosEnUso.Any(rangoExistente => rangoExistente.Id == rangoNuevo.Id))
+            {
+                recursoContexto.RangosEnUso.Add(rangoNuevo);
+            }
+        }
+    }
+
+    private void EliminarRangosEnUsoNoIncluidos(Recurso recursoContexto, Recurso recurso)
+    {
+        foreach (RangoDeUso rangoExistente in recursoContexto.RangosEnUso.ToList())
+        {
+            if (!recurso.RangosEnUso.Any(rango => rango.Id == rangoExistente.Id))
+            {
+                recursoContexto.RangosEnUso.Remove(rangoExistente);
+            }
         }
     }
 }

@@ -23,6 +23,12 @@ public static class ConfiguracionRecurso
             .HasOne(r => r.ProyectoAsociado)  
             .WithMany()                     
             .HasForeignKey("ProyectoAsociadoId")    
-            .IsRequired(false); 
+            .IsRequired(false);
+        
+        modelBuilder.Entity<Recurso>()
+            .HasMany(r => r.RangosEnUso)  
+            .WithOne()                    
+            .HasForeignKey("RecursoId")       
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
