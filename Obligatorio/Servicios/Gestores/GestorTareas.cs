@@ -268,6 +268,51 @@ public class GestorTareas : IGestorTareas
         NotificarEliminar($"recurso {recurso.Nombre}", idTarea, idProyecto);
     }
     
+    public void EncontrarRecursosAlternativosMismoTipo(UsuarioDTO solicitanteDTO, int idProyecto, RecursoDTO recursoOriginalDTO, DateTime FechaInicio, DateTime FechaFin, int cantidad)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Recurso recursoOriginal = ObtenerRecursoPorDTO(recursoOriginalDTO);
+        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+
+        List<Recurso> todosLosRecursos = _repositorioRecursos.ObtenerTodos();
+
+        List<Recurso> recursosAlternativos = new List<Recurso>();
+
+        foreach (Recurso recurso in todosLosRecursos)
+        {
+            if (recurso.Tipo == recursoOriginal.Tipo && recurso.UsoSeAjustaANuevaCapacidad(cantidad) &&
+                recurso.TieneCapacidadDisponible(FechaInicio, FechaFin, cantidad))
+            {
+                recursosAlternativos.Add(recurso);
+            }
+        }
+
+        if (recursosAlternativos.Any())
+        {
+            string lista = string.Join(", ", recursosAlternativos.Select(r => r.Nombre));
+            string mensaje = $"Se encontraron recursos alternativos disponibles del mismo tipo que '{recursoOriginal.Nombre}': {lista}.";
+            _notificador.NotificarUno(proyecto.Administrador, mensaje);
+        }
+        else
+        {
+            string mensaje = $"No se encontraron recursos alternativos.";
+            _notificador.NotificarUno(proyecto.Administrador, mensaje);
+        }
+    }
+    
+    public void ReprogramarTarea(UsuarioDTO solicitanteDTO, int idProyecto, int idTarea, RecursoDTO recursoDTO, int cantidad)
+    {
+        Usuario solicitante = ObtenerUsuarioPorDTO(solicitanteDTO);
+        Proyecto proyecto = ObtenerProyectoValidandoAdmin(idProyecto, solicitante);
+        Recurso recurso = ObtenerRecursoPorDTO(recursoDTO);
+        Tarea tarea = ObtenerTareaDominioPorId(idProyecto, idTarea);
+
+        DateTime nuevaFechaInicio = recurso.BuscarProximaFechaDisponible(tarea.FechaInicioMasTemprana, tarea.DuracionEnDias, cantidad);
+
+        string mensaje = $"La tarea '{tarea.Titulo}' puede reprogramarse para comenzar el {nuevaFechaInicio:dd/MM/yyyy} usando el recurso '{recurso.Nombre}' sin conflictos.";
+        _notificador.NotificarUno(proyecto.Administrador, mensaje);
+    }
+    
     public void ForzarAsignacion(UsuarioDTO solicitanteDTO, int idTarea, int idProyecto, RecursoDTO recursoDTO,
         int cantidad)
     {

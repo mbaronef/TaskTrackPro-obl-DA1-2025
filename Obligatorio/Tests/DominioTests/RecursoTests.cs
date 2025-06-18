@@ -403,4 +403,15 @@ public class RecursoTests
             $"Nombre: '{recurso.Nombre}', tipo: '{recurso.Tipo}', descripción: '{recurso.Descripcion}'";
         Assert.AreEqual(resultadoEsperado, recurso.ToString());
     }
+    
+    [TestMethod]
+    public void BuscarProximaFechaDisponible_SinUsosDevuelveHoy()
+    {
+        var recurso = new Recurso("Dev", "Humano", "Backend", capacidad: 3);
+        
+        DateTime resultado = recurso.BuscarProximaFechaDisponible(DateTime.Today, duracionEnDias: 2, cantidad: 1);
+        
+        Assert.AreEqual(DateTime.Today, resultado);
+    }
+
 }
